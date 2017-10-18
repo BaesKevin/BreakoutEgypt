@@ -2,7 +2,7 @@
 
 ## installation instructions
 
-Clone this repo in a folder, we didn't test cloning via netbeans, use cli.
+Clone this repo in a folder, using netbeans works.
 Open the project in netbeans, ignore the error about the deployment descriptor.
 "Project problems" is about missing jars. Download them and add them to libraries.
 Add the missing jar files for the JBox2d and gson libraries. 
