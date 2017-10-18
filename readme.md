@@ -1,5 +1,10 @@
 # Breakout 
 
+## Set-up
+
+WEB-INF toevoegen in de 'Web Pages' folder.
+Ontbrekende JAR files toevoegen.
+
 ## Overview
 
 All breakout gamelogic happens in a java backend that runs on GlassFish server.
