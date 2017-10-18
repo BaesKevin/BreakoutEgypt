@@ -1,9 +1,18 @@
 # Breakout 
 
-## Set-up
+## installation instructions
 
-WEB-INF toevoegen in de 'Web Pages' folder.
-Ontbrekende JAR files toevoegen.
+Clone this repo in a folder, we didn't test cloning via netbeans, use cli.
+Open the project in netbeans, ignore the error about the deployment descriptor.
+"Project problems" is about missing jars. Download them and add them to libraries.
+Add the missing jar files for the JBox2d and gson libraries. 
+* https://mvnrepository.com/artifact/org.jbox2d/jbox2d-library/2.1.2.2
+* https://mvnrepository.com/artifact/com.google.code.gson/gson/2.8.2
+
+Under 'Web Pages', add a folder 'WEB-INF'. It should be on the same level as index.html. It doesn't contain anything, so git doesn't pick it up, but netbeans won't run the project without it.
+
+Finally, set the default browser for the project and you should be able to surf to localhost:8080/contextpath where contextpath is 
+specified right-click project > properties > run.
 
 ## Overview
 
