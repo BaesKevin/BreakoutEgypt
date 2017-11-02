@@ -26,7 +26,7 @@ public class Game extends TimerTask {
         world = new BreakoutWorld();
         manager = new SessionManager();
 
-        currentLevel = new Level(0, world.getBox2dWorld());
+        currentLevel = new LevelFactory(world.getBox2dWorld()).getLevel1();
         world.setLevel(currentLevel);
     }
 
@@ -57,7 +57,6 @@ public class Game extends TimerTask {
     @Override
     public void run() {
         world.step();
-
         manager.notifyPlayers(currentLevel, world);
     }
 

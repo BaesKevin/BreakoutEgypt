@@ -7,6 +7,7 @@ package com.breakoutws.domain;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
@@ -97,5 +98,34 @@ public class BodyFactory {
         body.createFixture(fd);
         body.setUserData(s);
         return body;
+    }
+    
+    public void addGround(float width, float height) {
+        PolygonShape ps = new PolygonShape();
+        ps.setAsBox(width, height);
+
+        FixtureDef fd = new FixtureDef();
+        fd.shape = ps;
+
+        BodyDef bd = new BodyDef();
+        bd.position = new Vec2(0.0f, -10f);
+
+        world.createBody(bd).createFixture(fd);
+    }
+
+    //This method creates a walls. 
+    public void addWall(float posX, float posY, float width, float height) {
+        PolygonShape ps = new PolygonShape();
+        ps.setAsBox(width, height);
+
+        FixtureDef fd = new FixtureDef();
+        fd.shape = ps;
+        fd.density = 1.0f;
+        fd.friction = 0.3f;
+
+        BodyDef bd = new BodyDef();
+        bd.position.set(posX, posY);
+
+        world.createBody(bd).createFixture(fd);
     }
 }

@@ -21,8 +21,8 @@ class BreakoutWorld {
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
     private final float timestep = 1.0f/60.0f;
-    private final int velocityIterations = 1;
-    private final int positionIterations = 1;
+    private final int velocityIterations = 8;
+    private final int positionIterations = 8;
     private Level currentLevel;
     
     // keep a seperate list of bodies to dstroy in the frontend since we only want to send this info once
