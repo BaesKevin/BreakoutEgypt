@@ -8,7 +8,6 @@ package com.breakoutws.domain;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
 
@@ -29,24 +28,33 @@ public class BreakoutContactListener implements ContactListener{
         Fixture a = contact.getFixtureA();
         Fixture b = contact.getFixtureB();
         
-        Ball ball;
-        Brick brick;
-        Object data1 = a.getBody().getUserData();
-        Object data2 = b.getBody().getUserData();
-
-        if( data1 instanceof Brick && data2 instanceof Ball){
-            brick = (Brick) data1;
-            ball = (Ball) data2;
-            world.destroyBrick(brick);
-        }else if( data1 instanceof Ball && data2 instanceof Brick){
-            brick = (Brick) data2;
-            ball = (Ball) data1;
-            world.destroyBrick(brick);
+        Shape data1 = (Shape) a.getBody().getUserData();
+        Shape data2 = (Shape) b.getBody().getUserData();
+        
+        if( data1 != null && data1.getName().contains("brick")){
+            world.destroyBrick(a.getBody(), data1.getName());
+            
+        }else if(data2 != null && data2.getName().contains("brick")){
+            world.destroyBrick(b.getBody(), data2.getName());
         }
     }
 
+    // detect if the ball hit the paddle
     @Override
     public void endContact(Contact contact) {
+        Fixture a = contact.getFixtureA();
+        Fixture b = contact.getFixtureB();
+        
+        Shape data1 = (Shape) a.getBody().getUserData();
+        Shape data2 = (Shape) b.getBody().getUserData();
+        
+         if ( data1 != null && data1.getName().equals("ball") && 
+                    data2 != null && data2.getName().equals("paddle")){
+            world.ballHitPaddle();
+        } else if ( data1 != null && data1.getName().equals("paddle") && 
+                    data2 != null && data2.getName().equals("ball")){
+            world.ballHitPaddle();
+        }
     }
 
     @Override

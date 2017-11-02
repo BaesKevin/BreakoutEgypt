@@ -10,8 +10,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $('canvas').on('mousemove', getMouseX);
 
-    draw();
+    loadLevel();
+    
+    
 });
+
+
+
+function loadLevel(){
+    console.log(getParameterByName("gameId"));
+    var gameId = getParameterByName("gameId");
+    console.log(gameId);
+    
+    fetch('level?gameId=' + gameId).then(function(response) {
+        return response.json();
+      }).then(function(response){
+          console.log(response);
+          if(!response.error){
+              brickdata=response.bricks;
+            balldata = response.ball;
+            paddledata=response.paddle;
+          }
+          else
+          {
+              document.location = "/breakout/";
+              console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
+          }
+      }).then(function(){
+          draw();
+      }).catch(function(err){
+          console.log(err);
+          websocket.close();
+          document.location = "/breakout?error='something went wrong'";
+      });
+}
 
 function draw() {
     var ctx = $('canvas')[0].getContext('2d');
@@ -19,19 +51,20 @@ function draw() {
     ctx.beginPath();
 
     ctx.fillStyle = balldata.color;
-    ctx.arc(balldata.x + balldata.radius / 2, balldata.y + balldata.radius / 2, balldata.radius / 2, 0, 2 * Math.PI, false);
+    ctx.arc(Math.round(balldata.x) + balldata.width / 2, Math.round(balldata.y) + balldata.width / 2, balldata.width / 2, 0, 2 * Math.PI, false);
     ctx.fill();
 
-    if (brickdata) {
-        ctx.fillStyle = brickdata.color;
-        ctx.fillRect(brickdata.x, brickdata.y, brickdata.width, brickdata.height);
-    }
+    brickdata.forEach(function (brick) {
+        ctx.fillStyle = brick.color;
+        ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
+    })
+
 
     setPaddleX();
 
     if (websocket.readyState === websocket.OPEN) {
         sendOverSocket(JSON.stringify({
-            x: paddledata.x + paddledata.width/2, 
+            x: paddledata.x + paddledata.width / 2,
             y: paddledata.y
         }));
     }
