@@ -7,6 +7,7 @@ package com.breakoutws.domain;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jbox2d.dynamics.World;
 
@@ -15,14 +16,15 @@ import org.jbox2d.dynamics.World;
  * @author kevin
  */
 public class LevelFactory {
-    private World world;
     
-    public LevelFactory(World world){
-        this.world = world;
+    private Game game;
+
+    public LevelFactory(Game game) {
+        this.game = game;
     }
     
     public Level getLevel1(){
-        
+               
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
         List<Shape> bricks = new ArrayList();
@@ -43,7 +45,18 @@ public class LevelFactory {
             row++;
         }
         
-        Level level = new Level(1, world, ballShape, paddleShape, bricks);
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (int i=0; i<bricks.size(); i++) {
+            list.add(new Integer(i));
+        }
+        Collections.shuffle(list);
+        for (int i=0; i<3; i++) {
+            Shape b = bricks.get(list.get(i));
+            b.setTarget(true);
+            b.setColor(Color.BLACK);
+        }
+        
+        Level level = new Level(1, game, ballShape, paddleShape, bricks);
         
         return level;
     }

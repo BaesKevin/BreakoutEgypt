@@ -22,14 +22,21 @@ public class Shape {
     //Ball radius in pixels
     private Color color;
     private String name;
+    private boolean isTarget;
     
-    public Shape(String name, float posX, float posY, int width, int height, Color color) {
+    public Shape(String name, float posX, float posY, int width, int height, Color color
+            , boolean isTarget) {
         this.name = name;
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
         this.color = color;
+        this.isTarget = isTarget;
+    }
+    
+    public Shape(String name, float posX, float posY, int width, int height, Color color) {
+        this(name, posX, posY, width, height, color, false);
     }
 
     public String getName() {
@@ -79,6 +86,14 @@ public class Shape {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+    
+    public boolean isTarget() {
+        return this.isTarget;
+    }
+    
+    public void setTarget(boolean isTarget) {
+        this.isTarget = isTarget;
     }
     
     

@@ -20,7 +20,7 @@ class BreakoutWorld {
     
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    private final float timestep = 1.0f/60.0f;
+    private final float timestep = 10.0f/60.0f;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
     private Level currentLevel;
@@ -30,11 +30,17 @@ class BreakoutWorld {
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
     
-    public BreakoutWorld() {
+    public BreakoutWorld(Level level) {
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
         world = new World(new Vec2(0.0f, 0.0f));
         world.setContactListener(new BreakoutContactListener(this));
+        
+        this.currentLevel = level;
+    }
+    
+    public World getWorld() {
+        return world;
     }
     
     public void setLevel(Level level){ this.currentLevel = level; }
@@ -49,6 +55,10 @@ class BreakoutWorld {
             currentLevel.removeBrick(brick);
             bodiesToDestroy.add(brick);
             keysOfBodiesToDestroy.add(key);
+        }
+        
+        if (currentLevel.allTargetBricksDestroyed()) {
+            currentLevel.getBall().setLinearVelocity(new Vec2(0.0f, 0.0f));        
         }
     }
     
@@ -94,9 +104,6 @@ class BreakoutWorld {
     public World getBox2dWorld() {
         return world;
     }
-
     
-
-
-    
+       
 }

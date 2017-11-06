@@ -27,7 +27,7 @@ public class BodyFactory {
     }
     
     public Body createBrick(Shape s){
-         BodyDef bd = new BodyDef();
+        BodyDef bd = new BodyDef();
         bd.type = BodyType.STATIC;
         bd.position.set(s.getPosX(), s.getPosY());
         PolygonShape ps = new PolygonShape();
@@ -121,7 +121,7 @@ public class BodyFactory {
         FixtureDef fd = new FixtureDef();
         fd.shape = ps;
         fd.density = 1.0f;
-        fd.friction = 0.3f;
+        fd.friction = 0.0f;
 
         BodyDef bd = new BodyDef();
         bd.position.set(posX, posY);
