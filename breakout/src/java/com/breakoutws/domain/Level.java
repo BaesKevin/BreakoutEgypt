@@ -20,34 +20,24 @@ public class Level extends TimerTask {
     private int id;
     private List<Body> bricks;
     private Body ball;
-    private Body paddle;
-    
-    private Timer timer;
-    
-    private Game game;
-    
+    private Body paddle;    
+    private Timer timer;    
+    private Game game;    
     private BodyFactory factory;
     
     private BreakoutWorld breakoutWorld;
     
-    public Level(int id, Game game){
-    
+    public Level(int id, Game game){    
         this.id = id;
         bricks = new ArrayList();        
         
         breakoutWorld = new BreakoutWorld(this);
         factory = new BodyFactory(breakoutWorld.getWorld());
                 
-        this.game = game;
-        
-        this.timer = new Timer();
-        
-        createBounds();
-        
-        
-    }
-    
-    
+        this.game = game;        
+             
+        createBounds();        
+    }    
     
     public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks){
         this(id, game);
@@ -118,14 +108,18 @@ public class Level extends TimerTask {
         return getTargetBricksLeft() == 0;
     }
     
-    public void startLevel() {
-        timer.schedule(this, 0, 1000/60);
+    public void start() {
+        timer = new Timer();
+        System.out.println("start level");
+        timer.schedule(this, 0, 300/60);
     }
     
-    public void stopLevel() {
+    public void stop() {
+        System.out.println("stop level");
         timer.cancel();
-    }
-    
+        //game.showSplitScreen();
+        game.nextLevel();
+    }   
     
     @Override
     public void run() {

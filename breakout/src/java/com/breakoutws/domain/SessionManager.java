@@ -42,6 +42,19 @@ public class SessionManager {
         return gameSessions.size() == 0;
     }
     
+    public void notifyLevelComplete(Level currentLevel) {        
+        json = createLevelCompleteJson(currentLevel.getId());
+
+        try {
+            for (Session peer : gameSessions) {
+                if( peer.isOpen())
+                    peer.getBasicRemote().sendObject(json);
+            }
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }        
+    }
+    
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
         json = createJson(currentLevel, simulation);
 
@@ -50,11 +63,18 @@ public class SessionManager {
                 if( peer.isOpen())
                     peer.getBasicRemote().sendObject(json);
             }
-        } catch (IOException io) {
-            io.printStackTrace();
-        } catch (EncodeException ee) {
-            ee.printStackTrace();
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
         }
+    }
+    
+    private JsonObject createLevelCompleteJson(int nextLevel) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        
+        job.add("levelComplete", true);
+        job.add("nextLevel", nextLevel);
+        
+        return job.build();        
     }
 
     private JsonObject createJson(Level currentLevel, BreakoutWorld simulation) {

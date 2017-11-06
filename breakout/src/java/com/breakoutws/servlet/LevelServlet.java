@@ -31,11 +31,11 @@ public class LevelServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
+        
         System.out.println("Getting current level for game " + gameId);
         GameManager manager = new GameManager();
-        Level level = manager.getLevel(gameId);
-        
-        
+        Level level = manager.getLevel(gameId);        
+        System.out.println("level: " + level.getId());
         
         JsonObjectBuilder job = Json.createObjectBuilder();
         if (level != null) {
@@ -48,18 +48,17 @@ public class LevelServlet extends HttpServlet {
             job.add("bricks", jab);
             job.add("ball", ((Shape)level.getBall().getUserData()).toJson());
             job.add("paddle", ((Shape)level.getPaddle().getUserData()).toJson());
+            job.add("level", level.getId());
             
-            manager.startGame(gameId);
-            
+            manager.startGame(gameId);            
         } else {
             job.add("error", "Tried to get level for game that doesn't exist");
-            
         }
         
         response.setContentType("application/json");
-            try (PrintWriter out = response.getWriter()) {
-                out.print(job.build().toString());
-            }
-
+        
+        try (PrintWriter out = response.getWriter()) {
+            out.print(job.build().toString());
+        }
     }
 }

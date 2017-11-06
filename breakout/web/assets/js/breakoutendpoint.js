@@ -22,8 +22,10 @@ function loadLevel(){
     var gameId = getParameterByName("gameId");
     console.log(gameId);
     
-    fetch('level?gameId=' + gameId).then(function(response) {
-        return response.json();
+    fetch('level?gameId=' + gameId).then(function(response) {      
+        var json = response.json();
+        console.log(json);
+        return json;
       }).then(function(response){
           console.log(response);
           if(!response.error){
@@ -40,8 +42,9 @@ function loadLevel(){
           draw();
       }).catch(function(err){
           console.log(err);
+          console.log("things really bad");
           websocket.close();
-          document.location = "/breakout?error='something went wrong'";
+          //document.location = "/breakout?error='something went wrong'";
       });
 }
 

@@ -23,7 +23,7 @@ public class LevelFactory {
         this.game = game;
     }
     
-    public Level getLevel1(){
+    public Level getLevel(int targetBlocks){
                
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
@@ -31,8 +31,8 @@ public class LevelFactory {
         
         int row = 1;
         int col = 1;
-        int rows = 3;
-        int cols = 5;
+        int rows = 1;
+        int cols = 3;
         int width = 30;
         int height = 10;
         
@@ -45,18 +45,27 @@ public class LevelFactory {
             row++;
         }
         
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        for (int i=0; i<bricks.size(); i++) {
-            list.add(new Integer(i));
-        }
-        Collections.shuffle(list);
-        for (int i=0; i<3; i++) {
-            Shape b = bricks.get(list.get(i));
-            b.setTarget(true);
-            b.setColor(Color.BLACK);
-        }
+//        ArrayList<Integer> list = new ArrayList<Integer>();
+//        for (int i=0; i<bricks.size(); i++) {
+//            list.add(new Integer(i));
+//        }
+//        Collections.shuffle(list);
+//        for (int i=0; i<targetBlocks; i++) {
+//            Shape b = bricks.get(list.get(i));
+//            b.setTarget(true);
+//            b.setColor(Color.BLACK);
+//        }
+
+//        for (int i = 0; i < targetBlocks; i++) {
+//            Shape b = bricks.get(i);
+//            b.setTarget(true);
+//            b.setColor(Color.BLACK);
+//        }
+
+        bricks.get(0).setTarget(true);
+        bricks.get(0).setColor(Color.BLACK);
         
-        Level level = new Level(1, game, ballShape, paddleShape, bricks);
+        Level level = new Level(targetBlocks, game, ballShape, paddleShape, bricks);
         
         return level;
     }

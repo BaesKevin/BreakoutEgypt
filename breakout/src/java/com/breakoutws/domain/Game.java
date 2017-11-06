@@ -17,19 +17,17 @@ public class Game{
     private static int ID = 0;
     private int id;
     private Level currentLevel;
-    private SessionManager manager;
-    
+    private int currentTargetBlocks;
+    private LevelFactory levelFactory;
+    private SessionManager manager;    
 
     public Game() {
-        id = ID++;
+        id = ID++;        
+        manager = new SessionManager();        
+        levelFactory = new LevelFactory(this);
         
-        manager = new SessionManager();
-        
-        currentLevel = new LevelFactory(this).getLevel1();
-
-        //currentLevel = new LevelFactory(world.getBox2dWorld()).getLevel1();
-        //currentLevel = new LevelFactory().getLevel1();
-        //world.setLevel(currentLevel);
+        currentTargetBlocks = 1;
+        currentLevel = levelFactory.getLevel(currentTargetBlocks);
     }
 
     public int getId() {
@@ -61,16 +59,20 @@ public class Game{
     }
     
     public void startLevel() {
-        this.currentLevel.startLevel();
+        System.out.println("Starting from startLevel");
+        this.currentLevel.start();
     }
     
     public void stopLevel() {
-        this.currentLevel.stopLevel();
+        currentLevel.stop();
     }
     
-
-    
-
-
-
+    public void nextLevel() {
+        currentTargetBlocks++;
+        System.out.println("Starting from nextLevel");
+        System.out.println("currentTargetBlocks: " + currentTargetBlocks);
+        currentLevel = levelFactory.getLevel(currentTargetBlocks);
+        manager.notifyLevelComplete(currentLevel);
+        currentLevel.start();
+    }
 }

@@ -17,12 +17,16 @@ function onError(evt) {
 function onMessage(evt){
     var json = JSON.parse(evt.data);
     
-    if( json && !json.error){
+    if( json && !json.error){         
+       if (json.levelComplete) {     
+           console.log("next level " + json.nextLevel);
+           setTimeout(loadLevel, 3000);
+           return;
+       }
        balldata.x = json.ball.x;
-       balldata.y = json.ball.y;
+       balldata.y = json.ball.y;      
        
-       if(json.destroy){
-           
+       if(json.destroy){           
            console.log(json.destroy);
            json.destroy.forEach(function(key){
                if(key.includes("brick")){
@@ -31,7 +35,7 @@ function onMessage(evt){
                    });
                }
            })
-       }
+       } 
     }
     else{
         console.log(json);
