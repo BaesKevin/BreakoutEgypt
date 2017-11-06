@@ -67,12 +67,11 @@ public class Game{
         currentLevel.stop();
     }
     
-    public void nextLevel() {
+    // TODO check if last level was reached
+    public void initNextLevel() {
+        System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
         currentTargetBlocks++;
-        System.out.println("Starting from nextLevel");
-        System.out.println("currentTargetBlocks: " + currentTargetBlocks);
         currentLevel = levelFactory.getLevel(currentTargetBlocks);
         manager.notifyLevelComplete(currentLevel);
-        currentLevel.start();
     }
 }

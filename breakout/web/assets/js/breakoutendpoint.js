@@ -64,19 +64,23 @@ function draw() {
 
 
     setPaddleX();
-
-    if (websocket.readyState === websocket.OPEN) {
-        sendOverSocket(JSON.stringify({
-            x: paddledata.x + paddledata.width / 2,
-            y: paddledata.y
-        }));
-    }
-
+    sendClientLevelState();
+    
     ctx.fillStyle = paddledata.color;
     ctx.fillRect(paddledata.x, paddledata.y, paddledata.width, paddledata.height);
 
 
     window.requestAnimationFrame(draw);
+}
+
+
+function sendClientLevelState(){
+    if (websocket.readyState === websocket.OPEN && !levelComplete) {
+        sendOverSocket(JSON.stringify({
+            x: paddledata.x + paddledata.width / 2,
+            y: paddledata.y
+        }));
+    }
 }
 
 function getMouseX(e) {

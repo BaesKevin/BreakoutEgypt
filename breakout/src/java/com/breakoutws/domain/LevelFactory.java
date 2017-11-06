@@ -31,18 +31,28 @@ public class LevelFactory {
         
         int row = 1;
         int col = 1;
-        int rows = 1;
-        int cols = 3;
+        int rows = 3;
+        int cols = 15;
         int width = 30;
         int height = 10;
         
         Shape brickShape;
+        String id;
         for(int x = 45; x < 45 + (( width + 1) * cols); x+=width + 1){
             for(int y = 45; y < 45 + (( height + 1) * rows ); y += height + 1){
-                brickShape = new Shape("brick" + col++ + "" + row, x, y, width, height, Color.PINK);
+                int colPadding = cols / 10 + 1;
+                int rowPadding = rows / 10 + 1;
+                System.out.printf("rowpadding: %d, colPadding: %d", rowPadding, colPadding);
+                id = String.format("brick%0" + rowPadding+ "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
+                System.out.printf("Cell id: %s", id);
+                
+                
+                brickShape = new Shape(id, x, y, width, height, Color.PINK);
                 bricks.add(brickShape);
+                col++;
             }
             row++;
+            col = 1;
         }
         
 //        ArrayList<Integer> list = new ArrayList<Integer>();

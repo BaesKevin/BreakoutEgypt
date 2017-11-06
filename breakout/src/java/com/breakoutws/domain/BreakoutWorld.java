@@ -58,7 +58,7 @@ class BreakoutWorld {
         }
         
         if (currentLevel.allTargetBricksDestroyed()) {
-            currentLevel.stop();  
+            currentLevel.initNextLevel();
         }
     }
     

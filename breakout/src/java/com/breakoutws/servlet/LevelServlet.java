@@ -35,11 +35,11 @@ public class LevelServlet extends HttpServlet {
         System.out.println("Getting current level for game " + gameId);
         GameManager manager = new GameManager();
         Level level = manager.getLevel(gameId);        
-        System.out.println("level: " + level.getId());
+        
         
         JsonObjectBuilder job = Json.createObjectBuilder();
         if (level != null) {
-            
+            System.out.println("level: " + level.getId());
             JsonArrayBuilder jab = Json.createArrayBuilder();
             for (Body body : level.getBricks()) {
                 Shape s = (Shape) body.getUserData();

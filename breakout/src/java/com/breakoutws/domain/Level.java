@@ -110,16 +110,23 @@ public class Level extends TimerTask {
     
     public void start() {
         timer = new Timer();
-        System.out.println("start level");
+        System.out.printf("start level %d", this.id);
         timer.schedule(this, 0, 300/60);
     }
     
+    // it is necessary to check if the timer is null because when the server crashes the timer seems to be null before we get here
     public void stop() {
-        System.out.println("stop level");
-        timer.cancel();
-        //game.showSplitScreen();
-        game.nextLevel();
-    }   
+        System.out.printf("stop level %d", this.id);
+        
+        if( timer != null ){
+            timer.cancel();
+        }
+    }
+    
+    public void initNextLevel(){
+        stop();
+        game.initNextLevel();
+    }
     
     @Override
     public void run() {
