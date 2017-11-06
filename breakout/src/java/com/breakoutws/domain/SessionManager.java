@@ -6,6 +6,7 @@
 package com.breakoutws.domain;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -20,16 +21,18 @@ import org.jbox2d.common.Vec2;
 
 /**
  * Keeps track of connected players in a game
+ *
  * @author kevin
  */
 public class SessionManager {
+
     private Set<Session> gameSessions;
     private JsonObject json;
-    
-    public SessionManager(){
-        gameSessions  = Collections.synchronizedSet(new HashSet());
+
+    public SessionManager() {
+        gameSessions = Collections.synchronizedSet(new HashSet());
     }
-    
+
     public void addPlayer(Session peer) {
         gameSessions.add(peer);
     }
@@ -37,18 +40,35 @@ public class SessionManager {
     public void removePlayer(Session peer) {
         gameSessions.remove(peer);
     }
-    
+
     public boolean hasNoPlayers() {
         return gameSessions.size() == 0;
     }
-    
+
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
         json = createJson(currentLevel, simulation);
 
         try {
             for (Session peer : gameSessions) {
-                if( peer.isOpen())
+                if (peer.isOpen()) {
                     peer.getBasicRemote().sendObject(json);
+                }
+            }
+        } catch (IOException io) {
+            io.printStackTrace();
+        } catch (EncodeException ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    void notifyPlayersOfGameOver() {
+        json = gameOverJson();
+
+        try {
+            for (Session peer : gameSessions) {
+                if (peer.isOpen()) {
+                    peer.getBasicRemote().sendObject(json);
+                }
             }
         } catch (IOException io) {
             io.printStackTrace();
@@ -84,5 +104,12 @@ public class SessionManager {
         return job.build();
     }
 
-   
+    private JsonObject gameOverJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+
+        job.add("gameOver", true);
+
+        return job.build();
+    }
+
 }

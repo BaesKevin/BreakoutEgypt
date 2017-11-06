@@ -56,7 +56,7 @@ public class LevelFactory {
             b.setColor(Color.BLACK);
         }
         
-        Level level = new Level(1, game, ballShape, paddleShape, bricks);
+        Level level = new Level(1, game, ballShape, paddleShape, bricks, 3);
         
         return level;
     }

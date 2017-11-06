@@ -30,6 +30,10 @@ public class Level extends TimerTask {
     
     private BreakoutWorld breakoutWorld;
     
+    private int lives;
+    
+    private Shape startingBall;
+    
     public Level(int id, Game game){
     
         this.id = id;
@@ -43,13 +47,11 @@ public class Level extends TimerTask {
         this.timer = new Timer();
         
         createBounds();
-        
-        
     }
     
     
     
-    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks){
+    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives){
         this(id, game);
         
         addBall(ball);
@@ -58,6 +60,8 @@ public class Level extends TimerTask {
         for(Shape brick : bricks){
             addBrick(brick);
         }
+        
+        this.lives = lives;
     }
     
     public void movePaddle(int x, int y) {
@@ -73,14 +77,17 @@ public class Level extends TimerTask {
     }
     
     public void addBall(Shape s){
+        this.startingBall = new Shape(s);
         ball = factory.createCircle(s);
     }
     
     private void createBounds(){
-        factory.addGround(300, 10);
-        factory.addWall(0, 300, 1, 300); //Left wall
-        factory.addWall(290, 300, 1, 300); //Right wall, keep in mind 
-        factory.addWall(0, 300, 300, 1); //Left wall
+        factory.addGround(300, 300);
+        
+        factory.addWall(0, 0, 1, 300); //Left wall
+        factory.addWall(300, 0, 1, 300); //Right wall, keep in mind 
+        
+        factory.addWall(0, 0,300, 1); //roof 
     }
     
     public int getId() {
@@ -103,6 +110,12 @@ public class Level extends TimerTask {
         bricks.remove(brick);
     }
     
+    void resetBall() {
+        ball = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
+        
+        lives--;
+    }
+    
     private int getTargetBricksLeft() {
         int targetsLeft = 0;
         for(Body b : bricks) {
@@ -118,6 +131,10 @@ public class Level extends TimerTask {
         return getTargetBricksLeft() == 0;
     }
     
+    public boolean noLivesLeft(){
+        return lives == 0;
+    }
+    
     public void startLevel() {
         timer.schedule(this, 0, 1000/60);
     }
@@ -126,11 +143,16 @@ public class Level extends TimerTask {
         timer.cancel();
     }
     
-    
     @Override
     public void run() {
         breakoutWorld.step();
-        game.notifyPlayers(this, breakoutWorld);
+        
+        if( noLivesLeft() ){
+            game.notifyPlayersLevelEnded();
+        } else {
+            game.notifyPlayers(this, breakoutWorld);
+        }
+        
     }
 
 }

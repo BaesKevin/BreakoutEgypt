@@ -60,6 +60,10 @@ public class Game{
         manager.notifyPlayers(currentLevel, simulation);
     }
     
+    public void notifyPlayersLevelEnded(){
+        manager.notifyPlayersOfGameOver();
+    }
+    
     public void startLevel() {
         this.currentLevel.startLevel();
     }

@@ -81,7 +81,7 @@ public class BodyFactory {
 //        bd.linearVelocity.x = -100;
         bd.linearVelocity.y = -100;
         CircleShape cs = new CircleShape();
-        cs.m_radius = s.getWidth();  //We need to convert radius to JBox2D equivalent
+        cs.m_radius = s.getWidth() / 2;  //We need to convert radius to JBox2D equivalent
         
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
@@ -100,17 +100,21 @@ public class BodyFactory {
         return body;
     }
     
-    public void addGround(float width, float height) {
+    public void addGround(float y, int width ) {
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(width, height);
+        ps.setAsBox(width, 1);
 
         FixtureDef fd = new FixtureDef();
         fd.shape = ps;
+        fd.isSensor = true;
 
         BodyDef bd = new BodyDef();
-        bd.position = new Vec2(0.0f, -10f);
+        bd.position = new Vec2(0.0f, y);
 
-        world.createBody(bd).createFixture(fd);
+        Shape groundShape = new Shape("ground", 0, y, width, 1);
+        Body body = world.createBody(bd);
+        body.createFixture(fd);
+        body.setUserData(groundShape);
     }
 
     //This method creates a walls. 
