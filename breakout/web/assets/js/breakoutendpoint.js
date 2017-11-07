@@ -29,11 +29,17 @@ function loadLevel(){
       }).then(function(response){
           console.log(response);
           if(!response.error){
-              brickdata=response.bricks;
-            balldata = response.ball;
-            paddledata=response.paddle;
-            console.log("lives: " + response.lives);
-            console.log("level: " + response.level);
+              console.log(response);
+              if ( response.allLevelsComplete) {
+                  allLevelsComplete = true;
+              } else {
+                brickdata=response.bricks;
+                balldata = response.ball;
+                paddledata=response.paddle;
+                console.log("lives: " + response.lives);
+                console.log("level: " + response.level);
+              }
+            
           }
           else
           {
@@ -43,7 +49,11 @@ function loadLevel(){
       }).then(function(){
           levelComplete = false;
           gameOver = false;
-          draw();
+          console.log(allLevelsComplete);
+          if (!allLevelsComplete) {
+              draw();
+          }
+
       }).catch(function(err){
           console.log(err);
           console.log("things really bad");

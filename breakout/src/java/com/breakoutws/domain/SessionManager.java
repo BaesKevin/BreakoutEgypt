@@ -46,10 +46,8 @@ public class SessionManager {
     }
     
     public void notifyLevelComplete(Level currentLevel) {        
-        json = createLevelCompleteJson(currentLevel.getId());
-        
+        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel());        
         System.out.println("notifying of level complete");
-
         sendJsonToPlayers(json);       
     }
     
@@ -74,10 +72,11 @@ public class SessionManager {
         return job.build();
     }
     
-    private JsonObject createLevelCompleteJson(int nextLevel) {
+    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         
-        job.add("levelComplete", true);       
+        job.add("levelComplete", true);   
+        job.add("isLastLevel", isLastLevel);
         return job.build();        
     }
     

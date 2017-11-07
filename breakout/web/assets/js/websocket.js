@@ -7,6 +7,7 @@ var brickdata = [];
 var paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
 var levelComplete = false;
 var gameOver = false;
+var allLevelsComplete = false;
 
 function onOpen(evt) {
     console.log('Connection open');
@@ -20,15 +21,19 @@ function onMessage(evt) {
     var json = JSON.parse(evt.data);
 
     if (json && !json.error) {
+        
         if (json.gameOver) {
             console.log("game over");
             gameOver = true;            
         } else if (json.livesLeft) {
             console.log("livesLeft: " + json.livesLeft);
         }
-        else if (json.levelComplete) {
+        else if (json.levelComplete) {            
             levelComplete = true;
+         
             loadLevel();
+                
+           
         } else {
            
             updateLevelData(json);

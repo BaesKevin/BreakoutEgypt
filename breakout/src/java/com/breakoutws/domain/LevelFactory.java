@@ -18,13 +18,34 @@ import org.jbox2d.dynamics.World;
 public class LevelFactory {
     
     private Game game;
+    private int currentLevel;
+    private int totalLevels;
 
     public LevelFactory(Game game) {
+        this.currentLevel = 1;
+        this.totalLevels = 2;
         this.game = game;
     }
     
+    public boolean hasNextLevel() {
+
+        return currentLevel <= totalLevels;
+    }
+    
+    public Level getCurrentLevel() {
+        System.out.println("current level: " + currentLevel);
+        System.out.println("total levels: " + totalLevels);
+        return getSimpleTestLevel(currentLevel);        
+    }
+    
+    public Level getNextLevel() {
+        currentLevel++;
+        return getCurrentLevel();
+    }
+    
     public Level getSimpleTestLevel(int targetBlocks){
-               
+        
+                      
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
         List<Shape> bricks = new ArrayList();
@@ -72,11 +93,11 @@ public class LevelFactory {
 //            b.setColor(Color.BLACK);
 //        }
 
-        bricks.get(0).setTarget(true);
-        bricks.get(0).setColor(Color.BLACK);
-        bricks.get(1).setTarget(true);
-        bricks.get(1).setColor(Color.BLACK);
-        
+        for (int i=0; i<targetBlocks; i++) {
+            bricks.get(i).setTarget(true);
+            bricks.get(i).setColor(Color.BLACK);
+        }
+                
         Level level = new Level(1, game, ballShape, paddleShape, bricks, 3);
         
         return level;

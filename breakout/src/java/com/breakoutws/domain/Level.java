@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.json.JsonValue;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
@@ -31,6 +32,8 @@ public class Level extends TimerTask {
     
     private Shape startingBall;
     
+    private boolean isLastLevel;
+    
     public Level(int id, Game game){
     
         this.id = id;
@@ -39,14 +42,16 @@ public class Level extends TimerTask {
         breakoutWorld = new BreakoutWorld(this);
         factory = new BodyFactory(breakoutWorld.getWorld());
                 
-        this.game = game;        
+        this.game = game; 
+        this.isLastLevel = isLastLevel;
              
         createBounds();        
-    }    
+    }  
     
-    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives){
+    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives
+           ){
+             
         this(id, game);
-        
         addBall(ball);
         addPaddle(paddle);
         
@@ -162,6 +167,10 @@ public class Level extends TimerTask {
         game.notifyPlayers(this, breakoutWorld);
        
         
+    }
+
+    public boolean isLastLevel() {
+        return isLastLevel;
     }
 
 }

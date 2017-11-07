@@ -80,4 +80,8 @@ public class GameManager {
         }
         
     }
+    
+    public boolean hasNextLevel(int gameId) {
+        return games.get(gameId).hasNextLevel();
+    }
 }

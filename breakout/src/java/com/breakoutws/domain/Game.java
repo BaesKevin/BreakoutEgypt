@@ -17,17 +17,16 @@ public class Game{
     private static int ID = 0;
     private int id;
     private Level currentLevel;
-    private int currentTargetBlocks;
+   
     private LevelFactory levelFactory;
     private SessionManager manager;    
 
     public Game() {
         id = ID++;        
         manager = new SessionManager();        
-        levelFactory = new LevelFactory(this);
-        
-        currentTargetBlocks = 2;
-        currentLevel = levelFactory.getSimpleTestLevel(currentTargetBlocks);
+        levelFactory = new LevelFactory(this);       
+    
+        currentLevel = levelFactory.getCurrentLevel();
     }
 
     public int getId() {
@@ -57,8 +56,7 @@ public class Game{
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
         manager.notifyPlayers(currentLevel, simulation);
     }
-    
-
+ 
     public void notifyPlayersOfLivesLeft() {
         
         manager.notifyPlayersOfLivesLeft(currentLevel);
@@ -80,8 +78,12 @@ public class Game{
     // TODO check if last level was reached
     public void initNextLevel() {
         System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
-        currentTargetBlocks++;
-        currentLevel = levelFactory.getSimpleTestLevel(currentTargetBlocks);
+        
+        currentLevel = levelFactory.getNextLevel();
         manager.notifyLevelComplete(currentLevel);
+    }
+    
+    public boolean hasNextLevel() {
+        return levelFactory.hasNextLevel();
     }
 }
