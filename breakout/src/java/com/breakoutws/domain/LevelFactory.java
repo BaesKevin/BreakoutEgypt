@@ -7,9 +7,7 @@ package com.breakoutws.domain;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.jbox2d.dynamics.World;
 
 /**
  *
@@ -18,13 +16,32 @@ import org.jbox2d.dynamics.World;
 public class LevelFactory {
     
     private Game game;
+    private int currentLevel;
+    private int totalLevels;
 
     public LevelFactory(Game game) {
+        this.currentLevel = 1;
+        this.totalLevels = 2;
         this.game = game;
     }
     
+    public boolean hasNextLevel() {
+
+        return currentLevel <= totalLevels;
+    }
+    
+    public Level getCurrentLevel() {
+        System.out.printf("LevelFactory: Get level %d of %d", currentLevel, totalLevels);
+        return getSimpleTestLevel(currentLevel);        
+    }
+    
+    public Level getNextLevel() {
+        System.out.println("LevelFactory: Get next level");
+        currentLevel++;
+        return getCurrentLevel();
+    }
+    
     public Level getSimpleTestLevel(int targetBlocks){
-               
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
         List<Shape> bricks = new ArrayList();
@@ -32,7 +49,7 @@ public class LevelFactory {
         int row = 1;
         int col = 1;
         int rows = 1;
-        int cols = 15;
+        int cols = 5;
         int width = 30;
         int height = 10;
         
@@ -72,12 +89,12 @@ public class LevelFactory {
 //            b.setColor(Color.BLACK);
 //        }
 
-        bricks.get(0).setTarget(true);
-        bricks.get(0).setColor(Color.BLACK);
-        bricks.get(1).setTarget(true);
-        bricks.get(1).setColor(Color.BLACK);
-        
-        Level level = new Level(1, game, ballShape, paddleShape, bricks, 3);
+        for (int i=0; i<targetBlocks; i++) {
+            bricks.get(i).setTarget(true);
+            bricks.get(i).setColor(Color.BLACK);
+        }
+                
+        Level level = new Level(currentLevel, game, ballShape, paddleShape, bricks, 3);
         
         return level;
     }
