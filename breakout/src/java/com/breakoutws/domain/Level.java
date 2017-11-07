@@ -5,13 +5,15 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.shapes.Ball;
+import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.Paddle;
+import com.breakoutws.domain.shapes.Shape;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.json.JsonValue;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -30,7 +32,7 @@ public class Level extends TimerTask {
     
     private int lives;
     
-    private Shape startingBall;
+    private Ball startingBall;
     
     private boolean isLastLevel;
     
@@ -48,14 +50,14 @@ public class Level extends TimerTask {
         createBounds();        
     }  
     
-    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives
+    public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
            ){
              
         this(id, game);
         addBall(ball);
         addPaddle(paddle);
         
-        for(Shape brick : bricks){
+        for(Brick brick : bricks){
             addBrick(brick);
         }
         
@@ -66,17 +68,17 @@ public class Level extends TimerTask {
         breakoutWorld.movePaddle(x, y);
     }
     
-    public void addPaddle(Shape s){
-        paddle = factory.createPaddle(s);
+    public void addPaddle(Paddle p){
+        paddle = factory.createPaddle(p);
     }
     
-    public void addBrick(Shape s){
-        bricks.add(factory.createBrick(s));
+    public void addBrick(Brick brick){
+        bricks.add(factory.createBrick(brick));
     }
     
-    public void addBall(Shape s){
-        this.startingBall = new Shape(s);
-        ball = factory.createCircle(s);
+    public void addBall(Ball b){
+        this.startingBall = b;
+        ball = factory.createCircle(b);
     }
     
     private void createBounds(){
@@ -117,10 +119,10 @@ public class Level extends TimerTask {
     
     private int getTargetBricksLeft() {
         int targetsLeft = 0;
-        for(Body b : bricks) {
-            Shape s = (Shape) b.getUserData();
+        for(Body body : bricks) {
+            Brick brick = (Brick) body.getUserData();
             
-            if (s.isTarget())
+            if (brick.isTarget())
                ++targetsLeft;           
         }
         return targetsLeft;

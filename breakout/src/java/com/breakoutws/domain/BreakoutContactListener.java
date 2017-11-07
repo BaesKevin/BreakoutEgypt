@@ -5,6 +5,9 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.BrickType;
+import com.breakoutws.domain.shapes.IShape;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -28,33 +31,41 @@ public class BreakoutContactListener implements ContactListener{
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
         
-        Shape s1 = (Shape) f1.getBody().getUserData();
-        Shape s2 = (Shape) f2.getBody().getUserData();
+        IShape s1 = (IShape) f1.getBody().getUserData();
+        IShape s2 = (IShape) f2.getBody().getUserData();
         
-       if(  ballHitBrick(f1, f2, s1, s2))
+        Brick hitBrick = getBrickBallCollidedWith(f1, f2, s1, s2);
+        boolean isBallOutOfBounds = isBallOutOfBounds(f1, f2, s1, s2);
+        
+       if( hitBrick != null  )
        {
-           world.destroyBrick(f1.getBody(), s1.getName());
+           // TODO do stuff based on bricktype
+           BrickType brickType = hitBrick.getBricktype();
+           
+           if(brickType == BrickType.REGULAR){
+                world.destroyBrick(f1.getBody(), s1.getName());
+           }
        } 
-       else if (isBallOutOfBounds(f1, f2, s1, s2))
+       else if (isBallOutOfBounds)
        {
            // System.out.println("Ball is out of bounds");
            world.resetBall();
        }
     }
     
-    private boolean ballHitBrick(Fixture f1, Fixture f2, Shape s1, Shape s2){
-        boolean hitBrick = false;
+    private Brick getBrickBallCollidedWith(Fixture f1, Fixture f2, IShape s1, IShape s2){
+        Brick brick = null;
         
         if( s1 != null && s1.getName().contains("brick")){
-            hitBrick = true;
+           brick = (Brick) s1;
         }else if(s2 != null && s2.getName().contains("brick")){
-            hitBrick = true;
+            brick = (Brick) s2;
         }
         
-        return hitBrick;
+        return brick;
     }
     
-    private boolean isBallOutOfBounds (Fixture fix1, Fixture fix2, Shape s1, Shape s2){
+    private boolean isBallOutOfBounds (Fixture fix1, Fixture fix2, IShape s1, IShape s2){
         boolean outOfBounds = false;
         
         if( s1 != null && s1.getName().contains("ground")){
@@ -73,8 +84,8 @@ public class BreakoutContactListener implements ContactListener{
         Fixture a = contact.getFixtureA();
         Fixture b = contact.getFixtureB();
         
-        Shape data1 = (Shape) a.getBody().getUserData();
-        Shape data2 = (Shape) b.getBody().getUserData();
+        IShape data1 = (IShape) a.getBody().getUserData();
+        IShape data2 = (IShape) b.getBody().getUserData();
         
          if ( data1 != null && data1.getName().equals("ball") && 
                     data2 != null && data2.getName().equals("paddle")){

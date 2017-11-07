@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutws.domain;
+package com.breakoutws.domain.shapes;
 
 import java.awt.Color;
 import javax.json.Json;
@@ -11,39 +11,35 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 /**
- * Used to provide inital values for Box2d objects. Changing these values will not influence the box2d world.
- * To change position or dimensions you must use the Body object
+ * Used to provide inital values for Box2d objects. Changing these values will
+ * not influence the box2d world. To change position or dimensions you must use
+ * the Body object
+ *
  * @author kevin
  */
 public class Shape {
+
     private float posX;
     private float posY;
     private int width, height;
     //Ball radius in pixels
     private Color color;
     private String name;
-    private boolean isTarget;
-    
-    Shape(String name, float x, float y, int width, int height) {
+
+    public Shape(String name, float x, float y, int width, int height) {
         this(name, x, y, width, height, Color.BLACK);
     }
-    
-     public Shape(String name, float posX, float posY, int width, int height, Color color) {
-        this(name, posX, posY, width, height, color, false);
-    }
-    
-    public Shape(String name, float posX, float posY, int width, int height, Color color
-            , boolean isTarget) {
+
+    public Shape(String name, float posX, float posY, int width, int height, Color color) {
         this.name = name;
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
         this.color = color;
-        this.isTarget = isTarget;
     }
-   
-    Shape(Shape s) {
+
+    public Shape(Shape s) {
         this(s.name, s.posX, s.posY, s.width, s.height, s.color);
     }
 
@@ -55,7 +51,6 @@ public class Shape {
         this.name = name;
     }
 
-    
     public float getPosX() {
         return posX;
     }
@@ -95,16 +90,7 @@ public class Shape {
     public void setColor(Color color) {
         this.color = color;
     }
-    
-    public boolean isTarget() {
-        return this.isTarget;
-    }
-    
-    public void setTarget(boolean isTarget) {
-        this.isTarget = isTarget;
-    }
-    
-    
+
     public JsonObject toJson() {
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
         brickkObjectBuilder.add("name", this.name);

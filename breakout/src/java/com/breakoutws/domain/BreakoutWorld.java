@@ -5,6 +5,7 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.shapes.IShape;
 import java.util.ArrayList;
 import java.util.List;
 import org.jbox2d.common.Vec2;
@@ -98,7 +99,7 @@ class BreakoutWorld {
     }
 
     private void adjustBallDirection(){
-        float width = ((Shape)currentLevel.getPaddle().getUserData()).getWidth();
+        float width = ((IShape)currentLevel.getPaddle().getUserData()).getShape().getWidth();
         float adjustedX = currentLevel.getPaddle().getPosition().x - width/2;
         float relativeDistance = (currentLevel.getBall().getPosition().x - adjustedX) / width ;
 
