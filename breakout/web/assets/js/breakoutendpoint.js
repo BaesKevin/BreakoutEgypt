@@ -18,26 +18,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function loadLevel(){
-    console.log(getParameterByName("gameId"));
+    console.log("load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
-    console.log(gameId);
     
     fetch('level?gameId=' + gameId).then(function(response) {      
         var json = response.json();
-        console.log(json);
         return json;
       }).then(function(response){
-          console.log(response);
           if(!response.error){
-              console.log(response);
               if ( response.allLevelsComplete) {
+                  console.log("Load level: got allLevelsComplete message");
                   allLevelsComplete = true;
               } else {
+                  console.log("Load level: got data for level " + response.level);
                 brickdata=response.bricks;
                 balldata = response.ball;
                 paddledata=response.paddle;
-                console.log("lives: " + response.lives);
-                console.log("level: " + response.level);
               }
             
           }
@@ -49,16 +45,13 @@ function loadLevel(){
       }).then(function(){
           levelComplete = false;
           gameOver = false;
-          console.log(allLevelsComplete);
           if (!allLevelsComplete) {
               draw();
           }
 
       }).catch(function(err){
-          console.log(err);
-          console.log("things really bad");
           websocket.close();
-          //document.location = "/breakout?error='something went wrong'";
+          document.location = "/breakout?error=" + err;
       });
 }
 

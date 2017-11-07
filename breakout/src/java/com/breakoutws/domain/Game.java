@@ -67,7 +67,6 @@ public class Game{
     }
     
     public void startLevel() {
-        System.out.println("Starting from startLevel");
         this.currentLevel.start();
     }
     
@@ -79,7 +78,9 @@ public class Game{
     public void initNextLevel() {
         System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
         
-        currentLevel = levelFactory.getNextLevel();
+        if(levelFactory.hasNextLevel()){
+               currentLevel = levelFactory.getNextLevel();
+        }
         manager.notifyLevelComplete(currentLevel);
     }
     

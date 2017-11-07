@@ -104,7 +104,7 @@ class BreakoutWorld {
 
 
         float newX = -100 + relativeDistance * 200;
-        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
+//        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
         currentLevel.getBall().setLinearVelocity(new Vec2(newX, currentLevel.getBall().getLinearVelocity().y));
     }
     
