@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.json.JsonValue;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
@@ -31,6 +32,8 @@ public class Level extends TimerTask {
     
     private Shape startingBall;
     
+    private boolean isLastLevel;
+    
     public Level(int id, Game game){
     
         this.id = id;
@@ -39,14 +42,16 @@ public class Level extends TimerTask {
         breakoutWorld = new BreakoutWorld(this);
         factory = new BodyFactory(breakoutWorld.getWorld());
                 
-        this.game = game;        
+        this.game = game; 
+        this.isLastLevel = isLastLevel;
              
         createBounds();        
-    }    
+    }  
     
-    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives){
+    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives
+           ){
+             
         this(id, game);
-        
         addBall(ball);
         addPaddle(paddle);
         
@@ -104,7 +109,7 @@ public class Level extends TimerTask {
     }
     
     void resetBall() {
-        System.out.println("resetBall()");
+        System.out.println("LeveL: resetBall()");
         ball = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);        
         lives--;
         game.notifyPlayersOfLivesLeft();
@@ -127,7 +132,7 @@ public class Level extends TimerTask {
     
     public void start() {
         timer = new Timer();
-        System.out.printf("start level %d", this.id);
+        System.out.printf("Level: start level %d", this.id);
         timer.schedule(this, 0, 1000/60);
     }
     
@@ -143,7 +148,7 @@ public class Level extends TimerTask {
       
     // it is necessary to check if the timer is null because when the server crashes the timer seems to be null before we get here
     public void stop() {
-        System.out.printf("stop level %d", this.id);
+        System.out.printf("Level: stop level %d", this.id);
         
         if( timer != null ){
             timer.cancel();
@@ -162,6 +167,10 @@ public class Level extends TimerTask {
         game.notifyPlayers(this, breakoutWorld);
        
         
+    }
+
+    public boolean isLastLevel() {
+        return isLastLevel;
     }
 
 }

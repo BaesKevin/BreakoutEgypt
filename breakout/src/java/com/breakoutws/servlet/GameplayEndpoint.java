@@ -33,7 +33,7 @@ public class GameplayEndpoint {
     }
     @OnOpen
     public void onOpen(Session peer) {
-        System.out.println("Opening socket connection");
+        System.out.println("GamePlayEndpoint: Opening socket connection");
         GameManager gm = new GameManager();
         
         int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
@@ -59,7 +59,7 @@ public class GameplayEndpoint {
         }
         else
         {
-            System.out.println("Trying to move paddle for game that doesn't exist");
+            System.out.println("GamePlayEndpoint: Trying to move paddle for game that doesn't exist");
         }
     }
 }

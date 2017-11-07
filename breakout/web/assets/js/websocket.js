@@ -7,6 +7,7 @@ var brickdata = [];
 var paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
 var levelComplete = false;
 var gameOver = false;
+var allLevelsComplete = false;
 
 function onOpen(evt) {
     console.log('Connection open');
@@ -20,17 +21,22 @@ function onMessage(evt) {
     var json = JSON.parse(evt.data);
 
     if (json && !json.error) {
+        
         if (json.gameOver) {
-            console.log("game over");
+            console.log("Gameplay: game over");
             gameOverMessage();
             gameOver = true;            
         } else if (json.livesLeft) {
-            console.log("livesLeft: " + json.livesLeft);
+            console.log("Gameplay: livesLeft: " + json.livesLeft);
             loadLives(json.livesLeft);
         }
-        else if (json.levelComplete) {
+        else if (json.levelComplete) {   
+            console.log("Socket received message level complete");
             levelComplete = true;
+         
             loadLevel();
+                
+           
         } else {
            
             updateLevelData(json);
@@ -47,7 +53,7 @@ function updateLevelData(json) {
     balldata.y = json.ball.y;
 
     if (json.destroy) {
-        console.log(json.destroy);
+        console.log("Received bricks to destroy");
         json.destroy.forEach(function (key) {
             if (key.includes("brick")) {
                 brickdata = brickdata.filter(function (brick) {
@@ -59,7 +65,6 @@ function updateLevelData(json) {
 }
 
 function handleLevelUpdateError(json) {
-    console.log(json);
     if (json.error) {
         document.location = "/breakout?error=" + json.error;
     } else

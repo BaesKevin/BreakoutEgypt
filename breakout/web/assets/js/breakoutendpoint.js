@@ -1,4 +1,4 @@
-var canvas, mouse,lives;
+var canvas, mouse, lives;
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     paddledata.x = canvas.width / 2 - paddledata.width / 2;
@@ -11,47 +11,49 @@ document.addEventListener("DOMContentLoaded", function () {
     $('canvas').on('mousemove', getMouseX);
 
     loadLevel();
-    
-    
+
+
 });
 
 
 
-function loadLevel(){
-    console.log(getParameterByName("gameId"));
+function loadLevel() {
+    console.log("load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
-    console.log(gameId);
-    
-    fetch('level?gameId=' + gameId).then(function(response) {      
+
+    fetch('level?gameId=' + gameId).then(function (response) {
         var json = response.json();
-        console.log(json);
         return json;
-      }).then(function(response){
-          console.log(response);
-          if(!response.error){
-              brickdata=response.bricks;
-            balldata = response.ball;
-            paddledata=response.paddle;
-            console.log("lives: " + response.lives);
-            lives=response.lives;
-            loadLives(lives);
-            console.log("level: " + response.level);
-          }
-          else
-          {
-              document.location = "/breakout/";
-              console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
-          }
-      }).then(function(){
-          levelComplete = false;
-          gameOver = false;
-          draw();
-      }).catch(function(err){
-          console.log(err);
-          console.log("things really bad");
-          websocket.close();
-          //document.location = "/breakout?error='something went wrong'";
-      });
+    }).then(function (response) {
+        if (!response.error) {
+            if (response.allLevelsComplete) {
+                console.log("Load level: got allLevelsComplete message");
+                allLevelsComplete = true;
+            } else {
+                console.log("Load level: got data for level " + response.level);
+                brickdata = response.bricks;
+                balldata = response.ball;
+                paddledata = response.paddle;
+                lives = response.lives;
+                loadLives(lives);
+                console.log("lives: " + response.lives);
+            }
+        } else
+        {
+            document.location = "/breakout/";
+            console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
+        }
+    }).then(function () {
+        levelComplete = false;
+        gameOver = false;
+        if (!allLevelsComplete) {
+            draw();
+        }
+
+    }).catch(function (err) {
+        websocket.close();
+        document.location = "/breakout?error=" + err;
+    });
 }
 
 function draw() {
@@ -71,7 +73,7 @@ function draw() {
 
     setPaddleX();
     sendClientLevelState();
-    
+
     ctx.fillStyle = paddledata.color;
     ctx.fillRect(paddledata.x, paddledata.y, paddledata.width, paddledata.height);
 
@@ -80,7 +82,7 @@ function draw() {
 }
 
 
-function sendClientLevelState(){
+function sendClientLevelState() {
     if (websocket.readyState === websocket.OPEN && !levelComplete && !gameOver) {
         sendOverSocket(JSON.stringify({
             x: paddledata.x + paddledata.width / 2,
