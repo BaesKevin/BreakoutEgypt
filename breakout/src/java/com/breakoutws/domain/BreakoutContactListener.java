@@ -25,18 +25,46 @@ public class BreakoutContactListener implements ContactListener{
     
     @Override
     public void beginContact(Contact contact) {
-        Fixture a = contact.getFixtureA();
-        Fixture b = contact.getFixtureB();
+        Fixture f1 = contact.getFixtureA();
+        Fixture f2 = contact.getFixtureB();
         
-        Shape data1 = (Shape) a.getBody().getUserData();
-        Shape data2 = (Shape) b.getBody().getUserData();
+        Shape s1 = (Shape) f1.getBody().getUserData();
+        Shape s2 = (Shape) f2.getBody().getUserData();
         
-        if( data1 != null && data1.getName().contains("brick")){
-            world.destroyBrick(a.getBody(), data1.getName());
-            
-        }else if(data2 != null && data2.getName().contains("brick")){
-            world.destroyBrick(b.getBody(), data2.getName());
+       if(  ballHitBrick(f1, f2, s1, s2))
+       {
+           world.destroyBrick(f1.getBody(), s1.getName());
+       } 
+       else if (isBallOutOfBounds(f1, f2, s1, s2))
+       {
+           // System.out.println("Ball is out of bounds");
+           world.resetBall();
+       }
+    }
+    
+    private boolean ballHitBrick(Fixture f1, Fixture f2, Shape s1, Shape s2){
+        boolean hitBrick = false;
+        
+        if( s1 != null && s1.getName().contains("brick")){
+            hitBrick = true;
+        }else if(s2 != null && s2.getName().contains("brick")){
+            hitBrick = true;
         }
+        
+        return hitBrick;
+    }
+    
+    private boolean isBallOutOfBounds (Fixture fix1, Fixture fix2, Shape s1, Shape s2){
+        boolean outOfBounds = false;
+        
+        if( s1 != null && s1.getName().contains("ground")){
+            outOfBounds = true;
+        }else if(s2 != null && s2.getName().contains("ground")){
+            outOfBounds = true;
+        }
+        
+        return outOfBounds;
+        
     }
 
     // detect if the ball hit the paddle

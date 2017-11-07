@@ -12,22 +12,22 @@ import javax.websocket.Session;
  *
  * @author kevin
  */
-public class Game extends TimerTask {
+public class Game{
 
     private static int ID = 0;
     private int id;
     private Level currentLevel;
-    private BreakoutWorld world;
-    private SessionManager manager;
-    
+    private int currentTargetBlocks;
+    private LevelFactory levelFactory;
+    private SessionManager manager;    
 
     public Game() {
-        id = ID++;
-        world = new BreakoutWorld();
-        manager = new SessionManager();
-
-        currentLevel = new LevelFactory(world.getBox2dWorld()).getLevel1();
-        world.setLevel(currentLevel);
+        id = ID++;        
+        manager = new SessionManager();        
+        levelFactory = new LevelFactory(this);
+        
+        currentTargetBlocks = 2;
+        currentLevel = levelFactory.getSimpleTestLevel(currentTargetBlocks);
     }
 
     public int getId() {
@@ -39,7 +39,7 @@ public class Game extends TimerTask {
     }
 
     public void movePaddle(int x, int y) {
-        world.movePaddle(x, y);
+        currentLevel.movePaddle(x, y);
     }
     
     public void addPlayer(Session peer) {
@@ -53,15 +53,35 @@ public class Game extends TimerTask {
     public boolean hasNoPlayers() {
         return manager.hasNoPlayers();
     }
-
-    @Override
-    public void run() {
-        world.step();
-        manager.notifyPlayers(currentLevel, world);
+    
+    public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
+        manager.notifyPlayers(currentLevel, simulation);
     }
-
     
 
-
-
+    public void notifyPlayersOfLivesLeft() {
+        
+        manager.notifyPlayersOfLivesLeft(currentLevel);
+        if (currentLevel.noLivesLeft()) {
+            currentLevel.stop();
+        }
+        
+    }
+    
+    public void startLevel() {
+        System.out.println("Starting from startLevel");
+        this.currentLevel.start();
+    }
+    
+    public void stopLevel() {
+        currentLevel.stop();
+    }
+    
+    // TODO check if last level was reached
+    public void initNextLevel() {
+        System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
+        currentTargetBlocks++;
+        currentLevel = levelFactory.getSimpleTestLevel(currentTargetBlocks);
+        manager.notifyLevelComplete(currentLevel);
+    }
 }

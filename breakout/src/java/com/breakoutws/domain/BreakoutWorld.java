@@ -24,17 +24,24 @@ class BreakoutWorld {
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
     private Level currentLevel;
+    private boolean isBallOutOfBounds = false;
     
     // keep a seperate list of bodies to dstroy in the frontend since we only want to send this info once
     private List<Body> bodiesToDestroy;
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
     
-    public BreakoutWorld() {
+    public BreakoutWorld(Level level) {
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
         world = new World(new Vec2(0.0f, 0.0f));
         world.setContactListener(new BreakoutContactListener(this));
+        
+        this.currentLevel = level;
+    }
+    
+    public World getWorld() {
+        return world;
     }
     
     public void setLevel(Level level){ this.currentLevel = level; }
@@ -49,6 +56,10 @@ class BreakoutWorld {
             currentLevel.removeBrick(brick);
             bodiesToDestroy.add(brick);
             keysOfBodiesToDestroy.add(key);
+        }
+        
+        if (currentLevel.allTargetBricksDestroyed()) {
+            currentLevel.initNextLevel();
         }
     }
     
@@ -77,6 +88,12 @@ class BreakoutWorld {
         if(ballHitPaddle){
             adjustBallDirection();
             ballHitPaddle = false;
+        } 
+        else if (isBallOutOfBounds)
+        {
+            world.destroyBody(currentLevel.getBall());
+            currentLevel.resetBall();
+            isBallOutOfBounds = false;
         }
     }
 
@@ -95,8 +112,9 @@ class BreakoutWorld {
         return world;
     }
 
+    void resetBall() {
+        isBallOutOfBounds = true;
+    }
     
-
-
-    
+       
 }

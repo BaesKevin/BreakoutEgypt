@@ -22,14 +22,18 @@ function loadLevel(){
     var gameId = getParameterByName("gameId");
     console.log(gameId);
     
-    fetch('level?gameId=' + gameId).then(function(response) {
-        return response.json();
+    fetch('level?gameId=' + gameId).then(function(response) {      
+        var json = response.json();
+        console.log(json);
+        return json;
       }).then(function(response){
           console.log(response);
           if(!response.error){
               brickdata=response.bricks;
             balldata = response.ball;
             paddledata=response.paddle;
+            console.log("lives: " + response.lives);
+            console.log("level: " + response.level);
           }
           else
           {
@@ -37,11 +41,14 @@ function loadLevel(){
               console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
           }
       }).then(function(){
+          levelComplete = false;
+          gameOver = false;
           draw();
       }).catch(function(err){
           console.log(err);
+          console.log("things really bad");
           websocket.close();
-          document.location = "/breakout?error='something went wrong'";
+          //document.location = "/breakout?error='something went wrong'";
       });
 }
 
@@ -61,19 +68,23 @@ function draw() {
 
 
     setPaddleX();
-
-    if (websocket.readyState === websocket.OPEN) {
-        sendOverSocket(JSON.stringify({
-            x: paddledata.x + paddledata.width / 2,
-            y: paddledata.y
-        }));
-    }
-
+    sendClientLevelState();
+    
     ctx.fillStyle = paddledata.color;
     ctx.fillRect(paddledata.x, paddledata.y, paddledata.width, paddledata.height);
 
 
     window.requestAnimationFrame(draw);
+}
+
+
+function sendClientLevelState(){
+    if (websocket.readyState === websocket.OPEN && !levelComplete && !gameOver) {
+        sendOverSocket(JSON.stringify({
+            x: paddledata.x + paddledata.width / 2,
+            y: paddledata.y
+        }));
+    }
 }
 
 function getMouseX(e) {

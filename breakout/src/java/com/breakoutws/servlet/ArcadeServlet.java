@@ -30,9 +30,5 @@ public class ArcadeServlet extends HttpServlet{
         
         response.sendRedirect("arcade.html?gameId="+gameId);
     }
-    
-    
-    
 
-//    
 }

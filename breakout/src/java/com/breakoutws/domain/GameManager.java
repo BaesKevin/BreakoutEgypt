@@ -18,14 +18,12 @@ import javax.websocket.Session;
 public class GameManager {
 
     private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
-    private static Map<Integer, Timer> simulations =  Collections.synchronizedMap(new HashMap());
-    
+       
     public int createGame(){
         Game game = new Game();
         
         games.put(game.getId(), game);
-        simulations.put(game.getId(), new Timer());
-        
+               
         System.out.println("Created game " + game.getId());
         return game.getId();
     }
@@ -47,25 +45,13 @@ public class GameManager {
     
     public void startGame(int gameId){
         Game game = games.get(gameId);
+        
+        game.startLevel();
        
-        
-        if(game != null){
-            Timer t = simulations.get(gameId);
-            t.schedule(game, 0, 1000/60);
-        }
-        else{
-            System.out.println("trying to start game that hasn't been created");
-        }
-        
     }
     
     public void stopGame(int gameId){
-        Timer t = simulations.get(gameId);
-        t.cancel();
-        
-        simulations.remove(gameId);
-        games.remove(gameId);
-        System.out.printf("Game %d stopped", gameId);
+        games.get(gameId).stopLevel();        
     }
 
     public void addPlayer(int gameId, Session peer) {
