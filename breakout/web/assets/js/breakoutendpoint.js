@@ -39,6 +39,7 @@ function loadLevel(){
               console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
           }
       }).then(function(){
+          levelComplete = false;
           draw();
       }).catch(function(err){
           console.log(err);

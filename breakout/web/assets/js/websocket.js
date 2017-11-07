@@ -21,7 +21,7 @@ function onMessage(evt) {
     if (json && !json.error) {
         if (json.levelComplete) {
             levelComplete = true;
-//            loadLevel();
+            loadLevel();
         } else {
             updateLevelData(json);
         }

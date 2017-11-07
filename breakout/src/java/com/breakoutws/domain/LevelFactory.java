@@ -31,7 +31,7 @@ public class LevelFactory {
         
         int row = 1;
         int col = 1;
-        int rows = 3;
+        int rows = 1;
         int cols = 15;
         int width = 30;
         int height = 10;
@@ -74,6 +74,9 @@ public class LevelFactory {
 
         bricks.get(0).setTarget(true);
         bricks.get(0).setColor(Color.BLACK);
+        bricks.get(1).setTarget(true);
+        bricks.get(1).setColor(Color.BLACK);
+        
         
         Level level = new Level(targetBlocks, game, ballShape, paddleShape, bricks);
         

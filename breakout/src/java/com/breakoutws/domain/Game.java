@@ -26,7 +26,7 @@ public class Game{
         manager = new SessionManager();        
         levelFactory = new LevelFactory(this);
         
-        currentTargetBlocks = 1;
+        currentTargetBlocks = 2;
         currentLevel = levelFactory.getLevel(currentTargetBlocks);
     }
 
