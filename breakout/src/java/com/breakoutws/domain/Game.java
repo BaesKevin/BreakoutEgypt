@@ -27,7 +27,7 @@ public class Game{
         levelFactory = new LevelFactory(this);
         
         currentTargetBlocks = 2;
-        currentLevel = levelFactory.getLevel(currentTargetBlocks);
+        currentLevel = levelFactory.getSimpleTestLevel(currentTargetBlocks);
     }
 
     public int getId() {
@@ -58,6 +58,16 @@ public class Game{
         manager.notifyPlayers(currentLevel, simulation);
     }
     
+
+    public void notifyPlayersOfLivesLeft() {
+        
+        manager.notifyPlayersOfLivesLeft(currentLevel);
+        if (currentLevel.noLivesLeft()) {
+            currentLevel.stop();
+        }
+        
+    }
+    
     public void startLevel() {
         System.out.println("Starting from startLevel");
         this.currentLevel.start();
@@ -71,7 +81,7 @@ public class Game{
     public void initNextLevel() {
         System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
         currentTargetBlocks++;
-        currentLevel = levelFactory.getLevel(currentTargetBlocks);
+        currentLevel = levelFactory.getSimpleTestLevel(currentTargetBlocks);
         manager.notifyLevelComplete(currentLevel);
     }
 }

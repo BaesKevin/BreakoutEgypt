@@ -24,6 +24,14 @@ public class Shape {
     private String name;
     private boolean isTarget;
     
+    Shape(String name, float x, float y, int width, int height) {
+        this(name, x, y, width, height, Color.BLACK);
+    }
+    
+     public Shape(String name, float posX, float posY, int width, int height, Color color) {
+        this(name, posX, posY, width, height, color, false);
+    }
+    
     public Shape(String name, float posX, float posY, int width, int height, Color color
             , boolean isTarget) {
         this.name = name;
@@ -34,9 +42,9 @@ public class Shape {
         this.color = color;
         this.isTarget = isTarget;
     }
-    
-    public Shape(String name, float posX, float posY, int width, int height, Color color) {
-        this(name, posX, posY, width, height, color, false);
+   
+    Shape(Shape s) {
+        this(s.name, s.posX, s.posY, s.width, s.height, s.color);
     }
 
     public String getName() {

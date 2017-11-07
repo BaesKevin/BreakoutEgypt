@@ -6,6 +6,7 @@ var balldata = {x: 0, y: 0, radius: 0, color: 'rgb(0,0,0)'};
 var brickdata = [];
 var paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
 var levelComplete = false;
+var gameOver = false;
 
 function onOpen(evt) {
     console.log('Connection open');
@@ -19,10 +20,17 @@ function onMessage(evt) {
     var json = JSON.parse(evt.data);
 
     if (json && !json.error) {
-        if (json.levelComplete) {
+        if (json.gameOver) {
+            console.log("game over");
+            gameOver = true;            
+        } else if (json.livesLeft) {
+            console.log("livesLeft: " + json.livesLeft);
+        }
+        else if (json.levelComplete) {
             levelComplete = true;
             loadLevel();
         } else {
+           
             updateLevelData(json);
         }
     } else {
@@ -44,11 +52,12 @@ function updateLevelData(json) {
                     return brick.name !== key;
                 });
             }
-        })
+        });
     }
 }
 
 function handleLevelUpdateError(json) {
+    console.log(json);
     if (json.error) {
         document.location = "/breakout?error=" + json.error;
     } else

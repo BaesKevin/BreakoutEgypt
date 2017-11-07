@@ -24,6 +24,7 @@ class BreakoutWorld {
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
     private Level currentLevel;
+    private boolean isBallOutOfBounds = false;
     
     // keep a seperate list of bodies to dstroy in the frontend since we only want to send this info once
     private List<Body> bodiesToDestroy;
@@ -87,6 +88,12 @@ class BreakoutWorld {
         if(ballHitPaddle){
             adjustBallDirection();
             ballHitPaddle = false;
+        } 
+        else if (isBallOutOfBounds)
+        {
+            world.destroyBody(currentLevel.getBall());
+            currentLevel.resetBall();
+            isBallOutOfBounds = false;
         }
     }
 
@@ -103,6 +110,10 @@ class BreakoutWorld {
     
     public World getBox2dWorld() {
         return world;
+    }
+
+    void resetBall() {
+        isBallOutOfBounds = true;
     }
     
        

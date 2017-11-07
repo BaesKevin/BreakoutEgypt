@@ -49,6 +49,7 @@ public class LevelServlet extends HttpServlet {
             job.add("ball", ((Shape)level.getBall().getUserData()).toJson());
             job.add("paddle", ((Shape)level.getPaddle().getUserData()).toJson());
             job.add("level", level.getId());
+            job.add("lives", level.getLives());
             
             manager.startGame(gameId);            
         } else {

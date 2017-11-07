@@ -32,6 +32,8 @@ function loadLevel(){
               brickdata=response.bricks;
             balldata = response.ball;
             paddledata=response.paddle;
+            console.log("lives: " + response.lives);
+            console.log("level: " + response.level);
           }
           else
           {
@@ -40,6 +42,7 @@ function loadLevel(){
           }
       }).then(function(){
           levelComplete = false;
+          gameOver = false;
           draw();
       }).catch(function(err){
           console.log(err);
@@ -76,7 +79,7 @@ function draw() {
 
 
 function sendClientLevelState(){
-    if (websocket.readyState === websocket.OPEN && !levelComplete) {
+    if (websocket.readyState === websocket.OPEN && !levelComplete && !gameOver) {
         sendOverSocket(JSON.stringify({
             x: paddledata.x + paddledata.width / 2,
             y: paddledata.y

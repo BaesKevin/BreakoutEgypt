@@ -23,7 +23,7 @@ public class LevelFactory {
         this.game = game;
     }
     
-    public Level getLevel(int targetBlocks){
+    public Level getSimpleTestLevel(int targetBlocks){
                
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
@@ -42,9 +42,9 @@ public class LevelFactory {
             for(int y = 45; y < 45 + (( height + 1) * rows ); y += height + 1){
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
-                System.out.printf("rowpadding: %d, colPadding: %d", rowPadding, colPadding);
+             
                 id = String.format("brick%0" + rowPadding+ "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
-                System.out.printf("Cell id: %s", id);
+               
                 
                 
                 brickShape = new Shape(id, x, y, width, height, Color.PINK);
@@ -77,8 +77,7 @@ public class LevelFactory {
         bricks.get(1).setTarget(true);
         bricks.get(1).setColor(Color.BLACK);
         
-        
-        Level level = new Level(targetBlocks, game, ballShape, paddleShape, bricks);
+        Level level = new Level(1, game, ballShape, paddleShape, bricks, 3);
         
         return level;
     }
