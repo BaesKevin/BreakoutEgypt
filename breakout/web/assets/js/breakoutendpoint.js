@@ -1,4 +1,4 @@
-var canvas, mouse;
+var canvas, mouse,lives;
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     paddledata.x = canvas.width / 2 - paddledata.width / 2;
@@ -33,6 +33,8 @@ function loadLevel(){
             balldata = response.ball;
             paddledata=response.paddle;
             console.log("lives: " + response.lives);
+            lives=response.lives;
+            loadLives(lives);
             console.log("level: " + response.level);
           }
           else

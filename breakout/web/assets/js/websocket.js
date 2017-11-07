@@ -22,9 +22,11 @@ function onMessage(evt) {
     if (json && !json.error) {
         if (json.gameOver) {
             console.log("game over");
+            gameOverMessage();
             gameOver = true;            
         } else if (json.livesLeft) {
             console.log("livesLeft: " + json.livesLeft);
+            loadLives(json.livesLeft);
         }
         else if (json.levelComplete) {
             levelComplete = true;
