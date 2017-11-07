@@ -24,7 +24,7 @@ public class GameManager {
         
         games.put(game.getId(), game);
                
-        System.out.println("Created game " + game.getId());
+        System.out.println("GameManager: Created game " + game.getId());
         return game.getId();
     }
 
@@ -36,7 +36,7 @@ public class GameManager {
         Game game = games.get(gameId);
         
         if(game == null){
-            System.out.println("Trying to get level for game that doesn't exist");
+            System.out.println("GameManager: Trying to get level for game that doesn't exist");
             return null;
         }
         
@@ -61,27 +61,33 @@ public class GameManager {
         if(game!=null)
             game.addPlayer(peer);
         else
-            System.out.println("Trying to add player to game that doesn't exist");
+            System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }
 
     public void removePlayer(int gameId, Session peer) {
         if(games != null){
             Game game = games.get(gameId);
-            System.out.println("Removing peer from game " + gameId);    
+            System.out.println("GameManager: Removing peer from game " + gameId);    
             if(game != null){
                 game.removePlayer(peer);
                 if(game.hasNoPlayers()){
-                    System.out.println("No more players");
+                    System.out.println("GameManager: No more players");
                     stopGame(game.getId());
                 }
             } else {
-                System.out.println("Trying to remove player to game that doesn't exist");
+                System.out.println("TGameManager: rying to remove player to game that doesn't exist");
             }
         }
         
     }
     
     public boolean hasNextLevel(int gameId) {
-        return games.get(gameId).hasNextLevel();
+        Game game = games.get(gameId);
+        
+        if( game != null ){
+            return games.get(gameId).hasNextLevel();
+        }
+        
+        return false;
     }
 }

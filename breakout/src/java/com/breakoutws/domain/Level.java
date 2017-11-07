@@ -109,7 +109,7 @@ public class Level extends TimerTask {
     }
     
     void resetBall() {
-        System.out.println("resetBall()");
+        System.out.println("LeveL: resetBall()");
         ball = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);        
         lives--;
         game.notifyPlayersOfLivesLeft();
@@ -132,7 +132,7 @@ public class Level extends TimerTask {
     
     public void start() {
         timer = new Timer();
-        System.out.printf("start level %d", this.id);
+        System.out.printf("Level: start level %d", this.id);
         timer.schedule(this, 0, 1000/60);
     }
     
@@ -148,7 +148,7 @@ public class Level extends TimerTask {
       
     // it is necessary to check if the timer is null because when the server crashes the timer seems to be null before we get here
     public void stop() {
-        System.out.printf("stop level %d", this.id);
+        System.out.printf("Level: stop level %d", this.id);
         
         if( timer != null ){
             timer.cancel();

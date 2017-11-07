@@ -23,12 +23,13 @@ function onMessage(evt) {
     if (json && !json.error) {
         
         if (json.gameOver) {
-            console.log("game over");
+            console.log("Gameplay: game over");
             gameOver = true;            
         } else if (json.livesLeft) {
-            console.log("livesLeft: " + json.livesLeft);
+            console.log("Gameplay: livesLeft: " + json.livesLeft);
         }
-        else if (json.levelComplete) {            
+        else if (json.levelComplete) {   
+            console.log("Socket received message level complete");
             levelComplete = true;
          
             loadLevel();
@@ -50,7 +51,7 @@ function updateLevelData(json) {
     balldata.y = json.ball.y;
 
     if (json.destroy) {
-        console.log(json.destroy);
+        console.log("Received bricks to destroy");
         json.destroy.forEach(function (key) {
             if (key.includes("brick")) {
                 brickdata = brickdata.filter(function (brick) {
@@ -62,7 +63,6 @@ function updateLevelData(json) {
 }
 
 function handleLevelUpdateError(json) {
-    console.log(json);
     if (json.error) {
         document.location = "/breakout?error=" + json.error;
     } else

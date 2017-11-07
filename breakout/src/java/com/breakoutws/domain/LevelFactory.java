@@ -7,9 +7,7 @@ package com.breakoutws.domain;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.jbox2d.dynamics.World;
 
 /**
  *
@@ -33,19 +31,17 @@ public class LevelFactory {
     }
     
     public Level getCurrentLevel() {
-        System.out.println("current level: " + currentLevel);
-        System.out.println("total levels: " + totalLevels);
+        System.out.printf("LevelFactory: Get level %d of %d", currentLevel, totalLevels);
         return getSimpleTestLevel(currentLevel);        
     }
     
     public Level getNextLevel() {
+        System.out.println("LevelFactory: Get next level");
         currentLevel++;
         return getCurrentLevel();
     }
     
     public Level getSimpleTestLevel(int targetBlocks){
-        
-                      
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
         List<Shape> bricks = new ArrayList();
@@ -53,7 +49,7 @@ public class LevelFactory {
         int row = 1;
         int col = 1;
         int rows = 1;
-        int cols = 15;
+        int cols = 5;
         int width = 30;
         int height = 10;
         
@@ -98,7 +94,7 @@ public class LevelFactory {
             bricks.get(i).setColor(Color.BLACK);
         }
                 
-        Level level = new Level(1, game, ballShape, paddleShape, bricks, 3);
+        Level level = new Level(currentLevel, game, ballShape, paddleShape, bricks, 3);
         
         return level;
     }

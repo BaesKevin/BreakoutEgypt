@@ -47,7 +47,7 @@ public class SessionManager {
     
     public void notifyLevelComplete(Level currentLevel) {        
         json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel());        
-        System.out.println("notifying of level complete");
+        System.out.println("SessionManager: notifying of level complete");
         sendJsonToPlayers(json);       
     }
     
@@ -59,7 +59,7 @@ public class SessionManager {
     
     
     void notifyPlayersOfLivesLeft(Level currentLevel) {   
-        System.out.println("notifying players of lives lfet");
+        System.out.println("SessionManager: notifying players of lives lfet");
         boolean noLivesLeft = currentLevel.noLivesLeft();
         json = createLivesLeftJson(currentLevel.getLives(), noLivesLeft);
         sendJsonToPlayers(json);        
