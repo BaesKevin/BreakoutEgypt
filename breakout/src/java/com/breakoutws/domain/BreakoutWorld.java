@@ -20,7 +20,7 @@ class BreakoutWorld {
     
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    private final float timestep = 10.0f/60.0f;
+    private final float timestep = 1.0f/60.0f;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
     private Level currentLevel;
@@ -59,7 +59,7 @@ class BreakoutWorld {
         }
         
         if (currentLevel.allTargetBricksDestroyed()) {
-            currentLevel.getBall().setLinearVelocity(new Vec2(0.0f, 0.0f));        
+            currentLevel.initNextLevel();
         }
     }
     
@@ -104,7 +104,7 @@ class BreakoutWorld {
 
 
         float newX = -100 + relativeDistance * 200;
-        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
+//        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
         currentLevel.getBall().setLinearVelocity(new Vec2(newX, currentLevel.getBall().getLinearVelocity().y));
     }
     

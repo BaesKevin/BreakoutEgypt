@@ -31,7 +31,8 @@ public class BodyFactory {
         bd.type = BodyType.STATIC;
         bd.position.set(s.getPosX(), s.getPosY());
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(s.getWidth() / 2, s.getHeight() /2);
+        ps.setAsBox(s.getWidth() / 2, s.getHeight() / 2);
+        
         
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
@@ -79,9 +80,10 @@ public class BodyFactory {
         bd.type = BodyType.DYNAMIC;
         bd.position.set(s.getPosX(), s.getPosY());
 //        bd.linearVelocity.x = -100;
-        bd.linearVelocity.y = -100;
+        bd.linearVelocity.y = 100;
         CircleShape cs = new CircleShape();
-        cs.m_radius = s.getWidth() / 2;  //We need to convert radius to JBox2D equivalent
+        cs.m_radius = s.getWidth() / 2;
+        
         
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();

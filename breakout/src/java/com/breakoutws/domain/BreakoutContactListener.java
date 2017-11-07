@@ -37,7 +37,7 @@ public class BreakoutContactListener implements ContactListener{
        } 
        else if (isBallOutOfBounds(f1, f2, s1, s2))
        {
-           System.out.println("Ball is out of bounds");
+           // System.out.println("Ball is out of bounds");
            world.resetBall();
        }
     }
@@ -55,7 +55,7 @@ public class BreakoutContactListener implements ContactListener{
     }
     
     private boolean isBallOutOfBounds (Fixture fix1, Fixture fix2, Shape s1, Shape s2){
-         boolean outOfBounds = false;
+        boolean outOfBounds = false;
         
         if( s1 != null && s1.getName().contains("ground")){
             outOfBounds = true;

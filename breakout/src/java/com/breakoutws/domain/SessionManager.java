@@ -44,38 +44,43 @@ public class SessionManager {
     public boolean hasNoPlayers() {
         return gameSessions.size() == 0;
     }
-
+    
+    public void notifyLevelComplete(Level currentLevel) {        
+        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel());        
+        System.out.println("SessionManager: notifying of level complete");
+        sendJsonToPlayers(json);       
+    }
+    
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
         json = createJson(currentLevel, simulation);
 
-        try {
-            for (Session peer : gameSessions) {
-                if (peer.isOpen()) {
-                    peer.getBasicRemote().sendObject(json);
-                }
-            }
-        } catch (IOException io) {
-            io.printStackTrace();
-        } catch (EncodeException ee) {
-            ee.printStackTrace();
-        }
+        sendJsonToPlayers(json);
     }
-
-    void notifyPlayersOfGameOver() {
-        json = gameOverJson();
-
-        try {
-            for (Session peer : gameSessions) {
-                if (peer.isOpen()) {
-                    peer.getBasicRemote().sendObject(json);
-                }
-            }
-        } catch (IOException io) {
-            io.printStackTrace();
-        } catch (EncodeException ee) {
-            ee.printStackTrace();
-        }
+    
+    
+    void notifyPlayersOfLivesLeft(Level currentLevel) {   
+        System.out.println("SessionManager: notifying players of lives lfet");
+        boolean noLivesLeft = currentLevel.noLivesLeft();
+        json = createLivesLeftJson(currentLevel.getLives(), noLivesLeft);
+        sendJsonToPlayers(json);        
     }
+    
+    private JsonObject createLivesLeftJson(int livesLeft, boolean noLivesLeft) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        job.add("livesLeft", livesLeft);
+        job.add("gameOver", noLivesLeft);
+        return job.build();
+    }
+    
+    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        
+        job.add("levelComplete", true);   
+        job.add("isLastLevel", isLastLevel);
+        return job.build();        
+    }
+    
+    
 
     private JsonObject createJson(Level currentLevel, BreakoutWorld simulation) {
         JsonObjectBuilder job = Json.createObjectBuilder();
@@ -104,12 +109,16 @@ public class SessionManager {
         return job.build();
     }
 
-    private JsonObject gameOverJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-
-        job.add("gameOver", true);
-
-        return job.build();
+     private void sendJsonToPlayers(JsonObject json) {
+        try {
+            for (Session peer : gameSessions) {
+                if (peer.isOpen()) {
+                    peer.getBasicRemote().sendObject(json);
+                }
+            }
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }
     }
 
 }

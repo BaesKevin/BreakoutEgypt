@@ -18,18 +18,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function loadLevel(){
-    console.log(getParameterByName("gameId"));
+    console.log("load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
-    console.log(gameId);
     
-    fetch('level?gameId=' + gameId).then(function(response) {
-        return response.json();
+    fetch('level?gameId=' + gameId).then(function(response) {      
+        var json = response.json();
+        return json;
       }).then(function(response){
-          console.log(response);
           if(!response.error){
-              brickdata=response.bricks;
-            balldata = response.ball;
-            paddledata=response.paddle;
+              if ( response.allLevelsComplete) {
+                  console.log("Load level: got allLevelsComplete message");
+                  allLevelsComplete = true;
+              } else {
+                  console.log("Load level: got data for level " + response.level);
+                brickdata=response.bricks;
+                balldata = response.ball;
+                paddledata=response.paddle;
+              }
+            
           }
           else
           {
@@ -37,11 +43,15 @@ function loadLevel(){
               console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
           }
       }).then(function(){
-          draw();
+          levelComplete = false;
+          gameOver = false;
+          if (!allLevelsComplete) {
+              draw();
+          }
+
       }).catch(function(err){
-          console.log(err);
           websocket.close();
-          document.location = "/breakout?error='something went wrong'";
+          document.location = "/breakout?error=" + err;
       });
 }
 
@@ -61,19 +71,23 @@ function draw() {
 
 
     setPaddleX();
-
-    if (websocket.readyState === websocket.OPEN) {
-        sendOverSocket(JSON.stringify({
-            x: paddledata.x + paddledata.width / 2,
-            y: paddledata.y
-        }));
-    }
-
+    sendClientLevelState();
+    
     ctx.fillStyle = paddledata.color;
     ctx.fillRect(paddledata.x, paddledata.y, paddledata.width, paddledata.height);
 
 
     window.requestAnimationFrame(draw);
+}
+
+
+function sendClientLevelState(){
+    if (websocket.readyState === websocket.OPEN && !levelComplete && !gameOver) {
+        sendOverSocket(JSON.stringify({
+            x: paddledata.x + paddledata.width / 2,
+            y: paddledata.y
+        }));
+    }
 }
 
 function getMouseX(e) {
