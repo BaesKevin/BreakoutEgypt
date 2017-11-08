@@ -31,14 +31,18 @@ public class BodyFactory {
         this.world = world;
     }
     
-    public Body createBrick(Brick b){
+    public Body createTriangle(Brick b){
         Shape s = b.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.STATIC;
         bd.position.set(s.getPosX(), s.getPosY());
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(s.getWidth() / 2, s.getHeight() / 2);
-        
+
+        Vec2[] vertices = new Vec2[3];
+        vertices[0] = new Vec2(s.getWidth()/2, 0);
+        vertices[1] = new Vec2(0, s.getHeight());
+        vertices[2] = new Vec2(s.getWidth(), s.getHeight());
+        ps.set(vertices, 3);
         
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
@@ -88,7 +92,7 @@ public class BodyFactory {
         bd.type = BodyType.DYNAMIC;
         bd.position.set(s.getPosX(), s.getPosY());
 //        bd.linearVelocity.x = -100;
-        bd.linearVelocity.y = 100;
+        bd.linearVelocity.y = -50;
         CircleShape cs = new CircleShape();
         cs.m_radius = s.getWidth() / 2;
         

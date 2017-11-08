@@ -7,9 +7,9 @@ package com.breakoutws.servlet;
 
 import com.breakoutws.domain.GameManager;
 import com.breakoutws.domain.Level;
-import com.breakoutws.domain.shapes.BodyType;
+import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.IShape;
-import com.breakoutws.domain.shapes.Shape;
+import com.breakoutws.domain.shapes.Paddle;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.json.Json;
@@ -33,32 +33,21 @@ public class LevelServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-        
+
         GameManager manager = new GameManager();
-        
+
         JsonObjectBuilder job;
         System.out.println("LevelServlet: get level");
         boolean hasNextLevel = manager.hasNextLevel(gameId);
         //System.out.println("hasnextlevel: " + hasNextLevel);
         if (hasNextLevel) {
-            Level level = manager.getLevel(gameId);        
+            Level level = manager.getLevel(gameId);
             job = Json.createObjectBuilder();
             if (level != null) {
                 JsonArrayBuilder jab = Json.createArrayBuilder();
-                for (Body body : level.getBricks()) {
-                    IShape s = (IShape) body.getUserData();
-                    
-                   jab.add(s.getShape().toJson());
-                    
-                }
-                job.add("bricks", jab);
-                job.add("ball", ((IShape)level.getBall().getUserData()).getShape().toJson());
-                job.add("paddle", ((IShape)level.getPaddle().getUserData()).getShape().toJson());
-                job.add("level", level.getId());
-                job.add("lives", level.getLives());
-               
+                levelToJson(level, jab, job);
 
-                manager.startGame(gameId);            
+                manager.startGame(gameId);
             } else {
                 job.add("error", "Tried to get level for game that doesn't exist");
             }
@@ -66,11 +55,23 @@ public class LevelServlet extends HttpServlet {
             job = Json.createObjectBuilder();
             job.add("allLevelsComplete", true);
         }
-        
+
         response.setContentType("application/json");
-        
+
         try (PrintWriter out = response.getWriter()) {
             out.print(job.build().toString());
         }
+    }
+
+    private void levelToJson(Level level, JsonArrayBuilder jab, JsonObjectBuilder job) {
+        for (Body body : level.getBricks()) {
+            IShape s = (IShape) body.getUserData();
+            jab.add(s.getShape().toJson());
+        }
+        job.add("bricks", jab);
+        job.add("ball", ((Ball) level.getBall().getUserData()).getShape().toJson());
+        job.add("paddle", ((Paddle) level.getPaddle().getUserData()).getShape().toJson());
+        job.add("level", level.getId());
+        job.add("lives", level.getLives());
     }
 }

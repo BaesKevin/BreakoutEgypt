@@ -49,8 +49,9 @@ public class LevelFactory {
     }
     
     public Level getSimpleTestLevel(int targetBlocks){
+//        targetBlocks = 5;
         Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        Shape ballShape = new Shape("ball", 45, 15, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
         
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
@@ -61,7 +62,7 @@ public class LevelFactory {
         int rows = 1;
         int cols = 5;
         int width = 30;
-        int height = 10;
+        int height = 30;
         
         Shape brickShape;
         Brick brick;

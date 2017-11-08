@@ -10,7 +10,6 @@ canvas{
 }
 
 header{
-    margin-top:50px;
     padding-top:90px;
     padding-bottom:90px;
     text-align:center;
@@ -50,8 +49,30 @@ footer{
     font-weight:bold;
 
 }
+#gameMain{
+    width:80%;
+    background-color:#fecc66;
+    margin-left:auto;
+    margin-right:auto;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
 #menu button:hover{
     background-color:#cb7a28;
+}
+#healthbar{
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom: 5px;
+    
+}
+#healthbar img{
+    padding:10px;
+    float:right;
+    height:50px;
+    width:auto;
+    display:inline-block;
 }
 .list-group{
     margin-left:auto;
@@ -63,4 +84,11 @@ footer{
     padding:0;
     background-color:inherit;
     margin:5px;
+}
+.clearfix:before,.clearfix:after{
+    content:"";
+    display:table;
+}
+.clearfix:after{
+    clear:both;
 }

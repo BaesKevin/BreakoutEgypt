@@ -49,7 +49,7 @@ public class LevelState {
     // TODO based on bricktype it might be necessary to do more here
     // e.g. all surrounding bricks an explosive brick
     public void addBrick(Brick brick) {
-        brickBodies.add(factory.createBrick(brick));
+        brickBodies.add(factory.createTriangle(brick));
     }
 
     public void addBall(Ball b) {

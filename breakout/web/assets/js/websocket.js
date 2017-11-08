@@ -24,9 +24,11 @@ function onMessage(evt) {
         
         if (json.gameOver) {
             console.log("Gameplay: game over");
+            gameOverMessage();
             gameOver = true;            
         } else if (json.livesLeft) {
             console.log("Gameplay: livesLeft: " + json.livesLeft);
+            loadLives(json.livesLeft);
         }
         else if (json.levelComplete) {   
             console.log("Socket received message level complete");
