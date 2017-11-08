@@ -1,3 +1,14 @@
+var modalLevelCompleted=function(level){
+    var buttons="<button class='btn'>Continue</button>";
+    printModal("Level "+level+" completed","*placeholder for score and username*",buttons);
+};
+var modalGameOver=function(){
+    var buttons="<button class='btn'>Retry</button>";
+    printModal("Game Over","GAME OVER",buttons);
+}
+var modalStartLevel=function(level){
+    printModal("Are you ready?","You will start Level "+level,"");
+};
 var modalChooseDifficulty=function(){
     var buttons="<form action='arcade' method='post'><input type='submit' class='btn' value='Easy'/></form>";
     buttons+="<form action='arcade' method='post'><input type='submit' class='btn' value='Medium'/></form>";

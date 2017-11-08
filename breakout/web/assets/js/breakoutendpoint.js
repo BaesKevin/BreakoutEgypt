@@ -32,7 +32,7 @@ function loadLevel() {
                 allLevelsComplete = true;
             } else {
                 console.log("Load level: got data for level " + response.level);
-                //loadLevelOnScreen(response.level);
+                loadLevelOnScreen(response.level);
                 brickdata = response.bricks;
                 balldata = response.ball;
                 paddledata = response.paddle;

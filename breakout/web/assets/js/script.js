@@ -29,6 +29,3 @@ var loadLevelOnScreen=function(levelnumber){
 var gameOverMessage=function(){
     $("#healthbar").html("<h1>Game over</h1>");
 };
-var completedAllLevelsMessage=function(){
-    console.log("message");
-};
