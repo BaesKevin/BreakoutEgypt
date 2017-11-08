@@ -1,3 +1,8 @@
+var timer=null;
+var totSeconds=0;
+var hours = 0;
+var minutes = 0;
+var seconds = 0;
 $(document).ready(function(){
     $("#arcade").on("click",redirectToArcade);
     $("#returnToMain").on("click",redirectToMainMenu);
@@ -28,4 +33,16 @@ var loadLevelOnScreen=function(levelnumber){
 };
 var gameOverMessage=function(){
     $("#healthbar").html("<h1>Game over</h1>");
+};
+var incrSeconds=function(){
+    totSeconds++;
+    hours = parseInt(totSeconds / 3600);
+    minutes = parseInt((totSeconds -(hours*3600))/ 60);
+    seconds = totSeconds - (hours * 3600) - (minutes * 60);
+}
+var startTimer=function(){
+    timer=window.setInterval(incrSeconds,1000);
+};
+var stopTimer=function(){
+    clearInterval(timer);
 };
