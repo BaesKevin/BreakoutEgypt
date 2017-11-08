@@ -24,7 +24,7 @@ function onMessage(evt) {
         
         if (json.gameOver) {
             console.log("Gameplay: game over");
-            gameOverMessage();
+            modalGameOver();
             gameOver = true;            
         } else if (json.livesLeft) {
             console.log("Gameplay: livesLeft: " + json.livesLeft);

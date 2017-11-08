@@ -7,7 +7,12 @@ $(document).ready(function(){
     $("#arcade").on("click",redirectToArcade);
     $("#returnToMain").on("click",redirectToMainMenu);
     $("#toMultiplayer").on("click",redirectToMultiplayer);
+    $("#modalPlaceholder").on("click","#returnToMain",redirectToMainMenu);
 });
+var dosomething=function(e){
+    e.preventDefault();
+    console.log("clicked");
+}
 var redirectToArcade=function(e){
     e.preventDefault();
     modalChooseDifficulty();
@@ -30,9 +35,6 @@ var loadLives=function(lives){
 };
 var loadLevelOnScreen=function(levelnumber){
     $("#level").html("<p><span>Level: "+levelnumber+"</span></p>");
-};
-var gameOverMessage=function(){
-    $("#healthbar").html("<h1>Game over</h1>");
 };
 var incrSeconds=function(){
     totSeconds++;

@@ -3,7 +3,7 @@ var modalLevelCompleted=function(level){
     printModal("Level "+level+" completed","*placeholder for score and username*",buttons);
 };
 var modalGameOver=function(){
-    var buttons="<button class='btn'>Retry</button>";
+    var buttons="<button class='btn'>Retry</button><button class='btn' id='returnToMain'>Main Menu</button>";
     printModal("Game Over","GAME OVER",buttons);
 }
 var modalStartLevel=function(level){
