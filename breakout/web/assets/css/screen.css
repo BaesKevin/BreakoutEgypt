@@ -1,6 +1,9 @@
 body{
     background-color:#fecc33;
 }
+span{
+    font-weight:bold;
+}
 nav{
     background-color:#fecc33;
 }
@@ -10,7 +13,6 @@ canvas{
 }
 
 header{
-    margin-top:50px;
     padding-top:90px;
     padding-bottom:90px;
     text-align:center;
@@ -52,6 +54,7 @@ footer{
 }
 #gameMain{
     width:80%;
+    padding:25px;
     background-color:#fecc66;
     margin-left:auto;
     margin-right:auto;
@@ -63,16 +66,19 @@ footer{
     background-color:#cb7a28;
 }
 #healthbar{
-    margin-left:auto;
-    margin-right:auto;
-    margin-bottom: 5px;
-    
+    float:right;
 }
 #healthbar img{
+    display:block;
     padding:10px;
-    height:110px;
+    height:60px;
     width:auto;
-    display:inline-block;
+}
+#level{
+    float:left;
+}
+#level span{
+    font-size:20px;
 }
 .list-group{
     margin-left:auto;

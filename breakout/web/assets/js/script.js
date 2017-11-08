@@ -24,7 +24,7 @@ var loadLives=function(lives){
     $("#healthbar").html(lifeImages);
 };
 var loadLevelOnScreen=function(levelnumber){
-    $("#level").html("<p>Level: "+levelnumber+"</p>");
+    $("#level").html("<p><span>Level: "+levelnumber+"</span></p>");
 };
 var gameOverMessage=function(){
     $("#healthbar").html("<h1>Game over</h1>");
