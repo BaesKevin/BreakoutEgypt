@@ -5,6 +5,8 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.brickcollisionhandlers.BrickCollisionHandler;
+import com.breakoutws.domain.brickcollisionhandlers.RegularCollision;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.BrickType;
 import com.breakoutws.domain.shapes.IShape;
@@ -34,17 +36,12 @@ public class BreakoutContactListener implements ContactListener{
         IShape s1 = (IShape) f1.getBody().getUserData();
         IShape s2 = (IShape) f2.getBody().getUserData();
         
-        Brick hitBrick = getBrickBallCollidedWith(f1, f2, s1, s2);
+        Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
         boolean isBallOutOfBounds = isBallOutOfBounds(f1, f2, s1, s2);
         
-       if( hitBrick != null  )
+       if( brick != null  )
        {
-           // TODO do stuff based on bricktype
-           BrickType brickType = hitBrick.getBricktype();
-           
-           if(brickType == BrickType.REGULAR){
-                world.destroyBrick(f1.getBody(), s1.getName());
-           }
+           new BrickCollisionHandler(f1, f2, world, brick).handleCollision();
        } 
        else if (isBallOutOfBounds)
        {

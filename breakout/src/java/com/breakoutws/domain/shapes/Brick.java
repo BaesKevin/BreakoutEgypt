@@ -5,6 +5,8 @@
  */
 package com.breakoutws.domain.shapes;
 
+import java.awt.Point;
+
 /**
  *
  * @author kevin
@@ -12,13 +14,15 @@ package com.breakoutws.domain.shapes;
 public class Brick  extends RegularBody{
     private BrickType brickType;
     private boolean isTarget;
+    private Point gridPosition;
     
-    public Brick(Shape s, BrickType type){
-        this(s, type, false);
+    public Brick(Shape s, BrickType type, Point position){
+        this(s, type,position, false);
     }
     
-    public Brick(Shape s, BrickType type, boolean isTarget){
+    public Brick(Shape s, BrickType type,  Point gridPosition,boolean isTarget){
         super(s);
+        this.gridPosition = gridPosition;
         this.brickType = type;
     }
 
@@ -37,6 +41,23 @@ public class Brick  extends RegularBody{
     public void setIsTarget(boolean isTarget) {
         this.isTarget = isTarget;
     }
+
+    public BrickType getBrickType() {
+        return brickType;
+    }
+
+    public void setBrickType(BrickType brickType) {
+        this.brickType = brickType;
+    }
+
+    public Point getGridPosition() {
+        return gridPosition;
+    }
+
+    public void setGridPosition(Point position) {
+        this.gridPosition = position;
+    }
+    
     
     
 }

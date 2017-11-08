@@ -37,7 +37,7 @@ public class LevelServlet extends HttpServlet {
         GameManager manager = new GameManager();
         
         JsonObjectBuilder job;
-        
+        System.out.println("LevelServlet: get level");
         boolean hasNextLevel = manager.hasNextLevel(gameId);
         //System.out.println("hasnextlevel: " + hasNextLevel);
         if (hasNextLevel) {

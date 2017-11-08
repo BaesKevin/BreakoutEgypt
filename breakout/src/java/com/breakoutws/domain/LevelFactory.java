@@ -11,6 +11,7 @@ import com.breakoutws.domain.shapes.BrickType;
 import com.breakoutws.domain.shapes.Paddle;
 import com.breakoutws.domain.shapes.Shape;
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class LevelFactory {
                 
                 
                 brickShape = new Shape(id, x, y, width, height, Color.PINK);
-                brick = new Brick(brickShape, BrickType.REGULAR);
+                brick = new Brick(brickShape, BrickType.REGULAR, new Point(row, col));
                 bricks.add(brick);
                 col++;
             }
@@ -140,7 +141,7 @@ public class LevelFactory {
                 
                 
                 brickShape = new Shape(id, x, y, width, height, Color.PINK);
-                brick = new Brick(brickShape, BrickType.REGULAR);
+                brick = new Brick(brickShape, BrickType.REGULAR, new Point(row,col));
                 bricks.add(brick);
                 col++;
             }
