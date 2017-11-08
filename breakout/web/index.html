@@ -39,7 +39,7 @@
             <div id="menu">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <button type="button" class="btn" data-toggle="modal" data-target="#difficultyModal">Arcade</button>
+                        <button type="button" class="btn" id="arcade" data-toggle="modal" data-target="#modal">Arcade</button>
                     </li>
                     <li class="list-group-item">
                         <button type="button" id="toMultiplayer" class="btn">Multiplayer</button>
@@ -73,35 +73,11 @@
         </div>
     </footer>
 </div>
-<div class="modal fade" id="difficultyModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Choose difficulty</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Choose a difficulty:</p>
-            </div>
-            <div class="modal-footer">
-                <form action="arcade" method="post">
-                            <input type="submit" class="btn" value="Easy"/>
-                        </form>
-                <form action="arcade" method="post">
-                    <input type="submit" class="btn" value="Medium"/>
-                </form>
-                <form action="arcade" method="post">
-                    <input type="submit" class="btn" value="Hard"/>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+    <div id="modalPlaceholder"></div>
 <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="assets/js/popper.min.js"></script>
 <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/modalResponsive.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
 </body>
 </html>

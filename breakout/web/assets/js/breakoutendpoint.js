@@ -28,9 +28,11 @@ function loadLevel() {
         if (!response.error) {
             if (response.allLevelsComplete) {
                 console.log("Load level: got allLevelsComplete message");
+                completedAllLevelsMessage();
                 allLevelsComplete = true;
             } else {
                 console.log("Load level: got data for level " + response.level);
+                //loadLevelOnScreen(response.level);
                 brickdata = response.bricks;
                 balldata = response.ball;
                 paddledata = response.paddle;

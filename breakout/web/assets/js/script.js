@@ -1,7 +1,12 @@
 $(document).ready(function(){
+    $("#arcade").on("click",redirectToArcade);
     $("#returnToMain").on("click",redirectToMainMenu);
     $("#toMultiplayer").on("click",redirectToMultiplayer);
 });
+var redirectToArcade=function(e){
+    e.preventDefault();
+    modalChooseDifficulty();
+}
 var redirectToMainMenu=function(e){
     e.preventDefault();
     location.replace('index.html');
@@ -18,6 +23,12 @@ var loadLives=function(lives){
     }
     $("#healthbar").html(lifeImages);
 };
+var loadLevelOnScreen=function(levelnumber){
+    $("#level").html("<p>Level: "+levelnumber+"</p>");
+};
 var gameOverMessage=function(){
     $("#healthbar").html("<h1>Game over</h1>");
-}
+};
+var completedAllLevelsMessage=function(){
+    console.log("message");
+};
