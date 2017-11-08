@@ -1,4 +1,5 @@
 var canvas, mouse, lives;
+var ctx = $("canvas")[0].getContext('2d');
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     paddledata.x = canvas.width / 2 - paddledata.width / 2;
@@ -11,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
     $('canvas').on('mousemove', getMouseX);
 
     loadLevel();
-
 
 });
 
@@ -57,19 +57,24 @@ function loadLevel() {
 }
 
 function draw() {
-    var ctx = $('canvas')[0].getContext('2d');
     ctx.clearRect(0, 0, 300, 300);
     ctx.beginPath();
 
     ctx.fillStyle = balldata.color;
-    ctx.arc(Math.round(balldata.x) + balldata.width / 2, Math.round(balldata.y) + balldata.width / 2, balldata.width / 2, 0, 2 * Math.PI, false);
+    // box2d draws circle from center
+    ctx.arc(Math.round(balldata.x), Math.round(balldata.y), (balldata.width / 2), 0, 2 * Math.PI, false);
     ctx.fill();
-
     brickdata.forEach(function (brick) {
         ctx.fillStyle = brick.color;
-        ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
-    })
 
+        ctx.beginPath();
+        ctx.moveTo((brick.x + brick.width / 2), brick.y);
+        ctx.lineTo(brick.x, (brick.y + brick.height));
+        ctx.lineTo((brick.x + brick.width), (brick.y + brick.height));
+        ctx.fill();
+
+//        ctx.(brick.x, brick.y, brick.width, brick.height);
+    })
 
     setPaddleX();
     sendClientLevelState();
