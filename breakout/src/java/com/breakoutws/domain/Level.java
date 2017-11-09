@@ -102,7 +102,8 @@ public class Level extends TimerTask {
         System.out.println("LeveL: resetBall()");
         levelState.resetBall();
         
-        lives--;
+        
+        lives--;        
         game.notifyPlayersOfLivesLeft();
     }
 
