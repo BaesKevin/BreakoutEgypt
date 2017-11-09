@@ -134,23 +134,23 @@ public class Level extends TimerTask {
         return isLastLevel;
     }
 
-     public Body getPaddle() {
+     public Paddle getPaddle() {
         return levelState.getPaddle();
     }
 
-    public  void removeBrick(Body brick) {
+    public  void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
     }
 
-    public Body getBall() {
+    public Ball getBall() {
         return levelState.getBall();
     }
 
-    public List<Body> getBricks() {
+    public List<Brick> getBricks() {
         return levelState.getBricks();
     }
 
-    List<Body> getRangeOfBricksAroundBody(Body brick, int range) {
+    List<Brick> getRangeOfBricksAroundBody(Brick brick, int range) {
         return levelState.getRangeOfBricksAroundBody(brick, range);
     }
         

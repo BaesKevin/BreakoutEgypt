@@ -52,22 +52,22 @@ public class BreakoutWorld {
     }
 
     public void movePaddle(float x, float y) {
-        currentLevel.getPaddle().setTransform(new Vec2(x, y), 0);;
+        currentLevel.getPaddle().moveTo(x, y);
 //        System.out.println(currentLevel.getPaddle().getPosition().x);
     }
 
-    public void destroyBrick(Body brickBody) {
-        destroyBricksInRange(brickBody, 0);
+    public void destroyBrick(Brick brick) {
+        destroyBricksInRange(brick, 0);
     }
 
-    public void destroyBricksInRange(Body brickBody, int range) {
-        List<Body> bodiesInRange = currentLevel.getRangeOfBricksAroundBody(brickBody, range);
+    public void destroyBricksInRange(Brick brickBody, int range) {
+        List<Brick> bodiesInRange = currentLevel.getRangeOfBricksAroundBody(brickBody, range);
         String key;
-        for (Body brickBodyInRange : bodiesInRange) {
-            if (!bodiesToDestroy.contains(brickBodyInRange)) {
-                key = ((Brick) brickBodyInRange.getUserData()).getName();
+        for (Brick brickBodyInRange : bodiesInRange) {
+            if (!bodiesToDestroy.contains(brickBodyInRange.getBody())) {
+                key = brickBodyInRange.getName();
                 currentLevel.removeBrick(brickBodyInRange);
-                bodiesToDestroy.add(brickBodyInRange);
+                bodiesToDestroy.add(brickBodyInRange.getBody());
                 keysOfBodiesToDestroy.add(key);
             }
         }
@@ -104,20 +104,21 @@ public class BreakoutWorld {
             adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
-            world.destroyBody(currentLevel.getBall());
+            world.destroyBody(currentLevel.getBall().getBody());
             currentLevel.resetBall();
             isBallOutOfBounds = false;
         }
     }
 
     private void adjustBallDirection() {
-        float width = ((IShape) currentLevel.getPaddle().getUserData()).getShape().getWidth();
-        float adjustedX = currentLevel.getPaddle().getPosition().x - width / 2;
-        float relativeDistance = (currentLevel.getBall().getPosition().x - adjustedX) / width;
+        float width = currentLevel.getPaddle().getShape().getWidth();
+        float adjustedX = currentLevel.getPaddle().getBody().getPosition().x - width / 2;
+        float relativeDistance = (currentLevel.getBall().getBody().getPosition().x - adjustedX) / width;
 
         float newX = -100 + relativeDistance * 200;
 //        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
-        currentLevel.getBall().setLinearVelocity(new Vec2(newX, currentLevel.getBall().getLinearVelocity().y));
+        System.out.println("Adjust ball direction for: " + currentLevel.getBall().getName());
+        currentLevel.getBall().setLinearVelocity(newX, currentLevel.getBall().getLinearVelocity().y);
     }
 
     public World getBox2dWorld() {

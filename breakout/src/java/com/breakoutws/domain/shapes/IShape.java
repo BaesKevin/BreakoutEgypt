@@ -5,6 +5,8 @@
  */
 package com.breakoutws.domain.shapes;
 
+import org.jbox2d.dynamics.Body;
+
 /**
  *
  * @author kevin
@@ -13,4 +15,5 @@ public interface IShape {
     String getName();
     Shape getShape();
     BodyType getBodyType();
+    void setBody(Body b);
 }

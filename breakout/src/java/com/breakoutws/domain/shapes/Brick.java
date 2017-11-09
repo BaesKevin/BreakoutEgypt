@@ -16,7 +16,7 @@ public class Brick  extends RegularBody{
     private boolean isTarget;
     private Point gridPosition;
     
-    public Brick(Shape s, BrickType type, Point position){
+    public Brick(Shape s,  BrickType type, Point position){
         this(s, type,position, false);
     }
     

@@ -19,16 +19,16 @@ import org.jbox2d.dynamics.Body;
  */
 public class LevelState {
     
-    private List<Body> brickBodies;
-    private Body ballBody;
-    private Body paddleBody;
+    private List<Brick> bricks;
+    private Ball ball;
+    private Paddle paddle;
     private Ball startingBall;
 
     private BodyFactory factory;
     private BreakoutWorld breakoutWorld;
 
     public LevelState(BreakoutWorld breakoutWorld, Ball ball, Paddle paddle, List<Brick> bricks) {
-        brickBodies = new ArrayList();
+        this.bricks = new ArrayList();
         this.breakoutWorld = breakoutWorld;
         factory = new BodyFactory(breakoutWorld.getWorld());
 
@@ -43,44 +43,51 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-        paddleBody = factory.createPaddle(p);
+        Body paddleBody = factory.createPaddle(p);
+        p.setBody(paddleBody);
+        paddle = p;
     }
 
     // TODO based on bricktype it might be necessary to do more here
     // e.g. all surrounding bricks an explosive brick
     public void addBrick(Brick brick) {
-        brickBodies.add(factory.createTriangle(brick));
+        Body brickBody = factory.createTriangle(brick);
+        brick.setBody(brickBody);
+        bricks.add(brick);
     }
 
     public void addBall(Ball b) {
         this.startingBall = b;
-        ballBody = factory.createCircle(b);
+        
+        Body ballBody = factory.createCircle(b);
+        b.setBody(ballBody);
+        this.ball = b;
     }
 
-    public List<Body> getBricks() {
-        return brickBodies;
+    public List<Brick> getBricks() {
+        return bricks;
     }
 
-    public Body getBall() {
-        return ballBody;
+    public Ball getBall() {
+        return ball;
     }
 
-    public Body getPaddle() {
-        return paddleBody;
+    public Paddle getPaddle() {
+        return paddle;
     }
 
-    public void removeBrick(Body brick) {
-        brickBodies.remove(brick);
+    public void removeBrick(Brick brick) {
+        bricks.remove(brick);
     }
     
     void resetBall() {
-        ballBody = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
+        Body ballBody = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
+        ball.setBody(ballBody);
     }
     
     public int getTargetBricksLeft() {
         int targetsLeft = 0;
-        for (Body body : brickBodies) {
-            Brick brick = (Brick) body.getUserData();
+        for (Brick brick : bricks) {
             if (brick.isTarget()) {
                 ++targetsLeft;
             }
@@ -97,28 +104,24 @@ public class LevelState {
         factory.addWall(0, 0, 300, 1); //roof 
     }
 
-    List<Body> getRangeOfBricksAroundBody(Body brickBody, int range) {
-        List<Body> bodies = new ArrayList();
-        Brick centreBrick = (Brick)brickBody.getUserData();
+    List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
+        List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();
         
-        Brick currentBrick;
         Point currentBrickPosition;
         
         if(range == 0){
-            bodies.add( brickBody );
-            return bodies;
+            bricksToRemove.add( centreBrick );
         } else {
-            for(Body body : brickBodies){
-                currentBrick = (Brick) body.getUserData();
-                currentBrickPosition = currentBrick.getGridPosition();
+            for(Brick brick : bricks){
+                currentBrickPosition = brick.getGridPosition();
                 System.out.println("Current brick: " + currentBrickPosition);
                 if(Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range ){
-                    bodies.add(body);
+                    bricksToRemove.add(brick);
                 }
             }
         }
         
-        return bodies;
+        return bricksToRemove;
     }
 }

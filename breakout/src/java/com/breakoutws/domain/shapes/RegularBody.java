@@ -5,6 +5,9 @@
  */
 package com.breakoutws.domain.shapes;
 
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+
 /**
  *
  * @author kevin
@@ -13,6 +16,7 @@ public class RegularBody implements IShape {
 
        private Shape shape;
     private BodyType bodyType;
+    private Body body;
     
     public RegularBody(Shape s){
         this.bodyType = BodyType.REGULAR;
@@ -35,5 +39,20 @@ public class RegularBody implements IShape {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public void setBody(Body body) {
+        this.body = body;
+    }
     
+    public void moveTo(float x, float y){
+        body.setTransform(new Vec2(x, y), 0);
+    }
+    
+    public Vec2 getPosition(){
+        return body.getPosition();
+    }
 }

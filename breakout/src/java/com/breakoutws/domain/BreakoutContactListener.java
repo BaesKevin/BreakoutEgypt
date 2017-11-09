@@ -6,9 +6,7 @@
 package com.breakoutws.domain;
 
 import com.breakoutws.domain.brickcollisionhandlers.BrickCollisionHandler;
-import com.breakoutws.domain.brickcollisionhandlers.RegularCollision;
 import com.breakoutws.domain.shapes.Brick;
-import com.breakoutws.domain.shapes.BrickType;
 import com.breakoutws.domain.shapes.IShape;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -41,7 +39,7 @@ public class BreakoutContactListener implements ContactListener{
         
        if( brick != null  )
        {
-           new BrickCollisionHandler(f1, f2, world, brick).handleCollision();
+           new BrickCollisionHandler( world, brick).handleCollision();
        } 
        else if (isBallOutOfBounds)
        {

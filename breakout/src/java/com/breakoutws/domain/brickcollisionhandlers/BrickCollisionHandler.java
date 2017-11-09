@@ -15,16 +15,11 @@ import org.jbox2d.dynamics.Fixture;
  * @author kevin
  */
 public class BrickCollisionHandler {
-
-    private Fixture fixtureA, fixtureB;
     private BreakoutWorld world;
-
     private Brick brick;
 
     
-    public BrickCollisionHandler(Fixture fixtureA, Fixture fixtureB, BreakoutWorld world, Brick brick) {
-        this.fixtureA = fixtureA;
-        this.fixtureB = fixtureB;
+    public BrickCollisionHandler(BreakoutWorld world, Brick brick) {
         this.world = world;
         this.brick = brick;
     }
@@ -34,12 +29,12 @@ public class BrickCollisionHandler {
         System.out.printf("BrickCollisionHandle: handleCollsion, bricktype: %s", brickType);
         switch(brickType){
             case EXPLOSIVE:
-                new ExplosiveCollision(world, fixtureA.getBody(), brick.getShape().getName(), 1).handleCollsion();
+                new ExplosiveCollision(world, brick, 1).handleCollsion();
                 break;
             case UNBREAKABLE:
                 break;
             default:
-                new RegularCollision(world, fixtureA.getBody(), brick.getShape().getName()).handleCollsion();
+                new RegularCollision(world, brick).handleCollsion();
                 break;
         }
     }

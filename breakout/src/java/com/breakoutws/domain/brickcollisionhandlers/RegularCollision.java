@@ -15,17 +15,15 @@ import org.jbox2d.dynamics.Body;
  */
 public class RegularCollision {
     private BreakoutWorld world;
-    private Body brickBody;
-    private String shapeName;
+    private Brick brick;
 
-    public RegularCollision(BreakoutWorld world, Body brickBody, String shapeNamee) {
+    public RegularCollision(BreakoutWorld world, Brick brick) {
         this.world = world;
-        this.brickBody = brickBody;
-        this.shapeName = shapeNamee;
+        this.brick = brick;
     }
     
     public void handleCollsion(){
         System.out.println("RegularCollision: Handling regular collision");
-        world.destroyBrick(brickBody);
+        world.destroyBrick(brick);
     }
 }

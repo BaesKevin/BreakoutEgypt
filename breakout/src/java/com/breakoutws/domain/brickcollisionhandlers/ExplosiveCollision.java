@@ -15,18 +15,17 @@ import org.jbox2d.dynamics.Body;
  */
 public class ExplosiveCollision {
 private BreakoutWorld world;
-    private Body brickBody;
+    private Brick brick;
     private String shapeName;
     private int rangeToDestroy;
 
-    public ExplosiveCollision(BreakoutWorld world, Body brickBody, String shapeName, int rangeToDestroy) {
+    public ExplosiveCollision(BreakoutWorld world, Brick brick, int rangeToDestroy) {
         this.world = world;
-        this.brickBody = brickBody;
-        this.shapeName = shapeName;
+        this.brick = brick;
         this.rangeToDestroy = rangeToDestroy;
     }
     
     public void handleCollsion(){
-        world.destroyBricksInRange(brickBody, rangeToDestroy);
+        world.destroyBricksInRange(brick, rangeToDestroy);
     }
 }
