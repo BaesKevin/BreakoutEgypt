@@ -5,6 +5,11 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.shapes.Ball;
+import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.Paddle;
+import com.breakoutws.domain.shapes.RegularBody;
+import com.breakoutws.domain.shapes.Shape;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -26,13 +31,18 @@ public class BodyFactory {
         this.world = world;
     }
     
-    public Body createBrick(Shape s){
+    public Body createTriangle(Brick b){
+        Shape s = b.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.STATIC;
         bd.position.set(s.getPosX(), s.getPosY());
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(s.getWidth() / 2, s.getHeight() / 2);
-        
+
+        Vec2[] vertices = new Vec2[3];
+        vertices[0] = new Vec2(s.getWidth()/2, 0);
+        vertices[1] = new Vec2(0, s.getHeight());
+        vertices[2] = new Vec2(s.getWidth(), s.getHeight());
+        ps.set(vertices, 3);
         
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
@@ -47,11 +57,12 @@ public class BodyFactory {
         */
         Body body = world.createBody(bd);
         body.createFixture(fd);
-        body.setUserData(s);
+        body.setUserData(b);
         return body;
     }
     
-    public Body createPaddle(Shape s){
+    public Body createPaddle(Paddle paddle){
+        Shape s = paddle.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.KINEMATIC;
         bd.position.set(s.getPosX(), s.getPosY());
@@ -71,11 +82,12 @@ public class BodyFactory {
         */
         Body body = world.createBody(bd);
         body.createFixture(fd);
-        body.setUserData(s);
+        body.setUserData(paddle);
         return body;
     }
     
-    public Body createCircle(Shape s){
+    public Body createCircle(Ball ball){
+        Shape s = ball.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.DYNAMIC;
         bd.position.set(s.getPosX(), s.getPosY());
@@ -98,7 +110,7 @@ public class BodyFactory {
         */
         Body body = world.createBody(bd);
         body.createFixture(fd);
-        body.setUserData(s);
+        body.setUserData(ball);
         return body;
     }
     
@@ -114,9 +126,10 @@ public class BodyFactory {
         bd.position = new Vec2(0.0f, y);
 
         Shape groundShape = new Shape("ground", 0, y, width, 1);
+        RegularBody ground = new RegularBody(groundShape);
         Body body = world.createBody(bd);
         body.createFixture(fd);
-        body.setUserData(groundShape);
+        body.setUserData(ground);
     }
 
     //This method creates a walls. 

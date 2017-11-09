@@ -54,6 +54,7 @@ function updateLevelData(json) {
 
     if (json.destroy) {
         console.log("Received bricks to destroy");
+        console.log(json.destroy);
         json.destroy.forEach(function (key) {
             if (key.includes("brick")) {
                 brickdata = brickdata.filter(function (brick) {
