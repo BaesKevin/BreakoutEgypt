@@ -66,20 +66,15 @@ public class LevelServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        System.out.println("body: " + request.getParameterMap().toString());
-        System.out.println("gameId: " + request.getParameter("gameId"));
+       
         int gameId = Integer.parseInt(request.getParameter("gameId"));
+        System.out.println("LevelServlet: Post request on /level to start game " + gameId);
         
-        System.out.println("gameId from post: " + gameId);
-
         GameManager manager = new GameManager();
 
-        JsonObjectBuilder job;
-        System.out.println("LevelServlet: get level");
-        
+        JsonObjectBuilder job;       
         
         Level level = manager.getLevel(gameId);
-        level.setLevelStarted(true);
         level.startBall();
         
         response.setContentType("application/json");

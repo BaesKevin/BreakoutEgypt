@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 $("canvas")[0].addEventListener("click", function() {
     
     var gameId = getParameterByName("gameId");
-    console.log("gameId: " + gameId);
+    console.log("Doing post for game " + gameId + " to start the ball.");
     fetch('level', { method: "POST", body: "gameId=" + gameId,
     headers: {
     "Content-Type": "application/x-www-form-urlencoded"
@@ -33,7 +33,7 @@ $("canvas")[0].addEventListener("click", function() {
 
 
 function loadLevel() {
-    console.log("load level for game  " + getParameterByName("gameId"));
+    console.log("Load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
 
     fetch('level?gameId=' + gameId).then(function (response) {

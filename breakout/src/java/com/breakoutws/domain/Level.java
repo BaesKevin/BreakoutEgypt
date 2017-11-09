@@ -62,7 +62,9 @@ public class Level extends TimerTask {
     }
     
     public void startBall() {
+        setLevelStarted(true);
         getBall().setLinearVelocity(0, 100);
+        System.out.println("Level: startBall()");
     }
 
     public void movePaddle(int x, int y) {
