@@ -49,6 +49,8 @@ function onMessage(evt) {
             loadLives(json.livesLeft);
         } else if (json.levelComplete) {
             console.log("Socket received message level complete");
+            console.log("%cTime to complete this level: "  + json.scoreTimer, "background-color:blue;color:white;padding:5px;");
+            console.log("You completed this level in " + scoreTimerFormatter(json.scoreTimer));
             level.levelComplete = true;
 
             level.loadLevel();
@@ -71,6 +73,21 @@ function handleLevelUpdateError(json) {
     }
 }
 
+function scoreTimerFormatter (millisecs) {
+    
+    var secs = Math.round(millisecs / 1000);
+    
+    var mins = parseInt(secs / 60);
+    secs = secs % 60;
+    
+    return prenull(mins) + ":" + prenull(secs);
+}
+
+function prenull (number) {
+    
+    return number < 10 ? "0" + number : "" + number;
+        
+};
 
 
 
