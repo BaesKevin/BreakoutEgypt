@@ -15,21 +15,15 @@ import org.jbox2d.dynamics.Body;
 public class RegularBody implements IShape {
 
        private Shape shape;
-    private BodyType bodyType;
     private Body body;
     
     public RegularBody(Shape s){
-        this.bodyType = BodyType.REGULAR;
         this.shape = s;
     }
     
     @Override
     public String getName(){
         return shape.getName();
-    }
-    @Override
-    public BodyType getBodyType() {
-        return bodyType;
     }
 
     public Shape getShape() {
@@ -55,4 +49,9 @@ public class RegularBody implements IShape {
     public Vec2 getPosition(){
         return body.getPosition();
     }
+
+//    @Override
+//    public void accept(ShapeUser u) {
+//        u.doForRegular(this);
+//    }
 }

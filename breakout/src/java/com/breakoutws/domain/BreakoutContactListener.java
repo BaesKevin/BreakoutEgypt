@@ -6,8 +6,10 @@
 package com.breakoutws.domain;
 
 import com.breakoutws.domain.brickcollisionhandlers.BrickCollisionHandler;
+import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.IShape;
+import com.breakoutws.domain.shapes.Paddle;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -51,9 +53,9 @@ public class BreakoutContactListener implements ContactListener{
     private Brick getBrickBallCollidedWith(Fixture f1, Fixture f2, IShape s1, IShape s2){
         Brick brick = null;
         
-        if( s1 != null && s1.getName().contains("brick")){
+        if( s1 != null && s1 instanceof Brick){
            brick = (Brick) s1;
-        }else if(s2 != null && s2.getName().contains("brick")){
+        }else if(s2 != null && s2 instanceof Brick){
             brick = (Brick) s2;
         }
         
@@ -82,11 +84,11 @@ public class BreakoutContactListener implements ContactListener{
         IShape data1 = (IShape) a.getBody().getUserData();
         IShape data2 = (IShape) b.getBody().getUserData();
         
-         if ( data1 != null && data1.getName().equals("ball") && 
-                    data2 != null && data2.getName().equals("paddle")){
+         if ( data1 != null && data1 instanceof Ball && 
+                    data2 != null && data2 instanceof Paddle){
             world.ballHitPaddle();
-        } else if ( data1 != null && data1.getName().equals("paddle") && 
-                    data2 != null && data2.getName().equals("ball")){
+        } else if ( data1 != null && data1 instanceof Paddle && 
+                    data2 != null && data2 instanceof Ball){
             world.ballHitPaddle();
         }
     }

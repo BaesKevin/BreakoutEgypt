@@ -58,6 +58,9 @@ public class Brick  extends RegularBody{
         this.gridPosition = position;
     }
     
+//    public void accept(ShapeUser u){
+//        u.doForBrick(this);
+//    }
     
     
 }
