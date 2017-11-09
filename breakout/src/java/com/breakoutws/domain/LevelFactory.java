@@ -13,6 +13,7 @@ import com.breakoutws.domain.shapes.Shape;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -155,9 +156,22 @@ public class LevelFactory {
             bricks.get(i).getShape().setColor(Color.BLACK);
         }
         
+        
         bricks.get(1).setType(BrickType.UNBREAKABLE);
         bricks.get(2).setType(BrickType.EXPLOSIVE);
-                
+        
+        bricks.get(3).getShape().setColor(Color.YELLOW);
+        bricks.get(3).setSwitched(false);
+        
+        //bricks.get(4).setSwitched(false);
+        bricks.get(4).getShape().setColor(Color.BLUE); 
+        bricks.get(4).setType(BrickType.SWITCH);
+        bricks.get(4).setSwitchBricks(
+                Arrays.asList(new Brick[]{
+                    bricks.get(3)
+                })
+          );
+               
         Level level = new Level(currentLevel, game, ball, paddle, bricks, 3);
         
         return level;

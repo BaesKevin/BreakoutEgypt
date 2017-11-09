@@ -95,6 +95,21 @@ public class BreakoutContactListener implements ContactListener{
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
+        Fixture f1 = contact.getFixtureA();
+        Fixture f2 = contact.getFixtureB();
+        
+        IShape s1 = (IShape) f1.getBody().getUserData();
+        IShape s2 = (IShape) f2.getBody().getUserData();
+        
+        Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
+        
+        if (brick != null && !brick.isSwitched()) {
+            System.out.println("BreakoutContactListener: contact false, brick is switched off");
+            contact.setEnabled(false);
+        }       
+        else {
+            System.out.println("BreakoutContactListener: contact true");
+        }
     }
 
     @Override

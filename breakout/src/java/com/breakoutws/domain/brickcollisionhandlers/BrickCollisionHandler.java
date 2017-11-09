@@ -27,16 +27,30 @@ public class BrickCollisionHandler {
         // TODO do stuff based on bricktype
         BrickType brickType = brick.getBricktype();
         System.out.printf("BrickCollisionHandle: handleCollsion, bricktype: %s", brickType);
-        switch(brickType){
-            case EXPLOSIVE:
-                new ExplosiveCollision(world, brick, 1).handleCollsion();
-                break;
-            case UNBREAKABLE:
-                break;
-            default:
-                new RegularCollision(world, brick).handleCollsion();
-                break;
+        System.out.println("BrickCollisionHandler: isSwitched: " + brick.isSwitched());
+        if (brick.isSwitched()) {
+            switch(brickType){
+                case EXPLOSIVE:
+                    System.out.println("BrickCollisionHandler: explosive collision");
+                    new ExplosiveCollision(world, brick, 1).handleCollsion();
+                    break;
+                case UNBREAKABLE:
+                    System.out.println("BrickCollisionHandler: unbreakable collision");
+                    break;
+                case SWITCH:
+                    System.out.println("BrickCollisionHandler: switch Collision");
+                    new SwitchCollision(world, brick).handleCollsion();
+                    break;
+                default:
+                    System.out.println("BrickCollisionHandler: regular collision");
+                    new RegularCollision(world, brick).handleCollsion();
+                    break;
+            }
+        } else {
+            System.out.println("BrickCollisionHandler: collision with switched off brick, going through...");
         }
+            
+        
     }
 
 }

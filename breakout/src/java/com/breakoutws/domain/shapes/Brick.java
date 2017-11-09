@@ -6,6 +6,7 @@
 package com.breakoutws.domain.shapes;
 
 import java.awt.Point;
+import java.util.List;
 
 /**
  *
@@ -15,15 +16,38 @@ public class Brick  extends RegularBody{
     private BrickType brickType;
     private boolean isTarget;
     private Point gridPosition;
+    private List<Brick> switchBricks;
+    private boolean isSwitched;
     
     public Brick(Shape s,  BrickType type, Point position){
-        this(s, type,position, false);
+        this(s, type,position, false, true);
     }
     
-    public Brick(Shape s, BrickType type,  Point gridPosition,boolean isTarget){
+    public Brick(Shape s, BrickType type,  Point gridPosition,boolean isTarget, boolean isSwitched){
         super(s);
         this.gridPosition = gridPosition;
         this.brickType = type;
+        this.isSwitched = isSwitched;
+    }
+    
+    public void setSwitchBricks(List<Brick> bricks) {
+        this.switchBricks = bricks;
+    }
+
+    public List<Brick> getSwitchBricks() {
+        return switchBricks;
+    }
+    
+    public void toggle() {
+        isSwitched = !isSwitched;
+    }
+    
+    public void setSwitched(boolean b) {
+        isSwitched = b;
+    }
+    
+    public boolean isSwitched() {
+        return isSwitched;
     }
 
     public BrickType getBricktype() {
