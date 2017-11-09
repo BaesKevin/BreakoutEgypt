@@ -126,7 +126,7 @@ public class LevelFactory {
         int rows = 1;
         int cols = 5;
         int width = 30;
-        int height = 10;
+        int height = 30;
         
         Shape brickShape;
         Brick brick;
