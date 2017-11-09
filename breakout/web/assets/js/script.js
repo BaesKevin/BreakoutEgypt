@@ -21,10 +21,12 @@ var redirectToMainMenu=function(e){
     e.preventDefault();
     location.replace('index.html');
 };
+
 var redirectToMultiplayer=function(e){
     e.preventDefault();
     location.replace('multiplayerMenu.html');
 };
+
 var loadLives=function(lives){
     var imagePath="assets/media/ankLife.png";
     var lifeImages="";
