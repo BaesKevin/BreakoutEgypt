@@ -5,13 +5,13 @@
  */
 package com.breakoutws.domain;
 
-import java.util.ArrayList;
+import com.breakoutws.domain.shapes.Ball;
+import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.Paddle;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.json.JsonValue;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -21,45 +21,32 @@ import org.jbox2d.dynamics.World;
 public class Level extends TimerTask {
 
     private int id;
-    private List<Body> bricks;
-    private Body ball;
-    private Body paddle;
+
     private Timer timer;
     private Game game;
-    private BodyFactory factory;
 
     private BreakoutWorld breakoutWorld;
 
     private int lives;
 
-    private Shape startingBall;
-
     private boolean isLastLevel;
+    private LevelState levelState;
 
     public Level(int id, Game game) {
 
         this.id = id;
-        bricks = new ArrayList();
-
-        breakoutWorld = new BreakoutWorld(this);
-        factory = new BodyFactory(breakoutWorld.getWorld());
-
         this.game = game;
         this.isLastLevel = isLastLevel;
 
-        createBounds();
+        breakoutWorld = new BreakoutWorld(this);
     }
 
-    public Level(int id, Game game, Shape ball, Shape paddle, List<Shape> bricks, int lives) {
+    public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
+    ) {
 
         this(id, game);
-        addBall(ball);
-        addPaddle(paddle);
-
-        for (Shape brick : bricks) {
-            addBrick(brick);
-        }
-
+        levelState = new LevelState(breakoutWorld, ball, paddle, bricks);
+       
         this.lives = lives;
     }
 
@@ -67,65 +54,40 @@ public class Level extends TimerTask {
         breakoutWorld.movePaddle(x, y);
     }
 
-    public void addPaddle(Shape s) {
-        paddle = factory.createPaddle(s);
+    public void addPaddle(Paddle p) {
+        levelState.addPaddle(p);
     }
 
-    public void addBrick(Shape s) {
-        bricks.add(factory.createTriangle(s));
+    // TODO based on bricktype it might be necessary to do more here
+    // e.g. all surrounding bricks an explosive brick
+    public void addBrick(Brick brick) {
+        levelState.addBrick(brick);
     }
 
-    public void addBall(Shape s) {
-        this.startingBall = new Shape(s);
-        ball = factory.createCircle(s);
-    }
-
-    private void createBounds() {
-        factory.addGround(300, 300);
-
-        factory.addWall(0, 0, 1, 300); //Left wall
-        factory.addWall(300, 0, 1, 300); //Right wall, keep in mind 
-
-        factory.addWall(0, 0, 300, 1); //roof 
+    public void addBall(Ball b) {
+       levelState.addBall(b);
     }
 
     public int getId() {
         return id;
     }
 
-    public List<Body> getBricks() {
-        return bricks;
-    }
-
-    public Body getBall() {
-        return ball;
-    }
-
-    public Body getPaddle() {
-        return paddle;
-    }
-
-    public void removeBrick(Body brick) {
-        bricks.remove(brick);
+    // SHOULD NOT BE USED, USE DELEGATION INSTEAD
+    public LevelState getLevelState(){
+        return levelState;
     }
 
     void resetBall() {
         System.out.println("LeveL: resetBall()");
-        ball = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
+        levelState.resetBall();
+        
         lives--;
         game.notifyPlayersOfLivesLeft();
     }
 
     private int getTargetBricksLeft() {
-        int targetsLeft = 0;
-        for (Body b : bricks) {
-            Shape s = (Shape) b.getUserData();
-
-            if (s.isTarget()) {
-                ++targetsLeft;
-            }
-        }
-        return targetsLeft;
+        System.out.println("Targets left: " + levelState.getTargetBricksLeft());
+        return levelState.getTargetBricksLeft();
     }
 
     public boolean allTargetBricksDestroyed() {
@@ -172,4 +134,24 @@ public class Level extends TimerTask {
         return isLastLevel;
     }
 
+     public Paddle getPaddle() {
+        return levelState.getPaddle();
+    }
+
+    public  void removeBrick(Brick brick) {
+        levelState.removeBrick(brick);
+    }
+
+    public Ball getBall() {
+        return levelState.getBall();
+    }
+
+    public List<Brick> getBricks() {
+        return levelState.getBricks();
+    }
+
+    List<Brick> getRangeOfBricksAroundBody(Brick brick, int range) {
+        return levelState.getRangeOfBricksAroundBody(brick, range);
+    }
+        
 }
