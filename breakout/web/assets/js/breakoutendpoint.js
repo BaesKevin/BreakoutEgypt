@@ -19,8 +19,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+var responsivePaddle=function(paddle){
+    paddle.width=(paddle.width/300)*canvas.width;
+    paddle.height=(paddle.height/300)*canvas.height;
+    return paddle;
+}
 function draw() {
-    ctx.clearRect(0, 0, 300, 300);
+    // initial values 300 x 300
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
 
     ctx.fillStyle = level.balldata.color;
