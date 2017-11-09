@@ -13,8 +13,6 @@ import org.jbox2d.dynamics.Body;
  */
 public interface IShape {
     
-   
-    
     String getName();
     Shape getShape();
     void setBody(Body b);

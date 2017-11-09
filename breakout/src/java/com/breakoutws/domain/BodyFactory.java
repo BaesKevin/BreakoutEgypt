@@ -92,7 +92,7 @@ public class BodyFactory {
         bd.type = BodyType.DYNAMIC;
         bd.position.set(s.getPosX(), s.getPosY());
 //        bd.linearVelocity.x = -100;
-        bd.linearVelocity.y = 100;
+        bd.linearVelocity.y = 0;
         CircleShape cs = new CircleShape();
         cs.m_radius = s.getWidth() / 2;
         
