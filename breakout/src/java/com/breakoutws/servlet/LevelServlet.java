@@ -7,7 +7,9 @@ package com.breakoutws.servlet;
 
 import com.breakoutws.domain.GameManager;
 import com.breakoutws.domain.Level;
-import com.breakoutws.domain.Shape;
+import com.breakoutws.domain.shapes.Ball;
+import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.Paddle;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.json.Json;
@@ -18,7 +20,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jbox2d.dynamics.Body;
 
 /**
  *
@@ -35,7 +36,7 @@ public class LevelServlet extends HttpServlet {
         GameManager manager = new GameManager();
 
         JsonObjectBuilder job;
-
+        System.out.println("LevelServlet: get level");
         boolean hasNextLevel = manager.hasNextLevel(gameId);
         //System.out.println("hasnextlevel: " + hasNextLevel);
         if (hasNextLevel) {
@@ -62,13 +63,12 @@ public class LevelServlet extends HttpServlet {
     }
 
     private void levelToJson(Level level, JsonArrayBuilder jab, JsonObjectBuilder job) {
-        for (Body body : level.getBricks()) {
-            Shape s = (Shape) body.getUserData();
-            jab.add(s.toJson());
+        for (Brick brick : level.getBricks()) {
+            jab.add(brick.getShape().toJson());
         }
         job.add("bricks", jab);
-        job.add("ball", ((Shape) level.getBall().getUserData()).toJson());
-        job.add("paddle", ((Shape) level.getPaddle().getUserData()).toJson());
+        job.add("ball", level.getBall().getShape().toJson());
+        job.add("paddle", level.getPaddle().getShape().toJson());
         job.add("level", level.getId());
         job.add("lives", level.getLives());
     }
