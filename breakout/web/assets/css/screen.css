@@ -1,5 +1,6 @@
 body{
     background-color:#fecc33;
+    min-width:400px;
 }
 span{
     font-weight:bold;
@@ -53,7 +54,7 @@ footer{
 
 }
 #gameMain{
-    width:80%;
+    width:70%;
     padding:25px;
     background-color:#fecc66;
     margin-left:auto;

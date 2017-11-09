@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
     level.paddledata.y = canvas.height - 50;
+    
+    level.xscaling = canvas.width / 300;
+    level.yscaling = canvas.height / 300;
+    console.log("xscaling: " + level.xscaling + " yscaling: " + level.yscaling);
+    
     mouse = {
         x: 0,
         y: canvas.height - 50
@@ -17,13 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     level.loadLevel();
 });
-
-
-var responsivePaddle=function(paddle){
-    paddle.width=(paddle.width/300)*canvas.width;
-    paddle.height=(paddle.height/300)*canvas.height;
-    return paddle;
-}
 function draw() {
     // initial values 300 x 300
     ctx.clearRect(0, 0, canvas.width, canvas.height);
