@@ -15,6 +15,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+$("canvas")[0].addEventListener("click", function() {
+    
+    var gameId = getParameterByName("gameId");
+    console.log("gameId: " + gameId);
+    fetch('level', { method: "POST", body: "gameId=" + gameId,
+    headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+    }
+    }).then(function (response) {
+        console.log("levelPOST response::" + response);
+        console.debug(response);
+    });
+    
+});
+
 
 
 function loadLevel() {

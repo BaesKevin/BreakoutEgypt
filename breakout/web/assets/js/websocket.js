@@ -37,8 +37,7 @@ function onMessage(evt) {
             loadLevel();
                 
            
-        } else {
-           
+        } else {           
             updateLevelData(json);
         }
     } else {
@@ -80,10 +79,10 @@ function sendOverSocket(json) {
 }
 
 websocket.onerror = function (evt) {
-    onError(evt)
+    onError(evt);
 };
 websocket.onopen = function (evt) {
-    onOpen(evt)
+    onOpen(evt);
 };
 
 websocket.onmessage = function (evt) {
