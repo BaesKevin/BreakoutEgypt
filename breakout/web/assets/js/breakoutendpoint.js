@@ -1,9 +1,13 @@
-var canvas, mouse, lives;
+var canvas, mouse;
 var ctx = $("canvas")[0].getContext('2d');
+
+var level = new Level();
+var websocket = new ArcadeWebSocket();
+
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
-    paddledata.x = canvas.width / 2 - paddledata.width / 2;
-    paddledata.y = canvas.height - 50;
+    level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
+    level.paddledata.y = canvas.height - 50;
     mouse = {
         x: 0,
         y: canvas.height - 50
@@ -11,89 +15,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $('canvas').on('mousemove', getMouseX);
 
-    loadLevel();
-
+    level.loadLevel();
 });
 
 
-
-function loadLevel() {
-    console.log("load level for game  " + getParameterByName("gameId"));
-    var gameId = getParameterByName("gameId");
-
-    fetch('level?gameId=' + gameId).then(function (response) {
-        var json = response.json();
-        return json;
-    }).then(function (response) {
-        if (!response.error) {
-            if (response.allLevelsComplete) {
-                console.log("Load level: got allLevelsComplete message");
-                allLevelsComplete = true;
-            } else {
-                console.log("Load level: got data for level " + response.level);
-                brickdata = response.bricks;
-                balldata = response.ball;
-                paddledata = response.paddle;
-                lives = response.lives;
-                loadLives(lives);
-                console.log("lives: " + response.lives);
-            }
-        } else
-        {
-            document.location = "/breakout/";
-            console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
-        }
-    }).then(function () {
-        levelComplete = false;
-        gameOver = false;
-        if (!allLevelsComplete) {
-            draw();
-        }
-
-    }).catch(function (err) {
-        websocket.close();
-        document.location = "/breakout?error=" + err;
-    });
+var responsivePaddle=function(paddle){
+    paddle.width=(paddle.width/300)*canvas.width;
+    paddle.height=(paddle.height/300)*canvas.height;
+    return paddle;
 }
-
 function draw() {
-    ctx.clearRect(0, 0, 300, 300);
+    // initial values 300 x 300
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
 
-    ctx.fillStyle = balldata.color;
+    ctx.fillStyle = level.balldata.color;
+    
     // box2d draws circle from center
-    ctx.arc(Math.round(balldata.x), Math.round(balldata.y), (balldata.width / 2), 0, 2 * Math.PI, false);
+    ctx.arc(Math.round(level.balldata.x), Math.round(level.balldata.y), (level.balldata.width / 2), 0, 2 * Math.PI, false);
     ctx.fill();
-    brickdata.forEach(function (brick) {
-        ctx.fillStyle = brick.color;
-
-        ctx.beginPath();
-        ctx.moveTo((brick.x + brick.width / 2), brick.y);
-        ctx.lineTo(brick.x, (brick.y + brick.height));
-        ctx.lineTo((brick.x + brick.width), (brick.y + brick.height));
-        ctx.fill();
-
-//        ctx.(brick.x, brick.y, brick.width, brick.height);
+    
+    level.brickdata.forEach(function (brick) {
+        brick.draw(ctx);
     })
 
     setPaddleX();
-    sendClientLevelState();
+    level.sendClientLevelState();
 
-    ctx.fillStyle = paddledata.color;
-    ctx.fillRect(paddledata.x, paddledata.y, paddledata.width, paddledata.height);
+    ctx.fillStyle = level.paddledata.color;
+    ctx.fillRect(level.paddledata.x, level.paddledata.y, level.paddledata.width, level.paddledata.height);
 
 
     window.requestAnimationFrame(draw);
-}
-
-
-function sendClientLevelState() {
-    if (websocket.readyState === websocket.OPEN && !levelComplete && !gameOver) {
-        sendOverSocket(JSON.stringify({
-            x: paddledata.x + paddledata.width / 2,
-            y: paddledata.y
-        }));
-    }
 }
 
 function getMouseX(e) {
@@ -103,17 +56,12 @@ function getMouseX(e) {
 }
 
 function setPaddleX() {
-    paddledata.x = mouse.x - paddledata.width / 2;
+    level.paddledata.x = mouse.x - level.paddledata.width / 2;
 
-    if (paddledata.x < 0) {
-        paddledata.x = 0;
-    } else if (canvas.width - paddledata.width < paddledata.x) {
-        paddledata.x = canvas.width - paddledata.width;
+    if (level.paddledata.x < 0) {
+        level.paddledata.x = 0;
+    } else if (canvas.width - level.paddledata.width < level.paddledata.x) {
+        level.paddledata.x = canvas.width - level.paddledata.width;
     }
 
-}
-
-
-function movePaddle(x, y) {
-    sendOverSocket(JSON.stringify({x: x, y: y}));
 }

@@ -10,24 +10,6 @@
 </head>
 <body>
 <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">Breakout Egypt</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
     <header class="row">
         <div class="col-lg-12 text-center text-capitalize">
             <h1>Breakout Egypt</h1>
@@ -39,7 +21,10 @@
             <div id="menu">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <button type="button" class="btn" data-toggle="modal" data-target="#difficultyModal">Arcade</button>
+                        <form action="arcade" method="POST">
+                            <input type="submit" value="Arcade"/>;
+                        </form>
+                        <button type="button" class="btn" id="arcade" data-toggle="modal" data-target="#modal">Arcade</button>
                     </li>
                     <li class="list-group-item">
                         <button type="button" id="toMultiplayer" class="btn">Multiplayer</button>
@@ -73,35 +58,11 @@
         </div>
     </footer>
 </div>
-<div class="modal fade" id="difficultyModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Choose difficulty</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Choose a difficulty:</p>
-            </div>
-            <div class="modal-footer">
-                <form action="arcade" method="post">
-                            <input type="submit" class="btn" value="Easy"/>
-                        </form>
-                <form action="arcade" method="post">
-                    <input type="submit" class="btn" value="Medium"/>
-                </form>
-                <form action="arcade" method="post">
-                    <input type="submit" class="btn" value="Hard"/>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+    <div id="modalPlaceholder"></div>
 <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="assets/js/popper.min.js"></script>
 <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/modalResponsive.js"></script>
 <script type="text/javascript" src="assets/js/script.js"></script>
 </body>
 </html>
