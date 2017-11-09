@@ -78,14 +78,27 @@ Level.prototype.updateLevelData = function (json) {
 
     var self = this;
 
-    if (json.destroy) {
+    if (json.actions) {
         console.log("Received bricks to destroy");
-        json.destroy.forEach(function (key) {
-            if (key.includes("brick")) {
-                self.brickdata = self.brickdata.filter(function (brick) {
-                    return brick.name !== key;
-                });
+        console.log(json);
+        
+        json.actions.forEach(function (key) {
+            switch (key.action) {
+                case "destroy":
+                    self.brickdata = self.brickdata.filter(function (brick) {
+                        return brick.name !== key.name;
+                    });
+                    break;
+                case "hide":
+                    console.log("Level.js:updateLevelData -> should be hiding bricks here");
+                    break;
+                
+                    
+                
             }
+           
         });
     }
+    
+   
 };

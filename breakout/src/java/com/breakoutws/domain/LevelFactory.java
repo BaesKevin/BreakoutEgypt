@@ -157,20 +157,20 @@ public class LevelFactory {
         }
         
         
-        bricks.get(1).setType(BrickType.UNBREAKABLE);
-        bricks.get(2).setType(BrickType.EXPLOSIVE);
+        //bricks.get(1).setType(BrickType.UNBREAKABLE);
+        //bricks.get(2).setType(BrickType.EXPLOSIVE);
         
-        bricks.get(3).getShape().setColor(Color.YELLOW);
-        bricks.get(3).setSwitched(false);
-        
-        //bricks.get(4).setSwitched(false);
-        bricks.get(4).getShape().setColor(Color.BLUE); 
-        bricks.get(4).setType(BrickType.SWITCH);
-        bricks.get(4).setSwitchBricks(
-                Arrays.asList(new Brick[]{
-                    bricks.get(3)
-                })
-          );
+//        bricks.get(3).getShape().setColor(Color.YELLOW);
+//        bricks.get(3).setSwitched(false);
+//        
+//        //bricks.get(4).setSwitched(false);
+//        bricks.get(4).getShape().setColor(Color.BLUE); 
+//        bricks.get(4).setType(BrickType.SWITCH);
+//        bricks.get(4).setSwitchBricks(
+//                Arrays.asList(new Brick[]{
+//                    bricks.get(3)
+//                })
+//          );
                
         Level level = new Level(currentLevel, game, ball, paddle, bricks, 3);
         

@@ -52,6 +52,7 @@ public class SessionManager {
     }
     
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
+       // System.out.println("SessionManager: sending json");
         json = createJson(currentLevel, simulation);
 
         sendJsonToPlayers(json);
@@ -87,25 +88,34 @@ public class SessionManager {
 
         Vec2 position = currentLevel.getBall().getPosition();
 
-        JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
+        JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();        
         brickkObjectBuilder.add("x", position.x);
-        brickkObjectBuilder.add("y", position.y);
-
+        brickkObjectBuilder.add("y", position.y);        
         job.add("ball", brickkObjectBuilder.build());
-
-        List<String> bodiesToDestroy = simulation.getKeysOfBodiesToDestroy();
-        if (0 < bodiesToDestroy.size()) {
-            JsonArrayBuilder jab = Json.createArrayBuilder();
-
-            for (String key : bodiesToDestroy) {
-                jab.add(key);
-            }
-
-            job.add("destroy", jab.build());
+        
+                
+        JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
+        boolean actionsToBeDone = false;
+        
+        List<String> bodiesToDestroy = simulation.getKeysOfBodiesToDestroy(); 
+        for (String key: bodiesToDestroy) {
+            actionsToBeDone = true;
+            JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
+            actionObjectBuilder.add("action", "destroy");
+            actionObjectBuilder.add("name", key);
+            actionsArrayBuilder.add(actionObjectBuilder.build());
         }
-
+        
+        //BODIES to HIDE
+        
+        //BODIES to SHOW
+        
+        if ( actionsToBeDone ) {
+            job.add("actions", actionsArrayBuilder.build());       
+            System.out.println("SessoinManager: sending bodies to destroy");
+        }
+        
         simulation.clearKeysOfBodiesToDestroy();
-
         return job.build();
     }
 
