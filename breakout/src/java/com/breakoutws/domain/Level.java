@@ -31,26 +31,47 @@ public class Level extends TimerTask {
 
     private boolean isLastLevel;
     private LevelState levelState;
+    
+    private boolean levelStarted;
 
     public Level(int id, Game game) {
 
         this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
+        
+        this.levelStarted = false;
 
         breakoutWorld = new BreakoutWorld(this);
     }
 
     public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
     ) {
-
         this(id, game);
         levelState = new LevelState(breakoutWorld, ball, paddle, bricks);
        
         this.lives = lives;
     }
+    
+    public boolean isLevelStarted() {
+        return levelStarted;
+    }
+    
+    public void setLevelStarted(boolean b) {
+        this.levelStarted = b;
+    }
+    
+    public void startBall() {
+        setLevelStarted(true);
+        getBall().setLinearVelocity(0, 100);
+        System.out.println("Level: startBall()");
+    }
 
     public void movePaddle(int x, int y) {
+        if (!levelStarted) {
+            float yPos = this.getBall().getPosition().y;
+            this.getBall().moveTo(x, yPos);
+        }
         breakoutWorld.movePaddle(x, y);
     }
 
@@ -81,7 +102,8 @@ public class Level extends TimerTask {
         System.out.println("LeveL: resetBall()");
         levelState.resetBall();
         
-        lives--;
+        
+        lives--;        
         game.notifyPlayersOfLivesLeft();
     }
 

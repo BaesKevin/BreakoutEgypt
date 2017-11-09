@@ -18,11 +18,26 @@ document.addEventListener("DOMContentLoaded", function () {
     level.loadLevel();
 });
 
+$("canvas")[0].addEventListener("click", function() {
+    
+    var gameId = getParameterByName("gameId");
+    console.log("Doing post for game " + gameId + " to start the ball.");
+    fetch('level', { method: "POST", body: "gameId=" + gameId,
+    headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+    }
+    }).then(function (response) {
+        console.log("levelPOST response::" + response);
+        console.debug(response);
+    });
+    
+});
 
 var responsivePaddle=function(paddle){
     paddle.width=(paddle.width/300)*canvas.width;
     paddle.height=(paddle.height/300)*canvas.height;
     return paddle;
+
 }
 function draw() {
     // initial values 300 x 300
