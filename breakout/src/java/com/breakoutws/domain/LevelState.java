@@ -81,6 +81,7 @@ public class LevelState {
     }
     
     void resetBall() {
+        
         Body ballBody = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
         ball.setBody(ballBody);
     }
@@ -104,7 +105,7 @@ public class LevelState {
         factory.addWall(0, 0, 300, 1); //roof 
     }
 
-    List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
+    public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
         List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();
         

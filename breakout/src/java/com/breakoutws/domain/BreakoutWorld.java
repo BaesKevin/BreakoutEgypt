@@ -50,6 +50,10 @@ public class BreakoutWorld {
     public void setLevel(Level level) {
         this.currentLevel = level;
     }
+    
+    public Level getLevel(  ){
+        return currentLevel;
+    }
 
     public void movePaddle(float x, float y) {
         currentLevel.getPaddle().moveTo(x, y);
@@ -57,11 +61,13 @@ public class BreakoutWorld {
     }
 
     public void destroyBrick(Brick brick) {
-        destroyBricksInRange(brick, 0);
+        List<Brick> bricks = new ArrayList();
+        bricks.add(brick);
+        destroyBricks(bricks);
     }
 
-    public void destroyBricksInRange(Brick brickBody, int range) {
-        List<Brick> bodiesInRange = currentLevel.getRangeOfBricksAroundBody(brickBody, range);
+    public void destroyBricks(List<Brick> bodiesInRange) {
+        System.out.println("BreakoutWorld: destroying bodies");
         String key;
         for (Brick brickBodyInRange : bodiesInRange) {
             if (!bodiesToDestroy.contains(brickBodyInRange.getBody())) {

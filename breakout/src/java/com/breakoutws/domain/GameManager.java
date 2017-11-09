@@ -67,15 +67,15 @@ public class GameManager {
     public void removePlayer(int gameId, Session peer) {
         if(games != null){
             Game game = games.get(gameId);
-            System.out.println("GameManager: Removing peer from game " + gameId);    
+//            System.out.println("GameManager: Removing peer from game " + gameId);    
             if(game != null){
                 game.removePlayer(peer);
                 if(game.hasNoPlayers()){
-                    System.out.println("GameManager: No more players");
+//                    System.out.println("GameManager: No more players");
                     stopGame(game.getId());
                 }
             } else {
-                System.out.println("TGameManager: rying to remove player to game that doesn't exist");
+//                System.out.println("TGameManager: rying to remove player to game that doesn't exist");
             }
         }
         

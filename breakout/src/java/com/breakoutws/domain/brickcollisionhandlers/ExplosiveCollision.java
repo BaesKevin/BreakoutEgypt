@@ -5,27 +5,28 @@
  */
 package com.breakoutws.domain.brickcollisionhandlers;
 
-import com.breakoutws.domain.BreakoutWorld;
+import com.breakoutws.domain.Level;
+import com.breakoutws.domain.effects.ExplosiveEffect;
 import com.breakoutws.domain.shapes.Brick;
-import org.jbox2d.dynamics.Body;
 
 /**
  *
  * @author kevin
  */
 public class ExplosiveCollision {
-private BreakoutWorld world;
+
+    private Level level;
     private Brick brick;
     private String shapeName;
     private int rangeToDestroy;
 
-    public ExplosiveCollision(BreakoutWorld world, Brick brick, int rangeToDestroy) {
-        this.world = world;
+    public ExplosiveCollision(Brick brick, int rangeToDestroy, Level level) {
+        this.level = level;
         this.brick = brick;
         this.rangeToDestroy = rangeToDestroy;
     }
-    
-    public void handleCollsion(){
-        world.destroyBricksInRange(brick, rangeToDestroy);
+
+    public void handleCollsion() {
+        level.handleExplosiveEffect(new ExplosiveEffect(brick, rangeToDestroy));
     }
 }

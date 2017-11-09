@@ -41,12 +41,12 @@ public class BreakoutContactListener implements ContactListener{
         
        if( brick != null  )
        {
-           new BrickCollisionHandler( world, brick).handleCollision();
+           new BrickCollisionHandler( brick, world.getLevel()).handleCollision();
        } 
        else if (isBallOutOfBounds)
        {
            // System.out.println("Ball is out of bounds");
-           world.resetBall();
+           world.getLevel().getBreakoutWorld().resetBall();
        }
     }
     
@@ -89,7 +89,7 @@ public class BreakoutContactListener implements ContactListener{
             world.ballHitPaddle();
         } else if ( data1 != null && data1 instanceof Paddle && 
                     data2 != null && data2 instanceof Ball){
-            world.ballHitPaddle();
+           world.ballHitPaddle();
         }
     }
 

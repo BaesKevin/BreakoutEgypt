@@ -5,25 +5,25 @@
  */
 package com.breakoutws.domain.brickcollisionhandlers;
 
-import com.breakoutws.domain.BreakoutWorld;
+import com.breakoutws.domain.Level;
+import com.breakoutws.domain.effects.BrickRemoveEffect;
 import com.breakoutws.domain.shapes.Brick;
-import org.jbox2d.dynamics.Body;
 
 /**
  *
  * @author kevin
  */
 public class RegularCollision {
-    private BreakoutWorld world;
+    private Level level;
     private Brick brick;
 
-    public RegularCollision(BreakoutWorld world, Brick brick) {
-        this.world = world;
+    public RegularCollision(Level level, Brick brick) {
+        this.level = level;
         this.brick = brick;
     }
     
     public void handleCollsion(){
         System.out.println("RegularCollision: Handling regular collision");
-        world.destroyBrick(brick);
+        level.handleBrickRemoveEffect(new BrickRemoveEffect(brick));
     }
 }

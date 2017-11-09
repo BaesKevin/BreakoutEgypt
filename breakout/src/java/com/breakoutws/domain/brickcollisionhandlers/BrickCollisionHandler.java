@@ -5,23 +5,22 @@
  */
 package com.breakoutws.domain.brickcollisionhandlers;
 
-import com.breakoutws.domain.BreakoutWorld;
+import com.breakoutws.domain.Level;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.BrickType;
-import org.jbox2d.dynamics.Fixture;
 
 /**
  *
  * @author kevin
  */
 public class BrickCollisionHandler {
-    private BreakoutWorld world;
+    private Level level;
     private Brick brick;
 
     
-    public BrickCollisionHandler(BreakoutWorld world, Brick brick) {
-        this.world = world;
+    public BrickCollisionHandler(Brick brick, Level level) {
         this.brick = brick;
+        this.level = level;
     }
     public void handleCollision() {
         // TODO do stuff based on bricktype
@@ -29,12 +28,13 @@ public class BrickCollisionHandler {
         System.out.printf("BrickCollisionHandle: handleCollsion, bricktype: %s", brickType);
         switch(brickType){
             case EXPLOSIVE:
-                new ExplosiveCollision(world, brick, 1).handleCollsion();
+                new ExplosiveCollision(brick, 1, level).handleCollsion();
                 break;
             case UNBREAKABLE:
                 break;
             default:
-                new RegularCollision(world, brick).handleCollsion();
+                System.out.println("wtf");
+                new RegularCollision(level, brick).handleCollsion();
                 break;
         }
     }
