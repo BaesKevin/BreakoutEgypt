@@ -1,0 +1,25 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.breakoutws.domain.effects;
+
+import com.breakoutws.domain.shapes.Brick;
+import java.util.List;
+
+/**
+ *
+ * @author kevin
+ */
+public class ToggleEffect {
+    private List<Brick> bricksToToggle;
+    
+    public ToggleEffect(List<Brick> bricksToToggle){
+        this.bricksToToggle = bricksToToggle;
+    }
+
+    public List<Brick> getBricksToToggle() {
+        return bricksToToggle;
+    }
+}

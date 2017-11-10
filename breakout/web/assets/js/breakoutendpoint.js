@@ -20,18 +20,44 @@ document.addEventListener("DOMContentLoaded", function () {
     $('canvas').on('mousemove', getMouseX);
     
     level.loadLevel();
+    
+    $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
+    $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
+    $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
 });
+
+$("canvas")[0].addEventListener("click", function () {
+
+    var gameId = getParameterByName("gameId");
+    console.log("Doing post for game " + gameId + " to start the ball.");
+    fetch('level', {method: "POST", body: "gameId=" + gameId,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    }).then(function (response) {
+        console.log("Server started the game");
+    });
+
+});
+
+var responsivePaddle = function (paddle) {
+    paddle.width = (paddle.width / 300) * canvas.width;
+    paddle.height = (paddle.height / 300) * canvas.height;
+    return paddle;
+
+}
+
 function draw() {
     // initial values 300 x 300
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
 
     ctx.fillStyle = level.balldata.color;
-    
+
     // box2d draws circle from center
     ctx.arc(Math.round(level.balldata.x), Math.round(level.balldata.y), (level.balldata.width / 2), 0, 2 * Math.PI, false);
     ctx.fill();
-    
+
     level.brickdata.forEach(function (brick) {
         brick.draw(ctx);
     })
@@ -41,9 +67,14 @@ function draw() {
 
     ctx.fillStyle = level.paddledata.color;
     ctx.fillRect(level.paddledata.x, level.paddledata.y, level.paddledata.width, level.paddledata.height);
-    
-    
-    window.requestAnimationFrame(draw);
+
+    if (!level.allLevelsComplete) {
+        window.requestAnimationFrame(draw);
+    }
+    else {
+        console.log("Completed all levels");
+        // some code
+    }
 }
 
 function getMouseX(e) {

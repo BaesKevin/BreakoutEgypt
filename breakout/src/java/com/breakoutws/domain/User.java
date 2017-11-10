@@ -15,6 +15,9 @@ public class User {
     private String username;
     private String email;
     private String password;
+    public User(String username){
+        this(username, "","");
+    }
     public User(String username,String email,String password){
         this.setEmail(email);
         this.setPassword(password);
