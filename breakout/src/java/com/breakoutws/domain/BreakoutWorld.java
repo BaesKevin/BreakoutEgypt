@@ -5,6 +5,7 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.data.StaticDummyHighscoreRepo;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.IShape;
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ public class BreakoutWorld {
     private List<Body> bodiesToDestroy;
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
-
+    private List<BrickMessage> messages;
+    
     public BreakoutWorld(Level level) {
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
@@ -41,6 +43,7 @@ public class BreakoutWorld {
         world.setContactListener(new BreakoutContactListener(this));
 
         this.currentLevel = level;
+        messages = new ArrayList();
     }
 
     public World getWorld() {
@@ -66,21 +69,47 @@ public class BreakoutWorld {
         destroyBricks(bricks);
     }
 
-    public void destroyBricks(List<Brick> bodiesInRange) {
-        System.out.println("BreakoutWorld: destroying bodies");
-        String key;
+    public void destroyBricksInRange(Brick brickBody, int range) {
+        List<Brick> bodiesInRange = currentLevel.getRangeOfBricksAroundBody(brickBody, range);
+        String brickName;
         for (Brick brickBodyInRange : bodiesInRange) {
             if (!bodiesToDestroy.contains(brickBodyInRange.getBody())) {
-                key = brickBodyInRange.getName();
+                brickName = brickBodyInRange.getName();
                 currentLevel.removeBrick(brickBodyInRange);
                 bodiesToDestroy.add(brickBodyInRange.getBody());
-                keysOfBodiesToDestroy.add(key);
+                messages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
             }
         }
-        
+
         if (currentLevel.allTargetBricksDestroyed()) {
             System.out.println("BreakoutWorld: all brick destroyed");
+            currentLevel.getScoreTimer().stop();
+            
+            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
+            
+            Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration(), "hard");
+            dummyRepo.addScore(scoreOfPlayer);
+            System.out.println(dummyRepo.getRank(currentLevel.getId(), scoreOfPlayer));
+            
+            dummyRepo.getScoresByLevel(currentLevel.getId(), "hard");
             currentLevel.initNextLevel();
+        }
+    }
+
+    public void toggleBricks(List<Brick> switchBricks) {
+        for (Brick switchBrick : switchBricks) {
+            
+            switchBrick.toggle();
+            
+            BrickMessageType toggleType;
+            if(switchBrick.isSwitched()){
+                toggleType = BrickMessageType.SHOW;
+            } else {
+                toggleType = BrickMessageType.HIDE;
+            }
+            
+            messages.add(new BrickMessage(switchBrick.getName(), toggleType));
+            
         }
     }
 
@@ -88,12 +117,12 @@ public class BreakoutWorld {
         ballHitPaddle = true;
     }
 
-    public List<String> getKeysOfBodiesToDestroy() {
-        return keysOfBodiesToDestroy;
+    public List<BrickMessage> getBrickMessages() {
+        return messages;
     }
 
-    void clearKeysOfBodiesToDestroy() {
-        keysOfBodiesToDestroy.clear();
+    void clearBrickMessages() {
+        messages.clear();
     }
 
     // any changes to the world state must be made here to try to avoid concurrency issues where the game is 

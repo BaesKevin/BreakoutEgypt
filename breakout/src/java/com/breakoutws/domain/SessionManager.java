@@ -45,13 +45,14 @@ public class SessionManager {
         return gameSessions.size() == 0;
     }
     
-    public void notifyLevelComplete(Level currentLevel) {        
-        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel());        
+    public void notifyLevelComplete(Level currentLevel) {
+        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel(), currentLevel.getScoreTimer());        
         System.out.println("SessionManager: notifying of level complete");
         sendJsonToPlayers(json);       
     }
     
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
+       // System.out.println("SessionManager: sending json");
         json = createJson(currentLevel, simulation);
 
         sendJsonToPlayers(json);
@@ -72,10 +73,11 @@ public class SessionManager {
         return job.build();
     }
     
-    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel) {
+    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel, ScoreTimer t) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         
-        job.add("levelComplete", true);   
+        job.add("levelComplete", true);
+        job.add("scoreTimer", t.getDuration());
         job.add("isLastLevel", isLastLevel);
         return job.build();        
     }
@@ -87,25 +89,36 @@ public class SessionManager {
 
         Vec2 position = currentLevel.getBall().getPosition();
 
-        JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
+        JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();        
         brickkObjectBuilder.add("x", position.x);
-        brickkObjectBuilder.add("y", position.y);
-
+        brickkObjectBuilder.add("y", position.y);        
         job.add("ball", brickkObjectBuilder.build());
-
-        List<String> bodiesToDestroy = simulation.getKeysOfBodiesToDestroy();
-        if (0 < bodiesToDestroy.size()) {
-            JsonArrayBuilder jab = Json.createArrayBuilder();
-
-            for (String key : bodiesToDestroy) {
-                jab.add(key);
-            }
-
-            job.add("destroy", jab.build());
+        
+                
+        JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
+        boolean actionsToBeDone = false;
+        
+        List<BrickMessage> messages = simulation.getBrickMessages(); 
+        for (BrickMessage message : messages) {
+            actionsToBeDone = true;
+            JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
+            actionObjectBuilder.add("action", message.getMessageType().name().toLowerCase());
+            actionObjectBuilder.add("name", message.getName());
+            actionsArrayBuilder.add(actionObjectBuilder.build());
         }
-
-        simulation.clearKeysOfBodiesToDestroy();
-
+        simulation.clearBrickMessages();
+        
+        //BODIES to HIDE
+        
+        //BODIES to SHOW
+        
+        if ( actionsToBeDone ) {
+            job.add("actions", actionsArrayBuilder.build());       
+            System.out.println("SessoinManager: sending bodies to destroy");
+        }
+        
+        simulation.clearBrickMessages();
+        
         return job.build();
     }
 

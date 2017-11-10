@@ -91,7 +91,7 @@ public class Shape {
         this.color = color;
     }
 
-    public JsonObject toJson() {
+    public JsonObjectBuilder toJson() {
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
         brickkObjectBuilder.add("name", this.name);
         brickkObjectBuilder.add("x", this.posX);
@@ -99,6 +99,7 @@ public class Shape {
         brickkObjectBuilder.add("width", this.width);
         brickkObjectBuilder.add("height", this.height);
         brickkObjectBuilder.add("color", String.format("rgb(%d,%d,%d)", this.color.getRed(), this.color.getGreen(), this.color.getBlue()));
-        return brickkObjectBuilder.build();
+        return brickkObjectBuilder;
     }
+
 }

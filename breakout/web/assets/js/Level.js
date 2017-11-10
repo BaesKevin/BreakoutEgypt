@@ -2,7 +2,7 @@ var Level = function () {
     this.levelComplete = false;
     this.gameOver = false;
     this.allLevelsComplete = false;
-
+    this.level = 0;
     this.balldata = {x: 0, y: 0, radius: 0, color: 'rgb(0,0,0)'};
     this.brickdata = [];
     this.paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
@@ -21,6 +21,7 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
     this.balldata = balldata;
     this.paddledata = paddledata;
     this.lives = lives;
+    this.level = level;
     loadLives(lives);
     console.log("lives: " + this.lives);
 
@@ -29,9 +30,9 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
 Level.prototype.loadLevel = function () {
     console.log("load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
-    
+
     var self = this;
-    
+
     fetch('level?gameId=' + gameId).then(function (response) {
         var json = response.json();
         return json;
@@ -39,6 +40,7 @@ Level.prototype.loadLevel = function () {
         if (!response.error) {
             if (response.allLevelsComplete) {
                 console.log("Load level: got allLevelsComplete message");
+                modalAllLevelsCompleted(self.level, time);
                 self.allLevelsComplete = true;
             } else {
                 console.log("Load level: got data for level " + response.level);
@@ -47,7 +49,7 @@ Level.prototype.loadLevel = function () {
             }
         } else
         {
-            document.location = "/breakout/";
+//            document.location = "/breakout/";
             console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
         }
     }).then(function () {
@@ -59,7 +61,7 @@ Level.prototype.loadLevel = function () {
 
     }).catch(function (err) {
         websocket.close();
-        document.location = "/breakout?error=" + err;
+//        document.location = "/breakout?error=" + err;
     });
 };
 
@@ -78,14 +80,43 @@ Level.prototype.updateLevelData = function (json) {
 
     var self = this;
 
-    if (json.destroy) {
-        console.log("Received bricks to destroy");
-        json.destroy.forEach(function (key) {
-            if (key.includes("brick")) {
-                self.brickdata = self.brickdata.filter(function (brick) {
-                    return brick.name !== key;
-                });
+    if (json.actions) {
+        console.log("Received actions to perform on bricks");
+        
+        json.actions.forEach(function (message) {
+            switch (message.action) {
+                case "destroy":
+                    self.brickdata = self.brickdata.filter(function (brick) {
+                        return brick.name !== message.name;
+                    });
+                    break;
+                case "hide":
+                    console.log("Hide brick " + message.name);
+                    var brickToHide = self.brickdata.find(
+                            function(brick){ return message.name === brick.name}
+                    );
+            
+                    if(brickToHide){
+                        brickToHide.show = false;
+                    }
+                    break;
+                case "show":
+                    console.log("Show brick " + message.name);
+                    
+                    var brickToShow = self.brickdata.find(
+                            function(brick){ return message.name === brick.name}
+                    );
+                    
+                    if(brickToShow){
+                        brickToShow.show = true;
+                    }
+                            
+                    break;
+
             }
+
         });
     }
+
+
 };

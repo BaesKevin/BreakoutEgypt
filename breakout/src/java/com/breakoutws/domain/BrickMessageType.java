@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutws.domain.effects;
+package com.breakoutws.domain;
 
 /**
  *
  * @author kevin
  */
-public class AddBallEffect {
-    
+public enum BrickMessageType {
+    DESTROY, SHOW, HIDE
 }
