@@ -5,38 +5,51 @@
  */
 package com.breakoutws.domain.brickcollisionhandlers;
 
-import com.breakoutws.domain.BreakoutWorld;
+import com.breakoutws.domain.Level;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.BrickType;
-import org.jbox2d.dynamics.Fixture;
 
 /**
  *
  * @author kevin
  */
 public class BrickCollisionHandler {
-    private BreakoutWorld world;
+    private Level level;
     private Brick brick;
 
     
-    public BrickCollisionHandler(BreakoutWorld world, Brick brick) {
-        this.world = world;
+    public BrickCollisionHandler(Brick brick, Level level) {
         this.brick = brick;
+        this.level = level;
     }
     public void handleCollision() {
         // TODO do stuff based on bricktype
         BrickType brickType = brick.getBricktype();
         System.out.printf("BrickCollisionHandle: handleCollsion, bricktype: %s", brickType);
-        switch(brickType){
-            case EXPLOSIVE:
-                new ExplosiveCollision(world, brick, 1).handleCollsion();
-                break;
-            case UNBREAKABLE:
-                break;
-            default:
-                new RegularCollision(world, brick).handleCollsion();
-                break;
+        System.out.println("BrickCollisionHandler: isSwitched: " + brick.isSwitched());
+        if (brick.isSwitched()) {
+            switch(brickType){
+                case EXPLOSIVE:
+                    System.out.println("BrickCollisionHandler: explosive collision");
+                    new ExplosiveCollision(level, brick, 1).handleCollsion();
+                    break;
+                case UNBREAKABLE:
+                    System.out.println("BrickCollisionHandler: unbreakable collision");
+                    break;
+                case SWITCH:
+                    System.out.println("BrickCollisionHandler: switch Collision");
+                    new SwitchCollision(level, brick).handleCollsion();
+                    break;
+                default:
+                    System.out.println("BrickCollisionHandler: regular collision");
+                    new RegularCollision(level, brick).handleCollsion();
+                    break;
+            }
+        } else {
+            System.out.println("BrickCollisionHandler: collision with switched off brick, going through...");
         }
+            
+        
     }
 
 }

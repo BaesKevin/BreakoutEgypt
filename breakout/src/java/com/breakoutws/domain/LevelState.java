@@ -7,6 +7,7 @@ package com.breakoutws.domain;
 
 import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.BrickType;
 import com.breakoutws.domain.shapes.Paddle;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -81,6 +82,7 @@ public class LevelState {
     }
     
     void resetBall() {
+        
         Body ballBody = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
         ball.setBody(ballBody);
     }
@@ -104,7 +106,7 @@ public class LevelState {
         factory.addWall(0, 0, 300, 1); //roof 
     }
 
-    List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
+    public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
         List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();
         
@@ -117,7 +119,10 @@ public class LevelState {
                 currentBrickPosition = brick.getGridPosition();
                 System.out.println("Current brick: " + currentBrickPosition);
                 if(Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range ){
-                    bricksToRemove.add(brick);
+                    if(brick.isSwitched() && brick.getBrickType() != BrickType.SWITCH){
+                        bricksToRemove.add(brick);
+                    }
+                    
                 }
             }
         }

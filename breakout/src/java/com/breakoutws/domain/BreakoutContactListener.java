@@ -41,12 +41,12 @@ public class BreakoutContactListener implements ContactListener{
         
        if( brick != null  )
        {
-           new BrickCollisionHandler( world, brick).handleCollision();
+           new BrickCollisionHandler( brick, world.getLevel()).handleCollision();
        } 
        else if (isBallOutOfBounds)
        {
            // System.out.println("Ball is out of bounds");
-           world.resetBall();
+           world.getLevel().getBreakoutWorld().resetBall();
        }
     }
     
@@ -89,12 +89,27 @@ public class BreakoutContactListener implements ContactListener{
             world.ballHitPaddle();
         } else if ( data1 != null && data1 instanceof Paddle && 
                     data2 != null && data2 instanceof Ball){
-            world.ballHitPaddle();
+           world.ballHitPaddle();
         }
     }
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
+        Fixture f1 = contact.getFixtureA();
+        Fixture f2 = contact.getFixtureB();
+        
+        IShape s1 = (IShape) f1.getBody().getUserData();
+        IShape s2 = (IShape) f2.getBody().getUserData();
+        
+        Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
+        
+        if (brick != null && !brick.isSwitched()) {
+            System.out.println("BreakoutContactListener: contact false, brick is switched off");
+            contact.setEnabled(false);
+        }       
+        else {
+            System.out.println("BreakoutContactListener: contact true");
+        }
     }
 
     @Override

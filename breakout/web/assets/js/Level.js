@@ -47,9 +47,8 @@ Level.prototype.loadLevel = function () {
 
                 self.load(response.level, response.ball, response.bricks, response.paddle, response.lives);
             }
-        } else
-        {
-            document.location = "/breakout/";
+        } else {
+//            document.location = "/breakout/";
             console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
         }
     }).then(function () {
@@ -61,7 +60,7 @@ Level.prototype.loadLevel = function () {
 
     }).catch(function (err) {
         websocket.close();
-        document.location = "/breakout?error=" + err;
+//        document.location = "/breakout?error=" + err;
     });
 };
 
@@ -80,14 +79,47 @@ Level.prototype.updateLevelData = function (json) {
 
     var self = this;
 
-    if (json.destroy) {
-        console.log("Received bricks to destroy");
-        json.destroy.forEach(function (key) {
-            if (key.includes("brick")) {
-                self.brickdata = self.brickdata.filter(function (brick) {
-                    return brick.name !== key;
-                });
+    if (json.actions) {
+        console.log("Received actions to perform on bricks");
+
+        json.actions.forEach(function (message) {
+            switch (message.action) {
+                case "destroy":
+                    self.brickdata = self.brickdata.filter(function (brick) {
+                        return brick.name !== message.name;
+                    });
+                    break;
+                case "hide":
+                    console.log("Hide brick " + message.name);
+                    var brickToHide = self.brickdata.find(
+                            function (brick) {
+                                return message.name === brick.name
+                            }
+                    );
+
+                    if (brickToHide) {
+                        brickToHide.show = false;
+                    }
+                    break;
+                case "show":
+                    console.log("Show brick " + message.name);
+
+                    var brickToShow = self.brickdata.find(
+                            function (brick) {
+                                return message.name === brick.name
+                            }
+                    );
+
+                    if (brickToShow) {
+                        brickToShow.show = true;
+                    }
+
+                    break;
+
             }
+
         });
     }
+
+
 };

@@ -6,24 +6,28 @@
 package com.breakoutws.domain.brickcollisionhandlers;
 
 import com.breakoutws.domain.Level;
-import com.breakoutws.domain.effects.ExplosiveEffect;
+import com.breakoutws.domain.effects.ToggleEffect;
 import com.breakoutws.domain.shapes.Brick;
 
 /**
  *
- * @author kevin
+ * @author snc
  */
-public class RegularCollision {
+public class SwitchCollision {
     private Level level;
     private Brick brick;
 
-    public RegularCollision(Level level, Brick brick) {
+    public SwitchCollision(Level level, Brick brick) {
         this.level = level;
         this.brick = brick;
     }
     
     public void handleCollsion(){
-        System.out.println("RegularCollision: Handling regular collision");
-        level.handleExplosiveEffect(new ExplosiveEffect(brick, 0));
+        System.out.println("SwitchCollision: Handling switch collision");
+        
+        level.handleToggleEffect(new ToggleEffect(brick.getSwitchBricks()));
+        
+      
+        //world.destroyBrick(brick);
     }
 }

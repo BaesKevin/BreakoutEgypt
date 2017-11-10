@@ -6,6 +6,9 @@
 package com.breakoutws.domain.shapes;
 
 import java.awt.Point;
+import java.util.List;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /**
  *
@@ -15,15 +18,38 @@ public class Brick  extends RegularBody{
     private BrickType brickType;
     private boolean isTarget;
     private Point gridPosition;
+    private List<Brick> switchBricks;
+    private boolean isSwitched;
     
     public Brick(Shape s,  BrickType type, Point position){
-        this(s, type,position, false);
+        this(s, type,position, false, true);
     }
     
-    public Brick(Shape s, BrickType type,  Point gridPosition,boolean isTarget){
+    public Brick(Shape s, BrickType type,  Point gridPosition,boolean isTarget, boolean isSwitched){
         super(s);
         this.gridPosition = gridPosition;
         this.brickType = type;
+        this.isSwitched = isSwitched;
+    }
+    
+    public void setSwitchBricks(List<Brick> bricks) {
+        this.switchBricks = bricks;
+    }
+
+    public List<Brick> getSwitchBricks() {
+        return switchBricks;
+    }
+    
+    public void toggle() {
+        isSwitched = !isSwitched;
+    }
+    
+    public void setSwitched(boolean b) {
+        isSwitched = b;
+    }
+    
+    public boolean isSwitched() {
+        return isSwitched;
     }
 
     public BrickType getBricktype() {
@@ -56,6 +82,16 @@ public class Brick  extends RegularBody{
 
     public void setGridPosition(Point position) {
         this.gridPosition = position;
+    }
+    
+    public JsonObjectBuilder toJson(){
+        JsonObjectBuilder builder = getShape().toJson();
+        
+        builder.add("show", isSwitched);
+        builder.add("type", brickType.name());
+        builder.add("isTarget", isTarget());
+        
+        return builder;
     }
     
 //    public void accept(ShapeUser u){

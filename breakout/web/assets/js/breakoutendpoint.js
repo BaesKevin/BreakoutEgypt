@@ -4,6 +4,11 @@ var ctx = $("canvas")[0].getContext('2d');
 var level = new Level();
 var websocket = new ArcadeWebSocket();
 
+var brickImg = new Image();
+var personImg = new Image();
+var images = [brickImg, personImg];
+var brickPattern;
+
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
@@ -11,16 +16,32 @@ document.addEventListener("DOMContentLoaded", function () {
     mouse = {
         x: 0,
         y: canvas.height - 50
-    }
+    };
 
     $('canvas').on('mousemove', getMouseX);
 
-    level.loadLevel();
+    checkIfImagesLoaded();
+    brickImg.src = "assets/media/brick-wall.png";
+    personImg.src = "assets/media/person.png";
 
     $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
     $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
     $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
 });
+
+
+function checkIfImagesLoaded() {
+    var count = 0;
+    
+    images.forEach(function (img) {
+        img.onload = function () {
+            count++;
+            if (count === images.length) {
+                level.loadLevel();
+            }
+        }
+    })
+}
 
 $("canvas")[0].addEventListener("click", function () {
 
@@ -31,8 +52,7 @@ $("canvas")[0].addEventListener("click", function () {
             "Content-Type": "application/x-www-form-urlencoded"
         }
     }).then(function (response) {
-        console.log("levelPOST response::" + response);
-        console.debug(response);
+        console.log("Server started the game");
     });
 
 });
@@ -47,7 +67,7 @@ function draw() {
     // initial values 300 x 300
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
-
+    brickPattern = ctx.createPattern(brickImg, "repeat");
     ctx.shadowColor = "black";
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
@@ -90,5 +110,7 @@ function setPaddleX() {
     } else if (canvas.width - level.paddledata.width < level.paddledata.x) {
         level.paddledata.x = canvas.width - level.paddledata.width;
     }
+    
+    ctx.drawImage(personImg, mouse.x - personImg.width/3/2, level.paddledata.y + 15, personImg.width/3, personImg.height/3);
 
 }

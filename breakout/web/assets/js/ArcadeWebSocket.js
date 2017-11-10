@@ -32,7 +32,7 @@ function onOpen(evt) {
 }
 
 function onError(evt) {
-    console.error(evt.message);
+    console.error(evt);
 }
 
 function onMessage(evt) {
@@ -60,6 +60,7 @@ function onMessage(evt) {
 
         } else {
             level.updateLevelData(json);
+            //console.debug(json);
         }
     } else {
         handleLevelUpdateError(json);

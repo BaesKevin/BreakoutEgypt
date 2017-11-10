@@ -5,13 +5,14 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.effects.ExplosiveEffect;
+import com.breakoutws.domain.effects.ToggleEffect;
 import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jbox2d.dynamics.Body;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -106,7 +107,7 @@ public class Level extends TimerTask {
     public LevelState getLevelState(){
         return levelState;
     }
-
+    
     void resetBall() {
         System.out.println("LeveL: resetBall()");
         levelState.resetBall();
@@ -181,8 +182,17 @@ public class Level extends TimerTask {
         return levelState.getBricks();
     }
 
-    List<Brick> getRangeOfBricksAroundBody(Brick brick, int range) {
-        return levelState.getRangeOfBricksAroundBody(brick, range);
+    BreakoutWorld getBreakoutWorld() {
+        return breakoutWorld;
     }
+    
+    public void handleExplosiveEffect(ExplosiveEffect effect){
+        List<Brick> bricks = levelState.getRangeOfBricksAroundBody(effect.getCentreBrick(), effect.getRadius());
         
+        breakoutWorld.destroyBricks(bricks);
+    }
+
+    public void handleToggleEffect(ToggleEffect effect) {
+        breakoutWorld.toggleBricks( effect.getBricksToToggle() );
+    }
 }
