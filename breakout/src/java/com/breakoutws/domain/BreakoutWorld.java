@@ -5,6 +5,7 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.data.StaticDummyHighscoreRepo;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.IShape;
 import java.util.ArrayList;
@@ -76,6 +77,15 @@ public class BreakoutWorld {
 
         if (currentLevel.allTargetBricksDestroyed()) {
             System.out.println("BreakoutWorld: all brick destroyed");
+            currentLevel.getScoreTimer().stop();
+            
+            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
+            
+            Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration(), "hard");
+            dummyRepo.addScore(scoreOfPlayer);
+            System.out.println(dummyRepo.getRank(currentLevel.getId(), scoreOfPlayer));
+            
+            dummyRepo.getScoresByLevel(currentLevel.getId(), "hard");
             currentLevel.initNextLevel();
         }
     }

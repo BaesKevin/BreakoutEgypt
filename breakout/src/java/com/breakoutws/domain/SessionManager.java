@@ -45,8 +45,8 @@ public class SessionManager {
         return gameSessions.size() == 0;
     }
     
-    public void notifyLevelComplete(Level currentLevel) {        
-        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel());        
+    public void notifyLevelComplete(Level currentLevel) {
+        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel(), currentLevel.getScoreTimer());        
         System.out.println("SessionManager: notifying of level complete");
         sendJsonToPlayers(json);       
     }
@@ -73,10 +73,11 @@ public class SessionManager {
         return job.build();
     }
     
-    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel) {
+    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel, ScoreTimer t) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         
-        job.add("levelComplete", true);   
+        job.add("levelComplete", true);
+        job.add("scoreTimer", t.getDuration());
         job.add("isLastLevel", isLastLevel);
         return job.build();        
     }

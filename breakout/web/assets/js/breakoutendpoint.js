@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
     $('canvas').on('mousemove', getMouseX);
 
     level.loadLevel();
+    
+    $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
+    $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
+    $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
 });
 
 $("canvas")[0].addEventListener("click", function () {
@@ -38,6 +42,7 @@ var responsivePaddle = function (paddle) {
     return paddle;
 
 }
+
 function draw() {
     // initial values 300 x 300
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -59,8 +64,13 @@ function draw() {
     ctx.fillStyle = level.paddledata.color;
     ctx.fillRect(level.paddledata.x, level.paddledata.y, level.paddledata.width, level.paddledata.height);
 
-
-    window.requestAnimationFrame(draw);
+    if (!level.allLevelsComplete) {
+        window.requestAnimationFrame(draw);
+    }
+    else {
+        console.log("Completed all levels");
+        // some code
+    }
 }
 
 function getMouseX(e) {
