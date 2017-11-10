@@ -32,9 +32,9 @@ public class Level extends TimerTask {
 
     private boolean isLastLevel;
     private LevelState levelState;
-    
+
     private boolean levelStarted;
-    
+
     private ScoreTimer scoreTimer;
 
     public Level(int id, Game game) {
@@ -42,11 +42,11 @@ public class Level extends TimerTask {
         this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
-        
+
         this.levelStarted = false;
 
         scoreTimer = new ScoreTimer();
-        
+
         breakoutWorld = new BreakoutWorld(this);
     }
 
@@ -58,25 +58,27 @@ public class Level extends TimerTask {
     ) {
         this(id, game);
         levelState = new LevelState(breakoutWorld, ball, paddle, bricks);
-       
+
         this.lives = lives;
     }
-    
+
     public boolean isLevelStarted() {
         return levelStarted;
     }
-    
+
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;
     }
-    
+
     public void startBall() {
-        setLevelStarted(true);
-        scoreTimer.start();
-        getBall().setLinearVelocity(0, 100);
-        System.out.println("Level: startBall()");
+        if (!levelStarted) {
+            setLevelStarted(true);
+            scoreTimer.start();
+            getBall().setLinearVelocity(0, 100);
+            System.out.println("Level: startBall()");
+        }
     }
-    
+
     public void movePaddle(int x, int y) {
         if (!levelStarted) {
             float yPos = this.getBall().getPosition().y;
@@ -96,7 +98,7 @@ public class Level extends TimerTask {
     }
 
     public void addBall(Ball b) {
-       levelState.addBall(b);
+        levelState.addBall(b);
     }
 
     public int getId() {
@@ -104,16 +106,15 @@ public class Level extends TimerTask {
     }
 
     // SHOULD NOT BE USED, USE DELEGATION INSTEAD
-    public LevelState getLevelState(){
+    public LevelState getLevelState() {
         return levelState;
     }
-    
+
     void resetBall() {
         System.out.println("LeveL: resetBall()");
         levelState.resetBall();
-        
-        
-        lives--;        
+
+        lives--;
         game.notifyPlayersOfLivesLeft();
     }
 
@@ -166,11 +167,11 @@ public class Level extends TimerTask {
         return isLastLevel;
     }
 
-     public Paddle getPaddle() {
+    public Paddle getPaddle() {
         return levelState.getPaddle();
     }
 
-    public  void removeBrick(Brick brick) {
+    public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
     }
 
@@ -185,14 +186,14 @@ public class Level extends TimerTask {
     BreakoutWorld getBreakoutWorld() {
         return breakoutWorld;
     }
-    
-    public void handleExplosiveEffect(ExplosiveEffect effect){
+
+    public void handleExplosiveEffect(ExplosiveEffect effect) {
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(effect.getCentreBrick(), effect.getRadius());
-        
+
         breakoutWorld.destroyBricks(bricks);
     }
 
     public void handleToggleEffect(ToggleEffect effect) {
-        breakoutWorld.toggleBricks( effect.getBricksToToggle() );
+        breakoutWorld.toggleBricks(effect.getBricksToToggle());
     }
 }
