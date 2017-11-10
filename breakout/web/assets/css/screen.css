@@ -1,5 +1,6 @@
 body{
     background-color:#fecc33;
+    min-width:400px;
 }
 span{
     font-weight:bold;
@@ -53,7 +54,7 @@ main button{
 
 }
 #gameMain{
-    width:80%;
+    width:60%;
     padding:25px;
     background-color:#fecc66;
     margin-left:auto;
@@ -67,6 +68,7 @@ main button:hover{
 }
 #healthbar{
     float:right;
+    background-color:#fefe99;
 }
 #healthbar img{
     display:block;
@@ -74,9 +76,7 @@ main button:hover{
     height:60px;
     width:auto;
 }
-#level{
-    float:left;
-}
+
 #level span{
     font-size:20px;
 }

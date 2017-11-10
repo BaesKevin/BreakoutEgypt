@@ -8,13 +8,17 @@ document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
     level.paddledata.y = canvas.height - 50;
+    
+    level.xscaling = canvas.width / 300;
+    level.yscaling = canvas.height / 300;
+    console.log("xscaling: " + level.xscaling + " yscaling: " + level.yscaling);
+    
     mouse = {
         x: 0,
         y: canvas.height - 50
     }
-
     $('canvas').on('mousemove', getMouseX);
-
+    
     level.loadLevel();
     
     $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
