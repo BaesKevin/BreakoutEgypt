@@ -15,6 +15,10 @@ var modalChooseDifficulty=function(){
     buttons+="<form action='arcade' method='post'><input type='submit' class='btn' value='Hard'/></form>";
     printModal("Choose difficulty","Choose a difficulty please:",buttons);
 };
+var modalLogout=function(){
+    var buttons="<form action='logout' method='¨POST'><input type='submit' class='btn' value='Logout'/></form>";
+    printModal("Logout","Are you sure?",buttons);
+};
 var printModal=function(title,content,buttons){
     var modal="<div class='modal fade' id='modal'>";
     modal+="<div class='modal-dialog' role='document'>";
