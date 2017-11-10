@@ -5,8 +5,8 @@
  */
 package com.breakoutws.domain;
 
-import com.breakoutws.domain.effects.BrickRemoveEffect;
 import com.breakoutws.domain.effects.ExplosiveEffect;
+import com.breakoutws.domain.effects.ToggleEffect;
 import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
@@ -185,11 +185,6 @@ public class Level extends TimerTask {
     BreakoutWorld getBreakoutWorld() {
         return breakoutWorld;
     }
-        
-    
-    public void handleBrickRemoveEffect( BrickRemoveEffect effect ){
-        breakoutWorld.destroyBrick(effect.getBrick());
-    }
     
     public void handleExplosiveEffect(ExplosiveEffect effect){
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(effect.getCentreBrick(), effect.getRadius());
@@ -197,7 +192,7 @@ public class Level extends TimerTask {
         breakoutWorld.destroyBricks(bricks);
     }
 
-    public void handleAddBalleffect() {
-        
+    public void handleToggleEffect(ToggleEffect effect) {
+        breakoutWorld.toggleBricks( effect.getBricksToToggle() );
     }
 }

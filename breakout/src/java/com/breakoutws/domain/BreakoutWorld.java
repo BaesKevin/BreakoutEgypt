@@ -69,10 +69,9 @@ public class BreakoutWorld {
         destroyBricks(bricks);
     }
 
-    public void destroyBricksInRange(Brick brickBody, int range) {
-        List<Brick> bodiesInRange = currentLevel.getRangeOfBricksAroundBody(brickBody, range);
+    public void destroyBricks(List<Brick> bricks) {
         String brickName;
-        for (Brick brickBodyInRange : bodiesInRange) {
+        for (Brick brickBodyInRange : bricks) {
             if (!bodiesToDestroy.contains(brickBodyInRange.getBody())) {
                 brickName = brickBodyInRange.getName();
                 currentLevel.removeBrick(brickBodyInRange);

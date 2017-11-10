@@ -31,18 +31,18 @@ public class BrickCollisionHandler {
             switch(brickType){
                 case EXPLOSIVE:
                     System.out.println("BrickCollisionHandler: explosive collision");
-                    new ExplosiveCollision(world, brick, 1).handleCollsion();
+                    new ExplosiveCollision(level, brick, 1).handleCollsion();
                     break;
                 case UNBREAKABLE:
                     System.out.println("BrickCollisionHandler: unbreakable collision");
                     break;
                 case SWITCH:
                     System.out.println("BrickCollisionHandler: switch Collision");
-                    new SwitchCollision(world, brick).handleCollsion();
+                    new SwitchCollision(level, brick).handleCollsion();
                     break;
                 default:
                     System.out.println("BrickCollisionHandler: regular collision");
-                    new RegularCollision(world, brick).handleCollsion();
+                    new RegularCollision(level, brick).handleCollsion();
                     break;
             }
         } else {

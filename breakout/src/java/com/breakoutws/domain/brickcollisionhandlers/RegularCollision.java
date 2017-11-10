@@ -6,7 +6,7 @@
 package com.breakoutws.domain.brickcollisionhandlers;
 
 import com.breakoutws.domain.Level;
-import com.breakoutws.domain.effects.BrickRemoveEffect;
+import com.breakoutws.domain.effects.ExplosiveEffect;
 import com.breakoutws.domain.shapes.Brick;
 
 /**
@@ -24,6 +24,6 @@ public class RegularCollision {
     
     public void handleCollsion(){
         System.out.println("RegularCollision: Handling regular collision");
-        level.handleBrickRemoveEffect(new BrickRemoveEffect(brick));
+        level.handleExplosiveEffect(new ExplosiveEffect(brick, 0));
     }
 }

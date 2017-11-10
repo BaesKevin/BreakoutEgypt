@@ -20,7 +20,7 @@ public class ExplosiveCollision {
     private String shapeName;
     private int rangeToDestroy;
 
-    public ExplosiveCollision(Brick brick, int rangeToDestroy, Level level) {
+    public ExplosiveCollision(Level level, Brick brick, int rangeToDestroy) {
         this.level = level;
         this.brick = brick;
         this.rangeToDestroy = rangeToDestroy;

@@ -5,7 +5,8 @@
  */
 package com.breakoutws.domain.brickcollisionhandlers;
 
-import com.breakoutws.domain.BreakoutWorld;
+import com.breakoutws.domain.Level;
+import com.breakoutws.domain.effects.ToggleEffect;
 import com.breakoutws.domain.shapes.Brick;
 
 /**
@@ -13,18 +14,19 @@ import com.breakoutws.domain.shapes.Brick;
  * @author snc
  */
 public class SwitchCollision {
-    private BreakoutWorld world;
+    private Level level;
     private Brick brick;
 
-    public SwitchCollision(BreakoutWorld world, Brick brick) {
-        this.world = world;
+    public SwitchCollision(Level level, Brick brick) {
+        this.level = level;
         this.brick = brick;
     }
     
     public void handleCollsion(){
         System.out.println("SwitchCollision: Handling switch collision");
         
-        world.toggleBricks(brick.getSwitchBricks());
+        level.handleToggleEffect(new ToggleEffect(brick.getSwitchBricks()));
+        
       
         //world.destroyBrick(brick);
     }
