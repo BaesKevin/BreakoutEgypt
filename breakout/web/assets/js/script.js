@@ -4,13 +4,18 @@ var hours = 0;
 var minutes = 0;
 var seconds = 0;
 
-$(document).ready(function () {
-    $("#arcade").on("click", redirectToArcade);
-    $("#returnToMain").on("click", redirectToMainMenu);
-    $("#toMultiplayer").on("click", redirectToMultiplayer);
+$(document).ready(function(){
+    $("#arcade").on("click",redirectToArcade);
+    $("#logout").on("click",logout);
+    $("#returnToMain").on("click",redirectToMainMenu);
+    $("#toMultiplayer").on("click",redirectToMultiplayer);
     $("#toHighscores").on("click", redirectToHighscore);
-    $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
+    $("#modalPlaceholder").on("click","#returnToMain",redirectToMainMenu);
 });
+var logout=function(e){
+    e.preventDefault();
+    modalLogout();
+}
 
 var redirectToArcade = function (e) {
     e.preventDefault();

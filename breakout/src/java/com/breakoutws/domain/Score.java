@@ -28,7 +28,7 @@ public class Score implements Comparable<Score> {
     }
 
     public String getUser() {
-        return user.getName();
+        return user.getUsername();
     }
 
     public long getScore() {
@@ -56,7 +56,7 @@ public class Score implements Comparable<Score> {
 
     @Override
     public String toString() {        
-        return "Score{" + "level=" + level + ", user=" + user.getName() + ", score=" + score + "}\n";
+        return "Score{" + "level=" + level + ", user=" + user.getUsername() + ", score=" + score + "}\n";
     }
     
     public JsonObject toJson() {

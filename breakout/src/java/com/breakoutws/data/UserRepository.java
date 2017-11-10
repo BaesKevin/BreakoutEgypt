@@ -1,0 +1,20 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.breakoutws.data;
+
+import com.breakoutws.domain.User;
+import java.util.List;
+
+/**
+ *
+ * @author Bjarne Deketelaere
+ */
+public interface UserRepository {
+    public List<User> getUsers();
+    public void addUser(User user);
+    public boolean inList(User user);
+    public boolean alreadyExists(User user);
+}
