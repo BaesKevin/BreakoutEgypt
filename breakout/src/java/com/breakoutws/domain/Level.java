@@ -33,6 +33,8 @@ public class Level extends TimerTask {
     private LevelState levelState;
     
     private boolean levelStarted;
+    
+    private ScoreTimer scoreTimer;
 
     public Level(int id, Game game) {
 
@@ -42,7 +44,13 @@ public class Level extends TimerTask {
         
         this.levelStarted = false;
 
+        scoreTimer = new ScoreTimer();
+        
         breakoutWorld = new BreakoutWorld(this);
+    }
+
+    public ScoreTimer getScoreTimer() {
+        return scoreTimer;
     }
 
     public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
@@ -63,10 +71,11 @@ public class Level extends TimerTask {
     
     public void startBall() {
         setLevelStarted(true);
+        scoreTimer.start();
         getBall().setLinearVelocity(0, 100);
         System.out.println("Level: startBall()");
     }
-
+    
     public void movePaddle(int x, int y) {
         if (!levelStarted) {
             float yPos = this.getBall().getPosition().y;

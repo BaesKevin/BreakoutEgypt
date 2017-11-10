@@ -2,7 +2,7 @@ var Level = function () {
     this.levelComplete = false;
     this.gameOver = false;
     this.allLevelsComplete = false;
-
+    this.level = 0;
     this.balldata = {x: 0, y: 0, radius: 0, color: 'rgb(0,0,0)'};
     this.brickdata = [];
     this.paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
@@ -21,6 +21,7 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
     this.balldata = balldata;
     this.paddledata = paddledata;
     this.lives = lives;
+    this.level = level;
     loadLives(lives);
     console.log("lives: " + this.lives);
 
@@ -29,9 +30,9 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
 Level.prototype.loadLevel = function () {
     console.log("load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
-    
+
     var self = this;
-    
+
     fetch('level?gameId=' + gameId).then(function (response) {
         var json = response.json();
         return json;
@@ -39,6 +40,7 @@ Level.prototype.loadLevel = function () {
         if (!response.error) {
             if (response.allLevelsComplete) {
                 console.log("Load level: got allLevelsComplete message");
+                modalAllLevelsCompleted(self.level, time);
                 self.allLevelsComplete = true;
             } else {
                 console.log("Load level: got data for level " + response.level);
