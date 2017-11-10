@@ -7,11 +7,11 @@ package com.breakoutws.servlet;
 
 import com.breakoutws.domain.GameManager;
 import com.breakoutws.domain.Level;
-import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -91,7 +91,13 @@ public class LevelServlet extends HttpServlet {
         }
         job.add("bricks", jab);
         job.add("ball", level.getBall().getShape().toJson());
-        job.add("paddle", level.getPaddle().getShape().toJson());
+        
+        JsonArrayBuilder paddleBuilder = Json.createArrayBuilder();
+        List<Paddle> paddles = level.getPaddles();
+        for(int i = 0; i < paddles.size(); i++){
+            paddleBuilder.add( paddles.get(i).getShape().toJson().build());
+        }
+        job.add("paddles", paddleBuilder.build());
         job.add("level", level.getId());
         job.add("lives", level.getLives());
     }

@@ -10,6 +10,7 @@ import com.breakoutws.domain.effects.ToggleEffect;
 import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,10 +55,16 @@ public class Level extends TimerTask {
         return scoreTimer;
     }
 
+    
     public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
     ) {
+        this(id, game, ball, Arrays.asList(new Paddle[]{ paddle }), bricks, lives);
+    }
+    
+    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives
+    ) {
         this(id, game);
-        levelState = new LevelState(breakoutWorld, ball, paddle, bricks);
+        levelState = new LevelState(breakoutWorld, ball, paddles, bricks);
 
         this.lives = lives;
     }
@@ -167,8 +174,8 @@ public class Level extends TimerTask {
         return isLastLevel;
     }
 
-    public Paddle getPaddle() {
-        return levelState.getPaddle();
+    public List<Paddle> getPaddles() {
+        return levelState.getPaddles();
     }
 
     public void removeBrick(Brick brick) {

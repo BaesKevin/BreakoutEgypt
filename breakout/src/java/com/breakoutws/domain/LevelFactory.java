@@ -41,7 +41,9 @@ public class LevelFactory {
         System.out.printf("LevelFactory: Get level %d of %d", currentLevel, totalLevels);
 //        return getLevelWithUnbreakableAndExplosive();
 //        return getSimpleTestLevel(currentLevel);        
-        return getLevelWithSwitch();
+//        return getLevelWithSwitch();
+
+        return makePong();
     }
 
     public Level getNextLevel() {
@@ -174,6 +176,7 @@ public class LevelFactory {
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
+        
         Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
 
@@ -213,19 +216,36 @@ public class LevelFactory {
             bricks.get(i).getShape().setColor(Color.YELLOW);
             bricks.get(i).setSwitched(false);
         }
-        
+
         bricks.get(3).setBrickType(BrickType.EXPLOSIVE);
-        
+
         bricks.get(3).getShape().setColor(Color.RED);
         bricks.get(4).setType(BrickType.SWITCH);
         bricks.get(4).setSwitchBricks(
                 Arrays.asList(new Brick[]{
-                bricks.get(1), bricks.get(2), bricks.get(3)
-            })
+            bricks.get(1), bricks.get(2), bricks.get(3)
+        })
         );
 
         Level level = new Level(currentLevel, game, ball, paddle, bricks, 3);
 
         return level;
+    }
+
+    public Level makePong() {
+
+        Shape ballShape = new Shape("ball", 60, 150, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+
+        Paddle paddle = new Paddle(new Shape("paddle1", 45, 100, 100, 4, Color.BLUE));
+        Paddle paddle2 = new Paddle(new Shape("paddle2", 45, 250, 100, 4, Color.BLUE));
+        
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(paddle);
+        paddles.add(paddle2);
+        
+        Ball ball = new Ball(ballShape);
+        
+        return new Level(currentLevel, game, ball, paddles, new ArrayList<Brick>(), 3);
+
     }
 }

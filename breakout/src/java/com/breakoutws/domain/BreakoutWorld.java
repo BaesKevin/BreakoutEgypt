@@ -7,7 +7,7 @@ package com.breakoutws.domain;
 
 import com.breakoutws.data.StaticDummyHighscoreRepo;
 import com.breakoutws.domain.shapes.Brick;
-import com.breakoutws.domain.shapes.IShape;
+import com.breakoutws.domain.shapes.Paddle;
 import java.util.ArrayList;
 import java.util.List;
 import org.jbox2d.common.Vec2;
@@ -35,7 +35,7 @@ public class BreakoutWorld {
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
     private List<BrickMessage> messages;
-    
+
     public BreakoutWorld(Level level) {
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
@@ -53,14 +53,17 @@ public class BreakoutWorld {
     public void setLevel(Level level) {
         this.currentLevel = level;
     }
-    
-    public Level getLevel(  ){
+
+    public Level getLevel() {
         return currentLevel;
     }
 
     public void movePaddle(float x, float y) {
-        currentLevel.getPaddle().moveTo(x, y);
-//        System.out.println(currentLevel.getPaddle().getPosition().x);
+        List<Paddle> paddles = currentLevel.getPaddles();
+
+        for (Paddle p : paddles) {
+            p.moveTo(x, y);
+        }
     }
 
     public void destroyBrick(Brick brick) {
@@ -83,13 +86,13 @@ public class BreakoutWorld {
         if (currentLevel.allTargetBricksDestroyed()) {
             System.out.println("BreakoutWorld: all brick destroyed");
             currentLevel.getScoreTimer().stop();
-            
+
             StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
-            
+
             Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration(), "hard");
             dummyRepo.addScore(scoreOfPlayer);
             System.out.println(dummyRepo.getRank(currentLevel.getId(), scoreOfPlayer));
-            
+
             dummyRepo.getScoresByLevel(currentLevel.getId(), "hard");
             currentLevel.initNextLevel();
         }
@@ -97,18 +100,18 @@ public class BreakoutWorld {
 
     public void toggleBricks(List<Brick> switchBricks) {
         for (Brick switchBrick : switchBricks) {
-            
+
             switchBrick.toggle();
-            
+
             BrickMessageType toggleType;
-            if(switchBrick.isSwitched()){
+            if (switchBrick.isSwitched()) {
                 toggleType = BrickMessageType.SHOW;
             } else {
                 toggleType = BrickMessageType.HIDE;
             }
-            
+
             messages.add(new BrickMessage(switchBrick.getName(), toggleType));
-            
+
         }
     }
 
@@ -135,7 +138,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-            adjustBallDirection();
+//            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             currentLevel.setLevelStarted(false);
@@ -145,16 +148,16 @@ public class BreakoutWorld {
         }
     }
 
-    private void adjustBallDirection() {
-        float width = currentLevel.getPaddle().getShape().getWidth();
-        float adjustedX = currentLevel.getPaddle().getBody().getPosition().x - width / 2;
-        float relativeDistance = (currentLevel.getBall().getBody().getPosition().x - adjustedX) / width;
-
-        float newX = -100 + relativeDistance * 200;
-//        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
-        System.out.println("Adjust ball direction for: " + currentLevel.getBall().getName());
-        currentLevel.getBall().setLinearVelocity(newX, currentLevel.getBall().getLinearVelocity().y);
-    }
+//    private void adjustBallDirection() {
+//        float width = currentLevel.getPaddle().getShape().getWidth();
+//        float adjustedX = currentLevel.getPaddle().getBody().getPosition().x - width / 2;
+//        float relativeDistance = (currentLevel.getBall().getBody().getPosition().x - adjustedX) / width;
+//
+//        float newX = -100 + relativeDistance * 200;
+////        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
+//        System.out.println("Adjust ball direction for: " + currentLevel.getBall().getName());
+//        currentLevel.getBall().setLinearVelocity(newX, currentLevel.getBall().getLinearVelocity().y);
+//    }
 
     public World getBox2dWorld() {
         return world;

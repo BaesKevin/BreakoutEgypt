@@ -22,21 +22,25 @@ public class LevelState {
     
     private List<Brick> bricks;
     private Ball ball;
-    private Paddle paddle;
+    private List<Paddle> paddles;
     private Ball startingBall;
 
     private BodyFactory factory;
     private BreakoutWorld breakoutWorld;
 
-    public LevelState(BreakoutWorld breakoutWorld, Ball ball, Paddle paddle, List<Brick> bricks) {
+    public LevelState(BreakoutWorld breakoutWorld, Ball ball, List<Paddle> paddles, List<Brick> bricks) {
         this.bricks = new ArrayList();
+        this.paddles = new ArrayList();
         this.breakoutWorld = breakoutWorld;
         factory = new BodyFactory(breakoutWorld.getWorld());
 
+        
         createBounds();
         addBall(ball);
-        addPaddle(paddle);
 
+        for(Paddle paddle : paddles){
+            addPaddle(paddle);
+        }
         for (Brick brick : bricks) {
             addBrick(brick);
         }
@@ -46,7 +50,8 @@ public class LevelState {
     public void addPaddle(Paddle p) {
         Body paddleBody = factory.createPaddle(p);
         p.setBody(paddleBody);
-        paddle = p;
+        
+        paddles.add(p);
     }
 
     // TODO based on bricktype it might be necessary to do more here
@@ -73,8 +78,8 @@ public class LevelState {
         return ball;
     }
 
-    public Paddle getPaddle() {
-        return paddle;
+    public List<Paddle> getPaddles() {
+        return paddles;
     }
 
     public void removeBrick(Brick brick) {
