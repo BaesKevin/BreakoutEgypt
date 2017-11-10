@@ -5,14 +5,24 @@ var Level = function () {
     this.level = 0;
     this.balldata = {x: 0, y: 0, radius: 0, color: 'rgb(0,0,0)'};
     this.brickdata = [];
-    this.paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
+    this.paddles = [
+        {x:0, y:0, width: 0, height: 0, color: 'rgb(0,0,0)'}, 
+        {x:0, y:0, width: 0, height: 0, color: 'rgb(0,0,0)'}
+    ]
     this.lives = 0;
     this.xscaling = 1;
     this.yscaling = 1;
 };
 Level.prototype.defaultScale=function(){
     this.balldata=scaleObject(this.balldata,false);
-    this.paddledata=scaleObject(this.paddledata,false);
+    var scaledPaddles = [];
+    console.log("paddles in rescale");
+    console.log(this.paddles);
+    this.paddles.forEach(function(paddle){
+         scaledPaddles.push(scaleObject(paddle, false));
+    });
+    this.paddles = scaledPaddles;
+    
     for(var i=0;i<this.brickdata.length;i++){
         this.brickdata[i]=scaleBrick(this.brickdata[i],false);
     }
@@ -24,12 +34,21 @@ Level.prototype.reScale=function(width,height){
     this.yscaling=height/300;
     
     this.balldata=scaleObject(this.balldata,true);
-    this.paddledata=scaleObject(this.paddledata,true);
+    var scaledPaddles = [];
+    console.log("paddles in rescale");
+    console.log(this.paddles);
+    this.paddles.forEach(function(paddle){
+         scaledPaddles.push(scaleObject(paddle, true));
+    });
+    this.paddles = scaledPaddles;
+    
     for(var i=0;i<this.brickdata.length;i++){
         this.brickdata[i]=scaleBrick(this.brickdata[i],true);
     }
     
 }
+
+
 Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) {
 
     console.log("Load level: got data for level " + level);
@@ -39,7 +58,14 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
     })
     
     this.balldata = scaleObject(balldata,true);
-    this.paddledata = scaleObject(paddledata,true);
+    this.paddles = [];
+    paddledata.forEach(function(paddle){
+        self.paddles.push(scaleObject(paddle));
+    });
+    this.paddles.forEach(function(paddle){
+        console.log("%cPaddle: " + paddle.name,"color: green");
+    });
+    
     this.lives = lives;
     this.level = level;
     loadLives(lives);
@@ -100,9 +126,10 @@ var scaleBrick=function(brick,state){
 };
 Level.prototype.sendClientLevelState = function () {
     if (!this.levelComplete && !this.gameOver) {
+
         websocket.sendOverSocket(JSON.stringify({
-            x: xscale(this.paddledata.x, false) + xscale(this.paddledata.width, false) / 2,
-            y: yscale(this.paddledata.y, false)
+            x: xscale(this.paddles[1].x, false) + xscale(this.paddles[1].width, false) / 2,
+            y: yscale(this.paddles[1].y, false)
         }));
     }
 };

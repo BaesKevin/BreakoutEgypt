@@ -6,8 +6,7 @@ var websocket = new ArcadeWebSocket();
 
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
-    level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
-    level.paddledata.y = canvas.height - 50;
+    
     
     level.xscaling = canvas.width / 300;
     level.yscaling = canvas.height / 300;
@@ -65,8 +64,11 @@ function draw() {
     setPaddleX();
     level.sendClientLevelState();
 
-    ctx.fillStyle = level.paddledata.color;
-    ctx.fillRect(level.paddledata.x, level.paddledata.y, level.paddledata.width, level.paddledata.height);
+    level.paddles.forEach(function(paddle){
+        ctx.fillStyle = paddle.color;
+        ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    })
+    
 
     if (!level.allLevelsComplete) {
         window.requestAnimationFrame(draw);
@@ -84,12 +86,16 @@ function getMouseX(e) {
 }
 
 function setPaddleX() {
-    level.paddledata.x = mouse.x - level.paddledata.width / 2;
+    level.paddles.forEach(function(paddle){
+        paddle.x = mouse.x - paddle.width / 2;
 
-    if (level.paddledata.x < 0) {
-        level.paddledata.x = 0;
-    } else if (canvas.width - level.paddledata.width < level.paddledata.x) {
-        level.paddledata.x = canvas.width - level.paddledata.width;
-    }
+        if (paddle.x < 0) {
+            paddle.x = 0;
+        } else if (canvas.width - paddle.width < paddle.x) {
+            paddle.x = canvas.width - paddle.width;
+        }
+    });
+    
+
 
 }
