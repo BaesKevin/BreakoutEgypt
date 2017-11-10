@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     $('canvas').on('mousemove', getMouseX);
-
+    
     level.loadLevel();
 });
 function draw() {

@@ -4,23 +4,12 @@ var hours = 0;
 var minutes = 0;
 var seconds = 0;
 var scale=1;
+
 $(document).ready(function(){
     $("#arcade").on("click",redirectToArcade);
     $("#returnToMain").on("click",redirectToMainMenu);
     $("#toMultiplayer").on("click",redirectToMultiplayer);
     $("#modalPlaceholder").on("click","#returnToMain",redirectToMainMenu);
-});
-var resizeTimer;
-$(window).resize(function(e){
-    clearTimeout(resizeTimer);
-    resizeTimer=setTimeout(function(){
-        var gameMainWidth=$("#gameMain").width();
-        var canvas=$("canvas")[0];
-        canvas.width=gameMainWidth*0.8;
-        canvas.height=gameMainWidth*0.8;
-        level.reScale(canvas.width,canvas.height);
-    },400);
-    
 });
 
 var redirectToArcade=function(e){
