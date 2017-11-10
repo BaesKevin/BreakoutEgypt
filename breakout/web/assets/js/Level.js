@@ -29,9 +29,9 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
 Level.prototype.loadLevel = function () {
     console.log("load level for game  " + getParameterByName("gameId"));
     var gameId = getParameterByName("gameId");
-    
+
     var self = this;
-    
+
     fetch('level?gameId=' + gameId).then(function (response) {
         var json = response.json();
         return json;
@@ -47,7 +47,7 @@ Level.prototype.loadLevel = function () {
             }
         } else
         {
-            document.location = "/breakout/";
+//            document.location = "/breakout/";
             console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
         }
     }).then(function () {
@@ -59,7 +59,7 @@ Level.prototype.loadLevel = function () {
 
     }).catch(function (err) {
         websocket.close();
-        document.location = "/breakout?error=" + err;
+//        document.location = "/breakout?error=" + err;
     });
 };
 
@@ -79,26 +79,42 @@ Level.prototype.updateLevelData = function (json) {
     var self = this;
 
     if (json.actions) {
-        console.log("Received bricks to destroy");
-        console.log(json);
+        console.log("Received actions to perform on bricks");
         
-        json.actions.forEach(function (key) {
-            switch (key.action) {
+        json.actions.forEach(function (message) {
+            switch (message.action) {
                 case "destroy":
                     self.brickdata = self.brickdata.filter(function (brick) {
-                        return brick.name !== key.name;
+                        return brick.name !== message.name;
                     });
                     break;
                 case "hide":
-                    console.log("Level.js:updateLevelData -> should be hiding bricks here");
+                    console.log("Hide brick " + message.name);
+                    var brickToHide = self.brickdata.find(
+                            function(brick){ return message.name === brick.name}
+                    );
+            
+                    if(brickToHide){
+                        brickToHide.show = false;
+                    }
                     break;
-                
+                case "show":
+                    console.log("Show brick " + message.name);
                     
-                
+                    var brickToShow = self.brickdata.find(
+                            function(brick){ return message.name === brick.name}
+                    );
+                    
+                    if(brickToShow){
+                        brickToShow.show = true;
+                    }
+                            
+                    break;
+
             }
-           
+
         });
     }
-    
-   
+
+
 };

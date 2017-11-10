@@ -32,7 +32,7 @@ function onOpen(evt) {
 }
 
 function onError(evt) {
-    console.error(evt.message);
+    console.error(evt);
 }
 
 function onMessage(evt) {

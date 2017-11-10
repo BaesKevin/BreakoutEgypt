@@ -7,6 +7,8 @@ package com.breakoutws.domain.shapes;
 
 import java.awt.Point;
 import java.util.List;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /**
  *
@@ -80,6 +82,14 @@ public class Brick  extends RegularBody{
 
     public void setGridPosition(Point position) {
         this.gridPosition = position;
+    }
+    
+    public JsonObjectBuilder toJson(){
+        JsonObjectBuilder builder = getShape().toJson();
+        
+        builder.add("show", isSwitched);
+        
+        return builder;
     }
     
 //    public void accept(ShapeUser u){

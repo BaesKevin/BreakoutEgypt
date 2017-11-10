@@ -7,6 +7,7 @@ package com.breakoutws.domain;
 
 import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
+import com.breakoutws.domain.shapes.BrickType;
 import com.breakoutws.domain.shapes.Paddle;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -117,7 +118,10 @@ public class LevelState {
                 currentBrickPosition = brick.getGridPosition();
                 System.out.println("Current brick: " + currentBrickPosition);
                 if(Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range ){
-                    bricksToRemove.add(brick);
+                    if(brick.isSwitched() && brick.getBrickType() != BrickType.SWITCH){
+                        bricksToRemove.add(brick);
+                    }
+                    
                 }
             }
         }

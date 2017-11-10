@@ -24,9 +24,8 @@ public class SwitchCollision {
     public void handleCollsion(){
         System.out.println("SwitchCollision: Handling switch collision");
         
-        for (Brick switchBrick: brick.getSwitchBricks()) {
-            switchBrick.toggle();
-        }
+        world.toggleBricks(brick.getSwitchBricks());
+      
         //world.destroyBrick(brick);
     }
 }

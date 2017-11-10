@@ -87,7 +87,7 @@ public class LevelServlet extends HttpServlet {
 
     private void levelToJson(Level level, JsonArrayBuilder jab, JsonObjectBuilder job) {
         for (Brick brick : level.getBricks()) {
-            jab.add(brick.getShape().toJson());
+            jab.add(brick.toJson().build());
         }
         job.add("bricks", jab);
         job.add("ball", level.getBall().getShape().toJson());

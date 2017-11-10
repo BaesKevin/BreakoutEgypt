@@ -5,6 +5,9 @@
  */
 package com.breakoutws.domain.shapes;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
@@ -14,15 +17,15 @@ import org.jbox2d.dynamics.Body;
  */
 public class RegularBody implements IShape {
 
-       private Shape shape;
+    private Shape shape;
     private Body body;
-    
-    public RegularBody(Shape s){
+
+    public RegularBody(Shape s) {
         this.shape = s;
     }
-    
+
     @Override
-    public String getName(){
+    public String getName() {
         return shape.getName();
     }
 
@@ -41,14 +44,15 @@ public class RegularBody implements IShape {
     public void setBody(Body body) {
         this.body = body;
     }
-    
-    public void moveTo(float x, float y){
+
+    public void moveTo(float x, float y) {
         body.setTransform(new Vec2(x, y), 0);
     }
-    
-    public Vec2 getPosition(){
+
+    public Vec2 getPosition() {
         return body.getPosition();
     }
+
 
 //    @Override
 //    public void accept(ShapeUser u) {

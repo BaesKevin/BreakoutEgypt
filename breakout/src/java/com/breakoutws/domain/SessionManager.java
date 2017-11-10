@@ -97,14 +97,15 @@ public class SessionManager {
         JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
         boolean actionsToBeDone = false;
         
-        List<String> bodiesToDestroy = simulation.getKeysOfBodiesToDestroy(); 
-        for (String key: bodiesToDestroy) {
+        List<BrickMessage> messages = simulation.getBrickMessages(); 
+        for (BrickMessage message : messages) {
             actionsToBeDone = true;
             JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
-            actionObjectBuilder.add("action", "destroy");
-            actionObjectBuilder.add("name", key);
+            actionObjectBuilder.add("action", message.getMessageType().name().toLowerCase());
+            actionObjectBuilder.add("name", message.getName());
             actionsArrayBuilder.add(actionObjectBuilder.build());
         }
+        simulation.clearBrickMessages();
         
         //BODIES to HIDE
         
@@ -115,7 +116,8 @@ public class SessionManager {
             System.out.println("SessoinManager: sending bodies to destroy");
         }
         
-        simulation.clearKeysOfBodiesToDestroy();
+        simulation.clearBrickMessages();
+        
         return job.build();
     }
 
