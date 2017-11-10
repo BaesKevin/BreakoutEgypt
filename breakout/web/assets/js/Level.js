@@ -62,7 +62,7 @@ Level.prototype.loadLevel = function () {
                 self.allLevelsComplete = true;
             } else {
                 console.log("Load level: got data for level " + response.level);
-
+                loadLevelOnScreen(response.level);
                 self.load(response.level, response.ball, response.bricks, response.paddle, response.lives);
             }
         } else

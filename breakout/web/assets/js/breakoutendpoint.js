@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
         x: 0,
         y: canvas.height - 50
     }
-
     $('canvas').on('mousemove', getMouseX);
     
     level.loadLevel();
@@ -42,8 +41,8 @@ function draw() {
 
     ctx.fillStyle = level.paddledata.color;
     ctx.fillRect(level.paddledata.x, level.paddledata.y, level.paddledata.width, level.paddledata.height);
-
-
+    
+    
     window.requestAnimationFrame(draw);
 }
 

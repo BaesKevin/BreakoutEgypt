@@ -54,7 +54,7 @@ footer{
 
 }
 #gameMain{
-    width:70%;
+    width:60%;
     padding:25px;
     background-color:#fecc66;
     margin-left:auto;
@@ -68,6 +68,7 @@ footer{
 }
 #healthbar{
     float:right;
+    background-color:#fefe99;
 }
 #healthbar img{
     display:block;
@@ -75,9 +76,7 @@ footer{
     height:60px;
     width:auto;
 }
-#level{
-    float:left;
-}
+
 #level span{
     font-size:20px;
 }

@@ -35,6 +35,7 @@ var loadLives=function(lives){
     $("#healthbar").html(lifeImages);
 };
 var loadLevelOnScreen=function(levelnumber){
+    console.log("levelonscreen");
     $("#level").html("<p><span>Level: "+levelnumber+"</span></p>");
 };
 var incrSeconds=function(){
