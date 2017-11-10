@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
     $('canvas').on('mousemove', getMouseX);
 
     level.loadLevel();
+    
+    $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
+    $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
+    $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
 });
 
 $("canvas")[0].addEventListener("click", function() {

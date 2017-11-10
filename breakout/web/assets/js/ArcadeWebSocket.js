@@ -47,13 +47,16 @@ function onMessage(evt) {
         } else if (json.livesLeft) {
             console.log("Gameplay: livesLeft: " + json.livesLeft);
             loadLives(json.livesLeft);
-        } else if (json.levelComplete) {
+        } else if (json.levelComplete) {            
             console.log("Socket received message level complete");
             console.log("%cTime to complete this level: "  + json.scoreTimer, "background-color:blue;color:white;padding:5px;");
             console.log("You completed this level in " + scoreTimerFormatter(json.scoreTimer));
             level.levelComplete = true;
-
-            level.loadLevel();
+            
+            time = scoreTimerFormatter(json.scoreTimer);
+            modalLevelCompleted(level.level, scoreTimerFormatter(json.scoreTimer));
+            
+//            level.loadLevel();
 
         } else {
             level.updateLevelData(json);

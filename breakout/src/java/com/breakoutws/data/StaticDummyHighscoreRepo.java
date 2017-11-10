@@ -15,9 +15,9 @@ import java.util.List;
  *
  * @author BenDB
  */
-public class StaticDummyHighscoreRepo {
+public class StaticDummyHighscoreRepo implements HighscoreRepo {
     
-    private List<Score> scores;
+    private final List<Score> scores;
     
     public StaticDummyHighscoreRepo () {
         
@@ -25,27 +25,28 @@ public class StaticDummyHighscoreRepo {
         
         User dummy = new User("Ben");
         
-        scores.add(new Score(1, dummy, 2500));
-        scores.add(new Score(1, dummy, 4548));
-        scores.add(new Score(1, dummy, 2580));
-        scores.add(new Score(2, dummy, 48648));
-        scores.add(new Score(1, dummy, 2500));
-        scores.add(new Score(1, dummy, 25448));
-        scores.add(new Score(2, dummy, 25486));
-        scores.add(new Score(1, dummy, 12345));
-        scores.add(new Score(1, dummy, 486));
-        scores.add(new Score(2, dummy, 2560));
-        scores.add(new Score(1, dummy, 46));
-        scores.add(new Score(2, dummy, 8686));
-        scores.add(new Score(2, dummy, 486));
+        scores.add(new Score(1, dummy, 2500, "hard"));
+        scores.add(new Score(1, dummy, 4548, "hard"));
+        scores.add(new Score(1, dummy, 2580, "hard"));
+        scores.add(new Score(2, dummy, 48648, "hard"));
+        scores.add(new Score(1, dummy, 2500, "hard"));
+        scores.add(new Score(1, dummy, 25448, "hard"));
+        scores.add(new Score(2, dummy, 25486, "hard"));
+        scores.add(new Score(1, dummy, 12345, "hard"));
+        scores.add(new Score(1, dummy, 486, "hard"));
+        scores.add(new Score(2, dummy, 2560, "hard"));
+        scores.add(new Score(1, dummy, 46, "hard"));
+        scores.add(new Score(2, dummy, 8686, "hard"));
+        scores.add(new Score(2, dummy, 486, "hard"));
     }
     
-    public List<Score> getScoresByLevel(int levelID) {
+    @Override
+    public List<Score> getScoresByLevel(int levelID, String difficulty) {
         
         List<Score> scoresByLevel = new ArrayList();
         
         for (Score s : scores) {
-            if (s.getLevel() == levelID) {
+            if (s.getLevel() == levelID && s.getDifficulty().equals(difficulty)) {
                 scoresByLevel.add(s);
             }
         }
@@ -57,13 +58,15 @@ public class StaticDummyHighscoreRepo {
         return scoresByLevel;
     }
     
+    @Override
     public void addScore(Score s) {
         scores.add(s);
     }
     
+    @Override
     public int getRank(int levelID, Score s) {
         
-        List<Score> temp = getScoresByLevel(levelID);
+        List<Score> temp = getScoresByLevel(levelID, s.getDifficulty());
         return temp.indexOf(s) + 1;
         
     }

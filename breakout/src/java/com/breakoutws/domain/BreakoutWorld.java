@@ -79,11 +79,11 @@ public class BreakoutWorld {
             
             StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
             
-            Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration());
+            Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration(), "hard");
             dummyRepo.addScore(scoreOfPlayer);
             System.out.println(dummyRepo.getRank(currentLevel.getId(), scoreOfPlayer));
             
-            dummyRepo.getScoresByLevel(currentLevel.getId());
+            dummyRepo.getScoresByLevel(currentLevel.getId(), "hard");
             currentLevel.initNextLevel();
         }
     }

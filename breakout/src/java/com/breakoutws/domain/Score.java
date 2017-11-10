@@ -5,6 +5,10 @@
  */
 package com.breakoutws.domain;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 /**
  *
  * @author BenDB
@@ -14,15 +18,17 @@ public class Score implements Comparable<Score> {
     private int level;
     private User user;
     private long score;
+    private String difficulty;
     
-    public Score (int level, User user, long score) {   
+    public Score (int level, User user, long score, String difficulty) {   
         this.level = level;
         this.user = user;
-        this.score = score;   
+        this.score = score;
+        this.difficulty = difficulty;
     }
 
-    public User getUser() {
-        return user;
+    public String getUser() {
+        return user.getName();
     }
 
     public long getScore() {
@@ -31,6 +37,10 @@ public class Score implements Comparable<Score> {
     
     public int getLevel() {
         return level;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
     }
 
     @Override
@@ -47,6 +57,14 @@ public class Score implements Comparable<Score> {
     @Override
     public String toString() {        
         return "Score{" + "level=" + level + ", user=" + user.getName() + ", score=" + score + "}\n";
+    }
+    
+    public JsonObject toJson() {
+        JsonObjectBuilder scoreObjectBuilder = Json.createObjectBuilder();
+        scoreObjectBuilder.add("username", this.getUser());
+        scoreObjectBuilder.add("score", this.getScore());
+        scoreObjectBuilder.add("difficulty", this.getDifficulty());
+        return scoreObjectBuilder.build();
     }
     
 }
