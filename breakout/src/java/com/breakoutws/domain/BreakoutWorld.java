@@ -58,12 +58,13 @@ public class BreakoutWorld {
         return currentLevel;
     }
 
-    public void movePaddle(float x, float y) {
+    public void movePaddle(String name,float x, float y) {
         List<Paddle> paddles = currentLevel.getPaddles();
 
         for (Paddle p : paddles) {
-            p.moveTo(x, y);
-        }
+            if(p.getName().equals(name))
+                p.moveTo(x, y);
+            }
     }
 
     public void destroyBrick(Brick brick) {

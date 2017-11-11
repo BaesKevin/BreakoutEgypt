@@ -38,11 +38,13 @@ public class Game {
         return currentLevel;
     }
 
-    public void movePaddle(int x, int y) {
-        currentLevel.movePaddle(x, y);
+    public void movePaddle(Session s, int x, int y) {
+        MultiplayerPeer peer = manager.getPeerForSession(s);
+        
+        currentLevel.movePaddle( peer.getPaddleName(), x, y);
     }
 
-    public void addPlayer(Session peer) {
+    public void addPlayer(MultiplayerPeer peer) {
         manager.addPlayer(peer);
     }
 

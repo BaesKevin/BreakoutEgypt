@@ -26,23 +26,23 @@ import org.jbox2d.common.Vec2;
  */
 public class SessionManager {
 
-    private Set<Session> gameSessions;
+    private Set<MultiplayerPeer> peers;
     private JsonObject json;
 
     public SessionManager() {
-        gameSessions = Collections.synchronizedSet(new HashSet());
+        peers = Collections.synchronizedSet(new HashSet());
     }
 
-    public void addPlayer(Session peer) {
-        gameSessions.add(peer);
+    public void addPlayer(MultiplayerPeer peer) {
+        peers.add(peer);
     }
 
     public void removePlayer(Session peer) {
-        gameSessions.remove(peer);
+        peers.remove(peer);
     }
 
     public boolean hasNoPlayers() {
-        return gameSessions.size() == 0;
+        return peers.size() == 0;
     }
     
     public void notifyLevelComplete(Level currentLevel) {
@@ -124,14 +124,31 @@ public class SessionManager {
 
      private void sendJsonToPlayers(JsonObject json) {
         try {
-            for (Session peer : gameSessions) {
-                if (peer.isOpen()) {
-                    peer.getBasicRemote().sendObject(json);
+            for (MultiplayerPeer peer : peers) {
+                if (peer.getSession().isOpen()) {
+                    peer.getSession().getBasicRemote().sendObject(json);
                 }
             }
         } catch (IOException | EncodeException e) {
             e.printStackTrace();
         }
+    }
+
+    MultiplayerPeer getPeerForSession(Session s) {
+        MultiplayerPeer peerToFind = null;
+        
+        for(MultiplayerPeer peer : peers){
+            if(peer.getSession().equals(s)){
+                peerToFind = peer;
+                break;
+            }
+        }
+        
+        if( peerToFind == null ){
+            System.out.println("No peer found for session");
+        }
+        
+        return peerToFind;
     }
 
 }

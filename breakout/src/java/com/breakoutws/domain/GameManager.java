@@ -54,7 +54,7 @@ public class GameManager {
         games.get(gameId).stopLevel();        
     }
 
-    public void addPlayer(int gameId, Session peer) {
+    public void addPlayer(int gameId, MultiplayerPeer peer) {
         
         Game game = games.get(gameId);
         
