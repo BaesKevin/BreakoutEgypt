@@ -88,6 +88,8 @@ public class Brick  extends RegularBody{
         JsonObjectBuilder builder = getShape().toJson();
         
         builder.add("show", isSwitched);
+        builder.add("type", brickType.name());
+        builder.add("isTarget", isTarget());
         
         return builder;
     }

@@ -135,7 +135,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-            adjustBallDirection();
+//            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             currentLevel.setLevelStarted(false);

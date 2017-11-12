@@ -98,3 +98,7 @@ main button:hover{
 .clearfix:after{
     clear:both;
 }
+
+canvas {
+    background-image: url("../media/sandy-background2.jpg");
+}

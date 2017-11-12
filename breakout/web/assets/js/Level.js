@@ -10,36 +10,38 @@ var Level = function () {
     this.xscaling = 1;
     this.yscaling = 1;
 };
-Level.prototype.defaultScale=function(){
-    this.balldata=scaleObject(this.balldata,false);
-    this.paddledata=scaleObject(this.paddledata,false);
-    for(var i=0;i<this.brickdata.length;i++){
-        this.brickdata[i]=scaleBrick(this.brickdata[i],false);
+
+Level.prototype.defaultScale = function () {
+    this.balldata = scaleObject(this.balldata, false);
+    this.paddledata = scaleObject(this.paddledata, false);
+    for (var i = 0; i < this.brickdata.length; i++) {
+        this.brickdata[i] = scaleBrick(this.brickdata[i], false);
     }
-}
-Level.prototype.reScale=function(width,height){
+};
+
+Level.prototype.reScale = function (width, height) {
     console.log("RESCALE");
     this.defaultScale();
-    this.xscaling=width/300;
-    this.yscaling=height/300;
-    
-    this.balldata=scaleObject(this.balldata,true);
-    this.paddledata=scaleObject(this.paddledata,true);
-    for(var i=0;i<this.brickdata.length;i++){
-        this.brickdata[i]=scaleBrick(this.brickdata[i],true);
+    this.xscaling = width / 300;
+    this.yscaling = height / 300;
+
+    this.balldata = scaleObject(this.balldata, true);
+    this.paddledata = scaleObject(this.paddledata, true);
+    for (var i = 0; i < this.brickdata.length; i++) {
+        this.brickdata[i] = scaleBrick(this.brickdata[i], true);
     }
-    
-}
+};
+
 Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) {
 
     console.log("Load level: got data for level " + level);
     var self = this;
     brickdata.forEach(function (brickjson) {
-        self.brickdata.push(scaleBrick(brickjson,true));
-    })
-    
-    this.balldata = scaleObject(balldata,true);
-    this.paddledata = scaleObject(paddledata,true);
+        self.brickdata.push(scaleBrick(brickjson, true));
+    });
+
+    this.balldata = scaleObject(balldata, true);
+    this.paddledata = scaleObject(paddledata, true);
     this.lives = lives;
     this.level = level;
     loadLives(lives);
@@ -55,7 +57,12 @@ Level.prototype.loadLevel = function () {
 
     fetch('level?gameId=' + gameId).then(function (response) {
         var json = response.json();
-        return json;
+        var contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return json;
+        } else {
+            throw new Error(response.statusText);
+        }
     }).then(function (response) {
         if (!response.error) {
             if (response.allLevelsComplete) {
@@ -67,8 +74,7 @@ Level.prototype.loadLevel = function () {
                 loadLevelOnScreen(response.level);
                 self.load(response.level, response.ball, response.bricks, response.paddle, response.lives);
             }
-        } else
-        {
+        } else {
 //            document.location = "/breakout/";
             console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
         }
@@ -81,23 +87,26 @@ Level.prototype.loadLevel = function () {
 
     }).catch(function (err) {
         console.log("%c" + err, "background-color:red; color: white;padding:5px;");
+        modalErrorMessage(err);
         websocket.close();
-//        document.location = "/breakout?error=" + err;
     });
 };
-var scaleObject=function(object,state){
-    var scaleobj=object;
-    scaleobj.x=xscale(object.x,state);
-    scaleobj.y=yscale(object.y,state);
-    scaleobj.width=xscale(object.width,state);
-    scaleobj.height=yscale(object.height,state);
-    
+
+var scaleObject = function (object, state) {
+    var scaleobj = object;
+    scaleobj.x = xscale(object.x, state);
+    scaleobj.y = yscale(object.y, state);
+    scaleobj.width = xscale(object.width, state);
+    scaleobj.height = yscale(object.height, state);
+
     return scaleobj;
 };
-var scaleBrick=function(brick,state){
-    var scaledBrick = scaleObject(brick,state);
+
+var scaleBrick = function (brick, state) {
+    var scaledBrick = scaleObject(brick, state);
     return new Brick(scaledBrick);
 };
+
 Level.prototype.sendClientLevelState = function () {
     if (!this.levelComplete && !this.gameOver) {
         websocket.sendOverSocket(JSON.stringify({
@@ -115,7 +124,7 @@ Level.prototype.updateLevelData = function (json) {
 
     if (json.actions) {
         console.log("Received actions to perform on bricks");
-        
+
         json.actions.forEach(function (message) {
             switch (message.action) {
                 case "destroy":
@@ -126,45 +135,46 @@ Level.prototype.updateLevelData = function (json) {
                 case "hide":
                     console.log("Hide brick " + message.name);
                     var brickToHide = self.brickdata.find(
-                            function(brick){ return message.name === brick.name}
+                            function (brick) {
+                                return message.name === brick.name
+                            }
                     );
-            
-                    if(brickToHide){
+                    if (brickToHide) {
                         brickToHide.show = false;
                     }
                     break;
                 case "show":
                     console.log("Show brick " + message.name);
-                    
+
                     var brickToShow = self.brickdata.find(
-                            function(brick){ return message.name === brick.name}
+                            function (brick) {
+                                return message.name === brick.name
+                            }
                     );
-                    
-                    if(brickToShow){
+
+                    if (brickToShow) {
                         brickToShow.show = true;
                     }
-                            
                     break;
-
             }
-
         });
     }
-
-
 };
 
-function xscale(value, isIncoming){
-    if(isIncoming){
+function xscale(value, isIncoming) {
+    if (isIncoming) {
         return value * level.xscaling;
     } else {
         return value / level.xscaling;
     }
 }
-function yscale(value, isIncoming){
-    if(isIncoming){
+;
+
+function yscale(value, isIncoming) {
+    if (isIncoming) {
         return value * level.yscaling;
     } else {
         return value / level.yscaling;
     }
 }
+;
