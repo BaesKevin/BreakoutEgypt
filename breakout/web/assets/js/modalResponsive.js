@@ -33,6 +33,16 @@ var modalChooseDifficulty = function () {
     printModal("Choose difficulty", "Choose a difficulty please:", buttons);
 };
 
+var modalErrorMessage = function (reason) {
+    var buttons = "<button id='mainMenuModalButton' class='btn'>Take me there</button>";
+    var title = "Oops! Something went horribly wrong...";
+    var message = "We are sorry for this inconvenience. Only thing to do now is to go back to the mainpage."
+    if (reason !== null && reason !== undefined) {
+        message += "<br/><br/>" + reason;
+    }
+    printModal(title, message, buttons);
+}
+
 var printModal = function (title, content, buttons) {
     var modal = "<div class='modal fade' id='modal'>";
     modal += "<div class='modal-dialog' role='document'>";

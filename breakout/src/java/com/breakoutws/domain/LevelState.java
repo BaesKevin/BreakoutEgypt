@@ -44,7 +44,8 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-        Body paddleBody = factory.createPaddle(p);
+//        Body paddleBody = factory.createPaddle(p);
+        Body paddleBody = factory.createDomePaddle(p);
         p.setBody(paddleBody);
         paddle = p;
     }

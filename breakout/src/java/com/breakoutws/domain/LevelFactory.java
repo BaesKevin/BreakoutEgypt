@@ -170,7 +170,7 @@ public class LevelFactory {
     }
 
     public Level getLevelWithSwitch() {
-        Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
+        Shape paddleShape = new Shape("paddle", 45, 275, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);

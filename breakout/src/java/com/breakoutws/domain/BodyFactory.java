@@ -20,18 +20,20 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 /**
- * Creates Box2d Body objects and adds them to the world.  
+ * Creates Box2d Body objects and adds them to the world.
+ *
  * @author kevin
  */
 public class BodyFactory {
+
     private World world;
     public static final int BALL_RADIUS = 8;
-    
-    public BodyFactory(World world){
+
+    public BodyFactory(World world) {
         this.world = world;
     }
-    
-    public Body createTriangle(Brick b){
+
+    public Body createTriangle(Brick b) {
         Shape s = b.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.STATIC;
@@ -39,54 +41,83 @@ public class BodyFactory {
         PolygonShape ps = new PolygonShape();
 
         Vec2[] vertices = new Vec2[3];
-        vertices[0] = new Vec2(s.getWidth()/2, 0);
+        vertices[0] = new Vec2(s.getWidth() / 2, 0);
         vertices[1] = new Vec2(0, s.getHeight());
         vertices[2] = new Vec2(s.getWidth(), s.getHeight());
         ps.set(vertices, 3);
-        
+
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
         fd.shape = ps;
         fd.density = 0.6f;
-        fd.friction = 0f;        
+        fd.friction = 0f;
         fd.restitution = 1f;
-        
+
         /**
-        * Virtual invisible JBox2D body of ball. Bodies have velocity and position. 
-        * Forces, torques, and impulses can be applied to these bodies.
-        */
+         * Virtual invisible JBox2D body of ball. Bodies have velocity and
+         * position. Forces, torques, and impulses can be applied to these
+         * bodies.
+         */
         Body body = world.createBody(bd);
         body.createFixture(fd);
         body.setUserData(b);
         return body;
     }
-    
-    public Body createPaddle(Paddle paddle){
+
+    public Body createPaddle(Paddle paddle) {
         Shape s = paddle.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.KINEMATIC;
         bd.position.set(s.getPosX(), s.getPosY());
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(s.getWidth() / 2, s.getHeight() /2);
-        
+        ps.setAsBox(s.getWidth() / 2, s.getHeight() / 2);
+
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
         fd.shape = ps;
         fd.density = 0.6f;
-        fd.friction = 0f;        
+        fd.friction = 0f;
         fd.restitution = 1f;
-        
+
         /**
-        * Virtual invisible JBox2D body of ball. Bodies have velocity and position. 
-        * Forces, torques, and impulses can be applied to these bodies.
-        */
+         * Virtual invisible JBox2D body of ball. Bodies have velocity and
+         * position. Forces, torques, and impulses can be applied to these
+         * bodies.
+         */
         Body body = world.createBody(bd);
         body.createFixture(fd);
         body.setUserData(paddle);
         return body;
     }
-    
-    public Body createCircle(Ball ball){
+
+    public Body createDomePaddle(Paddle paddle) {
+        Shape s = paddle.getShape();
+
+        //        long radius = (s.getHeight() / 2) + (s.getWidth() * (s.getWidth() / 8 * s.getHeight()));
+        long radius = s.getWidth() / 2;
+
+        BodyDef bd = new BodyDef();
+        bd.type = BodyType.KINEMATIC;
+        bd.position.set(s.getPosX(), s.getPosY() + s.getHeight());
+        CircleShape newDomePaddle = new CircleShape();
+
+        System.out.println("radius: " + radius);
+        newDomePaddle.m_radius = radius;
+//        newDomePaddle.m_p.y = radius / 2;
+        FixtureDef fd = new FixtureDef();
+        fd.shape = newDomePaddle;
+        fd.density = 0.6f;
+        fd.friction = 0f;
+        fd.restitution = 1f;
+
+        Body body = world.createBody(bd);
+        body.createFixture(fd);
+        body.setUserData(paddle);
+
+        return body;
+    }
+
+    public Body createCircle(Ball ball) {
         Shape s = ball.getShape();
         BodyDef bd = new BodyDef();
         bd.type = BodyType.DYNAMIC;
@@ -95,26 +126,26 @@ public class BodyFactory {
         bd.linearVelocity.y = 0;
         CircleShape cs = new CircleShape();
         cs.m_radius = s.getWidth() / 2;
-        
-        
+
         // Create a fixture for ball
         FixtureDef fd = new FixtureDef();
         fd.shape = cs;
         fd.density = 0.6f;
-        fd.friction = 0f;        
+        fd.friction = 0f;
         fd.restitution = 1f;
-        
+
         /**
-        * Virtual invisible JBox2D body of ball. Bodies have velocity and position. 
-        * Forces, torques, and impulses can be applied to these bodies.
-        */
+         * Virtual invisible JBox2D body of ball. Bodies have velocity and
+         * position. Forces, torques, and impulses can be applied to these
+         * bodies.
+         */
         Body body = world.createBody(bd);
         body.createFixture(fd);
         body.setUserData(ball);
         return body;
     }
-    
-    public void addGround(float y, int width ) {
+
+    public void addGround(float y, int width) {
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(width, 1);
 

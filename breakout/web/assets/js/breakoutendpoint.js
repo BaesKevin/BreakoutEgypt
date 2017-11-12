@@ -3,21 +3,27 @@ var ctx = $("canvas")[0].getContext('2d');
 
 var level = new Level();
 var websocket = new ArcadeWebSocket();
-
 var brickImg = new Image();
 var personImg = new Image();
-var images = [brickImg, personImg];
 var brickPattern;
+
+//var images = [brickImg, personImg];
+//var imageSrc = ["assets/media/person.png", "assets/media/brick-wall.png"]
+
+var imageAssets = [
+    {image: personImg, src: "assets/media/person.png"},
+    {image: brickImg, src: "assets/media/brick-wall.png"}
+]
 
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
     level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
     level.paddledata.y = canvas.height - 50;
-    
+
     level.xscaling = canvas.width / 300;
     level.yscaling = canvas.height / 300;
     console.log("xscaling: " + level.xscaling + " yscaling: " + level.yscaling);
-    
+
     mouse = {
         x: 0,
         y: canvas.height - 50
@@ -25,27 +31,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $('canvas').on('mousemove', getMouseX);
 
-    checkIfImagesLoaded();
-    brickImg.src = "assets/media/brick-wall.png";
-    personImg.src = "assets/media/person.png";
+    loadImages().then(function () {
+        level.loadLevel();
+    }).catch(function (err) {
+        console.log(err);
+    });
 
     $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
     $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
     $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
 });
 
+function loadImages() {
+    var sequence = Promise.resolve();
 
-function checkIfImagesLoaded() {
-    var count = 0;
-    
-    images.forEach(function (img) {
+    return imageAssets.reduce(function (sequence, image) {
+        return sequence.then(function () {
+            return getImage(image.image, image.src);
+        })
+    }, Promise.resolve());
+}
+
+function getImage(img, src) {
+    return new Promise(function (resolve, reject) {
         img.onload = function () {
-            count++;
-            if (count === images.length) {
-                level.loadLevel();
-            }
-        }
-    })
+            resolve(src);
+        };
+        img.src = src;
+        img.onerror = function (err) {
+            reject(err);
+        };
+    });
 }
 
 $("canvas")[0].addEventListener("click", function () {
@@ -85,19 +101,20 @@ function draw() {
 
     level.brickdata.forEach(function (brick) {
         brick.draw(ctx);
-    })
+    });
 
     setPaddleX();
     level.sendClientLevelState();
 
-    ctx.fillStyle = level.paddledata.color;
-    ctx.fillRect(level.paddledata.x, level.paddledata.y, level.paddledata.width, level.paddledata.height);
+    ctx.strokeStyle = level.paddledata.color;
+    ctx.beginPath();
+    ctx.arc(level.paddledata.x + level.paddledata.width / 2, level.paddledata.y, level.paddledata.width / 2, 1 * Math.PI, 2 * Math.PI);
+    ctx.stroke();
 
     if (!level.allLevelsComplete) {
         window.requestAnimationFrame(draw);
     } else {
         console.log("Completed all levels");
-        // some code
     }
 }
 
@@ -115,7 +132,7 @@ function setPaddleX() {
     } else if (canvas.width - level.paddledata.width < level.paddledata.x) {
         level.paddledata.x = canvas.width - level.paddledata.width;
     }
-    
-    ctx.drawImage(personImg, mouse.x - personImg.width/3/2, level.paddledata.y + 15, personImg.width/3, personImg.height/3);
+
+    ctx.drawImage(personImg, mouse.x - personImg.width / 2, level.paddledata.y);
 
 }
