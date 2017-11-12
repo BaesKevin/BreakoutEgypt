@@ -36,9 +36,8 @@ function onError(evt) {
 }
 
 function onMessage(evt) {
-    var json;
     try {
-        json = JSON.parse("evt.data");
+        var json = JSON.parse(evt.data);
 
         if (json && !json.error) {
 
