@@ -5,30 +5,21 @@
  */
 package com.breakoutws.domain;
 
+import com.breakoutws.domain.shapes.Paddle;
 import javax.websocket.Session;
 
 /**
  *
  * @author kevin
  */
-public class MultiplayerPeer {
-    private Session session;
+public class Player {
     private User user;
-    private String paddleName;
+    private Paddle paddle;
     
-    public MultiplayerPeer(Session session, User user){
-        this.session = session;
+    public Player(User user){
         this.user = user;
     }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
-    }
-
+    
     public User getUser() {
         return user;
     }
@@ -37,12 +28,12 @@ public class MultiplayerPeer {
         this.user = user;
     }
 
-    public String getPaddleName() {
-        return paddleName;
+    public Paddle getPaddle() {
+        return paddle;
     }
 
-    public void setPaddleName(String paddleName) {
-        this.paddleName = paddleName;
+    public void setPaddle(Paddle paddle) {
+        this.paddle = paddle;
     }
     
     

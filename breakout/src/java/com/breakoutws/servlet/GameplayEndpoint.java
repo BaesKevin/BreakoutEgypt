@@ -7,7 +7,7 @@ package com.breakoutws.servlet;
 
 import com.breakoutws.domain.Game;
 import com.breakoutws.domain.GameManager;
-import com.breakoutws.domain.MultiplayerPeer;
+import com.breakoutws.domain.Player;
 import com.breakoutws.domain.User;
 import com.breakoutws.servlet.util.JsonMoveCommand;
 import com.breakoutws.servlet.util.MoveCommandDecoder;
@@ -42,9 +42,8 @@ public class GameplayEndpoint {
         
         game = gm.getGame(gameId);
         
-        MultiplayerPeer player = new MultiplayerPeer(peer, new User("player"));
-        player.setPaddleName("paddle1");
-        gm.addPlayer(gameId, player);
+        Player player = new Player(new User("player"));
+        gm.addPlayer(gameId, peer, player);
     }
 
     @OnClose

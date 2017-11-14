@@ -6,6 +6,7 @@
 package com.breakoutws.domain;
 
 import com.breakoutws.data.StaticDummyHighscoreRepo;
+import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class BreakoutWorld {
     private boolean ballHitPaddle = false;
     private List<BrickMessage> messages;
 
+    private Ball ballToChangeDirectionOff;
+    private Paddle paddleHitByBall;
+    
     public BreakoutWorld(Level level) {
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
@@ -56,15 +60,6 @@ public class BreakoutWorld {
 
     public Level getLevel() {
         return currentLevel;
-    }
-
-    public void movePaddle(String name,float x, float y) {
-        List<Paddle> paddles = currentLevel.getPaddles();
-
-        for (Paddle p : paddles) {
-            if(p.getName().equals(name))
-                p.moveTo(x, y);
-            }
     }
 
     public void destroyBrick(Brick brick) {
@@ -116,8 +111,10 @@ public class BreakoutWorld {
         }
     }
 
-    void ballHitPaddle() {
+    void ballHitPaddle(Ball ball, Paddle paddle) {
         ballHitPaddle = true;
+        ballToChangeDirectionOff = ball;
+        paddleHitByBall = paddle;
     }
 
     public List<BrickMessage> getBrickMessages() {
@@ -139,7 +136,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-//            adjustBallDirection();
+            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             currentLevel.setLevelStarted(false);
@@ -149,16 +146,15 @@ public class BreakoutWorld {
         }
     }
 
-//    private void adjustBallDirection() {
-//        float width = currentLevel.getPaddle().getShape().getWidth();
-//        float adjustedX = currentLevel.getPaddle().getBody().getPosition().x - width / 2;
-//        float relativeDistance = (currentLevel.getBall().getBody().getPosition().x - adjustedX) / width;
-//
-//        float newX = -100 + relativeDistance * 200;
-////        System.out.printf("Relative position: %f, newx: %f", relativeDistance,newX);
-//        System.out.println("Adjust ball direction for: " + currentLevel.getBall().getName());
-//        currentLevel.getBall().setLinearVelocity(newX, currentLevel.getBall().getLinearVelocity().y);
-//    }
+    private void adjustBallDirection() {
+        float width = paddleHitByBall.getShape().getWidth();
+        float adjustedX = paddleHitByBall.getBody().getPosition().x - width / 2;
+        float relativeDistance = (ballToChangeDirectionOff.getBody().getPosition().x - adjustedX) / width;
+
+        float newX = -100 + relativeDistance * 200;
+//        System.out.printf("New ball direction: (%f,%f)", newX, ballToChangeDirectionOff.getLinearVelocity().y);
+        ballToChangeDirectionOff.setLinearVelocity(newX, ballToChangeDirectionOff.getLinearVelocity().y);
+    }
 
     public World getBox2dWorld() {
         return world;

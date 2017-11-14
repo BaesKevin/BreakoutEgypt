@@ -62,9 +62,6 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
     paddledata.forEach(function(paddle){
         self.paddles.push(scaleObject(paddle));
     });
-    this.paddles.forEach(function(paddle){
-        console.log("%cPaddle: " + paddle.name,"color: green");
-    });
     
     this.lives = lives;
     this.level = level;
@@ -128,8 +125,8 @@ Level.prototype.sendClientLevelState = function () {
     if (!this.levelComplete && !this.gameOver) {
 
         websocket.sendOverSocket(JSON.stringify({
-            x: xscale(this.paddles[1].x, false) + xscale(this.paddles[1].width, false) / 2,
-            y: yscale(this.paddles[1].y, false)
+            x: xscale(this.paddles[0].x, false) + xscale(this.paddles[0].width, false) / 2,
+            y: yscale(this.paddles[0].y, false)
         }));
     }
 };

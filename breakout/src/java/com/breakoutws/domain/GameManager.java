@@ -19,8 +19,8 @@ public class GameManager {
 
     private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
        
-    public int createGame(){
-        Game game = new Game();
+    public int createGame(int numberOfPlayers, GameType type){
+        Game game = new Game(numberOfPlayers, type);
         
         games.put(game.getId(), game);
                
@@ -54,12 +54,12 @@ public class GameManager {
         games.get(gameId).stopLevel();        
     }
 
-    public void addPlayer(int gameId, MultiplayerPeer peer) {
+    public void addPlayer(int gameId, Session peer, Player player) {
         
         Game game = games.get(gameId);
         
         if(game!=null)
-            game.addPlayer(peer);
+            game.addPlayer(peer, player);
         else
             System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }

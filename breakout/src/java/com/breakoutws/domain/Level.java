@@ -86,12 +86,13 @@ public class Level extends TimerTask {
         }
     }
 
-    public void movePaddle(String name,int x, int y) {
+    public void movePaddle(Paddle paddle,int x, int y) {
         if (!levelStarted) {
             float yPos = this.getBall().getPosition().y;
             this.getBall().moveTo(x, yPos);
         }
-        breakoutWorld.movePaddle(name, x, y);
+        
+        paddle.moveTo(x, y);
     }
 
     public void addPaddle(Paddle p) {

@@ -6,11 +6,12 @@
 package com.breakoutws.domain;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
@@ -25,24 +26,43 @@ import org.jbox2d.common.Vec2;
  * @author kevin
  */
 public class SessionManager {
-
-    private Set<MultiplayerPeer> peers;
+    private int maxPlayers;
+    private Map<Session, Player> playerSessions;
     private JsonObject json;
-
+    
     public SessionManager() {
-        peers = Collections.synchronizedSet(new HashSet());
+        this(1);
+    }
+    
+    public SessionManager(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+        playerSessions = Collections.synchronizedMap(new HashMap());
+    }
+    
+    public Player getPlayer(Session session){
+        return playerSessions.get(session);
     }
 
-    public void addPlayer(MultiplayerPeer peer) {
-        peers.add(peer);
+    public void addPlayer(Session session, Player player) {
+        if(playerSessions.size() < maxPlayers){
+            playerSessions.put(session, player);
+        }
     }
 
     public void removePlayer(Session peer) {
-        peers.remove(peer);
+        playerSessions.remove(peer);
     }
 
     public boolean hasNoPlayers() {
-        return peers.size() == 0;
+        return playerSessions.size() == 0;
+    }
+    
+    public boolean isFull(){
+        return playerSessions.size() == maxPlayers;
+    }
+    
+    public List<Player> getPlayers(){
+        return new ArrayList(playerSessions.values());
     }
     
     public void notifyLevelComplete(Level currentLevel) {
@@ -124,31 +144,16 @@ public class SessionManager {
 
      private void sendJsonToPlayers(JsonObject json) {
         try {
-            for (MultiplayerPeer peer : peers) {
-                if (peer.getSession().isOpen()) {
-                    peer.getSession().getBasicRemote().sendObject(json);
+            Session session;
+            for (Entry<Session, Player> entry : playerSessions.entrySet()) {
+                session = entry.getKey();
+                if (session.isOpen()) {
+                    session.getBasicRemote().sendObject(json);
                 }
             }
         } catch (IOException | EncodeException e) {
             e.printStackTrace();
         }
-    }
-
-    MultiplayerPeer getPeerForSession(Session s) {
-        MultiplayerPeer peerToFind = null;
-        
-        for(MultiplayerPeer peer : peers){
-            if(peer.getSession().equals(s)){
-                peerToFind = peer;
-                break;
-            }
-        }
-        
-        if( peerToFind == null ){
-            System.out.println("No peer found for session");
-        }
-        
-        return peerToFind;
     }
 
 }

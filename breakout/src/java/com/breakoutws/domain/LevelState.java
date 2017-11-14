@@ -9,6 +9,7 @@ import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.BrickType;
 import com.breakoutws.domain.shapes.Paddle;
+import com.breakoutws.domain.shapes.RegularBody;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;

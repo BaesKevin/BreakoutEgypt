@@ -6,7 +6,8 @@
  */
 package com.breakoutws.domain;
 
-import java.util.TimerTask;
+import com.breakoutws.domain.shapes.Paddle;
+import java.util.List;
 import javax.websocket.Session;
 
 /**
@@ -22,11 +23,15 @@ public class Game {
     private LevelFactory levelFactory;
     private SessionManager manager;
 
-    public Game() {
+    public Game(int numberOfPlayers, GameType type) {
         id = ID++;
-        manager = new SessionManager();
-        levelFactory = new LevelFactory(this);
-
+        manager = new SessionManager(numberOfPlayers);
+        
+        if(type == GameType.ARCADE){
+            levelFactory = new ArcadeLevelFactory(this);
+        } else {
+            levelFactory = new MultiplayerLevelFactory(this);
+        }
         currentLevel = levelFactory.getCurrentLevel();
     }
 
@@ -39,13 +44,16 @@ public class Game {
     }
 
     public void movePaddle(Session s, int x, int y) {
-        MultiplayerPeer peer = manager.getPeerForSession(s);
-        
-        currentLevel.movePaddle( peer.getPaddleName(), x, y);
+        Player peer = manager.getPlayer(s);
+
+        currentLevel.movePaddle(peer.getPaddle(), x, y);
     }
 
-    public void addPlayer(MultiplayerPeer peer) {
-        manager.addPlayer(peer);
+    public void addPlayer(Session peer, Player player) {
+        manager.addPlayer(peer, player);
+        int indexOfPaddleToAssign = manager.getPlayers().size() - 1;
+
+        player.setPaddle(currentLevel.getPaddles().get(indexOfPaddleToAssign));
     }
 
     public void removePlayer(Session peer) {
@@ -80,9 +88,9 @@ public class Game {
     // TODO check if last level was reached
     public void initNextLevel() {
         System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
-        
+
         manager.notifyLevelComplete(currentLevel);
-        
+
         if (levelFactory.hasNextLevel()) {
             currentLevel = levelFactory.getNextLevel();
         }
