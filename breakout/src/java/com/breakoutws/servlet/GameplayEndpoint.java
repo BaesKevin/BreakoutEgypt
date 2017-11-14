@@ -33,8 +33,10 @@ public class GameplayEndpoint {
     public GameplayEndpoint(){
         
     }
+    
     @OnOpen
     public void onOpen(Session peer) {
+        
         System.out.println("GamePlayEndpoint: Opening socket connection");
         GameManager gm = new GameManager();
         
@@ -42,8 +44,11 @@ public class GameplayEndpoint {
         
         game = gm.getGame(gameId);
         
+        // TODO retrieve actual username from session/path parameter
+        String name = "player";
         Player player = new Player(new User("player"));
-        gm.addPlayer(gameId, peer, player);
+        gm.addSessionForPlayer(gameId, name, peer);
+//        gm.setSessionForPlayer(name, session); 
     }
 
     @OnClose

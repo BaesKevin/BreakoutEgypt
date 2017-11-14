@@ -102,7 +102,11 @@ Level.prototype.loadLevel = function () {
             draw();
         }
 
-    }).catch(function (err) {
+    })
+    .then(function(){
+        websocket = new ArcadeWebSocket();
+    })
+    .catch(function (err) {
         console.log("%c" + err, "background-color:red; color: white;padding:5px;");
         websocket.close();
 //        document.location = "/breakout?error=" + err;

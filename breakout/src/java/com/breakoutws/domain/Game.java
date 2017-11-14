@@ -46,17 +46,28 @@ public class Game {
     public void movePaddle(Session s, int x, int y) {
         Player peer = manager.getPlayer(s);
 
-        currentLevel.movePaddle(peer.getPaddle(), x, y);
+        if( peer != null ){
+            currentLevel.movePaddle(peer.getPaddle(), x, y);
+        } else {
+            System.out.println("Game: trying to move paddle for player that doesn't exist");
+        }
     }
 
-    public void addPlayer(Session peer, Player player) {
-        manager.addPlayer(peer, player);
-        int indexOfPaddleToAssign = manager.getPlayers().size() - 1;
-
+    public void addConnectingPlayer( Player player) {
+        System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
+        manager.addConnectingPlayer(player);
+        
+        int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
         player.setPaddle(currentLevel.getPaddles().get(indexOfPaddleToAssign));
+        
+    }
+    
+    public void addSessionForPlayer(String name, Session session){
+        manager.addSessionForPlayer(name, session);
     }
 
     public void removePlayer(Session peer) {
+        System.out.printf("Game %d: remove player\n", id);
         manager.removePlayer(peer);
     }
 

@@ -2,7 +2,7 @@ var canvas, mouse;
 var ctx = $("canvas")[0].getContext('2d');
 
 var level = new Level();
-var websocket = new ArcadeWebSocket();
+var websocket = false; // don't open connection untill level has start
 
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];

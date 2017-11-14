@@ -7,6 +7,8 @@ package com.breakoutws.servlet;
 
 import com.breakoutws.domain.GameManager;
 import com.breakoutws.domain.Level;
+import com.breakoutws.domain.Player;
+import com.breakoutws.domain.User;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
 import java.io.IOException;
@@ -34,13 +36,18 @@ public class LevelServlet extends HttpServlet {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
 
         GameManager manager = new GameManager();
-
+        
         JsonObjectBuilder job;
         System.out.println("LevelServlet: get level");
         boolean hasNextLevel = manager.hasNextLevel(gameId);
         //System.out.println("hasnextlevel: " + hasNextLevel);
         if (hasNextLevel) {
             Level level = manager.getLevel(gameId);
+            
+            // already initialize player and give him a paddle
+            Player player = new Player(new User("player"));
+            manager.addPlayer(gameId, player);
+            
             job = Json.createObjectBuilder();
             if (level != null) {
                 JsonArrayBuilder jab = Json.createArrayBuilder();
