@@ -45,9 +45,8 @@ public class GameplayEndpoint {
         game = gm.getGame(gameId);
         
         // TODO retrieve actual username from session/path parameter
-        String name = "player";
         Player player = new Player(new User("player"));
-        gm.addSessionForPlayer(gameId, name, peer);
+        gm.addSessionForPlayer(gameId, player, peer);
 //        gm.setSessionForPlayer(name, session); 
     }
 

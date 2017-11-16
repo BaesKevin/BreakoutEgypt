@@ -32,8 +32,8 @@ public class ArcadeServlet extends HttpServlet{
         
         GameManager gm = new GameManager();
         
-        int numberOfPlayers = 2;
-        int gameId = gm.createGame(numberOfPlayers, GameType.MULTIPLAYER);
+        int numberOfPlayers = 1;
+        int gameId = gm.createGame(1, GameType.ARCADE);
         
         
         response.sendRedirect("arcade.html?gameId="+gameId);

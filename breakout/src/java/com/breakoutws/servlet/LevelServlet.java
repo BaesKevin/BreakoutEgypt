@@ -5,6 +5,7 @@
  */
 package com.breakoutws.servlet;
 
+import com.breakoutws.domain.Game;
 import com.breakoutws.domain.GameManager;
 import com.breakoutws.domain.Level;
 import com.breakoutws.domain.Player;
@@ -36,7 +37,7 @@ public class LevelServlet extends HttpServlet {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
 
         GameManager manager = new GameManager();
-        
+        Game game = manager.getGame(gameId);
         JsonObjectBuilder job;
         System.out.println("LevelServlet: get level");
         boolean hasNextLevel = manager.hasNextLevel(gameId);
@@ -45,13 +46,22 @@ public class LevelServlet extends HttpServlet {
             Level level = manager.getLevel(gameId);
             
             // already initialize player and give him a paddle
-            Player player = new Player(new User("player"));
-            manager.addPlayer(gameId, player);
+            String name = "player";
+            Player player = new Player(new User(name));
+            
+            if(game.isPlayerInSessionManager(player)){
+                player = game.getPlayer(player);
+            }
+            else
+            {
+                manager.addConnectingPlayer(gameId, player);
+            }
+            manager.assignPaddleToPlayer(gameId, player);
             
             job = Json.createObjectBuilder();
             if (level != null) {
                 JsonArrayBuilder jab = Json.createArrayBuilder();
-                levelToJson(level, jab, job);
+                levelToJson(level, jab, job, player);
 
                 manager.startGame(gameId);
             } else {
@@ -75,7 +85,6 @@ public class LevelServlet extends HttpServlet {
         
        
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-        System.out.println("LevelServlet: Post request on /level to start game " + gameId);
         
         GameManager manager = new GameManager();
 
@@ -92,7 +101,7 @@ public class LevelServlet extends HttpServlet {
         
     }
 
-    private void levelToJson(Level level, JsonArrayBuilder jab, JsonObjectBuilder job) {
+    private void levelToJson(Level level, JsonArrayBuilder jab, JsonObjectBuilder job, Player player) {
         for (Brick brick : level.getBricks()) {
             jab.add(brick.toJson().build());
         }
@@ -105,6 +114,8 @@ public class LevelServlet extends HttpServlet {
             paddleBuilder.add( paddles.get(i).getShape().toJson().build());
         }
         job.add("paddles", paddleBuilder.build());
+        System.out.printf("Paddle position: %f, %f", player.getPaddle().getPosition().x, player.getPaddle().getPosition().y);
+        job.add("mypaddle", player.getPaddle().getName());
         job.add("level", level.getId());
         job.add("lives", level.getLives());
     }

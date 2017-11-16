@@ -84,8 +84,7 @@ function getMouseX(e) {
 }
 
 function setPaddleX() {
-    var paddle = level.paddles[0];
-
+    var paddle = level.mypaddle;
     paddle.x = mouse.x - paddle.width / 2;
 
     if (paddle.x < 0) {

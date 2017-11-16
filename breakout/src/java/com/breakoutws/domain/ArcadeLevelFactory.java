@@ -152,8 +152,8 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithSwitch() {
-        Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        Shape paddleShape = new Shape("paddle" + currentLevel, 45, 250, 100, 4, Color.BLUE);
+        Shape ballShape = new Shape("ball", 60, 200, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         

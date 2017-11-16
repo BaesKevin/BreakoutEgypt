@@ -123,7 +123,6 @@ public class LevelState {
         } else {
             for(Brick brick : bricks){
                 currentBrickPosition = brick.getGridPosition();
-                System.out.println("Current brick: " + currentBrickPosition);
                 if(Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range ){
                     if(brick.isSwitched() && brick.getBrickType() != BrickType.SWITCH){
                         bricksToRemove.add(brick);

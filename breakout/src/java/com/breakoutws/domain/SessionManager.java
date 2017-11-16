@@ -45,24 +45,49 @@ public class SessionManager {
     public Player getPlayer(Session session) {
         return playerSessions.get(session);
     }
+    
+     public  Player getPlayer(Player player) {
+         List<Player> players = getPlayers();
+         Player toFind = null;
+         
+         for(Player p : players){
+             if(p.equals(player)){
+                 toFind = p;
+             }
+         }
+         
+         return toFind;
+    }
 
     public void addConnectingPlayer(Player player) {
         connectingPlayers.add(player);
     }
 
-    public void addSessionForPlayer(String name, Session session) {
-        Player player = null;
+    public boolean isPlayerInSessionManager(Player player){
+        boolean isInManager =  connectingPlayers.contains(player) || getPlayers().contains(player);
+        System.out.println("Player " + player.getUser().getUsername() + " is in manager: " + isInManager);
+        return isInManager;
+    }
+    
+    public boolean isConnecting(Player player){
+        boolean isInManager =  connectingPlayers.contains(player);
+        System.out.println("Player " + player.getUser().getUsername() + " is connecting: ");
+        return isInManager;
+    }
+    
+    public void addSessionForPlayer(Player player, Session session) {
+        Player connectingPlayer = null;
         for (Player p : connectingPlayers) {
-            if (p.getUser().getUsername().equals(name)) {
-                player = p;
+            if (p.equals(player)) {
+                connectingPlayer = p;
             }
         }
 
-        if (player != null) {
-            connectingPlayers.remove(player);
+        if (connectingPlayer != null) {
+            connectingPlayers.remove(connectingPlayer);
             if (playerSessions.size() < maxPlayers) {
-                System.out.printf("SessionManager: Add session for connecting player %s\n", name);
-                playerSessions.put(session, player);
+                System.out.printf("SessionManager: Add session for connecting player %s\n", player.getUser().getUsername());
+                playerSessions.put(session, connectingPlayer);
             }
         } else {
             System.out.println("SessionManager: trying to addsession for player that doesn't exist");
@@ -87,7 +112,7 @@ public class SessionManager {
     }
 
     public int getNextAvailablePaddleIndex() {
-        return playerSessions.values().size() + connectingPlayers.size();
+        return playerSessions.values().size() + connectingPlayers.size() - 1;
     }
 
     public void notifyLevelComplete(Level currentLevel) {

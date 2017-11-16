@@ -55,7 +55,7 @@ public class GameManager {
         games.get(gameId).stopLevel();        
     }
 
-    public void addPlayer(int gameId, Player player) {
+    public void addConnectingPlayer(int gameId, Player player) {
         
         Game game = games.get(gameId);
         
@@ -65,13 +65,23 @@ public class GameManager {
             System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }
     
-    public void addSessionForPlayer(int gameId, String name, Session session){
+    public void addSessionForPlayer(int gameId, Player player, Session session){
          Game game = games.get(gameId);
         
         if(game!=null)
-            game.addSessionForPlayer(name, session);
+            game.addSessionForPlayer(player, session);
         else
             System.out.println("GameManager: Trying to add player to game that doesn't exist");
+    }
+    
+    public void assignPaddleToPlayer(int gameId, Player player) {
+        Game game = games.get(gameId);
+                
+        if(game!=null)
+            game.assignPaddleToPlayer(player);
+        else
+            System.out.println("GameManager: Trying to add player to game that doesn't exist");
+        
     }
 
     public void removePlayer(int gameId, Session peer) {

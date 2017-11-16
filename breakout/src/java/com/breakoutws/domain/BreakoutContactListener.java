@@ -106,7 +106,6 @@ public class BreakoutContactListener implements ContactListener {
         Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
 
         if (brick != null && !brick.isSwitched()) {
-            System.out.println("BreakoutContactListener: contact false, brick is switched off");
             contact.setEnabled(false);
         }
     }

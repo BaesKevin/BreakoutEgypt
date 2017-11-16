@@ -26,8 +26,8 @@ public class Game {
     public Game(int numberOfPlayers, GameType type) {
         id = ID++;
         manager = new SessionManager(numberOfPlayers);
-        
-        if(type == GameType.ARCADE){
+
+        if (type == GameType.ARCADE) {
             levelFactory = new ArcadeLevelFactory(this);
         } else {
             levelFactory = new MultiplayerLevelFactory(this);
@@ -46,24 +46,37 @@ public class Game {
     public void movePaddle(Session s, int x, int y) {
         Player peer = manager.getPlayer(s);
 
-        if( peer != null ){
+        if (peer != null) {
             currentLevel.movePaddle(peer.getPaddle(), x, y);
         } else {
             System.out.println("Game: trying to move paddle for player that doesn't exist");
         }
     }
 
-    public void addConnectingPlayer( Player player) {
-        System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
-        manager.addConnectingPlayer(player);
-        
-        int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
-        player.setPaddle(currentLevel.getPaddles().get(indexOfPaddleToAssign));
-        
+    public void addConnectingPlayer(Player player) {
+
+        if (!manager.isPlayerInSessionManager(player)) {
+            System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
+            manager.addConnectingPlayer(player);
+        }
+
     }
-    
-    public void addSessionForPlayer(String name, Session session){
-        manager.addSessionForPlayer(name, session);
+
+    public boolean isPlayerInSessionManager(Player player) {
+        return manager.isPlayerInSessionManager(player);
+    }
+
+    public void assignPaddleToPlayer(Player player) {
+        int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
+        Paddle paddleToAssign = currentLevel.getPaddles().get(indexOfPaddleToAssign);
+        System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
+        player.setPaddle(paddleToAssign);
+    }
+
+    public void addSessionForPlayer(Player player, Session session) {
+        if (manager.isConnecting(player)) {
+            manager.addSessionForPlayer(player, session);
+        }
     }
 
     public void removePlayer(Session peer) {
@@ -110,5 +123,9 @@ public class Game {
 
     public boolean hasNextLevel() {
         return levelFactory.hasNextLevel();
+    }
+
+    public Player getPlayer(Player player) {
+        return manager.getPlayer(player);
     }
 }

@@ -52,9 +52,6 @@ public class StaticDummyHighscoreRepo implements HighscoreRepo {
         }
         
         Collections.sort(scoresByLevel);
-        System.out.println("Scores for Level: " + levelID);
-        System.out.println(scoresByLevel);
-        System.out.println("");
         return scoresByLevel;
     }
     
