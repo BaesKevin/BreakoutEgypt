@@ -41,7 +41,7 @@ public class AuthenticationFilter implements Filter {
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
-            log("AuthenticationFilter:DoBeforeProcessing");
+//            log("AuthenticationFilter:DoBeforeProcessing");
 //            HttpServletRequest httpRequest = (HttpServletRequest) request;
 //            HttpServletResponse httpResponse = (HttpServletResponse) response;
 //            
@@ -55,7 +55,7 @@ public class AuthenticationFilter implements Filter {
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
-            log("AuthenticationFilter:DoAfterProcessing");
+//            log("AuthenticationFilter:DoAfterProcessing");
         }
 
         // Write code here to process the request and/or response after
@@ -91,7 +91,7 @@ public class AuthenticationFilter implements Filter {
             throws IOException, ServletException {
         
         if (debug) {
-            log("AuthenticationFilter:doFilter()");
+//            log("AuthenticationFilter:doFilter()");
         }
         
         doBeforeProcessing(request, response);
@@ -151,7 +151,7 @@ public class AuthenticationFilter implements Filter {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
             if (debug) {                
-                log("AuthenticationFilter:Initializing filter");
+//                log("AuthenticationFilter:Initializing filter");
             }
         }
     }

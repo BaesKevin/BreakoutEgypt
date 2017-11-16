@@ -5,48 +5,76 @@ var Level = function () {
     this.level = 0;
     this.balldata = {x: 0, y: 0, radius: 0, color: 'rgb(0,0,0)'};
     this.brickdata = [];
-    this.paddledata = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(255,0,0)'};
+    this.paddles = [
+        {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'},
+        {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'}
+    ],
+            this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
     this.lives = 0;
     this.xscaling = 1;
     this.yscaling = 1;
 };
-
 Level.prototype.defaultScale = function () {
+    console.log("Scaling to default");
     this.balldata = scaleObject(this.balldata, false);
-    this.paddledata = scaleObject(this.paddledata, false);
+    var scaledPaddles = [];
+    this.paddles.forEach(function (paddle) {
+        scaledPaddles.push(scaleObject(paddle, false));
+    });
+    this.paddles = scaledPaddles;
+    console.log("My paddle after default scale: " + this.mypaddle.x + " " + this.mypaddle.y);
+
     for (var i = 0; i < this.brickdata.length; i++) {
         this.brickdata[i] = scaleBrick(this.brickdata[i], false);
     }
-};
-
+}
 Level.prototype.reScale = function (width, height) {
-    console.log("RESCALE");
     this.defaultScale();
     this.xscaling = width / 300;
     this.yscaling = height / 300;
+    console.log("Scaling factors: " + this.xscaling + " " + this.yscaling)
 
     this.balldata = scaleObject(this.balldata, true);
-    this.paddledata = scaleObject(this.paddledata, true);
+    var scaledPaddles = [];
+    this.paddles.forEach(function (paddle) {
+        scaledPaddles.push(scaleObject(paddle, true));
+    });
+    this.paddles = scaledPaddles;
+    console.log("My paddle after rescale: " + this.mypaddle.x + " " + this.mypaddle.y);
     for (var i = 0; i < this.brickdata.length; i++) {
         this.brickdata[i] = scaleBrick(this.brickdata[i], true);
     }
-};
 
-Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) {
+}
+
+
+Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddle, lives) {
 
     console.log("Load level: got data for level " + level);
     var self = this;
     brickdata.forEach(function (brickjson) {
-        self.brickdata.push(scaleBrick(brickjson, true));
+        self.brickdata.push(scaleObject(new Brick(brickjson), true));
+    })
+
+    this.balldata = balldata;
+    this.paddles = [];
+
+    paddledata.forEach(function (paddle) {
+        self.paddles.push(scaleObject(paddle, true));
     });
 
-    this.balldata = scaleObject(balldata, true);
-    this.paddledata = scaleObject(paddledata, true);
+    this.mypaddle = this.paddles.find(function (paddle) {
+        return paddle.name === mypaddle;
+    });
+
+    console.log("My paddle is " + mypaddle);
+
+
     this.lives = lives;
     this.level = level;
     loadLives(lives);
-    console.log("lives: " + this.lives);
 
+    console.log("lives: " + this.lives);
 };
 
 Level.prototype.loadLevel = function () {
@@ -72,7 +100,7 @@ Level.prototype.loadLevel = function () {
             } else {
                 console.log("Load level: got data for level " + response.level);
                 loadLevelOnScreen(response.level);
-                self.load(response.level, response.ball, response.bricks, response.paddle, response.lives);
+                self.load(response.level, response.ball, response.bricks, response.paddles, response.mypaddle, response.lives);
             }
         } else {
 //            document.location = "/breakout/";
@@ -81,17 +109,23 @@ Level.prototype.loadLevel = function () {
     }).then(function () {
         self.levelComplete = false;
         self.gameOver = false;
+
+        // create connection if not already established
+        if (!websocket) {
+            websocket = new ArcadeWebSocket();
+        }
         if (!self.allLevelsComplete) {
             draw();
         }
 
-    }).catch(function (err) {
-        console.log("%c" + err, "background-color:red; color: white;padding:5px;");
-        modalErrorMessage(err);
-        websocket.close();
-    });
+    })
+            .catch(function (err) {
+                console.log(err);
+                console.log("%c" + err, "background-color:red; color: white;padding:5px;");
+                websocket.close();
+//        document.location = "/breakout?error=" + err;
+            });
 };
-
 var scaleObject = function (object, state) {
     var scaleobj = object;
     scaleobj.x = xscale(object.x, state);
@@ -101,7 +135,6 @@ var scaleObject = function (object, state) {
 
     return scaleobj;
 };
-
 var scaleBrick = function (brick, state) {
     var scaledBrick = scaleObject(brick, state);
     return new Brick(scaledBrick);
@@ -109,10 +142,15 @@ var scaleBrick = function (brick, state) {
 
 Level.prototype.sendClientLevelState = function () {
     if (!this.levelComplete && !this.gameOver) {
-        websocket.sendOverSocket(JSON.stringify({
-            x: xscale(this.paddledata.x, false) + xscale(this.paddledata.width, false) / 2,
-            y: yscale(this.paddledata.y, false)
-        }));
+
+        if (websocket) {
+            websocket.sendOverSocket(JSON.stringify({
+                x: xscale(this.mypaddle.x, false) + xscale(this.mypaddle.width, false) / 2,
+                y: yscale(this.mypaddle.y, false)
+            }));
+
+        }
+
     }
 };
 
@@ -139,6 +177,7 @@ Level.prototype.updateLevelData = function (json) {
                                 return message.name === brick.name
                             }
                     );
+
                     if (brickToHide) {
                         brickToHide.show = false;
                     }
@@ -155,6 +194,7 @@ Level.prototype.updateLevelData = function (json) {
                     if (brickToShow) {
                         brickToShow.show = true;
                     }
+
                     break;
             }
         });
@@ -168,8 +208,6 @@ function xscale(value, isIncoming) {
         return value / level.xscaling;
     }
 }
-;
-
 function yscale(value, isIncoming) {
     if (isIncoming) {
         return value * level.yscaling;

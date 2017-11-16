@@ -2,10 +2,10 @@ var canvas, mouse;
 var ctx = $("canvas")[0].getContext('2d');
 
 var level = new Level();
-var websocket = new ArcadeWebSocket();
 var brickImg = new Image();
 var personImg = new Image();
 var brickPattern;
+var websocket = false; // don't open connection untill level has start
 
 //var images = [brickImg, personImg];
 //var imageSrc = ["assets/media/person.png", "assets/media/brick-wall.png"]
@@ -17,8 +17,6 @@ var imageAssets = [
 
 document.addEventListener("DOMContentLoaded", function () {
     canvas = $('canvas')[0];
-    level.paddledata.x = canvas.width / 2 - level.paddledata.width / 2;
-    level.paddledata.y = canvas.height - 50;
 
     level.xscaling = canvas.width / 300;
     level.yscaling = canvas.height / 300;
@@ -106,10 +104,14 @@ function draw() {
     setPaddleX();
     level.sendClientLevelState();
 
-    ctx.strokeStyle = level.paddledata.color;
-    ctx.beginPath();
-    ctx.arc(level.paddledata.x + level.paddledata.width / 2, level.paddledata.y, level.paddledata.width / 2, 1 * Math.PI, 2 * Math.PI);
-    ctx.stroke();
+    level.paddles.forEach(function (paddle) {
+        ctx.strokeStyle = paddle.color;
+        ctx.beginPath();
+        ctx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
+        ctx.stroke();
+    })
+
+
 
     if (!level.allLevelsComplete) {
         window.requestAnimationFrame(draw);
@@ -125,14 +127,15 @@ function getMouseX(e) {
 }
 
 function setPaddleX() {
-    level.paddledata.x = mouse.x - level.paddledata.width / 2;
+    var paddle = level.mypaddle;
+    paddle.x = mouse.x - paddle.width / 2;
 
-    if (level.paddledata.x < 0) {
-        level.paddledata.x = 0;
-    } else if (canvas.width - level.paddledata.width < level.paddledata.x) {
-        level.paddledata.x = canvas.width - level.paddledata.width;
+    if (paddle.x < 0) {
+        paddle.x = 0;
+    } else if (canvas.width - paddle.width < paddle.x) {
+        paddle.x = canvas.width - paddle.width;
     }
 
-    ctx.drawImage(personImg, mouse.x - personImg.width / 2, level.paddledata.y);
+    ctx.drawImage(personImg, mouse.x - personImg.width / 2, paddle.y);
 
 }

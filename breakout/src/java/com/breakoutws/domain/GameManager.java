@@ -19,8 +19,8 @@ public class GameManager {
 
     private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
        
-    public int createGame(){
-        Game game = new Game();
+    public int createGame(int numberOfPlayers, GameType type){
+        Game game = new Game(numberOfPlayers, type);
         
         games.put(game.getId(), game);
                
@@ -51,27 +51,47 @@ public class GameManager {
     }
     
     public void stopGame(int gameId){
+        System.out.println("GameManager: stopping game " + gameId );
         games.get(gameId).stopLevel();        
     }
 
-    public void addPlayer(int gameId, Session peer) {
+    public void addConnectingPlayer(int gameId, Player player) {
         
         Game game = games.get(gameId);
         
         if(game!=null)
-            game.addPlayer(peer);
+            game.addConnectingPlayer(player);
         else
             System.out.println("GameManager: Trying to add player to game that doesn't exist");
+    }
+    
+    public void addSessionForPlayer(int gameId, Player player, Session session){
+         Game game = games.get(gameId);
+        
+        if(game!=null)
+            game.addSessionForPlayer(player, session);
+        else
+            System.out.println("GameManager: Trying to add player to game that doesn't exist");
+    }
+    
+    public void assignPaddleToPlayer(int gameId, Player player) {
+        Game game = games.get(gameId);
+                
+        if(game!=null)
+            game.assignPaddleToPlayer(player);
+        else
+            System.out.println("GameManager: Trying to add player to game that doesn't exist");
+        
     }
 
     public void removePlayer(int gameId, Session peer) {
         if(games != null){
             Game game = games.get(gameId);
-//            System.out.println("GameManager: Removing peer from game " + gameId);    
+
             if(game != null){
                 game.removePlayer(peer);
                 if(game.hasNoPlayers()){
-//                    System.out.println("GameManager: No more players");
+                    
                     stopGame(game.getId());
                 }
             } else {

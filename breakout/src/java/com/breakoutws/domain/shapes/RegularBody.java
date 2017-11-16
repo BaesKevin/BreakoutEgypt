@@ -5,9 +5,6 @@
  */
 package com.breakoutws.domain.shapes;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
