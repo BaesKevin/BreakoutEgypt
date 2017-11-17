@@ -23,6 +23,7 @@ public class BreakoutWorld {
 
     private World world;
 
+    // TODO use these!
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
     private final float timestep = 1.0f / 60.0f;
@@ -87,7 +88,6 @@ public class BreakoutWorld {
 
             Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration(), "hard");
             dummyRepo.addScore(scoreOfPlayer);
-            System.out.println(dummyRepo.getRank(currentLevel.getId(), scoreOfPlayer));
 
             dummyRepo.getScoresByLevel(currentLevel.getId(), "hard");
             currentLevel.initNextLevel();
@@ -136,7 +136,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-//            adjustBallDirection();
+            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             currentLevel.setLevelStarted(false);

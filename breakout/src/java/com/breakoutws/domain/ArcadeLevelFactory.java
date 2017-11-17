@@ -23,13 +23,31 @@ import java.util.List;
 public class ArcadeLevelFactory extends LevelFactory {
 
     public ArcadeLevelFactory(Game game) {
-        super(game);
+        super(game, 3);
     }
+
+    @Override
     public Level getCurrentLevel() {
-        System.out.printf("LevelFactory: Get level %d of %d", currentLevel, totalLevels);
-//        return getLevelWithUnbreakableAndExplosive();
-//        return getSimpleTestLevel(currentLevel);        
-        return getLevelWithSwitch();
+        return currentLevel;
+    }
+
+    @Override
+    protected void createCurrentLevel() {
+        System.out.println("LevelFactory: creating level " + currentLevelId);
+        switch (currentLevelId) {
+            case 1:
+                currentLevel = getLevelWithUnbreakableAndExplosive();
+                break;
+            case 2:
+                currentLevel = getSimpleTestLevel(2);
+                break;
+            case 3:
+                currentLevel = getLevelWithSwitch();
+                break;
+            default:
+                currentLevel = getLevelWithSwitch();
+                break;
+        }
     }
 
     public Level getSimpleTestLevel(int targetBlocks) {
@@ -88,7 +106,7 @@ public class ArcadeLevelFactory extends LevelFactory {
             bricks.get(i).getShape().setColor(Color.BLACK);
         }
 
-        Level level = new Level(currentLevel, game, ball, paddle, bricks, 3);
+        Level level = new Level(currentLevelId, game, ball, paddle, bricks, 3);
 
         return level;
     }
@@ -146,17 +164,17 @@ public class ArcadeLevelFactory extends LevelFactory {
 //                    bricks.get(3)
 //                })
 //          );
-        Level level = new Level(currentLevel, game, ball, paddle, bricks, 3);
+        Level level = new Level(currentLevelId, game, ball, paddle, bricks, 3);
 
         return level;
     }
 
     public Level getLevelWithSwitch() {
-        Shape paddleShape = new Shape("paddle" + currentLevel, 45, 250, 100, 4, Color.BLUE);
+        Shape paddleShape = new Shape("paddle" + currentLevelId, 45, 250, 100, 4, Color.BLUE);
         Shape ballShape = new Shape("ball", 60, 200, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
-        
+
         Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
 
@@ -207,7 +225,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         })
         );
 
-        Level level = new Level(currentLevel, game, ball, paddle, bricks, 3);
+        Level level = new Level(currentLevelId, game, ball, paddle, bricks, 3);
 
         return level;
     }

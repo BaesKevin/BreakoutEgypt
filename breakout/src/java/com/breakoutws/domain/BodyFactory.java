@@ -101,7 +101,6 @@ public class BodyFactory {
         bd.position.set(s.getPosX(), s.getPosY() + s.getHeight());
         CircleShape newDomePaddle = new CircleShape();
 
-        System.out.println("radius: " + radius);
         newDomePaddle.m_radius = radius;
 //        newDomePaddle.m_p.y = radius / 2;
         FixtureDef fd = new FixtureDef();

@@ -65,7 +65,7 @@ public class SessionManager {
 
     public boolean isPlayerInSessionManager(Player player){
         boolean isInManager =  connectingPlayers.contains(player) || getPlayers().contains(player);
-        System.out.println("Player " + player.getUser().getUsername() + " is in manager: " + isInManager);
+        System.out.println("SessionManager: Player " + player.getUser().getUsername() + " is in manager: " + isInManager);
         return isInManager;
     }
     

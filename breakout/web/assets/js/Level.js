@@ -78,9 +78,9 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
 };
 
 Level.prototype.loadLevel = function () {
-    console.log("load level for game  " + getParameterByName("gameId"));
+    
     var gameId = getParameterByName("gameId");
-
+    console.log("load leve " + level +  " for game  " +  gameId);
     var self = this;
 
     fetch('level?gameId=' + gameId).then(function (response) {

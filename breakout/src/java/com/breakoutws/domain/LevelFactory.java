@@ -11,25 +11,37 @@ package com.breakoutws.domain;
  */
 public abstract class LevelFactory {
     protected Game game;
-    protected int currentLevel;
+    protected int currentLevelId;
     protected int totalLevels;
+    protected Level currentLevel;
 
-    public LevelFactory(Game game) {
-        this.currentLevel = 1;
-        this.totalLevels = 2;
+    public LevelFactory(Game game, int totalLevels) {
+        this.currentLevelId = 1;
+        this.totalLevels = totalLevels;
         this.game = game;
     }
 
     public boolean hasNextLevel() {
 
-        return currentLevel <= totalLevels;
+        return currentLevelId <= totalLevels;
     }
 
-    public abstract Level getCurrentLevel();
-
+    public Level getCurrentLevel(){
+        return currentLevel;
+    }
+    protected abstract void createCurrentLevel();
+    
     public Level getNextLevel() {
-        System.out.println("LevelFactory: Get next level");
-        currentLevel++;
+        currentLevelId++;
+        createCurrentLevel();
         return getCurrentLevel();
     }
+    
+    public void setCurrentLevel(int id){
+        if(1 <= id && id <= totalLevels){
+            this.currentLevelId = id;
+            createCurrentLevel();
+        }
+    }
+
 }

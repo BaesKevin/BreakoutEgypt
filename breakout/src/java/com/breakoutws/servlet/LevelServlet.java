@@ -35,15 +35,14 @@ public class LevelServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
+        
         JsonObjectBuilder job;
-        System.out.println("LevelServlet: get level");
         boolean hasNextLevel = manager.hasNextLevel(gameId);
         //System.out.println("hasnextlevel: " + hasNextLevel);
         if (hasNextLevel) {
-            Level level = manager.getLevel(gameId);
+            Level level = game.getLevel();
             
             // already initialize player and give him a paddle
             String name = "player";
@@ -90,9 +89,8 @@ public class LevelServlet extends HttpServlet {
 
         JsonObjectBuilder job;       
         
-        Level level = manager.getLevel(gameId);
+        Level level = manager.getGame(gameId).getLevel();
         level.startBall();
-        
         response.setContentType("application/json");
 
         try (PrintWriter out = response.getWriter()) {
@@ -114,7 +112,6 @@ public class LevelServlet extends HttpServlet {
             paddleBuilder.add( paddles.get(i).getShape().toJson().build());
         }
         job.add("paddles", paddleBuilder.build());
-        System.out.printf("Paddle position: %f, %f", player.getPaddle().getPosition().x, player.getPaddle().getPosition().y);
         job.add("mypaddle", player.getPaddle().getName());
         job.add("level", level.getId());
         job.add("lives", level.getLives());

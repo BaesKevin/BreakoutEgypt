@@ -23,7 +23,7 @@ public class Game {
     private LevelFactory levelFactory;
     private SessionManager manager;
 
-    public Game(int numberOfPlayers, GameType type) {
+    public Game(int numberOfPlayers, int startingLevel, GameType type) {
         id = ID++;
         manager = new SessionManager(numberOfPlayers);
 
@@ -32,7 +32,8 @@ public class Game {
         } else {
             levelFactory = new MultiplayerLevelFactory(this);
         }
-        currentLevel = levelFactory.getCurrentLevel();
+
+        setCurrentLevel(startingLevel);
     }
 
     public int getId() {
@@ -55,10 +56,8 @@ public class Game {
 
     public void addConnectingPlayer(Player player) {
 
-        if (!manager.isPlayerInSessionManager(player)) {
-            System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
-            manager.addConnectingPlayer(player);
-        }
+        System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
+        manager.addConnectingPlayer(player);
 
     }
 
@@ -111,8 +110,6 @@ public class Game {
 
     // TODO check if last level was reached
     public void initNextLevel() {
-        System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
-
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {
@@ -127,5 +124,15 @@ public class Game {
 
     public Player getPlayer(Player player) {
         return manager.getPlayer(player);
+    }
+
+    // TODO validate by keeping track of the player's max reached level
+    public Level getLevel() {
+        return levelFactory.getCurrentLevel();
+    }
+
+    public void setCurrentLevel(int levelId) {
+        levelFactory.setCurrentLevel(levelId);
+        this.currentLevel = levelFactory.getCurrentLevel();
     }
 }

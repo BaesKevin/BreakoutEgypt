@@ -20,14 +20,14 @@ import java.util.List;
 public class MultiplayerLevelFactory extends LevelFactory {
 
     public MultiplayerLevelFactory(Game game) {
-        super(game);
+        super(game, 1);
     }
 
 
-    public Level getCurrentLevel() {
-        System.out.printf("LevelFactory: Get level %d of %d", currentLevel, totalLevels);
+    public void createCurrentLevel() {
+        System.out.printf("LevelFactory: Get level %d of %d", currentLevelId, totalLevels);
 
-        return makePong();
+        currentLevel = makePong();
     }
     
     public Level makePong() {
@@ -43,7 +43,7 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
         Ball ball = new Ball(ballShape);
 
-        return new Level(currentLevel, game, ball, paddles, new ArrayList<Brick>(), 3);
+        return new Level(currentLevelId, game, ball, paddles, new ArrayList<Brick>(), 3);
 
     }
 }

@@ -19,8 +19,8 @@ public class GameManager {
 
     private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
        
-    public int createGame(int numberOfPlayers, GameType type){
-        Game game = new Game(numberOfPlayers, type);
+    public int createGame(int numberOfPlayers, int startingLevel, GameType type){
+        Game game = new Game(numberOfPlayers, startingLevel, type);
         
         games.put(game.getId(), game);
                
@@ -30,17 +30,6 @@ public class GameManager {
 
     public Game getGame(int gameId){
         return games.get(gameId);
-    }
-    
-    public Level getLevel(int gameId) {
-        Game game = games.get(gameId);
-        
-        if(game == null){
-            System.out.println("GameManager: Trying to get level for game that doesn't exist");
-            return null;
-        }
-        
-        return game.getCurrentLevel();
     }
     
     public void startGame(int gameId){

@@ -32,11 +32,13 @@ public class ArcadeServlet extends HttpServlet{
         
         GameManager gm = new GameManager();
         
+        // TODO get from querystring
         int numberOfPlayers = 1;
-        int gameId = gm.createGame(1, GameType.ARCADE);
+        int startingLevel = 2;
+        int gameId = gm.createGame(1, 2, GameType.ARCADE);
         
-        
-        response.sendRedirect("arcade.html?gameId="+gameId);
+        // TODO redirect to level choice page
+        response.sendRedirect(String.format("arcade.html?gameId=%d&level=%d",gameId, 1));
     }
 
 }
