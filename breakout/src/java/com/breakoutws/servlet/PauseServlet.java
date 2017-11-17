@@ -29,21 +29,12 @@ public class PauseServlet extends HttpServlet {
             GameManager gm = new GameManager();
 
             String gameId = request.getParameter("gameid");
-            String action = request.getParameter("action");
-
-            System.out.println("Gameid = " + gameId);
-            System.out.println("action = " + action);
             
             try {
                 int id = Integer.parseInt(gameId);
                 Game game = gm.getGame(id);
                 if (game != null) {
-                    if (action.equals("pause")) {
-                        game.pause();
-                    }
-                    else if (action.equals("resume")) {
-                        game.resume();
-                    }
+                    game.togglePaused();
                 }
             } catch (NumberFormatException ex) {
                 throw new NumberFormatException("Wrong id");

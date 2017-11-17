@@ -159,6 +159,14 @@ public class Level {
         levelTimerTask.cancel();
         levelTimerTask = null;
     }
+    
+    public void togglePaused() {
+        if (levelTimerTask == null) {
+            start();
+        } else {
+            stop();
+        }
+    }
 
     public void initNextLevel() {
         stop();
