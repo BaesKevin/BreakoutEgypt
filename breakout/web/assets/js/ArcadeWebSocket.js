@@ -43,10 +43,13 @@ function onMessage(evt) {
 
             if (json.gameOver) {
                 console.log("Gameplay: game over");
+                level.lives = 0;
+                draw();
                 level.gameOver = true;
+                modalGameOver();
             } else if (json.livesLeft) {
                 console.log("Gameplay: livesLeft: " + json.livesLeft);
-                loadLives(json.livesLeft);
+                level.lives = json.livesLeft;
             } else if (json.levelComplete) {
                 console.log("Socket received message level complete");
                 console.log("%cTime to complete this level: " + json.scoreTimer, "background-color:blue;color:white;padding:5px;");

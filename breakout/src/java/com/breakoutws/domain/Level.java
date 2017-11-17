@@ -10,6 +10,7 @@ import com.breakoutws.domain.effects.ToggleEffect;
 import com.breakoutws.domain.shapes.Ball;
 import com.breakoutws.domain.shapes.Brick;
 import com.breakoutws.domain.shapes.Paddle;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -132,7 +133,7 @@ public class Level extends TimerTask {
         System.out.printf("Level: start level %d", this.id);
         timer.schedule(this, 0, 1000 / 60);
     }
-
+    
     public boolean noLivesLeft() {
         return lives == 0;
     }

@@ -4,15 +4,17 @@ var ctx = $("canvas")[0].getContext('2d');
 var level = new Level();
 var websocket = new ArcadeWebSocket();
 var brickImg = new Image();
-var personImg = new Image();
+var godImg = new Image();
+var liveImg = new Image();
 var brickPattern;
 
 //var images = [brickImg, personImg];
 //var imageSrc = ["assets/media/person.png", "assets/media/brick-wall.png"]
 
 var imageAssets = [
-    {image: personImg, src: "assets/media/person.png"},
-    {image: brickImg, src: "assets/media/brick-wall.png"}
+    {image: godImg, src: "assets/media/egyptian.png"},
+    {image: brickImg, src: "assets/media/brick-wall.png"},
+    {image: liveImg, src: "assets/media/ankLife.png"}
 ]
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -96,8 +98,11 @@ function draw() {
     ctx.fillStyle = level.balldata.color;
 
     // box2d draws circle from center
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = level.balldata.color;
     ctx.arc(Math.round(level.balldata.x), Math.round(level.balldata.y), (level.balldata.width / 2), 0, 2 * Math.PI, false);
     ctx.fill();
+    ctx.shadowBlur = 0;
 
     level.brickdata.forEach(function (brick) {
         brick.draw(ctx);
@@ -110,6 +115,8 @@ function draw() {
     ctx.beginPath();
     ctx.arc(level.paddledata.x + level.paddledata.width / 2, level.paddledata.y, level.paddledata.width / 2, 1 * Math.PI, 2 * Math.PI);
     ctx.stroke();
+
+    loadLives(level.lives);
 
     if (!level.allLevelsComplete) {
         window.requestAnimationFrame(draw);
@@ -132,7 +139,7 @@ function setPaddleX() {
     } else if (canvas.width - level.paddledata.width < level.paddledata.x) {
         level.paddledata.x = canvas.width - level.paddledata.width;
     }
-
-    ctx.drawImage(personImg, mouse.x - personImg.width / 2, level.paddledata.y);
-
+    godImgPosition = {x: level.paddledata.x + (level.paddledata.width / 2) - (godImg.width / 2), 
+                      y: level.paddledata.y - (level.paddledata.width * 0.4)};
+    ctx.drawImage(godImg, godImgPosition.x, godImgPosition.y);
 }

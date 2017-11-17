@@ -44,7 +44,6 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, lives) 
     this.paddledata = scaleObject(paddledata, true);
     this.lives = lives;
     this.level = level;
-    loadLives(lives);
     console.log("lives: " + this.lives);
 
 };
@@ -73,6 +72,7 @@ Level.prototype.loadLevel = function () {
                 console.log("Load level: got data for level " + response.level);
                 loadLevelOnScreen(response.level);
                 self.load(response.level, response.ball, response.bricks, response.paddle, response.lives);
+                console.log(response.lives);
             }
         } else {
 //            document.location = "/breakout/";
@@ -92,12 +92,12 @@ Level.prototype.loadLevel = function () {
     });
 };
 
-var scaleObject = function (object, state) {
+var scaleObject = function (object, isIncoming) {
     var scaleobj = object;
-    scaleobj.x = xscale(object.x, state);
-    scaleobj.y = yscale(object.y, state);
-    scaleobj.width = xscale(object.width, state);
-    scaleobj.height = yscale(object.height, state);
+    scaleobj.x = xscale(object.x, isIncoming);
+    scaleobj.y = yscale(object.y, isIncoming);
+    scaleobj.width = xscale(object.width, isIncoming);
+    scaleobj.height = yscale(object.height, isIncoming);
 
     return scaleobj;
 };

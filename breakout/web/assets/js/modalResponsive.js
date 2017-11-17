@@ -25,12 +25,14 @@ var modalAllLevelsCompleted = function (levelId, time) {
 };
 
 var modalGameOver = function () {
-    var buttons = "<button class='btn'>Retry</button><button class='btn' id='returnToMain'>Main Menu</button>";
+    var buttons = "<button class='btn'>Retry</button>";
+    buttons += mainMenuButton;
     printModal("Game Over", "GAME OVER", buttons);
 };
 var modalLogout=function(){
     var buttons="<form action='logout' method='¨POST'><input type='submit' class='btn' value='Logout'/></form>";
-    printModal("Logout","Are you sure?",buttons);
+    var title = "Logout";
+    printModal(title,"Are you sure?",buttons);
 };
 
 var modalErrorMessage = function (reason) {
@@ -41,7 +43,13 @@ var modalErrorMessage = function (reason) {
         message += "<br/><br/>" + reason;
     }
     printModal(title, message, buttons);
-}
+};
+
+var modalQuit=function(){
+    var buttons= "<button class='btn' data-dismiss='modal'>Cancel</button>";
+    buttons += "<button id='quit' class='btn' data-dismiss='modal'>Quit</button>";
+    printModal("Quit","Are you sure?",buttons);
+};
 
 var printModal = function (title, content, buttons) {
     var modal = "<div class='modal fade' id='modal'>";

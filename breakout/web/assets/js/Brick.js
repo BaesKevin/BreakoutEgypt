@@ -18,6 +18,7 @@ Brick.prototype.draw = function (ctx) {
         color = getColor(this);
 
         ctx.fillStyle = color.color1;
+        ctx.shadowColor = "black";
 
         ctx.beginPath();
         ctx.moveTo((this.x + this.width / 2), this.y);

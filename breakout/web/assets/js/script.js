@@ -4,15 +4,16 @@ var hours = 0;
 var minutes = 0;
 var seconds = 0;
 
-$(document).ready(function(){
-    $("#arcade").on("click",redirectToArcade);
-    $("#logout").on("click",logout);
-    $("#returnToMain").on("click",redirectToMainMenu);
-    $("#toMultiplayer").on("click",redirectToMultiplayer);
+$(document).ready(function () {
+    $("#arcade").on("click", redirectToArcade);
+    $("#logout").on("click", logout);
+    $("#returnToMain").on("click", redirectToMainMenu);
+    $("#toMultiplayer").on("click", redirectToMultiplayer);
     $("#toHighscores").on("click", redirectToHighscore);
-    $("#modalPlaceholder").on("click","#returnToMain",redirectToMainMenu);
-});
-var logout=function(e){
+    $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
+ });
+
+var logout = function (e) {
     e.preventDefault();
     modalLogout();
 }
@@ -38,16 +39,16 @@ var redirectToHighscore = function (e) {
 };
 
 var loadLives = function (lives) {
-    var imagePath = "assets/media/ankLife.png";
-    var lifeImages = "";
+    var height = (canvas.height - level.paddledata.y) * 0.8;
+    var startX = canvas.width - 5 - height;
     for (var i = 0; i < lives; i++) {
-        lifeImages += "<img src='" + imagePath + "' alt='life' title='life'/>";
+        ctx.drawImage(liveImg, startX, level.paddledata.y + 5, height, height);
+        startX -= (height * 1.1);
     }
-    $("#healthbar").html(lifeImages);
 };
 
 var loadLevelOnScreen = function (levelnumber) {
-    $("#level").html("<p><span>Level: " + levelnumber + "</span></p>");
+    $("#gameMain").find("#level").html("Level: " + levelnumber);
 };
 
 var incrSeconds = function () {
