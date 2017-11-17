@@ -6,6 +6,9 @@
 package com.breakoutws.servlet;
 
 import com.breakoutws.domain.GameManager;
+import com.breakoutws.domain.GameType;
+import com.breakoutws.domain.Player;
+import com.breakoutws.domain.User;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,9 +29,16 @@ public class ArcadeServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("ArcadeServlet: Creating game");
-        int gameId = new GameManager().createGame();
         
-        response.sendRedirect("arcade.html?gameId="+gameId);
+        GameManager gm = new GameManager();
+        
+        // TODO get from querystring
+        int numberOfPlayers = 1;
+        int startingLevel = 2;
+        int gameId = gm.createGame(1, 2, GameType.ARCADE);
+        
+        // TODO redirect to level choice page
+        response.sendRedirect(String.format("arcade.html?gameId=%d&level=%d",gameId, 1));
     }
 
 }

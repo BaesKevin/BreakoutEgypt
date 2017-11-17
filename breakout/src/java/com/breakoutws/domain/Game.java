@@ -6,7 +6,8 @@
  */
 package com.breakoutws.domain;
 
-import java.util.TimerTask;
+import com.breakoutws.domain.shapes.Paddle;
+import java.util.List;
 import javax.websocket.Session;
 
 /**
@@ -22,12 +23,17 @@ public class Game {
     private LevelFactory levelFactory;
     private SessionManager manager;
 
-    public Game() {
+    public Game(int numberOfPlayers, int startingLevel, GameType type) {
         id = ID++;
-        manager = new SessionManager();
-        levelFactory = new LevelFactory(this);
+        manager = new SessionManager(numberOfPlayers);
 
-        currentLevel = levelFactory.getCurrentLevel();
+        if (type == GameType.ARCADE) {
+            levelFactory = new ArcadeLevelFactory(this);
+        } else {
+            levelFactory = new MultiplayerLevelFactory(this);
+        }
+
+        setCurrentLevel(startingLevel);
     }
 
     public int getId() {
@@ -38,15 +44,42 @@ public class Game {
         return currentLevel;
     }
 
-    public void movePaddle(int x, int y) {
-        currentLevel.movePaddle(x, y);
+    public void movePaddle(Session s, int x, int y) {
+        Player peer = manager.getPlayer(s);
+
+        if (peer != null) {
+            currentLevel.movePaddle(peer.getPaddle(), x, y);
+        } else {
+            System.out.println("Game: trying to move paddle for player that doesn't exist");
+        }
     }
 
-    public void addPlayer(Session peer) {
-        manager.addPlayer(peer);
+    public void addConnectingPlayer(Player player) {
+
+        System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
+        manager.addConnectingPlayer(player);
+
+    }
+
+    public boolean isPlayerInSessionManager(Player player) {
+        return manager.isPlayerInSessionManager(player);
+    }
+
+    public void assignPaddleToPlayer(Player player) {
+        int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
+        Paddle paddleToAssign = currentLevel.getPaddles().get(indexOfPaddleToAssign);
+        System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
+        player.setPaddle(paddleToAssign);
+    }
+
+    public void addSessionForPlayer(Player player, Session session) {
+        if (manager.isConnecting(player)) {
+            manager.addSessionForPlayer(player, session);
+        }
     }
 
     public void removePlayer(Session peer) {
+        System.out.printf("Game %d: remove player\n", id);
         manager.removePlayer(peer);
     }
 
@@ -85,10 +118,8 @@ public class Game {
 
     // TODO check if last level was reached
     public void initNextLevel() {
-        System.out.printf("level %d complete, intializing next level ", currentLevel.getId());
-        
         manager.notifyLevelComplete(currentLevel);
-        
+
         if (levelFactory.hasNextLevel()) {
             currentLevel = levelFactory.getNextLevel();
         }
@@ -97,5 +128,19 @@ public class Game {
 
     public boolean hasNextLevel() {
         return levelFactory.hasNextLevel();
+    }
+
+    public Player getPlayer(Player player) {
+        return manager.getPlayer(player);
+    }
+
+    // TODO validate by keeping track of the player's max reached level
+    public Level getLevel() {
+        return levelFactory.getCurrentLevel();
+    }
+
+    public void setCurrentLevel(int levelId) {
+        levelFactory.setCurrentLevel(levelId);
+        this.currentLevel = levelFactory.getCurrentLevel();
     }
 }

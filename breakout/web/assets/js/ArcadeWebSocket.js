@@ -63,7 +63,6 @@ function onMessage(evt) {
 
             } else {
                 level.updateLevelData(json);
-                //console.debug(json);
             }
         } else {
             handleLevelUpdateError(json);

@@ -39,10 +39,10 @@ var redirectToHighscore = function (e) {
 };
 
 var loadLives = function (lives) {
-    var height = (canvas.height - level.paddledata.y) * 0.8;
+    var height = (canvas.height - level.mypaddle.y) * 0.8;
     var startX = canvas.width - 5 - height;
     for (var i = 0; i < lives; i++) {
-        ctx.drawImage(liveImg, startX, level.paddledata.y + 5, height, height);
+        ctx.drawImage(liveImg, startX, level.mypaddle.y + 5, height, height);
         startX -= (height * 1.1);
     }
 };
