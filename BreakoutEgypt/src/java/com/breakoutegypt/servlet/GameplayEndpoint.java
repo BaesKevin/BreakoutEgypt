@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.connectionmanagement.WebsocketConnection;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.Player;
@@ -45,15 +46,14 @@ public class GameplayEndpoint {
         game = gm.getGame(gameId);
         
         // TODO retrieve actual username from session/path parameter
-        Player player = new Player(new User("player"));
-        gm.addSessionForPlayer(gameId, player, peer);
+        gm.addConnectionForPlayer(gameId, "player", new WebsocketConnection(peer));
 //        gm.setSessionForPlayer(name, session); 
     }
 
     @OnClose
     public void onClose(Session peer) {
         int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
-        new GameManager().removePlayer(gameId, peer);
+        new GameManager().removePlayer(gameId, "player");
     }
     
     @OnMessage
@@ -62,7 +62,7 @@ public class GameplayEndpoint {
         int y = moveCommand.getJson().getInt("y");
         
         if(game != null){
-            game.movePaddle(session, x,y);
+            game.movePaddle("player", x,y);
         }
         else
         {

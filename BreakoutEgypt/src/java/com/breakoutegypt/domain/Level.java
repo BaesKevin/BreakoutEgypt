@@ -38,22 +38,6 @@ public class Level {
     private ScoreTimer scoreTimer;
     private LevelTimerTask levelTimerTask;
 
-    public Level(int id, Game game) {
-
-        this.id = id;
-        this.game = game;
-        this.isLastLevel = isLastLevel;
-
-        this.levelStarted = false;
-
-        scoreTimer = new ScoreTimer();
-
-        breakoutWorld = new BreakoutWorld(this);
-    }
-
-    public ScoreTimer getScoreTimer() {
-        return scoreTimer;
-    }
 
     public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
     ) {
@@ -62,11 +46,28 @@ public class Level {
 
     public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives
     ) {
-        this(id, game);
+        this(id, game, ball, paddles, bricks, lives, BreakoutWorld.TIMESTEP_DEFAULT);
+    }
+    
+    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives, float worldTimeStepInMs){
+         this.id = id;
+        this.game = game;
+        this.isLastLevel = isLastLevel;
+
+        this.levelStarted = false;
+
+        scoreTimer = new ScoreTimer();
+
+        breakoutWorld = new BreakoutWorld(this, worldTimeStepInMs);
         levelState = new LevelState(breakoutWorld, ball, paddles, bricks);
 
         this.lives = lives;
         this.timer = new Timer();
+    }
+
+    
+    public ScoreTimer getScoreTimer() {
+        return scoreTimer;
     }
 
     public boolean isLevelStarted() {
@@ -75,6 +76,19 @@ public class Level {
 
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;
+    }
+    
+    
+    public void start() {
+        if (levelTimerTask == null) {
+            System.out.printf("Level: start level %d", this.id);
+            levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
+            System.out.printf("Expected timestep: %d, actual timestep: %d", 1000/60, breakoutWorld.getTimeStepAsMs());
+            timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
+        } else {
+            System.out.println("Level: trying to start the level twice, ignoring call");
+        }
+
     }
 
     public void startBall() {
@@ -135,15 +149,9 @@ public class Level {
         return getTargetBricksLeft() == 0;
     }
 
-    public void start() {
-        if (levelTimerTask == null) {
-            System.out.printf("Level: start level %d", this.id);
-            levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
-            timer.schedule(levelTimerTask, 0, 1000 / 60);
-        } else {
-            System.out.println("Level: trying to start the level twice, ignoring call");
-        }
-
+    
+    public void step(){
+        breakoutWorld.step();
     }
     
     public boolean noLivesLeft() {

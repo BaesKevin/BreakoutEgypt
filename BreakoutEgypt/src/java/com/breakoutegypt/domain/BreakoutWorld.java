@@ -26,7 +26,8 @@ public class BreakoutWorld {
     // TODO use these!
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    private final float timestep = 1.0f / 60.0f;
+    public static final float TIMESTEP_DEFAULT = 1.0f / 60f;
+    private float timestepSeconds;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
     private Level currentLevel;
@@ -42,6 +43,10 @@ public class BreakoutWorld {
     private Paddle paddleHitByBall;
     
     public BreakoutWorld(Level level) {
+        this(level, TIMESTEP_DEFAULT);
+    }
+    
+    public BreakoutWorld(Level level, float timestepSeconds){
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
         world = new World(new Vec2(0.0f, 0.0f));
@@ -49,6 +54,8 @@ public class BreakoutWorld {
 
         this.currentLevel = level;
         messages = new ArrayList();
+        
+        this.timestepSeconds = timestepSeconds;
     }
 
     public World getWorld() {
@@ -61,6 +68,10 @@ public class BreakoutWorld {
 
     public Level getLevel() {
         return currentLevel;
+    }
+    
+    public long getTimeStepAsMs(){
+        return Math.round(Math.floor(timestepSeconds * 1000));
     }
 
     public void destroyBrick(Brick brick) {
@@ -121,14 +132,14 @@ public class BreakoutWorld {
         return messages;
     }
 
-    void clearBrickMessages() {
+    public void clearBrickMessages() {
         messages.clear();
     }
 
     // any changes to the world state must be made here to try to avoid concurrency issues where the game is 
     // updating some state while we are changing it too
     public void step() {
-        world.step(timestep, velocityIterations, positionIterations);
+        world.step(timestepSeconds, velocityIterations, positionIterations);
         for (Body brick : bodiesToDestroy) {
 
             world.destroyBody(brick);
@@ -160,7 +171,7 @@ public class BreakoutWorld {
         return world;
     }
 
-    void resetBall() {
+    public void resetBall() {
         isBallOutOfBounds = true;
     }
 

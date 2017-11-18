@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain;
+package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.domain.BodyFactory;
+import com.breakoutegypt.domain.Game;
+import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.BrickType;

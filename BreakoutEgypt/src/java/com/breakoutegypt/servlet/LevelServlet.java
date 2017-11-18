@@ -46,13 +46,10 @@ public class LevelServlet extends HttpServlet {
             
             // already initialize player and give him a paddle
             String name = "player";
-            Player player = new Player(new User(name));
+            Player player = game.getPlayer(name);
             
-            if(game.isPlayerInSessionManager(player)){
-                player = game.getPlayer(player);
-            }
-            else
-            {
+            if(player == null){
+                player = new Player(new User(name));
                 manager.addConnectingPlayer(gameId, player);
             }
             manager.assignPaddleToPlayer(gameId, player);

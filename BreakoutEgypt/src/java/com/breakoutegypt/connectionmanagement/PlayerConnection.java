@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain;
+package com.breakoutegypt.connectionmanagement;
+
+import javax.json.JsonObject;
 
 /**
  *
  * @author kevin
  */
-public enum GameType {
-    ARCADE, MULTIPLAYER, TEST
+public interface PlayerConnection {
+    void send(JsonObject json);
 }
