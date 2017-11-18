@@ -108,12 +108,8 @@ public class Game {
         currentLevel.stop();
     }
     
-    public void pause() {
-        currentLevel.stop();
-    }
-    
-    public void resume() {
-        currentLevel.start();
+    public void togglePaused() {
+        currentLevel.togglePaused();
     }
 
     // TODO check if last level was reached

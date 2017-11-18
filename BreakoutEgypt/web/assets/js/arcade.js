@@ -1,5 +1,3 @@
-var paused = false;
-
 var checkKey = function (e) {
     if (level !== undefined) {
         if (e.which === 112)
@@ -17,13 +15,8 @@ var quitGame = function () {
 
 var pauseGame = function () {
     var gameId = getParameterByName("gameId");
-    if (paused) {
-        var action = "resume";
-    } else {
-        var action = "pause";
-    }
     $.ajax({
-        url: "pause?gameid=" + gameId + "&action=" + action
+        url: "pause?gameid=" + gameId
     }).done(function () {
         console.log("stopped");
     });
