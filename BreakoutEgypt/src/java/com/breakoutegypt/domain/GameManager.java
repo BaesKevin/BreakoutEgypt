@@ -81,6 +81,7 @@ public class GameManager {
                 if(game.hasNoPlayers()){
                     
                     stopGame(game.getId());
+                    games.remove(game.getId());
                 }
             } else {
 //                System.out.println("TGameManager: rying to remove player to game that doesn't exist");
