@@ -20,6 +20,7 @@ public class Brick  extends RegularBody{
     private Point gridPosition;
     private List<Brick> switchBricks;
     private boolean isSwitched;
+    private int explosionRadius;
     
     public Brick(Shape s,  BrickType type, Point position){
         this(s, type,position, false, true);
@@ -30,6 +31,7 @@ public class Brick  extends RegularBody{
         this.gridPosition = gridPosition;
         this.brickType = type;
         this.isSwitched = isSwitched;
+        this.explosionRadius = 1;
     }
     
     public void setSwitchBricks(List<Brick> bricks) {
@@ -82,6 +84,14 @@ public class Brick  extends RegularBody{
 
     public void setGridPosition(Point position) {
         this.gridPosition = position;
+    }
+
+    public int getExplosionRadius() {
+        return explosionRadius;
+    }
+    
+    public void setExplosionRadius(int radius){
+        this.explosionRadius = radius;
     }
     
     public JsonObjectBuilder toJson(){

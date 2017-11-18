@@ -37,7 +37,7 @@ public class Level {
 
     private ScoreTimer scoreTimer;
     private LevelTimerTask levelTimerTask;
-
+    private boolean runLevelManually;
 
     public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
     ) {
@@ -48,9 +48,9 @@ public class Level {
     ) {
         this(id, game, ball, paddles, bricks, lives, BreakoutWorld.TIMESTEP_DEFAULT);
     }
-    
-    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives, float worldTimeStepInMs){
-         this.id = id;
+
+    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives, float worldTimeStepInMs) {
+        this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
 
@@ -63,9 +63,9 @@ public class Level {
 
         this.lives = lives;
         this.timer = new Timer();
+        runLevelManually = false;
     }
 
-    
     public ScoreTimer getScoreTimer() {
         return scoreTimer;
     }
@@ -77,13 +77,16 @@ public class Level {
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;
     }
-    
-    
+
+    public void setRunManual(boolean b) {
+        this.runLevelManually = b;
+    }
+
     public void start() {
-        if (levelTimerTask == null) {
+        if (!runLevelManually && levelTimerTask == null) {
             System.out.printf("Level: start level %d", this.id);
             levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
-            System.out.printf("Expected timestep: %d, actual timestep: %d", 1000/60, breakoutWorld.getTimeStepAsMs());
+            System.out.printf("Expected timestep: %d, actual timestep: %d", 1000 / 60, breakoutWorld.getTimeStepAsMs());
             timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
         } else {
             System.out.println("Level: trying to start the level twice, ignoring call");
@@ -149,11 +152,10 @@ public class Level {
         return getTargetBricksLeft() == 0;
     }
 
-    
-    public void step(){
+    public void step() {
         breakoutWorld.step();
     }
-    
+
     public boolean noLivesLeft() {
         return lives == 0;
     }
@@ -164,10 +166,13 @@ public class Level {
 
     public void stop() {
         System.out.printf("Level: stop level %d", this.id);
-        levelTimerTask.cancel();
-        levelTimerTask = null;
+
+        if (!runLevelManually) {
+            levelTimerTask.cancel();
+            levelTimerTask = null;
+        }
     }
-    
+
     public void togglePaused() {
         if (levelTimerTask == null) {
             start();

@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
    GameManagerTest.class,
    SessionManagerTest.class,
-   CollisionTest.class
+   LevelTest.class
 })
 
 public class BreakoutTestSuite {

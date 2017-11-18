@@ -28,7 +28,7 @@ public class BrickCollisionHandler {
         if (brick.isSwitched()) {
             switch(brickType){
                 case EXPLOSIVE:
-                    new ExplosiveCollision(level, brick, 1).handleCollsion();
+                    new ExplosiveCollision(level, brick, brick.getExplosionRadius()).handleCollsion();
                     break;
                 case UNBREAKABLE:
                     break;
