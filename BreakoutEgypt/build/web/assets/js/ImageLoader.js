@@ -1,8 +1,8 @@
 var ImageLoader = function () {
      return loadImages().then(function () {
-        brickPattern = ctx.createPattern(brickImg, "repeat");
-        goldPattern = ctx.createPattern(goldImg, "repeat");
-        firePattern = ctx.createPattern(fireImg, "repeat");
+        brickPattern = brickCtx.createPattern(brickImg, "repeat");
+        goldPattern = brickCtx.createPattern(goldImg, "repeat");
+        firePattern = brickCtx.createPattern(fireImg, "repeat");
     }).catch(function (err) {
         console.log(err);
     });

@@ -1,4 +1,4 @@
-var canvas, mouse, ctx;
+var mouse, brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
 
 var level = new Level();
 var brickImg = new Image();
@@ -18,16 +18,19 @@ var imageAssets = [
 ];
 
 document.addEventListener("DOMContentLoaded", function () {
-    canvas = $('canvas')[0];
-    ctx = canvas.getContext('2d');
+    brickCanvas = $('#stationaryParts')[0];
+    brickCtx = brickCanvas.getContext('2d');
+    movingPartsCanvas = $('#movingParts')[0];
+    movingPartsCtx = movingPartsCanvas.getContext('2d');
     
-    level.xscaling = canvas.width / 300;
-    level.yscaling = canvas.height / 300;
+    
+    level.xscaling = brickCanvas.width / 300;
+    level.yscaling = brickCanvas.height / 300;
     console.log("xscaling: " + level.xscaling + " yscaling: " + level.yscaling);
 
     mouse = {
         x: 0,
-        y: canvas.height - 50
+        y: brickCanvas.height - 50
     };
 
     $('canvas').on('mousemove', getMouseX);
@@ -39,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
 });
 
-$("canvas")[0].addEventListener("click", function () {
+$("#movingParts")[0].addEventListener("click", function () {
 
     var gameId = getParameterByName("gameId");
     console.log("Doing post for game " + gameId + " to start the ball.");

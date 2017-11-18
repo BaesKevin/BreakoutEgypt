@@ -95,6 +95,7 @@ Level.prototype.loadLevel = function () {
                 console.log("Load level: got data for level " + response.level);
                 loadLevelOnScreen(response.level);
                 self.load(response.level, response.ball, response.bricks, response.paddles, response.mypaddle, response.lives);
+                loadLives(level.lives);
             }
         } else {
 //            document.location = "/breakout/";
@@ -192,6 +193,7 @@ Level.prototype.updateLevelData = function (json) {
             }
         });
     }
+    updateBricks();
 };
 
 function xscale(value, isIncoming) {

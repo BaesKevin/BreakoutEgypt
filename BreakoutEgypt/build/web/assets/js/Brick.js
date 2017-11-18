@@ -10,21 +10,21 @@ var Brick = function (brickdata) {
     this.isTarget = brickdata.isTarget;
 };
 
-Brick.prototype.draw = function (ctx) {
+Brick.prototype.draw = function (brickCtx) {
     if (this.show) {
         visual = getColor(this);
 
-        ctx.fillStyle = visual.color;
-        ctx.shadowColor = "black";
+        brickCtx.fillStyle = visual.color;
+        brickCtx.shadowColor = "black";
 
-        ctx.beginPath();
-        ctx.moveTo((this.x + this.width / 2), this.y);
-        ctx.lineTo(this.x, (this.y + this.height));
-        ctx.lineTo((this.x + this.width), (this.y + this.height));
-        ctx.fill();
+        brickCtx.beginPath();
+        brickCtx.moveTo((this.x + this.width / 2), this.y);
+        brickCtx.lineTo(this.x, (this.y + this.height));
+        brickCtx.lineTo((this.x + this.width), (this.y + this.height));
+        brickCtx.fill();
 
-        ctx.fillStyle = visual.pattern;
-        ctx.fill();
+        brickCtx.fillStyle = visual.pattern;
+        brickCtx.fill();
     }
 };
 

@@ -22,3 +22,7 @@
 .quit {
     top: 45px;
 }
+
+#movingParts {
+    position: absolute;
+}
