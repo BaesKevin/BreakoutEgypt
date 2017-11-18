@@ -1,0 +1,97 @@
+body{
+    background-color:#fecc33;
+    min-width:400px;
+}
+span{
+    font-weight:bold;
+}
+nav{
+    background-color:#fecc33;
+}
+canvas{
+    background-color:white;
+    border: 1px solid black;
+}
+
+header{
+    padding-top:90px;
+    padding-bottom:90px;
+    text-align:center;
+    background:url('../media/egypt_header.jpg') no-repeat center center;
+    background-size:cover;
+}
+header h1,header h2{
+    color:white;
+}
+body{
+    background-color:#fefe99;
+}
+footer{
+    padding-top:10px;
+}
+.list-inline-item>a{
+    color:black;
+}
+#menu{
+    padding:10px;
+    margin-left:auto;
+    margin-right:auto;
+    width:40%;
+    background-color:#fe9933;
+    border: 1px solid black;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+main button{
+    background-color:#fe9933;
+    width:100%;
+    height:100%;
+    font-weight:bold;
+
+}
+#gameMain{
+    width:60%;
+    margin-left:auto;
+    margin-right:auto;
+    text-align: center;
+}
+main button:hover{
+    background-color:#cb7a28;
+}
+#healthbar{
+    float:right;
+    background-color:#fefe99;
+}
+#healthbar img{
+    display:block;
+    padding:10px;
+    height:60px;
+    width:auto;
+}
+
+#level span{
+    font-size:20px;
+}
+.list-group{
+    margin-left:auto;
+    margin-right:auto;
+    width:90%;
+
+}
+.list-group-item{
+    padding:0;
+    background-color:inherit;
+    margin:5px;
+}
+.clearfix:before,.clearfix:after{
+    content:"";
+    display:table;
+}
+.clearfix:after{
+    clear:both;
+}
+
+canvas {
+    background-image: url("../media/sandy-background2.jpg");
+}

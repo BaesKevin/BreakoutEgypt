@@ -25,7 +25,7 @@ var modalAllLevelsCompleted = function (levelId, time) {
 };
 
 var modalGameOver = function () {
-    var buttons = "<button class='btn'>Retry</button>";
+    var buttons = "<button id='retry' class='btn'>Retry</button>";
     buttons += mainMenuButton;
     printModal("Game Over", "GAME OVER", buttons);
 };
@@ -64,3 +64,40 @@ var printModal = function (title, content, buttons) {
     $("#modalPlaceholder").html(modal);
     $("#modal").modal({backdrop: 'static', keyboard: false});
 };
+
+var logout = function (e) {
+    e.preventDefault();
+    modalLogout();
+};
+
+var redirectToArcade = function (e) {
+    e.preventDefault();
+    modalChooseDifficulty();
+};
+
+var redirectToMainMenu = function (e) {
+    e.preventDefault();
+    location.replace('index.html');
+};
+
+var redirectToMultiplayer = function (e) {
+    e.preventDefault();
+    location.replace('multiplayerMenu.html');
+};
+
+var redirectToHighscore = function (e) {
+    e.preventDefault();
+    location.replace('highscore.html');
+};
+
+$(document).ready(function () {
+    $("#arcade").on("click", redirectToArcade);
+    $("#logout").on("click", logout);
+    $("#returnToMain").on("click", redirectToMainMenu);
+    $("#toMultiplayer").on("click", redirectToMultiplayer);
+    $("#toHighscores").on("click", redirectToHighscore);
+//    $("#modalPlaceholder").on("click", "#retry", restartLevel); //TODO
+    $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
+    $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
+    $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
+ });

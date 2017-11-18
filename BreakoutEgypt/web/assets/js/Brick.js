@@ -8,7 +8,7 @@ var Brick = function (brickdata) {
     this.show = brickdata.show;
     this.type = brickdata.type;
     this.isTarget = brickdata.isTarget;
-}
+};
 
 Brick.prototype.draw = function (ctx) {
     if (this.show) {
@@ -22,12 +22,11 @@ Brick.prototype.draw = function (ctx) {
         ctx.lineTo(this.x, (this.y + this.height));
         ctx.lineTo((this.x + this.width), (this.y + this.height));
         ctx.fill();
-        
+
         ctx.fillStyle = visual.pattern;
         ctx.fill();
-        
     }
-}
+};
 
 function getColor(brick) {
 

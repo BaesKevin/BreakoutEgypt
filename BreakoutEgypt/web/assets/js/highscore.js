@@ -7,7 +7,7 @@ function getHighscoresByLevel(levelId) {
 
         $("#highscoreTablePlaceholder").empty().append(scoreTable);
 
-    })
+    });
 }
 
 function generateHighscoreTable (scoresAsJson) {
@@ -39,7 +39,6 @@ function getHighscores(e) {
 }
 
 $(document).ready(function () {
-    
     getHighscoresByLevel(1);
     $("#returnToMain").on("click", redirectToMainMenu);
     $("form").on("submit", getHighscores);

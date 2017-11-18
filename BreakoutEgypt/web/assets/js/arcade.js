@@ -10,25 +10,26 @@ var checkKey = function (e) {
 var quitGame = function () {
     websocket.close();
     location.replace("index.html");
-    console.log("quit");
 };
 
 var pauseGame = function () {
     var gameId = getParameterByName("gameId");
     $.ajax({
         url: "pause?gameid=" + gameId
-    }).done(function () {
-        console.log("stopped");
-    });
-    paused = !paused;
+    }).fail(function (err) {
+        console.log(err);
+    })
 };
 
-
+var redirectToMainMenu = function (e) {
+    e.preventDefault();
+    location.replace('index.html');
+};
 
 $(document).ready(function () {
     $(".quit").on("click", modalQuit);
     $("#modalPlaceholder").on("click", "#quit", quitGame);
     $("#pause").on("click", pauseGame);
-    
+    $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
     $(document).on("keypress", checkKey);
 });

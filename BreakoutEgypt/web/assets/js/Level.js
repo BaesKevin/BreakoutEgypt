@@ -3,17 +3,18 @@ var Level = function () {
     this.gameOver = false;
     this.allLevelsComplete = false;
     this.level = 0;
-    this.balldata = {x: 0, y: 0, radius: 0, color: 'rgb(0,0,0)'};
+    this.balldata = {x: 0, y: 0, width: 0, color: 'rgb(0,0,0)'};
     this.brickdata = [];
     this.paddles = [
         {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'},
         {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'}
-    ],
+    ], 
             this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
     this.lives = 0;
     this.xscaling = 1;
     this.yscaling = 1;
 };
+
 Level.prototype.defaultScale = function () {
     console.log("Scaling to default");
     this.balldata = scaleObject(this.balldata, false);
@@ -27,12 +28,12 @@ Level.prototype.defaultScale = function () {
     for (var i = 0; i < this.brickdata.length; i++) {
         this.brickdata[i] = scaleBrick(this.brickdata[i], false);
     }
-}
+};
+
 Level.prototype.reScale = function (width, height) {
     this.defaultScale();
     this.xscaling = width / 300;
     this.yscaling = height / 300;
-    console.log("Scaling factors: " + this.xscaling + " " + this.yscaling)
 
     this.balldata = scaleObject(this.balldata, true);
     var scaledPaddles = [];
@@ -40,13 +41,10 @@ Level.prototype.reScale = function (width, height) {
         scaledPaddles.push(scaleObject(paddle, true));
     });
     this.paddles = scaledPaddles;
-    console.log("My paddle after rescale: " + this.mypaddle.x + " " + this.mypaddle.y);
     for (var i = 0; i < this.brickdata.length; i++) {
         this.brickdata[i] = scaleBrick(this.brickdata[i], true);
     }
-
-}
-
+};
 
 Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddle, lives) {
 
@@ -54,7 +52,7 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
     var self = this;
     brickdata.forEach(function (brickjson) {
         self.brickdata.push(scaleObject(new Brick(brickjson), true));
-    })
+    });
 
     this.balldata = balldata;
     this.paddles = [];
@@ -67,20 +65,15 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
         return paddle.name === mypaddle;
     });
 
-    console.log("My paddle is " + mypaddle);
-
-
     this.lives = lives;
     this.level = level;
     loadLives(lives);
-
-    console.log("lives: " + this.lives);
 };
 
 Level.prototype.loadLevel = function () {
 
     var gameId = getParameterByName("gameId");
-    console.log("load leve " + level + " for game  " + gameId);
+    console.log("load level " + level + " for game  " + gameId);
     var self = this;
 
     fetch('level?gameId=' + gameId).then(function (response) {
@@ -119,13 +112,11 @@ Level.prototype.loadLevel = function () {
             draw();
         }
 
-    })
-            .catch(function (err) {
-                console.log(err);
-                console.log("%c" + err, "background-color:red; color: white;padding:5px;");
-                websocket.close();
-//        document.location = "/breakout?error=" + err;
-            });
+    }).catch(function (err) {
+        console.log(err);
+        console.log("%c" + err, "background-color:red; color: white;padding:5px;");
+        websocket.close();
+    });
 };
 
 var scaleObject = function (object, isIncoming) {
@@ -137,9 +128,9 @@ var scaleObject = function (object, isIncoming) {
 
     return scaleobj;
 };
+
 var scaleBrick = function (brick, state) {
-    var scaledBrick = scaleObject(brick, state);
-    return new Brick(scaledBrick);
+    return new Brick(scaleObject(brick, state));
 };
 
 Level.prototype.sendClientLevelState = function () {
@@ -176,7 +167,7 @@ Level.prototype.updateLevelData = function (json) {
                     console.log("Hide brick " + message.name);
                     var brickToHide = self.brickdata.find(
                             function (brick) {
-                                return message.name === brick.name
+                                return message.name === brick.name;
                             }
                     );
 
@@ -189,7 +180,7 @@ Level.prototype.updateLevelData = function (json) {
 
                     var brickToShow = self.brickdata.find(
                             function (brick) {
-                                return message.name === brick.name
+                                return message.name === brick.name;
                             }
                     );
 
