@@ -14,16 +14,16 @@ import com.breakoutegypt.domain.shapes.Brick;
  * @author kevin
  */
 public class RegularCollision {
-    private Level level;
+    private CollisionEventHandler collisionEventHandler;
     private Brick brick;
 
-    public RegularCollision(Level level, Brick brick) {
-        this.level = level;
+    public RegularCollision(CollisionEventHandler collisionEventHandler, Brick brick) {
+        this.collisionEventHandler = collisionEventHandler;
         this.brick = brick;
     }
     
     public void handleCollsion(){
         System.out.println("RegularCollision: Handling regular collision");
-        level.handleExplosiveEffect(new ExplosiveEffect(brick, 0));
+        collisionEventHandler.handleExplosiveEffect(new ExplosiveEffect(brick, 0));
     }
 }

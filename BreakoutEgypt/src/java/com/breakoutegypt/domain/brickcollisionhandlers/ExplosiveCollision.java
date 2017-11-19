@@ -15,18 +15,18 @@ import com.breakoutegypt.domain.shapes.Brick;
  */
 public class ExplosiveCollision {
 
-    private Level level;
+    private CollisionEventHandler collisionEventHandler;
     private Brick brick;
     private String shapeName;
     private int rangeToDestroy;
 
-    public ExplosiveCollision(Level level, Brick brick, int rangeToDestroy) {
-        this.level = level;
+    public ExplosiveCollision(CollisionEventHandler collisionEventHandler, Brick brick, int rangeToDestroy) {
+        this.collisionEventHandler = collisionEventHandler;
         this.brick = brick;
         this.rangeToDestroy = rangeToDestroy;
     }
 
     public void handleCollsion() {
-        level.handleExplosiveEffect(new ExplosiveEffect(brick, rangeToDestroy));
+        collisionEventHandler.handleExplosiveEffect(new ExplosiveEffect(brick, rangeToDestroy));
     }
 }

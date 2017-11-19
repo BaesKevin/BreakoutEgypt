@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.data.StaticDummyHighscoreRepo;
+import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
@@ -19,7 +21,7 @@ import java.util.Timer;
  *
  * @author kevin
  */
-public class Level {
+public class Level implements BreakoutWorldEventListener, CollisionEventHandler {
 
     private int id;
 
@@ -44,7 +46,6 @@ public class Level {
         this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
     }
 
-
     public Level(int id, Game game, LevelState initialState, int lives, float worldTimeStepInMs) {
         this.id = id;
         this.game = game;
@@ -54,10 +55,12 @@ public class Level {
 
         scoreTimer = new ScoreTimer();
 
-        breakoutWorld = new BreakoutWorld(this, worldTimeStepInMs);
+        breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
+        breakoutWorld.setBreakoutWorldEventListener(this);
+        breakoutWorld.setCollisionEventHandler(this);
         levelState = initialState;
         levelState.spawnAllObjects(breakoutWorld);
-        
+
         this.lives = lives;
         this.timer = new Timer();
         runLevelManually = false;
@@ -172,21 +175,50 @@ public class Level {
         return isLastLevel;
     }
 
-    public void removeBrick(Brick brick) {
-        levelState.removeBrick(brick);
-    }
-    
-    BreakoutWorld getBreakoutWorld() {
-        return breakoutWorld;
+    @Override
+    public void setResetBallFlag(Ball ball) {
+        breakoutWorld.setResetBallFlag(ball);
     }
 
+    @Override
+    public void ballHitPaddle(Ball ball, Paddle paddle) {
+        breakoutWorld.ballHitPaddle(ball, paddle);
+    }
+    
+    @Override
     public void handleExplosiveEffect(ExplosiveEffect effect) {
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(effect.getCentreBrick(), effect.getRadius());
 
         breakoutWorld.destroyBricks(bricks);
     }
 
+    @Override
     public void handleToggleEffect(ToggleEffect effect) {
         breakoutWorld.toggleBricks(effect.getBricksToToggle());
+    }
+
+    @Override
+    public void ballOutOfBounds(Ball ball) {
+        setLevelStarted(false);
+        breakoutWorld.destroyBody(ball.getBody());
+        resetBall();
+    }
+
+    @Override
+    public void removeBrick(Brick brick) {
+        levelState.removeBrick(brick);
+        
+        if (allTargetBricksDestroyed()) {
+            System.out.println("BreakoutWorld: all brick destroyed");
+            getScoreTimer().stop();
+
+            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
+
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), "hard");
+            dummyRepo.addScore(scoreOfPlayer);
+
+            dummyRepo.getScoresByLevel(getId(), "hard");
+            initNextLevel();
+        }
     }
 }

@@ -14,20 +14,17 @@ import com.breakoutegypt.domain.shapes.Brick;
  * @author snc
  */
 public class SwitchCollision {
-    private Level level;
+    private CollisionEventHandler collisionEventHandler;
     private Brick brick;
 
-    public SwitchCollision(Level level, Brick brick) {
-        this.level = level;
+    public SwitchCollision(CollisionEventHandler collisionEventHandler, Brick brick) {
+        this.collisionEventHandler = collisionEventHandler;
         this.brick = brick;
     }
     
     public void handleCollsion(){
         System.out.println("SwitchCollision: Handling switch collision");
         
-        level.handleToggleEffect(new ToggleEffect(brick.getSwitchBricks()));
-        
-      
-        //world.destroyBrick(brick);
+        collisionEventHandler.handleToggleEffect(new ToggleEffect(brick.getSwitchBricks()));
     }
 }

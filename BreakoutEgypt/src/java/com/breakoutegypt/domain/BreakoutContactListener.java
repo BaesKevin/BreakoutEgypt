@@ -5,7 +5,8 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionHandler;
+import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
+import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.IShape;
@@ -22,10 +23,10 @@ import org.jbox2d.dynamics.contacts.Contact;
  */
 public class BreakoutContactListener implements ContactListener {
 
-    private BreakoutWorld world;
+    private CollisionEventHandler collisionEventHandler;
 
-    public BreakoutContactListener(BreakoutWorld world) {
-        this.world = world;
+    public BreakoutContactListener(CollisionEventHandler collisionEventHandler) {
+        this.collisionEventHandler = collisionEventHandler;
     }
 
     @Override
@@ -40,10 +41,12 @@ public class BreakoutContactListener implements ContactListener {
         boolean isBallOutOfBounds = isBallOutOfBounds(f1, f2, s1, s2);
 
         if (brick != null) {
-            new BrickCollisionHandler(brick, world.getLevel()).handleCollision();
+            new BrickCollisionDecider(brick, collisionEventHandler).handleCollision();
         } else if (isBallOutOfBounds) {
+            Ball ball = getOutOfBoundsBall(s1, s2);
+            System.out.println("Out of bounds ball: " + ball.getName());
             // System.out.println("Ball is out of bounds");
-            world.getLevel().getBreakoutWorld().setResetBallFlag();
+            collisionEventHandler.setResetBallFlag(ball);
         }
     }
 
@@ -86,12 +89,12 @@ public class BreakoutContactListener implements ContactListener {
                 && data2 != null && data2 instanceof Paddle) {
             ball = (Ball) data1;
             paddle = (Paddle) data2;
-            world.ballHitPaddle(ball, paddle);
+            collisionEventHandler.ballHitPaddle(ball, paddle);
         } else if (data1 != null && data1 instanceof Paddle
                 && data2 != null && data2 instanceof Ball) {
             ball = (Ball) data2;
             paddle = (Paddle) data1;
-            world.ballHitPaddle(ball, paddle);
+            collisionEventHandler.ballHitPaddle(ball, paddle);
         }
     }
 
@@ -112,6 +115,19 @@ public class BreakoutContactListener implements ContactListener {
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
+    }
+
+    private Ball getOutOfBoundsBall(IShape s1, IShape s2) {
+        Ball ball = null;
+        
+        if(s1 != null && s1 instanceof Ball){
+            ball = (Ball) s1;
+        } 
+        else if (s2 != null && s2 instanceof Ball){
+            ball = (Ball) s2;
+        }
+        
+        return ball;
     }
 
 }

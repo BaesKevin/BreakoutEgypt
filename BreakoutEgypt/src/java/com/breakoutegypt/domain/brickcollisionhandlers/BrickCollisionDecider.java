@@ -13,14 +13,14 @@ import com.breakoutegypt.domain.shapes.BrickType;
  *
  * @author kevin
  */
-public class BrickCollisionHandler {
-    private Level level;
+public class BrickCollisionDecider {
+    private CollisionEventHandler collisionEventHandler;
     private Brick brick;
 
     
-    public BrickCollisionHandler(Brick brick, Level level) {
+    public BrickCollisionDecider(Brick brick, CollisionEventHandler collisionEventHandler) {
         this.brick = brick;
-        this.level = level;
+        this.collisionEventHandler = collisionEventHandler;
     }
     public void handleCollision() {
         
@@ -28,15 +28,15 @@ public class BrickCollisionHandler {
         if (brick.isSwitched()) {
             switch(brickType){
                 case EXPLOSIVE:
-                    new ExplosiveCollision(level, brick, brick.getExplosionRadius()).handleCollsion();
+                    new ExplosiveCollision(collisionEventHandler, brick, brick.getExplosionRadius()).handleCollsion();
                     break;
                 case UNBREAKABLE:
                     break;
                 case SWITCH:
-                    new SwitchCollision(level, brick).handleCollsion();
+                    new SwitchCollision(collisionEventHandler, brick).handleCollsion();
                     break;
                 default:
-                    new RegularCollision(level, brick).handleCollsion();
+                    new RegularCollision(collisionEventHandler, brick).handleCollsion();
                     break;
             }
         } else {
