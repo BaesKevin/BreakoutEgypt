@@ -26,15 +26,16 @@ public class LevelState {
     private List<Brick> bricks;
     private Ball ball;
     private List<Paddle> paddles;
+    private List<RegularBody> walls;
     private Ball startingBall;
 
     private BodyConfigurationFactory factory;
-    private BreakoutWorld breakoutWorld;
 
-    public LevelState(BreakoutWorld breakoutWorld, Ball ball, List<Paddle> paddles, List<Brick> bricks) {
+    public LevelState(Ball ball, List<Paddle> paddles, List<Brick> bricks) {
         this.bricks = new ArrayList();
         this.paddles = new ArrayList();
-        this.breakoutWorld = breakoutWorld;
+        this.walls = new ArrayList();
+        
         factory = new BodyConfigurationFactory();
 
         createBounds();
@@ -54,8 +55,6 @@ public class LevelState {
         BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
         p.setBox2dConfig(domePaddleConfig);
 
-        breakoutWorld.spawn(p);
-
         paddles.add(p);
     }
 
@@ -64,8 +63,7 @@ public class LevelState {
     public void addBrick(Brick brick) {
         BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
         brick.setBox2dConfig(brickBody);
-
-        breakoutWorld.spawn(brick);
+        
         bricks.add(brick);
     }
 
@@ -74,8 +72,6 @@ public class LevelState {
 
         BodyConfiguration ballBodyConfig = factory.createBallConfig(ball.getShape());
         ball.setBox2dConfig(ballBodyConfig);
-
-        breakoutWorld.spawn(ball);
         this.ball = ball;
     }
 
@@ -90,12 +86,12 @@ public class LevelState {
     public List<Paddle> getPaddles() {
         return paddles;
     }
-
+    
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
 
-    void resetBall() {
+    void resetBall(BreakoutWorld breakoutWorld) {
 
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
@@ -133,10 +129,26 @@ public class LevelState {
         rightWall.setBox2dConfig(rightWallConfig);
         topWall.setBox2dConfig(topWallConfig);
 
-        breakoutWorld.spawn(ground);
-        breakoutWorld.spawn(leftWall);
-        breakoutWorld.spawn(rightWall);
-        breakoutWorld.spawn(topWall);
+        walls.add(ground);
+        walls.add(leftWall);
+        walls.add(rightWall);
+        walls.add(topWall);
+    }
+
+    public void spawnAllObjects(BreakoutWorld breakoutWorld) {
+        for (Brick b : bricks) {
+            breakoutWorld.spawn(b);
+        }
+
+        breakoutWorld.spawn(ball);
+
+        for (Paddle p : paddles) {
+            breakoutWorld.spawn(p);
+        }
+        
+        for( RegularBody wall : walls){
+            breakoutWorld.spawn(wall);
+        }
     }
 
     public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {

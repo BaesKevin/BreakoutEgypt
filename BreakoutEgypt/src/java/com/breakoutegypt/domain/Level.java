@@ -59,8 +59,9 @@ public class Level {
         scoreTimer = new ScoreTimer();
 
         breakoutWorld = new BreakoutWorld(this, worldTimeStepInMs);
-        levelState = new LevelState(breakoutWorld, ball, paddles, bricks);
-
+        levelState = new LevelState(ball, paddles, bricks);
+        levelState.spawnAllObjects(breakoutWorld);
+        
         this.lives = lives;
         this.timer = new Timer();
         runLevelManually = false;
@@ -137,7 +138,7 @@ public class Level {
 
     void resetBall() {
         System.out.println("LeveL: resetBall()");
-        levelState.resetBall();
+        levelState.resetBall(breakoutWorld);
 
         lives--;
         game.notifyPlayersOfLivesLeft();
