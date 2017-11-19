@@ -39,17 +39,13 @@ public class Level {
     private LevelTimerTask levelTimerTask;
     private boolean runLevelManually;
 
-    public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
+    public Level(int id, Game game, LevelState initialObjects, int lives
     ) {
-        this(id, game, ball, Arrays.asList(new Paddle[]{paddle}), bricks, lives);
+        this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
     }
 
-    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives
-    ) {
-        this(id, game, ball, paddles, bricks, lives, BreakoutWorld.TIMESTEP_DEFAULT);
-    }
 
-    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives, float worldTimeStepInMs) {
+    public Level(int id, Game game, LevelState initialState, int lives, float worldTimeStepInMs) {
         this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
@@ -59,7 +55,7 @@ public class Level {
         scoreTimer = new ScoreTimer();
 
         breakoutWorld = new BreakoutWorld(this, worldTimeStepInMs);
-        levelState = new LevelState(ball, paddles, bricks);
+        levelState = initialState;
         levelState.spawnAllObjects(breakoutWorld);
         
         this.lives = lives;
@@ -99,39 +95,24 @@ public class Level {
         if (!levelStarted) {
             setLevelStarted(true);
             scoreTimer.start();
-            getBall().setLinearVelocity(0, 100);
+            levelState.getBall().setLinearVelocity(0, 100);
             System.out.println("Level: startBall()");
         }
     }
 
     public void movePaddle(Paddle paddle, int x, int y) {
         if (!levelStarted) {
-            float yPos = this.getBall().getPosition().y;
-            this.getBall().moveTo(x, yPos);
+            float yPos = levelState.getBall().getPosition().y;
+            levelState.getBall().moveTo(x, yPos);
         }
 
         paddle.moveTo(x, y);
-    }
-
-    public void addPaddle(Paddle p) {
-        levelState.addPaddle(p);
-    }
-
-    // TODO based on bricktype it might be necessary to do more here
-    // e.g. all surrounding bricks an explosive brick
-    public void addBrick(Brick brick) {
-        levelState.addBrick(brick);
-    }
-
-    public void addBall(Ball b) {
-        levelState.addBall(b);
     }
 
     public int getId() {
         return id;
     }
 
-    // SHOULD NOT BE USED, USE DELEGATION INSTEAD
     public LevelState getLevelState() {
         return levelState;
     }
@@ -191,22 +172,10 @@ public class Level {
         return isLastLevel;
     }
 
-    public List<Paddle> getPaddles() {
-        return levelState.getPaddles();
-    }
-
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
     }
-
-    public Ball getBall() {
-        return levelState.getBall();
-    }
-
-    public List<Brick> getBricks() {
-        return levelState.getBricks();
-    }
-
+    
     BreakoutWorld getBreakoutWorld() {
         return breakoutWorld;
     }

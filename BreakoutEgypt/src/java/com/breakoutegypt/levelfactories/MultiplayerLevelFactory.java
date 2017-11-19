@@ -8,6 +8,7 @@ package com.breakoutegypt.levelfactories;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
@@ -47,7 +48,8 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
         Ball ball = new Ball(ballShape);
 
-        return new Level(currentLevelId, game, ball, paddles, new ArrayList<Brick>(), 3);
+        LevelState initialState = new LevelState(ball, paddle, new ArrayList());
+        return new Level(currentLevelId, game, initialState, 3);
 
     }
 }

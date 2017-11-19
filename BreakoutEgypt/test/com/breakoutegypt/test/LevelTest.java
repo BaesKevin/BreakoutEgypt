@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.shapes.Ball;
 import org.jbox2d.common.Vec2;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class LevelTest {
 
     @Test
     public void ballOutOfBoundsLosesLife() {
-        System.out.println(level.getBall().getPosition());
+        System.out.println(level.getLevelState().getBall().getPosition());
         level.start();
         level.startBall();
 
@@ -48,7 +49,7 @@ public class LevelTest {
         game.setCurrentLevel(2);
         level = game.getCurrentLevel();
         level.startBall();
-        level.getBall().setLinearVelocity(0, -100);
+        level.getLevelState().getBall().setLinearVelocity(0, -100);
         stepTimes(60);
 
         Assert.assertEquals(1, level.getLevelState().getTargetBricksLeft());
@@ -59,12 +60,12 @@ public class LevelTest {
         game.setCurrentLevel(3);
         level = game.getCurrentLevel();
         level.startBall();
-        level.getBall().setLinearVelocity(0, -100);
+        level.getLevelState().getBall().setLinearVelocity(0, -100);
         stepTimes(60);
-        level.getBall().getBody().setTransform(new Vec2(50, 100), 0);
+        level.getLevelState().getBall().getBody().setTransform(new Vec2(50, 100), 0);
         stepTimes(60);
 
-        Assert.assertEquals(3, level.getBricks().size());
+        Assert.assertEquals(3, level.getLevelState().getBricks().size());
     }
 
     @Test
@@ -72,11 +73,11 @@ public class LevelTest {
         game.setCurrentLevel(4);
         level = game.getCurrentLevel();
         level.startBall();
-        level.getBall().setLinearVelocity(0, -100);
+        level.getLevelState().getBall().setLinearVelocity(0, -100);
 
         stepTimes(60);
 
-        Assert.assertEquals(1, level.getBricks().size());
+        Assert.assertEquals(1, level.getLevelState().getBricks().size());
     }
 
     @Test
@@ -85,20 +86,21 @@ public class LevelTest {
         level = game.getCurrentLevel();
         level.startBall();
 
-        level.getBall().getBody().setTransform(new Vec2(50, 20), 0);
-        level.getBall().setLinearVelocity(-100, 0);
+        Ball ball = level.getLevelState().getBall();
+        ball.getBody().setTransform(new Vec2(50, 20), 0);
+        ball.setLinearVelocity(-100, 0);
         stepTimes(40);
-        Assert.assertTrue(0 <= level.getBall().getPosition().x);
+        Assert.assertTrue(0 <= ball.getPosition().x);
 
-        level.getBall().getBody().setTransform(new Vec2(20, 20), 0);
-        level.getBall().setLinearVelocity(0, -100);
+        ball.getBody().setTransform(new Vec2(20, 20), 0);
+        ball.setLinearVelocity(0, -100);
         stepTimes(40);
-        Assert.assertTrue(0 <= level.getBall().getPosition().y);
+        Assert.assertTrue(0 <= ball.getPosition().y);
 
-        level.getBall().getBody().setTransform(new Vec2(280, 20), 0);
-        level.getBall().setLinearVelocity(100, 0);
+        ball.getBody().setTransform(new Vec2(280, 20), 0);
+        ball.setLinearVelocity(100, 0);
         stepTimes(40);
-        Assert.assertTrue( level.getBall().getPosition().y < 300);
+        Assert.assertTrue( ball.getPosition().y < 300);
     }
 
     private void stepTimes(int times) {

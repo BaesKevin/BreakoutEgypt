@@ -5,14 +5,11 @@
  */
 package com.breakoutegypt.connectionmanagement;
 
-import com.breakoutegypt.connectionmanagement.PlayerConnection;
-import com.breakoutegypt.connectionmanagement.WebsocketConnection;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.BrickMessage;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ScoreTimer;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -21,8 +18,6 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.websocket.EncodeException;
-import javax.websocket.Session;
 import org.jbox2d.common.Vec2;
 
 /**
@@ -178,7 +173,7 @@ public class SessionManager {
     private JsonObject createJson(Level currentLevel, BreakoutWorld simulation) {
         JsonObjectBuilder job = Json.createObjectBuilder();
 
-        Vec2 position = currentLevel.getBall().getPosition();
+        Vec2 position = currentLevel.getLevelState().getBall().getPosition();
 
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
         brickkObjectBuilder.add("x", position.x);

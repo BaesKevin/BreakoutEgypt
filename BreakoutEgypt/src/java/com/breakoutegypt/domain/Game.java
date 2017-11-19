@@ -80,7 +80,7 @@ public class Game {
 
     public void assignPaddleToPlayer(Player player) {
         int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
-        Paddle paddleToAssign = currentLevel.getPaddles().get(indexOfPaddleToAssign);
+        Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
         System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
         player.setPaddle(paddleToAssign);
     }

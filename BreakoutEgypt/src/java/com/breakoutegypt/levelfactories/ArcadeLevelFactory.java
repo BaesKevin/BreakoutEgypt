@@ -8,6 +8,7 @@ package com.breakoutegypt.levelfactories;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.BrickType;
@@ -109,7 +110,8 @@ public class ArcadeLevelFactory extends LevelFactory {
             bricks.get(i).getShape().setColor(Color.BLACK);
         }
 
-        Level level = new Level(currentLevelId, game, ball, paddle, bricks, 3);
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
     }
@@ -167,7 +169,8 @@ public class ArcadeLevelFactory extends LevelFactory {
 //                    bricks.get(3)
 //                })
 //          );
-        Level level = new Level(currentLevelId, game, ball, paddle, bricks, 3);
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
     }
@@ -228,7 +231,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         })
         );
 
-        Level level = new Level(currentLevelId, game, ball, paddle, bricks, 3);
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
     }

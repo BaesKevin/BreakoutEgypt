@@ -43,7 +43,7 @@ public class BreakoutContactListener implements ContactListener {
             new BrickCollisionHandler(brick, world.getLevel()).handleCollision();
         } else if (isBallOutOfBounds) {
             // System.out.println("Ball is out of bounds");
-            world.getLevel().getBreakoutWorld().resetBall();
+            world.getLevel().getBreakoutWorld().setResetBallFlag();
         }
     }
 

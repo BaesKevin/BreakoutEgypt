@@ -170,7 +170,7 @@ public class BreakoutWorld {
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             currentLevel.setLevelStarted(false);
-            world.destroyBody(currentLevel.getBall().getBody());
+            world.destroyBody(currentLevel.getLevelState().getBall().getBody());
             currentLevel.resetBall();
             isBallOutOfBounds = false;
         }
@@ -190,7 +190,7 @@ public class BreakoutWorld {
         return world;
     }
 
-    public void resetBall() {
+    public void setResetBallFlag() {
         isBallOutOfBounds = true;
     }
 

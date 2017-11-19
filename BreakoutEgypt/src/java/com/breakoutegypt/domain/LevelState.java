@@ -31,11 +31,16 @@ public class LevelState {
 
     private BodyConfigurationFactory factory;
 
+    public LevelState(Ball ball, Paddle paddle, List<Brick> bricks) {
+        this(ball, new ArrayList(), bricks);
+        addPaddle(paddle);
+    }
+
     public LevelState(Ball ball, List<Paddle> paddles, List<Brick> bricks) {
         this.bricks = new ArrayList();
         this.paddles = new ArrayList();
         this.walls = new ArrayList();
-        
+
         factory = new BodyConfigurationFactory();
 
         createBounds();
@@ -51,7 +56,6 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-//        Body paddleBody = factory.createPaddleConfig(p);
         BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
         p.setBox2dConfig(domePaddleConfig);
 
@@ -63,7 +67,7 @@ public class LevelState {
     public void addBrick(Brick brick) {
         BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
         brick.setBox2dConfig(brickBody);
-        
+
         bricks.add(brick);
     }
 
@@ -86,7 +90,7 @@ public class LevelState {
     public List<Paddle> getPaddles() {
         return paddles;
     }
-    
+
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
@@ -145,8 +149,8 @@ public class LevelState {
         for (Paddle p : paddles) {
             breakoutWorld.spawn(p);
         }
-        
-        for( RegularBody wall : walls){
+
+        for (RegularBody wall : walls) {
             breakoutWorld.spawn(wall);
         }
     }

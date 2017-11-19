@@ -8,6 +8,7 @@ package com.breakoutegypt.levelfactories;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.BrickType;
@@ -60,9 +61,8 @@ public class TestLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
 
-        List<Paddle> paddles = new ArrayList();
-        paddles.add(paddle);
-        Level level = new Level(1, game, ball, paddles, new ArrayList(), 3);
+        LevelState initialState = new LevelState(ball, paddle, new ArrayList());
+        Level level = new Level(1, game, initialState, 3);
         level.setRunManual(true);
         return level;
     }
@@ -81,9 +81,8 @@ public class TestLevelFactory extends LevelFactory {
         bricks.get(0).setIsTarget(true);
         bricks.get(1).setIsTarget(true);
 
-        List<Paddle> paddles = new ArrayList();
-        paddles.add(paddle);
-        Level level = new Level(1, game, ball, paddles, bricks, 3);
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(1, game, initialState, 3);
         level.setRunManual(true);
         return level;
     }
@@ -104,15 +103,14 @@ public class TestLevelFactory extends LevelFactory {
         switchTaregts.add(bricks.get(1));
         bricks.get(2).setSwitchBricks(switchTaregts);
 
-        List<Paddle> paddles = new ArrayList();
-        paddles.add(paddle);
-        Level level = new Level(1, game, ball, paddles, bricks, 3);
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(1, game, initialState, 3);
         level.setRunManual(true);
         return level;
     }
 
     public Level getExplosiveBrickTest() {
-         ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
         ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
@@ -126,9 +124,8 @@ public class TestLevelFactory extends LevelFactory {
 
         bricks.get(2).setExplosionRadius(1);
 
-        List<Paddle> paddles = new ArrayList();
-        paddles.add(paddle);
-        Level level = new Level(1, game, ball, paddles, bricks, 3);
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(1, game, initialState, 3);
         level.setRunManual(true);
         return level;
     }
