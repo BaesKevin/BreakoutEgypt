@@ -5,41 +5,42 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import org.jbox2d.dynamics.Body;
 
 /**
  *
  * @author kevin
  */
 public class LevelState {
-    
+
     private List<Brick> bricks;
     private Ball ball;
     private List<Paddle> paddles;
     private Ball startingBall;
 
-    private BodyFactory factory;
+    private BodyConfigurationFactory factory;
     private BreakoutWorld breakoutWorld;
 
     public LevelState(BreakoutWorld breakoutWorld, Ball ball, List<Paddle> paddles, List<Brick> bricks) {
         this.bricks = new ArrayList();
         this.paddles = new ArrayList();
         this.breakoutWorld = breakoutWorld;
-        factory = new BodyFactory(breakoutWorld.getWorld());
+        factory = new BodyConfigurationFactory();
 
-        
         createBounds();
         addBall(ball);
 
-        for(Paddle paddle : paddles){
+        for (Paddle paddle : paddles) {
             addPaddle(paddle);
         }
         for (Brick brick : bricks) {
@@ -49,27 +50,33 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-//        Body paddleBody = factory.createPaddle(p);
-        Body paddleBody = factory.createDomePaddle(p);
-        p.setBody(paddleBody);
-        
+//        Body paddleBody = factory.createPaddleConfig(p);
+        BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
+        p.setBox2dConfig(domePaddleConfig);
+
+        breakoutWorld.spawn(p);
+
         paddles.add(p);
     }
 
     // TODO based on bricktype it might be necessary to do more here
     // e.g. all surrounding bricks an explosive brick
     public void addBrick(Brick brick) {
-        Body brickBody = factory.createTriangle(brick);
-        brick.setBody(brickBody);
+        BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
+        brick.setBox2dConfig(brickBody);
+
+        breakoutWorld.spawn(brick);
         bricks.add(brick);
     }
 
-    public void addBall(Ball b) {
-        this.startingBall = b;
-        
-        Body ballBody = factory.createCircle(b);
-        b.setBody(ballBody);
-        this.ball = b;
+    public void addBall(Ball ball) {
+        this.startingBall = ball;
+
+        BodyConfiguration ballBodyConfig = factory.createBallConfig(ball.getShape());
+        ball.setBox2dConfig(ballBodyConfig);
+
+        breakoutWorld.spawn(ball);
+        this.ball = ball;
     }
 
     public List<Brick> getBricks() {
@@ -87,13 +94,14 @@ public class LevelState {
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
-    
+
     void resetBall() {
-        
-        Body ballBody = new BodyFactory(breakoutWorld.getBox2dWorld()).createCircle(startingBall);
-        ball.setBody(ballBody);
+
+        BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
+        startingBall.setBox2dConfig(ballBodyBodyConfig);
+        breakoutWorld.spawn(startingBall);
     }
-    
+
     public int getTargetBricksLeft() {
         int targetsLeft = 0;
         for (Brick brick : bricks) {
@@ -105,34 +113,52 @@ public class LevelState {
     }
 
     private void createBounds() {
-        factory.addGround(300, 300);
+        ShapeDimension groundShape = new ShapeDimension("ground", 0, 300, 300, 1);
+        ShapeDimension leftWallDim = new ShapeDimension("leftwall", 0, 0, 1, 300);
+        ShapeDimension rightWallDim = new ShapeDimension("rightwall", 300, 0, 1, 300);
+        ShapeDimension topWallDim = new ShapeDimension("topwall", 0, 0, 300, 1);
 
-        factory.addWall(0, 0, 1, 300); //Left wall
-        factory.addWall(300, 0, 1, 300); //Right wall, keep in mind 
+        RegularBody ground = new RegularBody(groundShape);
+        RegularBody leftWall = new RegularBody(leftWallDim);
+        RegularBody rightWall = new RegularBody(rightWallDim);
+        RegularBody topWall = new RegularBody(topWallDim);
 
-        factory.addWall(0, 0, 300, 1); //roof 
+        BodyConfiguration groundConfig = factory.createWallConfig(groundShape, true);
+        BodyConfiguration leftWallConfig = factory.createWallConfig(leftWallDim, false);
+        BodyConfiguration rightWallConfig = factory.createWallConfig(rightWallDim, false);
+        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, false);
+
+        ground.setBox2dConfig(groundConfig);
+        leftWall.setBox2dConfig(leftWallConfig);
+        rightWall.setBox2dConfig(rightWallConfig);
+        topWall.setBox2dConfig(topWallConfig);
+
+        breakoutWorld.spawn(ground);
+        breakoutWorld.spawn(leftWall);
+        breakoutWorld.spawn(rightWall);
+        breakoutWorld.spawn(topWall);
     }
 
     public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
         List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();
-        
+
         Point currentBrickPosition;
-        
-        if(range == 0){
-            bricksToRemove.add( centreBrick );
+
+        if (range == 0) {
+            bricksToRemove.add(centreBrick);
         } else {
-            for(Brick brick : bricks){
+            for (Brick brick : bricks) {
                 currentBrickPosition = brick.getGridPosition();
-                if(Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range ){
-                    if(brick.isSwitched() && brick.getBrickType() != BrickType.SWITCH){
+                if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
+                    if (brick.isSwitched() && brick.getBrickType() != BrickType.SWITCH) {
                         bricksToRemove.add(brick);
                     }
-                    
+
                 }
             }
         }
-        
+
         return bricksToRemove;
     }
 }

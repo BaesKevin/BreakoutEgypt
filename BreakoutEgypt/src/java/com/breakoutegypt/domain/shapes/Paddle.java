@@ -11,7 +11,7 @@ package com.breakoutegypt.domain.shapes;
  */
 public class Paddle extends RegularBody{
    
-    public Paddle(Shape s){
+    public Paddle(ShapeDimension s){
         super(s);
     }
     

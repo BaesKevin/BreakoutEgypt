@@ -5,14 +5,14 @@
  */
 package com.breakoutegypt.levelfactories;
 
-import com.breakoutegypt.domain.BodyFactory;
+import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
-import com.breakoutegypt.domain.shapes.Shape;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -55,8 +55,8 @@ public class ArcadeLevelFactory extends LevelFactory {
 
     public Level getSimpleTestLevel(int targetBlocks) {
 //        targetBlocks = 5;
-        Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 45, 15, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 45, 15, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
@@ -69,7 +69,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         int width = 30;
         int height = 30;
 
-        Shape brickShape;
+        ShapeDimension brickShape;
         Brick brick;
 
         String id;
@@ -80,7 +80,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
-                brickShape = new Shape(id, x, y, width, height, Color.PINK);
+                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
                 brick = new Brick(brickShape, BrickType.REGULAR, new Point(row, col));
                 bricks.add(brick);
                 col++;
@@ -95,12 +95,12 @@ public class ArcadeLevelFactory extends LevelFactory {
 //        }
 //        Collections.shuffle(list);
 //        for (int i=0; i<targetBlocks; i++) {
-//            Shape b = bricks.get(list.get(i));
+//            ShapeDimension b = bricks.get(list.get(i));
 //            b.setTarget(true);
 //            b.setColor(Color.BLACK);
 //        }
 //        for (int i = 0; i < targetBlocks; i++) {
-//            Shape b = bricks.get(i);
+//            ShapeDimension b = bricks.get(i);
 //            b.setTarget(true);
 //            b.setColor(Color.BLACK);
 //        }
@@ -115,8 +115,8 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithUnbreakableAndExplosive() {
-        Shape paddleShape = new Shape("paddle", 45, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 60, 90, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 90, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
@@ -129,7 +129,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         int width = 30;
         int height = 30;
 
-        Shape brickShape;
+        ShapeDimension brickShape;
         Brick brick;
 
         String id;
@@ -140,7 +140,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
-                brickShape = new Shape(id, x, y, width, height, Color.PINK);
+                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
                 brick = new Brick(brickShape, BrickType.REGULAR, new Point(row, col));
                 bricks.add(brick);
                 col++;
@@ -173,8 +173,8 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithSwitch() {
-        Shape paddleShape = new Shape("paddle" + currentLevelId, 45, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 60, 200, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension paddleShape = new ShapeDimension("paddle" + currentLevelId, 45, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
 
@@ -188,7 +188,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         int width = 30;
         int height = 30;
 
-        Shape brickShape;
+        ShapeDimension brickShape;
         Brick brick;
 
         String id;
@@ -199,7 +199,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
-                brickShape = new Shape(id, x, y, width, height, Color.PINK);
+                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
                 brick = new Brick(brickShape, BrickType.REGULAR, new Point(row, col));
                 bricks.add(brick);
                 col++;

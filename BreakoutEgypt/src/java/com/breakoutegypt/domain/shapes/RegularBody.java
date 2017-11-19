@@ -14,10 +14,11 @@ import org.jbox2d.dynamics.Body;
  */
 public class RegularBody implements IShape {
 
-    private Shape shape;
+    private ShapeDimension shape;
     private Body body;
-
-    public RegularBody(Shape s) {
+    private BodyConfiguration config;
+    
+    public RegularBody(ShapeDimension s) {
         this.shape = s;
     }
 
@@ -26,11 +27,11 @@ public class RegularBody implements IShape {
         return shape.getName();
     }
 
-    public Shape getShape() {
+    public ShapeDimension getShape() {
         return shape;
     }
 
-    public void setShape(Shape shape) {
+    public void setShape(ShapeDimension shape) {
         this.shape = shape;
     }
 
@@ -50,9 +51,18 @@ public class RegularBody implements IShape {
         return body.getPosition();
     }
 
+    
 
 //    @Override
 //    public void accept(ShapeUser u) {
 //        u.doForRegular(this);
 //    }
+
+    public BodyConfiguration getConfig() {
+        return config;
+    }
+
+    public void setBox2dConfig(BodyConfiguration config) {
+        this.config = config;
+    }
 }

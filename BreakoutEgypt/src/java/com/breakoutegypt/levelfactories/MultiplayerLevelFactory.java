@@ -5,14 +5,14 @@
  */
 package com.breakoutegypt.levelfactories;
 
-import com.breakoutegypt.domain.BodyFactory;
+import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
-import com.breakoutegypt.domain.shapes.Shape;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,10 @@ public class MultiplayerLevelFactory extends LevelFactory {
     
     public Level makePong() {
 
-        Shape ballShape = new Shape("ball", 60, 150, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
-        Paddle paddle = new Paddle(new Shape("paddle1", 45, 250, 100, 4, Color.BLUE));
-        Paddle paddle2 = new Paddle(new Shape("paddle2", 45, 100, 100, 4, Color.BLUE));
+        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
+        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
 
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);

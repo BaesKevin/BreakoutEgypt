@@ -7,7 +7,6 @@ package com.breakoutegypt.domain.shapes;
 
 import java.awt.Point;
 import java.util.List;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 /**
@@ -22,11 +21,11 @@ public class Brick  extends RegularBody{
     private boolean isSwitched;
     private int explosionRadius;
     
-    public Brick(Shape s,  BrickType type, Point position){
+    public Brick(ShapeDimension s,  BrickType type, Point position){
         this(s, type,position, false, true);
     }
     
-    public Brick(Shape s, BrickType type,  Point gridPosition,boolean isTarget, boolean isSwitched){
+    public Brick(ShapeDimension s, BrickType type,  Point gridPosition,boolean isTarget, boolean isSwitched){
         super(s);
         this.gridPosition = gridPosition;
         this.brickType = type;

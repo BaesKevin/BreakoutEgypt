@@ -14,7 +14,7 @@ import org.jbox2d.dynamics.Body;
 public interface IShape {
     
     String getName();
-    Shape getShape();
+    ShapeDimension getShape();
     void setBody(Body b);
     
     // uitleg visitor en double dispatch van Mattias De Wael

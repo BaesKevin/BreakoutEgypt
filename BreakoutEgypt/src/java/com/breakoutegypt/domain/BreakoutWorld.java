@@ -7,12 +7,17 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.ArrayList;
 import java.util.List;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 /**
@@ -72,6 +77,20 @@ public class BreakoutWorld {
     
     public long getTimeStepAsMs(){
         return Math.round(Math.floor(timestepSeconds * 1000));
+    }
+    
+    public void spawn(RegularBody gameObject){
+        BodyConfiguration bodyConfig = gameObject.getConfig();
+        BodyDef bodyDef = bodyConfig.getBodyDefinition().getBox2dBodyDef();
+        FixtureDef fixtureDef = bodyConfig.getFixtureConfig().getBox2dFixtureDef();
+        Shape shape = bodyConfig.getShape();
+        
+        fixtureDef.shape = shape;
+               
+        Body body = world.createBody(bodyDef);
+        body.createFixture(fixtureDef);
+        body.setUserData(gameObject);
+        gameObject.setBody(body);
     }
 
     public void destroyBrick(Brick brick) {

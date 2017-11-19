@@ -5,14 +5,14 @@
  */
 package com.breakoutegypt.levelfactories;
 
-import com.breakoutegypt.domain.BodyFactory;
+import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Brick;
 import com.breakoutegypt.domain.shapes.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
-import com.breakoutegypt.domain.shapes.Shape;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -54,8 +54,8 @@ public class TestLevelFactory extends LevelFactory {
 
     public Level getOutOfBoundsTest() {
 //        targetBlocks = 5;
-        Shape paddleShape = new Shape("paddle", 180, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 45, 250, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 45, 250, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
@@ -68,15 +68,15 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     public Level getTargetBrickTest() {
-        Shape paddleShape = new Shape("paddle", 180, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 50, 100, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 50, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
 
         List<Brick> bricks = new ArrayList();
-        bricks.add(new Brick(new Shape("targetbrick1", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
-        bricks.add(new Brick(new Shape("targetbrick2", 62f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 2)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick1", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick2", 62f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 2)));
 
         bricks.get(0).setIsTarget(true);
         bricks.get(1).setIsTarget(true);
@@ -89,16 +89,16 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     public Level getSiwtchBrickTest() {
-        Shape paddleShape = new Shape("paddle", 180, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 70, 100, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
 
         List<Brick> bricks = new ArrayList();
-        bricks.add(new Brick(new Shape("targetbrick", 10f, 40f, 20, 10), BrickType.REGULAR, new Point(0, 1)));
-        bricks.add(new Brick(new Shape("regularbrick", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
-        bricks.add(new Brick(new Shape("switchbrick", 62f, 40f, 20, 10), BrickType.SWITCH, new Point(1, 2)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick", 10f, 40f, 20, 10), BrickType.REGULAR, new Point(0, 1)));
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
+        bricks.add(new Brick(new ShapeDimension("switchbrick", 62f, 40f, 20, 10), BrickType.SWITCH, new Point(1, 2)));
 
         List<Brick> switchTaregts = new ArrayList();
         switchTaregts.add(bricks.get(1));
@@ -112,17 +112,17 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     public Level getExplosiveBrickTest() {
-         Shape paddleShape = new Shape("paddle", 180, 250, 100, 4, Color.BLUE);
-        Shape ballShape = new Shape("ball", 70, 100, BodyFactory.BALL_RADIUS, BodyFactory.BALL_RADIUS, Color.GREEN);
+         ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
 
         List<Brick> bricks = new ArrayList();
-        bricks.add(new Brick(new Shape("targetbrick", 10f, 40f, 20, 10), BrickType.REGULAR, new Point(0, 1)));
-        bricks.add(new Brick(new Shape("regularbrick", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
-        bricks.add(new Brick(new Shape("explosivebrick", 62f, 40f, 20, 10), BrickType.EXPLOSIVE, new Point(2, 1)));
-        bricks.add(new Brick(new Shape("regularbrick", 84f, 40f, 20, 10), BrickType.REGULAR, new Point(3, 1)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick", 10f, 40f, 20, 10), BrickType.REGULAR, new Point(0, 1)));
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
+        bricks.add(new Brick(new ShapeDimension("explosivebrick", 62f, 40f, 20, 10), BrickType.EXPLOSIVE, new Point(2, 1)));
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 84f, 40f, 20, 10), BrickType.REGULAR, new Point(3, 1)));
 
         bricks.get(2).setExplosionRadius(1);
 

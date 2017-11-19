@@ -73,10 +73,32 @@ public class LevelTest {
         level = game.getCurrentLevel();
         level.startBall();
         level.getBall().setLinearVelocity(0, -100);
-        
+
         stepTimes(60);
 
         Assert.assertEquals(1, level.getBricks().size());
+    }
+
+    @Test
+    public void ballBouncesOfTopLeftRightWalls() {
+        game.setCurrentLevel(1);
+        level = game.getCurrentLevel();
+        level.startBall();
+
+        level.getBall().getBody().setTransform(new Vec2(50, 20), 0);
+        level.getBall().setLinearVelocity(-100, 0);
+        stepTimes(40);
+        Assert.assertTrue(0 <= level.getBall().getPosition().x);
+
+        level.getBall().getBody().setTransform(new Vec2(20, 20), 0);
+        level.getBall().setLinearVelocity(0, -100);
+        stepTimes(40);
+        Assert.assertTrue(0 <= level.getBall().getPosition().y);
+
+        level.getBall().getBody().setTransform(new Vec2(280, 20), 0);
+        level.getBall().setLinearVelocity(100, 0);
+        stepTimes(40);
+        Assert.assertTrue( level.getBall().getPosition().y < 300);
     }
 
     private void stepTimes(int times) {
@@ -84,5 +106,4 @@ public class LevelTest {
             level.step();
         }
     }
-
 }
