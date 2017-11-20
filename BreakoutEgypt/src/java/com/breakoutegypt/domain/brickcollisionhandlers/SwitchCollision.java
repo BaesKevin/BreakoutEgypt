@@ -5,9 +5,8 @@
  */
 package com.breakoutegypt.domain.brickcollisionhandlers;
 
-import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.effects.ToggleEffect;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.SwitchBrick;
 
 /**
  *
@@ -15,9 +14,9 @@ import com.breakoutegypt.domain.shapes.Brick;
  */
 public class SwitchCollision {
     private CollisionEventHandler collisionEventHandler;
-    private Brick brick;
+    private SwitchBrick brick;
 
-    public SwitchCollision(CollisionEventHandler collisionEventHandler, Brick brick) {
+    public SwitchCollision(CollisionEventHandler collisionEventHandler, SwitchBrick brick) {
         this.collisionEventHandler = collisionEventHandler;
         this.brick = brick;
     }

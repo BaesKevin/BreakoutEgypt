@@ -10,7 +10,7 @@ import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.Arrays;
 import java.util.List;

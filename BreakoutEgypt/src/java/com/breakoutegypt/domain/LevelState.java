@@ -8,11 +8,11 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
-import com.breakoutegypt.domain.shapes.Brick;
-import com.breakoutegypt.domain.shapes.BrickType;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.domain.shapes.bricks.SwitchBrick;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -167,7 +167,7 @@ public class LevelState {
             for (Brick brick : bricks) {
                 currentBrickPosition = brick.getGridPosition();
                 if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
-                    if (brick.isSwitched() && brick.getBrickType() != BrickType.SWITCH) {
+                    if (brick.isVisible() && !(brick instanceof SwitchBrick)) {
                         bricksToRemove.add(brick);
                     }
 

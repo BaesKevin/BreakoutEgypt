@@ -10,10 +10,12 @@ import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
-import com.breakoutegypt.domain.shapes.BrickType;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
+import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.domain.shapes.bricks.ExplosiveBrick;
+import com.breakoutegypt.domain.shapes.bricks.SwitchBrick;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -75,11 +77,11 @@ public class TestLevelFactory extends LevelFactory {
         Ball ball = new Ball(ballShape);
 
         List<Brick> bricks = new ArrayList();
-        bricks.add(new Brick(new ShapeDimension("targetbrick1", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
-        bricks.add(new Brick(new ShapeDimension("targetbrick2", 62f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 2)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick1", 40f, 40f, 20, 10), new Point(1, 1)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick2", 62f, 40f, 20, 10), new Point(1, 2)));
 
-        bricks.get(0).setIsTarget(true);
-        bricks.get(1).setIsTarget(true);
+        bricks.get(0).setTarget(true);
+        bricks.get(1).setTarget(true);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(1, game, initialState, 3);
@@ -94,14 +96,16 @@ public class TestLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
 
+        SwitchBrick switchBrick = new SwitchBrick(new ShapeDimension("switchbrick", 62f, 40f, 20, 10), new Point(1, 2));
         List<Brick> bricks = new ArrayList();
-        bricks.add(new Brick(new ShapeDimension("targetbrick", 10f, 40f, 20, 10), BrickType.REGULAR, new Point(0, 1)));
-        bricks.add(new Brick(new ShapeDimension("regularbrick", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
-        bricks.add(new Brick(new ShapeDimension("switchbrick", 62f, 40f, 20, 10), BrickType.SWITCH, new Point(1, 2)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick", 10f, 40f, 20, 10), new Point(0, 1)));
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 40f, 40f, 20, 10), new Point(1, 1)));
+        bricks.add(switchBrick);
 
+        bricks.get(0).setTarget(true);
         List<Brick> switchTaregts = new ArrayList();
         switchTaregts.add(bricks.get(1));
-        bricks.get(2).setSwitchBricks(switchTaregts);
+        switchBrick.setSwitchBricks(switchTaregts);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(1, game, initialState, 3);
@@ -116,13 +120,16 @@ public class TestLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
 
+        ExplosiveBrick explosive = new ExplosiveBrick(new ShapeDimension("explosivebrick", 62f, 40f, 20, 10), new Point(2, 1));
+        
         List<Brick> bricks = new ArrayList();
-        bricks.add(new Brick(new ShapeDimension("targetbrick", 10f, 40f, 20, 10), BrickType.REGULAR, new Point(0, 1)));
-        bricks.add(new Brick(new ShapeDimension("regularbrick", 40f, 40f, 20, 10), BrickType.REGULAR, new Point(1, 1)));
-        bricks.add(new Brick(new ShapeDimension("explosivebrick", 62f, 40f, 20, 10), BrickType.EXPLOSIVE, new Point(2, 1)));
-        bricks.add(new Brick(new ShapeDimension("regularbrick", 84f, 40f, 20, 10), BrickType.REGULAR, new Point(3, 1)));
+        bricks.add(new Brick(new ShapeDimension("targetbrick", 10f, 40f, 20, 10), new Point(0, 1)));
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 40f, 40f, 20, 10), new Point(1, 1)));
+        bricks.add(explosive);
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 84f, 40f, 20, 10), new Point(3, 1)));
 
-        bricks.get(2).setExplosionRadius(1);
+        bricks.get(0).setTarget(true);
+        explosive.setExplosionRadius(1);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(1, game, initialState, 3);

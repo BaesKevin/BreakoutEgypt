@@ -12,7 +12,7 @@ import org.jbox2d.dynamics.Body;
  *
  * @author kevin
  */
-public class RegularBody implements IShape {
+public class RegularBody {
 
     private ShapeDimension shape;
     private Body body;
@@ -22,7 +22,6 @@ public class RegularBody implements IShape {
         this.shape = s;
     }
 
-    @Override
     public String getName() {
         return shape.getName();
     }
@@ -51,7 +50,15 @@ public class RegularBody implements IShape {
         return body.getPosition();
     }
 
-    
+    //    // uitleg visitor en double dispatch van Mattias De Wael
+////    static interface ShapeUser {
+////     void   doForBrick(Brick b);
+////      void doForPaddle(Paddle p);
+////     void  doForBall(Ball b);
+////     void doForRegular(RegularBody r);
+////   }
+////    // Visitor + double dispatch
+////    void accept(ShapeUser u);
 
 //    @Override
 //    public void accept(ShapeUser u) {

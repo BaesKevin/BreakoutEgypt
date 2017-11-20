@@ -6,7 +6,7 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 
 /**
  *

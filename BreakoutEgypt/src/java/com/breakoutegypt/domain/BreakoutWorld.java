@@ -8,7 +8,7 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class BreakoutWorld {
             switchBrick.toggle();
 
             BrickMessageType toggleType;
-            if (switchBrick.isSwitched()) {
+            if (switchBrick.isVisible()) {
                 toggleType = BrickMessageType.SHOW;
             } else {
                 toggleType = BrickMessageType.HIDE;

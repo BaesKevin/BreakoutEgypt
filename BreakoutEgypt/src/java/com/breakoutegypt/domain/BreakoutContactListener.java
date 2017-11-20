@@ -8,9 +8,9 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
-import com.breakoutegypt.domain.shapes.IShape;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -34,8 +34,8 @@ public class BreakoutContactListener implements ContactListener {
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
 
-        IShape s1 = (IShape) f1.getBody().getUserData();
-        IShape s2 = (IShape) f2.getBody().getUserData();
+        RegularBody s1 = (RegularBody) f1.getBody().getUserData();
+        RegularBody s2 = (RegularBody) f2.getBody().getUserData();
 
         Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
         boolean isBallOutOfBounds = isBallOutOfBounds(f1, f2, s1, s2);
@@ -50,7 +50,7 @@ public class BreakoutContactListener implements ContactListener {
         }
     }
 
-    private Brick getBrickBallCollidedWith(Fixture f1, Fixture f2, IShape s1, IShape s2) {
+    private Brick getBrickBallCollidedWith(Fixture f1, Fixture f2, RegularBody s1, RegularBody s2) {
         Brick brick = null;
 
         if (s1 != null && s1 instanceof Brick) {
@@ -62,7 +62,7 @@ public class BreakoutContactListener implements ContactListener {
         return brick;
     }
 
-    private boolean isBallOutOfBounds(Fixture fix1, Fixture fix2, IShape s1, IShape s2) {
+    private boolean isBallOutOfBounds(Fixture fix1, Fixture fix2, RegularBody s1, RegularBody s2) {
         boolean outOfBounds = false;
 
         if (s1 != null && s1.getName().contains("ground")) {
@@ -81,8 +81,8 @@ public class BreakoutContactListener implements ContactListener {
         Fixture a = contact.getFixtureA();
         Fixture b = contact.getFixtureB();
 
-        IShape data1 = (IShape) a.getBody().getUserData();
-        IShape data2 = (IShape) b.getBody().getUserData();
+        RegularBody data1 = (RegularBody) a.getBody().getUserData();
+        RegularBody data2 = (RegularBody) b.getBody().getUserData();
         Ball ball;
         Paddle paddle;
         if (data1 != null && data1 instanceof Ball
@@ -103,12 +103,12 @@ public class BreakoutContactListener implements ContactListener {
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
 
-        IShape s1 = (IShape) f1.getBody().getUserData();
-        IShape s2 = (IShape) f2.getBody().getUserData();
+        RegularBody s1 = (RegularBody) f1.getBody().getUserData();
+        RegularBody s2 = (RegularBody) f2.getBody().getUserData();
 
         Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
 
-        if (brick != null && !brick.isSwitched()) {
+        if (brick != null && !brick.isVisible()) {
             contact.setEnabled(false);
         }
     }
@@ -117,7 +117,7 @@ public class BreakoutContactListener implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse impulse) {
     }
 
-    private Ball getOutOfBoundsBall(IShape s1, IShape s2) {
+    private Ball getOutOfBoundsBall(RegularBody s1, RegularBody s2) {
         Ball ball = null;
         
         if(s1 != null && s1 instanceof Ball){

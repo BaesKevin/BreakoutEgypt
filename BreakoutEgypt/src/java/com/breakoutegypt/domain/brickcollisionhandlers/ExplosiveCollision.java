@@ -5,9 +5,8 @@
  */
 package com.breakoutegypt.domain.brickcollisionhandlers;
 
-import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.ExplosiveBrick;
 
 /**
  *
@@ -16,11 +15,11 @@ import com.breakoutegypt.domain.shapes.Brick;
 public class ExplosiveCollision {
 
     private CollisionEventHandler collisionEventHandler;
-    private Brick brick;
+    private ExplosiveBrick brick;
     private String shapeName;
     private int rangeToDestroy;
 
-    public ExplosiveCollision(CollisionEventHandler collisionEventHandler, Brick brick, int rangeToDestroy) {
+    public ExplosiveCollision(CollisionEventHandler collisionEventHandler, ExplosiveBrick brick, int rangeToDestroy) {
         this.collisionEventHandler = collisionEventHandler;
         this.brick = brick;
         this.rangeToDestroy = rangeToDestroy;

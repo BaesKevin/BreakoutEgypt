@@ -11,7 +11,7 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.io.IOException;
 import java.io.PrintWriter;

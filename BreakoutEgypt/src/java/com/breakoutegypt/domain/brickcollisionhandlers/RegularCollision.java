@@ -7,7 +7,7 @@ package com.breakoutegypt.domain.brickcollisionhandlers;
 
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 
 /**
  *

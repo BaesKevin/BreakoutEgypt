@@ -8,8 +8,8 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
-import com.breakoutegypt.domain.shapes.BrickType;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
+import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
@@ -29,7 +29,7 @@ public class LevelObjectSpawningTest {
         List<Brick> bricks = new ArrayList();
         
         ShapeDimension shape = new ShapeDimension("triangle", 100,20, 20,20);
-        Brick brick = new Brick(shape, BrickType.REGULAR, new Point(0,0));
+        Brick brick = new Brick(shape, new Point(0,0));
         bricks.add(brick);
         
         ShapeDimension paddleshape = new ShapeDimension("paddle", 100, 200, 100, 20);

@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.domain.effects;
 
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import java.util.List;
 
 /**
