@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
+import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -67,8 +67,8 @@ public class BreakoutWorld {
         this.timestepSeconds = timestepSeconds;
     }
     
-    public void setCollisionEventHandler(CollisionEventHandler eventHandler){
-        world.setContactListener(new BreakoutContactListener(eventHandler));
+    public void initContactListener(EffectHandler eventHandler, BallEventHandler ballEventHandler){
+        world.setContactListener(new BreakoutContactListener(eventHandler, ballEventHandler));
     }
     
     public long getTimeStepAsMs(){

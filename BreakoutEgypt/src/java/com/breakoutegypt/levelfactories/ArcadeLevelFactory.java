@@ -9,15 +9,14 @@ import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
-import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ import java.util.List;
 public class ArcadeLevelFactory extends LevelFactory {
 
     public ArcadeLevelFactory(Game game) {
-        super(game, 1);
+        super(game, 2);
     }
 
     @Override
@@ -42,9 +41,9 @@ public class ArcadeLevelFactory extends LevelFactory {
             case 1:
                 currentLevel = getSimpleTestLevel();
                 break;
-//            case 2:
-//                currentLevel = getSimpleTestLevel();
-//                break;
+            case 2:
+                currentLevel = getLevelWithUnbreakableAndExplosive();
+                break;
 //            case 3:
 //                currentLevel = getLevelWithSwitch();
 //                break;
@@ -66,9 +65,17 @@ public class ArcadeLevelFactory extends LevelFactory {
         ShapeDimension brickShape;
         Brick brick;
         
-        brickShape = new ShapeDimension("brick1", 20, 20, 30, 30, Color.PINK);
-        brick = new Brick(brickShape, new Point(1, 1));
-        brick.setTarget(true);
+        String name = "brick1";
+        int x = 20;
+        int y = 20;
+        int width = 30;
+        int height = 30;
+        int gridX = 1;
+        int gridY = 1;
+        
+        // TODO move to ShapeFactory which gets default bricks from staticbrickrepo
+        brickShape = new ShapeDimension(name, x, y, width, height);
+        brick = new Brick(brickShape, new Point(gridX, gridY), true, true);        
         
         bricks.add(brick);
 
@@ -77,65 +84,67 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         return level;
     }
-//
-//    public Level getLevelWithUnbreakableAndExplosive() {
-//        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
-//        ShapeDimension ballShape = new ShapeDimension("ball", 60, 90, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-//
-//        Paddle paddle = new Paddle(paddleShape);
-//        Ball ball = new Ball(ballShape);
-//        List<Brick> bricks = new ArrayList();
-//
-//        int row = 1;
-//        int col = 1;
-//        int rows = 1;
-//        int cols = 5;
-//        int width = 30;
-//        int height = 30;
-//
-//        ShapeDimension brickShape;
-//        Brick brick;
-//
-//        String id;
-//        for (int x = 45; x < 45 + ((width + 1) * cols); x += width + 1) {
-//            for (int y = 45; y < 45 + ((height + 1) * rows); y += height + 1) {
-//                int colPadding = cols / 10 + 1;
-//                int rowPadding = rows / 10 + 1;
-//
-//                id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
-//
-//                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
-//                brick = new Brick(brickShape, new Point(row, col));
-//                bricks.add(brick);
-//                col++;
-//            }
-//            row++;
-//            col = 1;
-//        }
-//
-//        for (int i = 0; i < 1; i++) {
-//            bricks.get(i).setTarget(true);
-//            bricks.get(i).getShape().setColor(Color.BLACK);
-//        }
-//
-//        //bricks.get(1).setType(BrickType.UNBREAKABLE);
-//        //bricks.get(2).setType(BrickType.EXPLOSIVE);
-////        bricks.get(3).getShape().setColor(Color.YELLOW);
-////        bricks.get(3).setVisible(false);
-////        
-////        //bricks.get(4).setVisible(false);
-////        bricks.get(4).getShape().setColor(Color.BLUE); 
-////        bricks.get(4).setType(BrickType.SWITCH);
-////        bricks.get(4).setSwitchBricks(
-////                Arrays.asList(new Brick[]{
-////                    bricks.get(3)
-////                })
-////          );
-//        LevelState initialState = new LevelState(ball, paddle, bricks);
-//        Level level = new Level(currentLevelId, game, initialState, 3);
-//
-//        return level;
-//    }
+
+    public Level getLevelWithUnbreakableAndExplosive() {
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 90, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+
+        Paddle paddle = new Paddle(paddleShape);
+        Ball ball = new Ball(ballShape);
+        List<Brick> bricks = new ArrayList();
+
+        int row = 1;
+        int col = 1;
+        int rows = 1;
+        int cols = 5;
+        int width = 30;
+        int height = 30;
+
+        ShapeDimension brickShape;
+        Brick brick;
+
+        String id;
+        for (int x = 45; x < 45 + ((width + 1) * cols); x += width + 1) {
+            for (int y = 45; y < 45 + ((height + 1) * rows); y += height + 1) {
+                int colPadding = cols / 10 + 1;
+                int rowPadding = rows / 10 + 1;
+
+                id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
+
+                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
+                brick = new Brick(brickShape, new Point(row, col));
+                bricks.add(brick);
+                col++;
+            }
+            row++;
+            col = 1;
+        }
+
+        for (int i = 0; i < 1; i++) {
+            bricks.get(i).setTarget(true);
+            bricks.get(i).getShape().setColor(Color.BLACK);
+        }
+
+        bricks.get(2).addEffect(new ExplosiveEffect(bricks.get(2), 1));
+        
+        //bricks.get(1).setType(BrickType.UNBREAKABLE);
+        //bricks.get(2).setType(BrickType.EXPLOSIVE);
+//        bricks.get(3).getShape().setColor(Color.YELLOW);
+//        bricks.get(3).setVisible(false);
+//        
+//        //bricks.get(4).setVisible(false);
+//        bricks.get(4).getShape().setColor(Color.BLUE); 
+//        bricks.get(4).setType(BrickType.SWITCH);
+//        bricks.get(4).setSwitchBricks(
+//                Arrays.asList(new Brick[]{
+//                    bricks.get(3)
+//                })
+//          );
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(currentLevelId, game, initialState, 3);
+
+        return level;
+    }
 //
 //    public Level getLevelWithSwitch() {
 //        ShapeDimension paddleShape = new ShapeDimension("paddle" + currentLevelId, 45, 250, 100, 4, Color.BLUE);

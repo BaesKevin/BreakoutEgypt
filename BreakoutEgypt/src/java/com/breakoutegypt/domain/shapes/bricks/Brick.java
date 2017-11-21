@@ -5,9 +5,12 @@
  */
 package com.breakoutegypt.domain.shapes.bricks;
 
+import com.breakoutegypt.domain.effects.Effect;
+import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 import javax.json.JsonObjectBuilder;
 
@@ -24,6 +27,8 @@ public class Brick  extends RegularBody{
 
     private String brickTypeName;
     
+    private List<Effect> effects;
+    
     public Brick(ShapeDimension s, Point position){
         this(s,position, false, true);
     }
@@ -38,6 +43,12 @@ public class Brick  extends RegularBody{
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
         brickTypeName = "REGULAR";
+        
+        effects = new ArrayList();
+        
+        if(isVisible && isBreakable){
+            effects.add(new ExplosiveEffect(this, 0));
+        }
     }
     
 
@@ -91,6 +102,14 @@ public class Brick  extends RegularBody{
         builder.add("isTarget", isTarget());
         
         return builder;
+    }
+    
+    public void addEffect(Effect effect){
+        this.effects.add(effect);
+    }
+    
+    public List<Effect> getEffects(){
+        return effects;
     }
     
 //    public void accept(ShapeUser u){

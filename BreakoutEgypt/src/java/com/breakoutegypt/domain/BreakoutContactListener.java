@@ -6,7 +6,7 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
-import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
+import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -23,10 +23,12 @@ import org.jbox2d.dynamics.contacts.Contact;
  */
 public class BreakoutContactListener implements ContactListener {
 
-    private CollisionEventHandler collisionEventHandler;
-
-    public BreakoutContactListener(CollisionEventHandler collisionEventHandler) {
-        this.collisionEventHandler = collisionEventHandler;
+    private EffectHandler effectHandler;
+    private BallEventHandler ballEventHandler; 
+    
+    public BreakoutContactListener(EffectHandler effectHandler, BallEventHandler ballEventHandler) {
+        this.effectHandler = effectHandler;
+        this.ballEventHandler = ballEventHandler;
     }
 
     @Override
@@ -41,12 +43,12 @@ public class BreakoutContactListener implements ContactListener {
         boolean isBallOutOfBounds = isBallOutOfBounds(f1, f2, s1, s2);
 
         if (brick != null) {
-            new BrickCollisionDecider(brick, collisionEventHandler).handleCollision();
+            new BrickCollisionDecider(brick, effectHandler).handleCollision();
         } else if (isBallOutOfBounds) {
             Ball ball = getOutOfBoundsBall(s1, s2);
             System.out.println("Out of bounds ball: " + ball.getName());
             // System.out.println("Ball is out of bounds");
-            collisionEventHandler.setResetBallFlag(ball);
+            ballEventHandler.setResetBallFlag(ball);
         }
     }
 
@@ -89,12 +91,12 @@ public class BreakoutContactListener implements ContactListener {
                 && data2 != null && data2 instanceof Paddle) {
             ball = (Ball) data1;
             paddle = (Paddle) data2;
-            collisionEventHandler.ballHitPaddle(ball, paddle);
+            ballEventHandler.ballHitPaddle(ball, paddle);
         } else if (data1 != null && data1 instanceof Paddle
                 && data2 != null && data2 instanceof Ball) {
             ball = (Ball) data2;
             paddle = (Paddle) data1;
-            collisionEventHandler.ballHitPaddle(ball, paddle);
+            ballEventHandler.ballHitPaddle(ball, paddle);
         }
     }
 

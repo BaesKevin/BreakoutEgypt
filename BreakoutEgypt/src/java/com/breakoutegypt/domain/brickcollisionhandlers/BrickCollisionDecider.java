@@ -5,12 +5,9 @@
  */
 package com.breakoutegypt.domain.brickcollisionhandlers;
 
+import com.breakoutegypt.domain.effects.Effect;
+import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
-import static com.breakoutegypt.domain.shapes.bricks.BrickType.EXPLOSIVE;
-import static com.breakoutegypt.domain.shapes.bricks.BrickType.SWITCH;
-import static com.breakoutegypt.domain.shapes.bricks.BrickType.UNBREAKABLE;
-import com.breakoutegypt.domain.shapes.bricks.ExplosiveBrick;
-import com.breakoutegypt.domain.shapes.bricks.SwitchBrick;
 
 /**
  *
@@ -18,10 +15,10 @@ import com.breakoutegypt.domain.shapes.bricks.SwitchBrick;
  */
 public class BrickCollisionDecider {
 
-    private CollisionEventHandler collisionEventHandler;
+    private EffectHandler collisionEventHandler;
     private Brick brick;
 
-    public BrickCollisionDecider(Brick brick, CollisionEventHandler collisionEventHandler) {
+    public BrickCollisionDecider(Brick brick, EffectHandler collisionEventHandler) {
         this.brick = brick;
         this.collisionEventHandler = collisionEventHandler;
     }
@@ -30,16 +27,8 @@ public class BrickCollisionDecider {
         System.out.printf("Brick visible: %s Brick breakable: %s", brick.isVisible(), brick.isBreakable());
         if (brick.isVisible() && brick.isBreakable()) {
             
-            if (brick instanceof ExplosiveBrick) {
-                ExplosiveBrick explosiveBrick = (ExplosiveBrick) brick;
-                new ExplosiveCollision(collisionEventHandler, explosiveBrick, explosiveBrick.getExplosionRadius()).handleCollsion();
-            } 
-            else if (brick instanceof SwitchBrick) 
-            {
-                SwitchBrick switchBrick = (SwitchBrick) brick;
-                new SwitchCollision(collisionEventHandler, switchBrick).handleCollsion();
-            } else {
-                new RegularCollision(collisionEventHandler, brick).handleCollsion();
+            for(Effect effect : brick.getEffects()){
+                effect.accept(collisionEventHandler);
             }
         } else {
             System.out.println("BrickCollisionHandler: collision with switched off brick, going through...");

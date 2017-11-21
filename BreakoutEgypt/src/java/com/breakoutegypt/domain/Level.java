@@ -6,14 +6,10 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
-import com.breakoutegypt.domain.brickcollisionhandlers.CollisionEventHandler;
-import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Timer;
 
 /**
@@ -21,7 +17,7 @@ import java.util.Timer;
  *
  * @author kevin
  */
-public class Level implements BreakoutWorldEventListener, CollisionEventHandler {
+public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     private int id;
 
@@ -56,10 +52,14 @@ public class Level implements BreakoutWorldEventListener, CollisionEventHandler 
         scoreTimer = new ScoreTimer();
 
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
-        breakoutWorld.setBreakoutWorldEventListener(this);
-        breakoutWorld.setCollisionEventHandler(this);
+        
         levelState = initialState;
         levelState.spawnAllObjects(breakoutWorld);
+        
+        breakoutWorld.setBreakoutWorldEventListener(this);
+        breakoutWorld.initContactListener(
+                new BreakoutEffectHandler(levelState, breakoutWorld),
+                this);
 
         this.lives = lives;
         this.timer = new Timer();
@@ -184,18 +184,8 @@ public class Level implements BreakoutWorldEventListener, CollisionEventHandler 
     public void ballHitPaddle(Ball ball, Paddle paddle) {
         breakoutWorld.ballHitPaddle(ball, paddle);
     }
-    
-    @Override
-    public void handleExplosiveEffect(ExplosiveEffect effect) {
-        List<Brick> bricks = levelState.getRangeOfBricksAroundBody(effect.getCentreBrick(), effect.getRadius());
 
-        breakoutWorld.destroyBricks(bricks);
-    }
 
-    @Override
-    public void handleToggleEffect(ToggleEffect effect) {
-        breakoutWorld.toggleBricks(effect.getBricksToToggle());
-    }
 
     @Override
     public void ballOutOfBounds(Ball ball) {
@@ -207,7 +197,7 @@ public class Level implements BreakoutWorldEventListener, CollisionEventHandler 
     @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
-        
+
         if (allTargetBricksDestroyed()) {
             System.out.println("BreakoutWorld: all brick destroyed");
             getScoreTimer().stop();

@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author kevin
  */
-public class ExplosiveEffect {
+public class ExplosiveEffect implements Effect{
     private int radius;
     private Brick centreBrick;
     
@@ -29,6 +29,14 @@ public class ExplosiveEffect {
     public Brick getCentreBrick() {
         return centreBrick;
     }
+
+    @Override
+    public void accept(EffectHandler eh) {
+        eh.handle(this);
+    }
+
+    
+    
     
     
 }
