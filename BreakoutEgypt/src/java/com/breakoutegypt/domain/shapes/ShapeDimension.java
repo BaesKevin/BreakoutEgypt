@@ -7,7 +7,6 @@ package com.breakoutegypt.domain.shapes;
 
 import java.awt.Color;
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 /**
@@ -17,7 +16,7 @@ import javax.json.JsonObjectBuilder;
  *
  * @author kevin
  */
-public class Shape {
+public class ShapeDimension {
 
     private float posX;
     private float posY;
@@ -26,11 +25,11 @@ public class Shape {
     private Color color;
     private String name;
 
-    public Shape(String name, float x, float y, int width, int height) {
+    public ShapeDimension(String name, float x, float y, int width, int height) {
         this(name, x, y, width, height, Color.BLACK);
     }
 
-    public Shape(String name, float posX, float posY, int width, int height, Color color) {
+    public ShapeDimension(String name, float posX, float posY, int width, int height, Color color) {
         this.name = name;
         this.posX = posX;
         this.posY = posY;
@@ -39,7 +38,7 @@ public class Shape {
         this.color = color;
     }
 
-    public Shape(Shape s) {
+    public ShapeDimension(ShapeDimension s) {
         this(s.name, s.posX, s.posY, s.width, s.height, s.color);
     }
 

@@ -9,7 +9,7 @@ nav{
     background-color:#fecc33;
 }
 canvas{
-    background-color:white;
+    /*background-color:white;*/
     border: 1px solid black;
 }
 
@@ -92,6 +92,6 @@ main button:hover{
     clear:both;
 }
 
-canvas {
+#stationaryParts {
     background-image: url("../media/sandy-background2.jpg");
 }

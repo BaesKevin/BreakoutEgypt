@@ -1,24 +1,22 @@
 function draw() {
     // initial values 300 x 300
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    movingPartsCtx.clearRect(0, 0, movingPartsCanvas.width, movingPartsCanvas.height);
 
-    ctx.beginPath();
-    ctx.shadowColor = "black";
-    ctx.shadowOffsetX = 1;
-    ctx.shadowOffsetY = 1;
+    movingPartsCtx.beginPath();
+    movingPartsCtx.shadowColor = "black";
+    movingPartsCtx.shadowOffsetX = 1;
+    movingPartsCtx.shadowOffsetY = 1;
 
     drawBall();
 
-    level.brickdata.forEach(function (brick) {
-        brick.draw(ctx);
-    });
+//    level.brickdata.forEach(function (brick) {
+//        brick.draw(brickCtx);
+//    });
 
     setPaddleX();
     level.sendClientLevelState();
 
     drawPaddles();
-
-    loadLives(level.lives);
 
     if (!level.allLevelsComplete) {
         window.requestAnimationFrame(draw);
@@ -27,23 +25,31 @@ function draw() {
     }
 }
 
+function updateBricks() {
+    brickCtx.clearRect(0, 0, brickCanvas.width, brickCanvas.height);
+    level.brickdata.forEach(function (brick) {
+        brick.draw(brickCtx);
+    });
+    loadLives(level.lives);
+}
+
 function drawBall() {
-    ctx.fillStyle = firePattern;
+    movingPartsCtx.fillStyle = firePattern;
 
     // box2d draws circle from center
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = "blue";
-    ctx.arc(Math.round(level.balldata.x), Math.round(level.balldata.y), (level.balldata.width), 0, 2 * Math.PI, false);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    movingPartsCtx.shadowBlur = 25;
+    movingPartsCtx.shadowColor = "blue";
+    movingPartsCtx.arc(Math.round(level.balldata.x), Math.round(level.balldata.y), (level.balldata.width), 0, 2 * Math.PI, false);
+    movingPartsCtx.fill();
+    movingPartsCtx.shadowBlur = 0;
 }
 
 function drawPaddles() {
     level.paddles.forEach(function (paddle) {
-        ctx.strokeStyle = paddle.color;
-        ctx.beginPath();
-        ctx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
-        ctx.stroke();
+        movingPartsCtx.strokeStyle = paddle.color;
+        movingPartsCtx.beginPath();
+        movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
+        movingPartsCtx.stroke();
     });
 }
 
@@ -53,19 +59,19 @@ function setPaddleX() {
 
     if (paddle.x < 0) {
         paddle.x = 0;
-    } else if (canvas.width - paddle.width < paddle.x) {
-        paddle.x = canvas.width - paddle.width;
+    } else if (movingPartsCanvas.width - paddle.width < paddle.x) {
+        paddle.x = movingPartsCanvas.width - paddle.width;
     }
     godImgPosition = {x: level.mypaddle.x + (level.mypaddle.width / 2) - (godImg.width / 2),
         y: level.mypaddle.y - (level.mypaddle.width * 0.4)};
-    ctx.drawImage(godImg, godImgPosition.x, godImgPosition.y);
+    movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y);
 }
 
 var loadLives = function (lives) {
-    var height = (canvas.height - level.mypaddle.y) * 0.7;
-    var startX = canvas.width - 5 - height;
+    var height = (brickCanvas.height - level.mypaddle.y) * 0.7;
+    var startX = brickCanvas.width - 5 - height;
     for (var i = 0; i < lives; i++) {
-        ctx.drawImage(liveImg, startX, level.mypaddle.y * 1.05, height, height);
+        brickCtx.drawImage(liveImg, startX, level.mypaddle.y * 1.05, height, height);
         startX -= (height * 0.6);
     }
 };

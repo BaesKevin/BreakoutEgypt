@@ -12,7 +12,7 @@ import org.jbox2d.common.Vec2;
  * @author kevin
  */
 public class Ball extends RegularBody {
-    public Ball(Shape s) {
+    public Ball(ShapeDimension s) {
         super(s);
     }
 

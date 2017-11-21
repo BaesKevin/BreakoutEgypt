@@ -6,9 +6,13 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.connectionmanagement.PlayerConnection;
+import com.breakoutegypt.connectionmanagement.SessionManager;
+import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
+import com.breakoutegypt.levelfactories.LevelFactory;
+import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.domain.shapes.Paddle;
-import java.util.List;
-import javax.websocket.Session;
+import com.breakoutegypt.levelfactories.TestLevelFactory;
 
 /**
  *
@@ -23,19 +27,28 @@ public class Game {
     private LevelFactory levelFactory;
     private SessionManager manager;
 
-    public Game(int numberOfPlayers, int startingLevel, GameType type) {
+    public Game(int numberOfPlayers, int startingLevel, GameType gameType) {
         id = ID++;
         manager = new SessionManager(numberOfPlayers);
 
-        if (type == GameType.ARCADE) {
-            levelFactory = new ArcadeLevelFactory(this);
-        } else {
-            levelFactory = new MultiplayerLevelFactory(this);
-        }
-
+        levelFactory = createLevelFactoryForGameType(gameType);
+       
         setCurrentLevel(startingLevel);
     }
 
+    private LevelFactory createLevelFactoryForGameType(GameType gameType){
+        switch(gameType){
+            case ARCADE:
+                return new ArcadeLevelFactory(this);
+            case MULTIPLAYER:
+                return new MultiplayerLevelFactory(this);
+            case TEST:
+                return new TestLevelFactory(this);
+        }
+        
+        return null;
+
+    }
     public int getId() {
         return id;
     }
@@ -44,9 +57,9 @@ public class Game {
         return currentLevel;
     }
 
-    public void movePaddle(Session s, int x, int y) {
-        Player peer = manager.getPlayer(s);
-
+    public void movePaddle(String username, int x, int y) {
+        Player peer = manager.getPlayer(username);
+        
         if (peer != null) {
             currentLevel.movePaddle(peer.getPaddle(), x, y);
         } else {
@@ -67,20 +80,20 @@ public class Game {
 
     public void assignPaddleToPlayer(Player player) {
         int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
-        Paddle paddleToAssign = currentLevel.getPaddles().get(indexOfPaddleToAssign);
+        Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
         System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
         player.setPaddle(paddleToAssign);
     }
 
-    public void addSessionForPlayer(Player player, Session session) {
-        if (manager.isConnecting(player)) {
-            manager.addSessionForPlayer(player, session);
+    public void addConnectionForPlayer(String name, PlayerConnection conn) {
+        if (manager.isConnecting(name)) {
+            manager.addConnectionForPlayer(name, conn);
         }
     }
 
-    public void removePlayer(Session peer) {
+    public void removePlayer(String username) {
         System.out.printf("Game %d: remove player\n", id);
-        manager.removePlayer(peer);
+        manager.removePlayer(username);
     }
 
     public boolean hasNoPlayers() {
@@ -126,8 +139,8 @@ public class Game {
         return levelFactory.hasNextLevel();
     }
 
-    public Player getPlayer(Player player) {
-        return manager.getPlayer(player);
+    public Player getPlayer(String username) {
+        return manager.getPlayer(username);
     }
 
     // TODO validate by keeping track of the player's max reached level

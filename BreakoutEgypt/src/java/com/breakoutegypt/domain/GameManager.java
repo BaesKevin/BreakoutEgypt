@@ -5,11 +5,10 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import javax.websocket.Session;
 
 /**
  *
@@ -54,11 +53,11 @@ public class GameManager {
             System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }
     
-    public void addSessionForPlayer(int gameId, Player player, Session session){
+    public void addConnectionForPlayer(int gameId, String name, PlayerConnection conn){
          Game game = games.get(gameId);
         
         if(game!=null)
-            game.addSessionForPlayer(player, session);
+            game.addConnectionForPlayer(name, conn);
         else
             System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }
@@ -73,15 +72,16 @@ public class GameManager {
         
     }
 
-    public void removePlayer(int gameId, Session peer) {
+    public void removePlayer(int gameId, String name) {
         if(games != null){
             Game game = games.get(gameId);
 
             if(game != null){
-                game.removePlayer(peer);
+                game.removePlayer(name);
                 if(game.hasNoPlayers()){
                     
                     stopGame(game.getId());
+                    games.remove(game.getId());
                 }
             } else {
 //                System.out.println("TGameManager: rying to remove player to game that doesn't exist");

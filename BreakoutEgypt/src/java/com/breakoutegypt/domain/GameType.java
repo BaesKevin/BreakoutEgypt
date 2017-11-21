@@ -10,5 +10,5 @@ package com.breakoutegypt.domain;
  * @author kevin
  */
 public enum GameType {
-    ARCADE, MULTIPLAYER
+    ARCADE, MULTIPLAYER, TEST
 }

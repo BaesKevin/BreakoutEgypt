@@ -5,14 +5,14 @@
  */
 package com.breakoutegypt.domain.effects;
 
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import java.util.List;
 
 /**
  *
  * @author kevin
  */
-public class ToggleEffect {
+public class ToggleEffect implements Effect{
     private List<Brick> bricksToToggle;
     
     public ToggleEffect(List<Brick> bricksToToggle){
@@ -22,4 +22,11 @@ public class ToggleEffect {
     public List<Brick> getBricksToToggle() {
         return bricksToToggle;
     }
+
+    @Override
+    public void accept(EffectHandler eh) {
+        eh.handle(this);
+    }
+    
+    
 }

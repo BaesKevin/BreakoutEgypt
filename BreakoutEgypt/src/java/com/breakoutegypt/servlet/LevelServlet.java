@@ -8,9 +8,10 @@ package com.breakoutegypt.servlet;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,13 +47,10 @@ public class LevelServlet extends HttpServlet {
             
             // already initialize player and give him a paddle
             String name = "player";
-            Player player = new Player(new User(name));
+            Player player = game.getPlayer(name);
             
-            if(game.isPlayerInSessionManager(player)){
-                player = game.getPlayer(player);
-            }
-            else
-            {
+            if(player == null){
+                player = new Player(new User(name));
                 manager.addConnectingPlayer(gameId, player);
             }
             manager.assignPaddleToPlayer(gameId, player);
@@ -100,14 +98,15 @@ public class LevelServlet extends HttpServlet {
     }
 
     private void levelToJson(Level level, JsonArrayBuilder jab, JsonObjectBuilder job, Player player) {
-        for (Brick brick : level.getBricks()) {
+        LevelState state = level.getLevelState();
+        for (Brick brick : state.getBricks()) {
             jab.add(brick.toJson().build());
         }
         job.add("bricks", jab);
-        job.add("ball", level.getBall().getShape().toJson());
+        job.add("ball", state.getBall().getShape().toJson());
         
         JsonArrayBuilder paddleBuilder = Json.createArrayBuilder();
-        List<Paddle> paddles = level.getPaddles();
+        List<Paddle> paddles = state.getPaddles();
         for(int i = 0; i < paddles.size(); i++){
             paddleBuilder.add( paddles.get(i).getShape().toJson().build());
         }
