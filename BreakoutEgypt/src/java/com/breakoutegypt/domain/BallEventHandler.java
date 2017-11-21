@@ -5,10 +5,14 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Paddle;
+
 /**
  *
  * @author kevin
  */
-public enum GameType {
-    ARCADE, MULTIPLAYER, TEST
+public interface BallEventHandler {
+    void setResetBallFlag(Ball ball);
+    void ballHitPaddle(Ball ball, Paddle paddle);
 }

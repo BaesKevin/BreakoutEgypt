@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.shapes;
+package com.breakoutegypt.domain.effects;
 
 /**
  *
  * @author kevin
  */
-public enum BrickType {
-    REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH
+public interface Effect {
+    void accept(EffectHandler eh);
 }

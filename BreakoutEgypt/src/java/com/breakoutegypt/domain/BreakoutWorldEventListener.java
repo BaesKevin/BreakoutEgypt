@@ -5,10 +5,14 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
+
 /**
  *
  * @author kevin
  */
-public enum GameType {
-    ARCADE, MULTIPLAYER, TEST
+public interface BreakoutWorldEventListener {
+    void removeBrick(Brick brick);
+    void ballOutOfBounds(Ball ball);
 }

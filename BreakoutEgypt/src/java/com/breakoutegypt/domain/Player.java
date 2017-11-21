@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.Objects;
 import javax.websocket.Session;
@@ -16,6 +17,8 @@ import javax.websocket.Session;
 public class Player {
     private User user;
     private Paddle paddle;
+    private PlayerConnection conn;
+//    private Session session;
     
     public Player(User user){
         this.user = user;
@@ -35,6 +38,14 @@ public class Player {
 
     public void setPaddle(Paddle paddle) {
         this.paddle = paddle;
+    }
+
+    public PlayerConnection getConnection() {
+        return conn;
+    }
+
+    public void setConnection(PlayerConnection conn) {
+        this.conn = conn;
     }
 
     @Override

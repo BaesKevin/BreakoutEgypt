@@ -5,14 +5,19 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.data.StaticDummyHighscoreRepo;
+import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.BodyConfiguration;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.ArrayList;
 import java.util.List;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 /**
@@ -26,10 +31,13 @@ public class BreakoutWorld {
     // TODO use these!
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    private final float timestep = 1.0f / 60.0f;
+    public static final float TIMESTEP_DEFAULT = 1.0f / 60f;
+    private float timestepSeconds;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
-    private Level currentLevel;
+//    private Level currentLevel;
+    private BreakoutWorldEventListener listener;
+    
     private boolean isBallOutOfBounds = false;
 
     // keep a seperate list of bodies to dstroy in the frontend since we only want to send this info once
@@ -40,27 +48,45 @@ public class BreakoutWorld {
 
     private Ball ballToChangeDirectionOff;
     private Paddle paddleHitByBall;
+    private Ball outOfBoundsBall;
     
-    public BreakoutWorld(Level level) {
+    public BreakoutWorld(/*Level level*/) {
+        this(/*level, */TIMESTEP_DEFAULT);
+    }
+    
+    public BreakoutWorld(/*Level level, */float timestepSeconds){
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
+        
         world = new World(new Vec2(0.0f, 0.0f));
-        world.setContactListener(new BreakoutContactListener(this));
+        
 
-        this.currentLevel = level;
+//        this.currentLevel = level;
         messages = new ArrayList();
+        
+        this.timestepSeconds = timestepSeconds;
     }
-
-    public World getWorld() {
-        return world;
+    
+    public void initContactListener(EffectHandler eventHandler, BallEventHandler ballEventHandler){
+        world.setContactListener(new BreakoutContactListener(eventHandler, ballEventHandler));
     }
-
-    public void setLevel(Level level) {
-        this.currentLevel = level;
+    
+    public long getTimeStepAsMs(){
+        return Math.round(Math.floor(timestepSeconds * 1000));
     }
-
-    public Level getLevel() {
-        return currentLevel;
+    
+    public void spawn(RegularBody gameObject){
+        BodyConfiguration bodyConfig = gameObject.getConfig();
+        BodyDef bodyDef = bodyConfig.getBodyDefinition().getBox2dBodyDef();
+        FixtureDef fixtureDef = bodyConfig.getFixtureConfig().getBox2dFixtureDef();
+        Shape shape = bodyConfig.getShape();
+        
+        fixtureDef.shape = shape;
+               
+        Body body = world.createBody(bodyDef);
+        body.createFixture(fixtureDef);
+        body.setUserData(gameObject);
+        gameObject.setBody(body);
     }
 
     public void destroyBrick(Brick brick) {
@@ -69,38 +95,31 @@ public class BreakoutWorld {
         destroyBricks(bricks);
     }
 
+    public void destroyBody(Body body){
+        world.destroyBody(body);
+    }
+    
     public void destroyBricks(List<Brick> bricks) {
         String brickName;
-        for (Brick brickBodyInRange : bricks) {
-            if (!bodiesToDestroy.contains(brickBodyInRange.getBody())) {
-                brickName = brickBodyInRange.getName();
-                currentLevel.removeBrick(brickBodyInRange);
-                bodiesToDestroy.add(brickBodyInRange.getBody());
+        for (Brick brick : bricks) {
+            if (!bodiesToDestroy.contains(brick.getBody())) {
+                brickName = brick.getName();
+//                currentLevel.removeBrick(brick);
+                listener.removeBrick(brick);
+                bodiesToDestroy.add(brick.getBody());
                 messages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
             }
         }
-
-        if (currentLevel.allTargetBricksDestroyed()) {
-            System.out.println("BreakoutWorld: all brick destroyed");
-            currentLevel.getScoreTimer().stop();
-
-            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
-
-            Score scoreOfPlayer = new Score(currentLevel.getId(), new User("This is a new user"), currentLevel.getScoreTimer().getDuration(), "hard");
-            dummyRepo.addScore(scoreOfPlayer);
-
-            dummyRepo.getScoresByLevel(currentLevel.getId(), "hard");
-            currentLevel.initNextLevel();
-        }
     }
 
+    // TODO this probably belongs in LevelState
     public void toggleBricks(List<Brick> switchBricks) {
         for (Brick switchBrick : switchBricks) {
 
             switchBrick.toggle();
 
             BrickMessageType toggleType;
-            if (switchBrick.isSwitched()) {
+            if (switchBrick.isVisible()) {
                 toggleType = BrickMessageType.SHOW;
             } else {
                 toggleType = BrickMessageType.HIDE;
@@ -121,14 +140,14 @@ public class BreakoutWorld {
         return messages;
     }
 
-    void clearBrickMessages() {
+    public void clearBrickMessages() {
         messages.clear();
     }
 
     // any changes to the world state must be made here to try to avoid concurrency issues where the game is 
     // updating some state while we are changing it too
     public void step() {
-        world.step(timestep, velocityIterations, positionIterations);
+        world.step(timestepSeconds, velocityIterations, positionIterations);
         for (Body brick : bodiesToDestroy) {
 
             world.destroyBody(brick);
@@ -139,9 +158,7 @@ public class BreakoutWorld {
             adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
-            currentLevel.setLevelStarted(false);
-            world.destroyBody(currentLevel.getBall().getBody());
-            currentLevel.resetBall();
+            listener.ballOutOfBounds(outOfBoundsBall);
             isBallOutOfBounds = false;
         }
     }
@@ -156,12 +173,17 @@ public class BreakoutWorld {
         ballToChangeDirectionOff.setLinearVelocity(newX, ballToChangeDirectionOff.getLinearVelocity().y);
     }
 
-    public World getBox2dWorld() {
-        return world;
+    public int countWorldObjects(){
+        return world.getBodyCount();
     }
 
-    void resetBall() {
+    public void setResetBallFlag(Ball ball) {
         isBallOutOfBounds = true;
+        outOfBoundsBall = ball;
     }
 
+    public void setBreakoutWorldEventListener(BreakoutWorldEventListener listener){
+        this.listener = listener;
+    }
+    
 }

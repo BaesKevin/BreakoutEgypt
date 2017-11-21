@@ -3,21 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain;
+package com.breakoutegypt.connectionmanagement;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import com.breakoutegypt.domain.BreakoutWorld;
+import com.breakoutegypt.domain.BrickMessage;
+import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.ScoreTimer;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.websocket.EncodeException;
-import javax.websocket.Session;
 import org.jbox2d.common.Vec2;
 
 /**
@@ -28,8 +28,8 @@ import org.jbox2d.common.Vec2;
 public class SessionManager {
 
     private int maxPlayers;
-    private Map<Session, Player> connectedPlayers;
-    private List<Player> connectingPlayers;
+    private Set<Player> connectedPlayers;
+    private Set<Player> connectingPlayers;
     private JsonObject json;
 
     public SessionManager() {
@@ -38,56 +38,69 @@ public class SessionManager {
 
     public SessionManager(int maxPlayers) {
         this.maxPlayers = maxPlayers;
-        connectedPlayers = Collections.synchronizedMap(new HashMap());
-        connectingPlayers = Collections.synchronizedList(new ArrayList());
+        connectedPlayers = Collections.synchronizedSet(new HashSet());
+        connectingPlayers = Collections.synchronizedSet(new HashSet());
     }
 
-    public Player getPlayer(Session session) {
-        return connectedPlayers.get(session);
+    public Player getPlayer(String name) {
+
+        Player toFind = getPlayerInSet(name, connectedPlayers);
+
+        if (toFind == null) {
+            toFind = getPlayerInSet(name, connectingPlayers);
+        }
+
+        return toFind;
     }
-    
-     public  Player getPlayer(Player player) {
-         List<Player> players = getPlayers();
-         Player toFind = null;
-         
-         for(Player p : players){
-             if(p.equals(player)){
-                 toFind = p;
-             }
-         }
-         
-         return toFind;
+
+    public Player getPlayer(String name, boolean searchInConnectingPlayers) {
+        Set<Player> playerSetToSearch;
+        if (searchInConnectingPlayers) {
+            playerSetToSearch = connectingPlayers;
+        } else {
+            playerSetToSearch = connectedPlayers;
+        }
+
+        Player player = getPlayerInSet(name, playerSetToSearch);
+        return player;
+    }
+
+    private Player getPlayerInSet(String name, Set<Player> playerset) {
+        Player toFind = null;
+        for (Player player : playerset) {
+            if (player.getUser().getUsername().equals(name)) {
+                toFind = player;
+            }
+        }
+
+        return toFind;
     }
 
     public void addConnectingPlayer(Player player) {
         connectingPlayers.add(player);
     }
 
-    public boolean isPlayerInSessionManager(Player player){
-        boolean isInManager =  connectingPlayers.contains(player) || getPlayers().contains(player);
+    public boolean isPlayerInSessionManager(Player player) {
+        boolean isInManager = connectingPlayers.contains(player) || getPlayers().contains(player);
         System.out.println("SessionManager: Player " + player.getUser().getUsername() + " is in manager: " + isInManager);
         return isInManager;
     }
-    
-    public boolean isConnecting(Player player){
-        boolean isInManager =  connectingPlayers.contains(player);
-        System.out.println("Player " + player.getUser().getUsername() + " is connecting: ");
-        return isInManager;
+
+    public boolean isConnecting(String name) {
+        Player player = getPlayer(name, true);
+        return player != null;
     }
-    
-    public void addSessionForPlayer(Player player, Session session) {
-        Player connectingPlayer = null;
-        for (Player p : connectingPlayers) {
-            if (p.equals(player)) {
-                connectingPlayer = p;
-            }
-        }
+
+    public void addConnectionForPlayer(String name, PlayerConnection conn) {
+        Player connectingPlayer = getPlayer(name, true);
 
         if (connectingPlayer != null) {
             connectingPlayers.remove(connectingPlayer);
             if (connectedPlayers.size() < maxPlayers) {
-                System.out.printf("SessionManager: Add session for connecting player %s\n", player.getUser().getUsername());
-                connectedPlayers.put(session, connectingPlayer);
+                System.out.printf("SessionManager: Add session for connecting player %s\n", connectingPlayer.getUser().getUsername());
+
+                connectingPlayer.setConnection(conn);
+                connectedPlayers.add(connectingPlayer);
             }
         } else {
             System.out.println("SessionManager: trying to addsession for player that doesn't exist");
@@ -95,25 +108,30 @@ public class SessionManager {
 
     }
 
-    public void removePlayer(Session peer) {
-        connectedPlayers.remove(peer);
-        connectingPlayers.remove(peer);
+    public void removePlayer(String username) {
+        Player player=  getPlayer(username, true);
+        connectedPlayers.remove(player);
+        connectingPlayers.remove(player);
     }
 
     public boolean hasNoPlayers() {
-        return connectedPlayers.size() == 0;
+        return connectedPlayers.isEmpty() && connectingPlayers.isEmpty();
     }
 
     public boolean isFull() {
-        return connectedPlayers.size() == maxPlayers;
+        return connectedPlayers.size() + connectingPlayers.size() == maxPlayers;
     }
 
-    public List<Player> getPlayers() {
-        return new ArrayList(connectedPlayers.values());
+    public Set<Player> getPlayers() {
+        Set<Player> allPlayers = new HashSet();
+        allPlayers.addAll(connectedPlayers);
+        allPlayers.addAll(connectingPlayers);
+        
+        return allPlayers;
     }
 
     public int getNextAvailablePaddleIndex() {
-        return connectedPlayers.values().size() + connectingPlayers.size() - 1;
+        return connectedPlayers.size() + connectingPlayers.size() - 1;
     }
 
     public void notifyLevelComplete(Level currentLevel) {
@@ -129,7 +147,7 @@ public class SessionManager {
         sendJsonToPlayers(json);
     }
 
-    void notifyPlayersOfLivesLeft(Level currentLevel) {
+    public void notifyPlayersOfLivesLeft(Level currentLevel) {
         System.out.println("SessionManager: notifying players of lives lfet");
         boolean noLivesLeft = currentLevel.noLivesLeft();
         json = createLivesLeftJson(currentLevel.getLives(), noLivesLeft);
@@ -155,7 +173,7 @@ public class SessionManager {
     private JsonObject createJson(Level currentLevel, BreakoutWorld simulation) {
         JsonObjectBuilder job = Json.createObjectBuilder();
 
-        Vec2 position = currentLevel.getBall().getPosition();
+        Vec2 position = currentLevel.getLevelState().getBall().getPosition();
 
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
         brickkObjectBuilder.add("x", position.x);
@@ -188,16 +206,10 @@ public class SessionManager {
     }
 
     private void sendJsonToPlayers(JsonObject json) {
-        try {
-            Session session;
-            for (Entry<Session, Player> entry : connectedPlayers.entrySet()) {
-                session = entry.getKey();
-                if (session.isOpen()) {
-                    session.getBasicRemote().sendObject(json);
-                }
-            }
-        } catch (IOException | EncodeException e) {
-            e.printStackTrace();
+        PlayerConnection conn;
+        for (Player player : connectedPlayers) {
+            conn = player.getConnection();
+            conn.send(json);
         }
     }
 

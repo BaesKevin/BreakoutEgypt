@@ -5,13 +5,11 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.data.StaticDummyHighscoreRepo;
+import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Brick;
+import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Timer;
 
 /**
@@ -19,7 +17,7 @@ import java.util.Timer;
  *
  * @author kevin
  */
-public class Level {
+public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     private int id;
 
@@ -37,9 +35,14 @@ public class Level {
 
     private ScoreTimer scoreTimer;
     private LevelTimerTask levelTimerTask;
+    private boolean runLevelManually;
 
-    public Level(int id, Game game) {
+    public Level(int id, Game game, LevelState initialObjects, int lives
+    ) {
+        this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
+    }
 
+    public Level(int id, Game game, LevelState initialState, int lives, float worldTimeStepInMs) {
         this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
@@ -48,25 +51,23 @@ public class Level {
 
         scoreTimer = new ScoreTimer();
 
-        breakoutWorld = new BreakoutWorld(this);
+        breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
+        
+        levelState = initialState;
+        levelState.spawnAllObjects(breakoutWorld);
+        
+        breakoutWorld.setBreakoutWorldEventListener(this);
+        breakoutWorld.initContactListener(
+                new BreakoutEffectHandler(levelState, breakoutWorld),
+                this);
+
+        this.lives = lives;
+        this.timer = new Timer();
+        runLevelManually = false;
     }
 
     public ScoreTimer getScoreTimer() {
         return scoreTimer;
-    }
-
-    public Level(int id, Game game, Ball ball, Paddle paddle, List<Brick> bricks, int lives
-    ) {
-        this(id, game, ball, Arrays.asList(new Paddle[]{paddle}), bricks, lives);
-    }
-
-    public Level(int id, Game game, Ball ball, List<Paddle> paddles, List<Brick> bricks, int lives
-    ) {
-        this(id, game);
-        levelState = new LevelState(breakoutWorld, ball, paddles, bricks);
-
-        this.lives = lives;
-        this.timer = new Timer();
     }
 
     public boolean isLevelStarted() {
@@ -77,50 +78,51 @@ public class Level {
         this.levelStarted = b;
     }
 
+    public void setRunManual(boolean b) {
+        this.runLevelManually = b;
+    }
+
+    public void start() {
+        if (!runLevelManually && levelTimerTask == null) {
+            System.out.printf("Level: start level %d", this.id);
+            levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
+            System.out.printf("Expected timestep: %d, actual timestep: %d", 1000 / 60, breakoutWorld.getTimeStepAsMs());
+            timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
+        } else {
+            System.out.println("Level: trying to start the level twice, ignoring call");
+        }
+
+    }
+
     public void startBall() {
         if (!levelStarted) {
             setLevelStarted(true);
             scoreTimer.start();
-            getBall().setLinearVelocity(0, 100);
+            levelState.getBall().setLinearVelocity(0, 100);
             System.out.println("Level: startBall()");
         }
     }
 
     public void movePaddle(Paddle paddle, int x, int y) {
         if (!levelStarted) {
-            float yPos = this.getBall().getPosition().y;
-            this.getBall().moveTo(x, yPos);
+            float yPos = levelState.getBall().getPosition().y;
+            levelState.getBall().moveTo(x, yPos);
         }
 
         paddle.moveTo(x, y);
-    }
-
-    public void addPaddle(Paddle p) {
-        levelState.addPaddle(p);
-    }
-
-    // TODO based on bricktype it might be necessary to do more here
-    // e.g. all surrounding bricks an explosive brick
-    public void addBrick(Brick brick) {
-        levelState.addBrick(brick);
-    }
-
-    public void addBall(Ball b) {
-        levelState.addBall(b);
     }
 
     public int getId() {
         return id;
     }
 
-    // SHOULD NOT BE USED, USE DELEGATION INSTEAD
     public LevelState getLevelState() {
         return levelState;
     }
 
     void resetBall() {
         System.out.println("LeveL: resetBall()");
-        levelState.resetBall();
+        levelState.resetBall(breakoutWorld);
 
         lives--;
         game.notifyPlayersOfLivesLeft();
@@ -135,17 +137,10 @@ public class Level {
         return getTargetBricksLeft() == 0;
     }
 
-    public void start() {
-        if (levelTimerTask == null) {
-            System.out.printf("Level: start level %d", this.id);
-            levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
-            timer.schedule(levelTimerTask, 0, 1000 / 60);
-        } else {
-            System.out.println("Level: trying to start the level twice, ignoring call");
-        }
-
+    public void step() {
+        breakoutWorld.step();
     }
-    
+
     public boolean noLivesLeft() {
         return lives == 0;
     }
@@ -156,10 +151,13 @@ public class Level {
 
     public void stop() {
         System.out.printf("Level: stop level %d", this.id);
-        levelTimerTask.cancel();
-        levelTimerTask = null;
+
+        if (!runLevelManually) {
+            levelTimerTask.cancel();
+            levelTimerTask = null;
+        }
     }
-    
+
     public void togglePaused() {
         if (levelTimerTask == null) {
             start();
@@ -177,33 +175,40 @@ public class Level {
         return isLastLevel;
     }
 
-    public List<Paddle> getPaddles() {
-        return levelState.getPaddles();
+    @Override
+    public void setResetBallFlag(Ball ball) {
+        breakoutWorld.setResetBallFlag(ball);
     }
 
+    @Override
+    public void ballHitPaddle(Ball ball, Paddle paddle) {
+        breakoutWorld.ballHitPaddle(ball, paddle);
+    }
+
+
+
+    @Override
+    public void ballOutOfBounds(Ball ball) {
+        setLevelStarted(false);
+        breakoutWorld.destroyBody(ball.getBody());
+        resetBall();
+    }
+
+    @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
-    }
 
-    public Ball getBall() {
-        return levelState.getBall();
-    }
+        if (allTargetBricksDestroyed()) {
+            System.out.println("BreakoutWorld: all brick destroyed");
+            getScoreTimer().stop();
 
-    public List<Brick> getBricks() {
-        return levelState.getBricks();
-    }
+            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
 
-    BreakoutWorld getBreakoutWorld() {
-        return breakoutWorld;
-    }
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), "hard");
+            dummyRepo.addScore(scoreOfPlayer);
 
-    public void handleExplosiveEffect(ExplosiveEffect effect) {
-        List<Brick> bricks = levelState.getRangeOfBricksAroundBody(effect.getCentreBrick(), effect.getRadius());
-
-        breakoutWorld.destroyBricks(bricks);
-    }
-
-    public void handleToggleEffect(ToggleEffect effect) {
-        breakoutWorld.toggleBricks(effect.getBricksToToggle());
+            dummyRepo.getScoresByLevel(getId(), "hard");
+            initNextLevel();
+        }
     }
 }
