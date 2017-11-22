@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain;
+package com.breakoutegypt.domain.actionmessages;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 /**
  *
  * @author kevin
  */
-public class BrickMessage {
+public class BrickMessage implements Message {
+
     private String name;
     private BrickMessageType messageType;
 
@@ -24,5 +28,13 @@ public class BrickMessage {
 
     public BrickMessageType getMessageType() {
         return messageType;
+    }
+
+    @Override
+    public JsonObjectBuilder toJson() {
+        JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
+        actionObjectBuilder.add("action", getMessageType().name().toLowerCase());
+        actionObjectBuilder.add("name", getName());
+        return actionObjectBuilder;
     }
 }

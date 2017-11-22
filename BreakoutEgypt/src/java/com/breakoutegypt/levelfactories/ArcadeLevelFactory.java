@@ -26,7 +26,7 @@ import java.util.List;
 public class ArcadeLevelFactory extends LevelFactory {
 
     public ArcadeLevelFactory(Game game) {
-        super(game, 2);
+        super(game, 3);
     }
 
     @Override
@@ -40,13 +40,14 @@ public class ArcadeLevelFactory extends LevelFactory {
         switch (currentLevelId) {
             case 1:
                 currentLevel = getSimpleTestLevel();
+//                currentLevel = getLevelWithMultipleBalls();
                 break;
             case 2:
                 currentLevel = getLevelWithUnbreakableAndExplosive();
                 break;
-//            case 3:
-//                currentLevel = getLevelWithSwitch();
-//                break;
+            case 3:
+                currentLevel = getLevelWithMultipleBalls();
+                break;
 //            default:
 //                currentLevel = getLevelWithSwitch();
 //                break;
@@ -61,10 +62,10 @@ public class ArcadeLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
-        
+
         ShapeDimension brickShape;
         Brick brick;
-        
+
         String name = "brick1";
         int x = 20;
         int y = 20;
@@ -72,11 +73,11 @@ public class ArcadeLevelFactory extends LevelFactory {
         int height = 30;
         int gridX = 1;
         int gridY = 1;
-        
+
         // TODO move to ShapeFactory which gets default bricks from staticbrickrepo
         brickShape = new ShapeDimension(name, x, y, width, height);
-        brick = new Brick(brickShape, new Point(gridX, gridY), true, true);        
-        
+        brick = new Brick(brickShape, new Point(gridX, gridY), true, true);
+
         bricks.add(brick);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
@@ -126,7 +127,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         }
 
         bricks.get(2).addEffect(new ExplosiveEffect(bricks.get(2), 1));
-        
+
         //bricks.get(1).setType(BrickType.UNBREAKABLE);
         //bricks.get(2).setType(BrickType.EXPLOSIVE);
 //        bricks.get(3).getShape().setColor(Color.YELLOW);
@@ -141,6 +142,36 @@ public class ArcadeLevelFactory extends LevelFactory {
 //                })
 //          );
         LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(currentLevelId, game, initialState, 3);
+
+        return level;
+    }
+
+    public Level getLevelWithMultipleBalls() {
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 70, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape2 = new ShapeDimension("ball2", 80, 90, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape3 = new ShapeDimension("ball3", 100, 110, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape4 = new ShapeDimension("ball4", 120, 130, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape5 = new ShapeDimension("ball5", 140, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+
+        Paddle paddle = new Paddle(paddleShape);
+        Ball ball = new Ball(ballShape);
+        Ball ball2 = new Ball(ballShape2);
+        Ball ball3 = new Ball(ballShape3);
+        Ball ball4 = new Ball(ballShape4);
+        Ball ball5 = new Ball(ballShape5);
+        List<Ball> balls = new ArrayList<>();
+        balls.add(ball);
+        balls.add(ball2);
+        balls.add(ball3);
+        balls.add(ball4);
+        balls.add(ball5);
+        List<Brick> bricks = new ArrayList();
+
+        List<Paddle> paddles = new ArrayList<Paddle>();
+        paddles.add(paddle);
+        LevelState initialState = new LevelState(balls, paddles, bricks);
         Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;

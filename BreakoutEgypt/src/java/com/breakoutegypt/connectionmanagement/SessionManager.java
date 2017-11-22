@@ -6,10 +6,12 @@
 package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.BreakoutWorld;
-import com.breakoutegypt.domain.BrickMessage;
+import com.breakoutegypt.domain.actionmessages.BrickMessage;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ScoreTimer;
+import com.breakoutegypt.domain.actionmessages.Message;
+import com.breakoutegypt.domain.shapes.Ball;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +20,6 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import org.jbox2d.common.Vec2;
 
 /**
  * Keeps track of connected players in a game
@@ -109,7 +110,7 @@ public class SessionManager {
     }
 
     public void removePlayer(String username) {
-        Player player=  getPlayer(username, true);
+        Player player = getPlayer(username, true);
         connectedPlayers.remove(player);
         connectingPlayers.remove(player);
     }
@@ -126,7 +127,7 @@ public class SessionManager {
         Set<Player> allPlayers = new HashSet();
         allPlayers.addAll(connectedPlayers);
         allPlayers.addAll(connectingPlayers);
-        
+
         return allPlayers;
     }
 
@@ -172,35 +173,44 @@ public class SessionManager {
 
     private JsonObject createJson(Level currentLevel, BreakoutWorld simulation) {
         JsonObjectBuilder job = Json.createObjectBuilder();
+        
+        List<Ball> balls = currentLevel.getLevelState().getBalls();
+        JsonArrayBuilder ballArrayBuilder = Json.createArrayBuilder();
 
-        Vec2 position = currentLevel.getLevelState().getBall().getPosition();
+        JsonObjectBuilder ballObjectBuilder = Json.createObjectBuilder();
+        for (Ball b : balls) {
+            ballObjectBuilder.add("name", b.getName());
+            ballObjectBuilder.add("x", b.getPosition().x);
+            ballObjectBuilder.add("y", b.getPosition().y);
+            ballArrayBuilder.add(ballObjectBuilder.build());
+        }
 
-        JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
-        brickkObjectBuilder.add("x", position.x);
-        brickkObjectBuilder.add("y", position.y);
-        job.add("ball", brickkObjectBuilder.build());
+        job.add("balls", ballArrayBuilder.build());
+        
+        List<Message> ballMessages = currentLevel.getLevelState().getMessages();
+        
+        
 
         JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
-        boolean actionsToBeDone = false;
 
-        List<BrickMessage> messages = simulation.getBrickMessages();
-        for (BrickMessage message : messages) {
-            actionsToBeDone = true;
-            JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
-            actionObjectBuilder.add("action", message.getMessageType().name().toLowerCase());
-            actionObjectBuilder.add("name", message.getName());
+        System.out.println("ballmessages in sessionmanager: " + ballMessages);
+        List<Message> messages = simulation.getMessages();
+        messages.addAll(ballMessages);
+        for (Message message : messages) {
+            JsonObjectBuilder actionObjectBuilder = message.toJson();
             actionsArrayBuilder.add(actionObjectBuilder.build());
         }
-        simulation.clearBrickMessages();
+        simulation.clearMessages();
+        currentLevel.getLevelState().clearMessages();
 
         //BODIES to HIDE
         //BODIES to SHOW
-        if (actionsToBeDone) {
+        if (messages.size() > 0) {
             job.add("actions", actionsArrayBuilder.build());
             System.out.println("SessoinManager: sending bodies to destroy");
         }
 
-        simulation.clearBrickMessages();
+        simulation.clearMessages();
 
         return job.build();
     }

@@ -100,7 +100,22 @@ public class LevelTest {
         ball.getBody().setTransform(new Vec2(280, 20), 0);
         ball.setLinearVelocity(100, 0);
         stepTimes(40);
-        Assert.assertTrue( ball.getPosition().y < 300);
+        Assert.assertTrue(ball.getPosition().y < 300);
+    }
+
+    @Test
+    public void ballsDontCollide() {
+        game.setCurrentLevel(5);
+        level = game.getCurrentLevel();
+        level.startBall();
+        Ball topball = level.getLevelState().getBalls().get(0);
+        Ball bottomball = level.getLevelState().getBalls().get(1);
+        topball.setLinearVelocity(0, 100);
+        bottomball.setLinearVelocity(0, -100);
+        
+        stepTimes(60);
+        
+        Assert.assertTrue(topball.getPosition().y > bottomball.getPosition().y);
     }
 
     private void stepTimes(int times) {

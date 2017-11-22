@@ -5,6 +5,9 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.actionmessages.BrickMessageType;
+import com.breakoutegypt.domain.actionmessages.BrickMessage;
+import com.breakoutegypt.domain.actionmessages.Message;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
@@ -44,7 +47,7 @@ public class BreakoutWorld {
     private List<Body> bodiesToDestroy;
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
-    private List<BrickMessage> messages;
+    private List<Message> messages;
 
     private Ball ballToChangeDirectionOff;
     private Paddle paddleHitByBall;
@@ -136,11 +139,15 @@ public class BreakoutWorld {
         paddleHitByBall = paddle;
     }
 
-    public List<BrickMessage> getBrickMessages() {
+    public void addMessage(Message m) {
+        messages.add(m);
+    }
+    
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void clearBrickMessages() {
+    public void clearMessages() {
         messages.clear();
     }
 

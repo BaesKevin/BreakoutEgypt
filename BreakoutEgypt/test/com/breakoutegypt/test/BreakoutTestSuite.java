@@ -18,7 +18,8 @@ import org.junit.runners.Suite;
    GameManagerTest.class,
    SessionManagerTest.class,
    LevelTest.class,
-   LevelObjectSpawningTest.class
+   LevelObjectSpawningTest.class,
+   MessageTest.class
 })
 
 public class BreakoutTestSuite {

@@ -11,6 +11,7 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.io.IOException;
@@ -103,7 +104,12 @@ public class LevelServlet extends HttpServlet {
             jab.add(brick.toJson().build());
         }
         job.add("bricks", jab);
-        job.add("ball", state.getBall().getShape().toJson());
+        List<Ball> balls = state.getBalls();
+        JsonArrayBuilder ballBuilder = Json.createArrayBuilder();
+        for(int i = 0; i < balls.size(); i++) {
+            ballBuilder.add( balls.get(i).getShape().toJson().build());
+        }
+        job.add("balls", ballBuilder.build());
         
         JsonArrayBuilder paddleBuilder = Json.createArrayBuilder();
         List<Paddle> paddles = state.getPaddles();

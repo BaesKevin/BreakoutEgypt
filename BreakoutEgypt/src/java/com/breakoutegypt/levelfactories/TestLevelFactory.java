@@ -50,6 +50,8 @@ public class TestLevelFactory extends LevelFactory {
             case 4:
                 currentLevel = getExplosiveBrickTest();
                 break;
+            case 5:
+                currentLevel = getLevelWithMultipleBalls();
         }
     }
 
@@ -135,6 +137,19 @@ public class TestLevelFactory extends LevelFactory {
         explosive.addEffect(new ExplosiveEffect(explosive, 1));
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(1, game, initialState, 3);
+        level.setRunManual(true);
+        return level;
+    }
+    
+    public Level getLevelWithMultipleBalls () {
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape2 = new ShapeDimension("ball2", 70, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+        balls.add(new Ball(ballShape2));
+        
+        LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
         Level level = new Level(1, game, initialState, 3);
         level.setRunManual(true);
         return level;
