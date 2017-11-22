@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.connectionmanagement;
 
+import com.breakoutegypt.domain.actionmessages.Message;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.JsonObject;

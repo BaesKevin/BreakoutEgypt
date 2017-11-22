@@ -108,7 +108,6 @@ public class LevelState {
             }
             this.balls.add(b);
         }
-        System.out.println(this.balls.size());
     }
 
     public List<Brick> getBricks() {

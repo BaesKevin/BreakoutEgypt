@@ -6,8 +6,8 @@
 package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.BreakoutWorld;
-import com.breakoutegypt.domain.actionmessages.BrickMessage;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ScoreTimer;
 import com.breakoutegypt.domain.actionmessages.Message;
@@ -149,10 +149,28 @@ public class SessionManager {
     }
 
     public void notifyPlayersOfLivesLeft(Level currentLevel) {
-        System.out.println("SessionManager: notifying players of lives lfet");
+        System.out.println("SessionManager: notifying players of lives left");
         boolean noLivesLeft = currentLevel.noLivesLeft();
         json = createLivesLeftJson(currentLevel.getLives(), noLivesLeft);
         sendJsonToPlayers(json);
+    }
+    
+    public void notifyPlayersOfBallAction(Level currentLevel) {
+        List<Message> ballMessages = currentLevel.getLevelState().getMessages();
+        json = createBallActionJson(currentLevel.getLevelState().getMessages());
+        sendJsonToPlayers(json);
+        currentLevel.getLevelState().clearMessages();
+    }
+    
+    private JsonObject createBallActionJson(List<Message> messages) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
+        for (Message message : messages) {
+            JsonObjectBuilder actionObjectBuilder = message.toJson();
+            actionsArrayBuilder.add(actionObjectBuilder.build());
+        }
+        job.add("ballactions", actionsArrayBuilder.build());
+        return job.build();
     }
 
     private JsonObject createLivesLeftJson(int livesLeft, boolean noLivesLeft) {
@@ -185,17 +203,13 @@ public class SessionManager {
             ballArrayBuilder.add(ballObjectBuilder.build());
         }
 
-        job.add("balls", ballArrayBuilder.build());
-        
-        List<Message> ballMessages = currentLevel.getLevelState().getMessages();
-        
+        job.add("balls", ballArrayBuilder.build());        
         
 
         JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
-
-        System.out.println("ballmessages in sessionmanager: " + ballMessages);
+        
         List<Message> messages = simulation.getMessages();
-        messages.addAll(ballMessages);
+        
         for (Message message : messages) {
             JsonObjectBuilder actionObjectBuilder = message.toJson();
             actionsArrayBuilder.add(actionObjectBuilder.build());
@@ -206,8 +220,8 @@ public class SessionManager {
         //BODIES to HIDE
         //BODIES to SHOW
         if (messages.size() > 0) {
-            job.add("actions", actionsArrayBuilder.build());
-            System.out.println("SessoinManager: sending bodies to destroy");
+            job.add("brickactions", actionsArrayBuilder.build());
+            System.out.println("SessionManager: sending bodies to destroy");
         }
 
         simulation.clearMessages();

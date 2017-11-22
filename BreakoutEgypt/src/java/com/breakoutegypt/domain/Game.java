@@ -112,6 +112,10 @@ public class Game {
         }
 
     }
+    
+    public void notifyPlayersOfBallAction() {
+        manager.notifyPlayersOfBallAction(currentLevel);
+    }
 
     public void startLevel() {
         this.currentLevel.start();

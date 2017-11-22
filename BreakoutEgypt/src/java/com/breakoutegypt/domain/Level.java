@@ -6,6 +6,8 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
+import com.breakoutegypt.domain.actionmessages.BallMessage;
+import com.breakoutegypt.domain.actionmessages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -136,9 +138,10 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             lives--;
         } else {
             levelState.removeBall(ball);
+            levelState.getMessages().add(new BallMessage(ball.getName(), BallMessageType.REMOVE));
         }
         System.out.println("Balls left: " + this.getLevelState().getBalls().size());
-        
+        game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
     }
 
