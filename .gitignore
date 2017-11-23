@@ -3,5 +3,7 @@
 **/nbbuild/ 
 **/dist/ 
 **/nbdist/ 
-**/.nb-gradle/ 
+**/.nb-gradle/
+**/node_modules/
+**/web_dev/
 .idea/

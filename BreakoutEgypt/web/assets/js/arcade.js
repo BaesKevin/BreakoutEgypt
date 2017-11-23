@@ -1,3 +1,5 @@
+// ArcadeButtonsModule
+
 var checkKey = function (e) {
     if (level !== undefined) {
         if (e.which === 112)
@@ -27,7 +29,7 @@ var redirectToMainMenu = function (e) {
 };
 
 $(document).ready(function () {
-    $(".quit").on("click", modalQuit);
+    $(".quit").on("click", ModalModule.modalQuit);
     $("#modalPlaceholder").on("click", "#quit", quitGame);
     $("#pause").on("click", pauseGame);
     $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
