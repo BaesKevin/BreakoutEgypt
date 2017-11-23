@@ -1,5 +1,4 @@
 // BrickModule.js
-
 var Brick = function (brickdata) {
     this.name = brickdata.name;
     this.x = brickdata.x;
@@ -38,28 +37,28 @@ function getColor(brick) {
     switch (brick.type) {
         case "UNBREAKABLE":
             color.color = "gray";
-            color.pattern = brickPattern;
+            color.pattern = ImageLoader.patterns["brick"];
             break;
         case "EXPLOSIVE":
             color.color = "red";
-            color.pattern = brickPattern;
+            color.pattern = ImageLoader.patterns["brick"];
             break;
         case "SWITCH":
             color.color = "blue";
-            color.pattern = brickPattern;
+            color.pattern = ImageLoader.patterns["brick"];
             break;
         case "REGULAR":
             if (brick.isTarget) {
                 color.color = "gold";
-                color.pattern = goldPattern;
+                color.pattern = ImageLoader.patterns["gold"];
             } else {
                 color.color = "green";
-                color.pattern = brickPattern;
+                color.pattern = ImageLoader.patterns["brick"];
             }
             break;
         default :
             color.color = "black";
-            color.pattern = brickPattern;
+            color.pattern = ImageLoader.patterns["brick"];
     }
     return color;
 

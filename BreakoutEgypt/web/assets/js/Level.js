@@ -15,6 +15,7 @@ var Level = function () {
 
 Level.prototype.reScale = function (width, height) {
     ScalingModule.updateScalingFactors(width, height);
+    ScalingModule.scaleLevelToDefault(this);
     ScalingModule.scaleLevel(this);
 };
 
@@ -39,8 +40,8 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
 
     this.lives = lives;
     this.level = level;
-    loadLives(lives);
 
+    DrawingModule.drawLives(lives);
     ScalingModule.scaleLevel(this);
 };
 
@@ -51,25 +52,20 @@ Level.prototype.loadLevel = function () {
     var self = this;
 
     fetch('level?gameId=' + gameId).then(function (response) {
-        var json = response.json();
-        var contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            return json;
-        } else {
-            throw new Error(response.statusText);
-        }
+        return parseJsonFromResponse(response);
+
     }).then(function (response) {
         if (!response.error) {
             if (response.allLevelsComplete) {
                 console.log("Load level: got allLevelsComplete message");
-                modalAllLevelsCompleted(self.level, time);
+                ModalModule.modalAllLevelsCompleted(self.level, time);
                 self.allLevelsComplete = true;
             } else {
                 level.brickdata = [];
                 console.log("Load level: got data for level " + response.level);
-                loadLevelOnScreen(response.level);
+                DrawingModule.drawLevelNumber(response.level);
                 self.load(response.level, response.ball, response.bricks, response.paddles, response.mypaddle, response.lives);
-                loadLives(level.lives);
+                DrawingModule.drawLives(level.lives);
             }
         } else {
 //            document.location = "/breakout/";
@@ -79,31 +75,38 @@ Level.prototype.loadLevel = function () {
         self.levelComplete = false;
         self.gameOver = false;
 
-        // create connection if not already established
-        if (!websocket) {
-            websocket = new ArcadeWebSocket();
+        if (!ArcadeWebSocket.isConnected()) {
+            ArcadeWebSocket.connect();
         }
+
         if (!self.allLevelsComplete) {
-            draw();
+            DrawingModule.draw();
         }
 
     }).catch(function (err) {
         console.log(err);
         console.log("%c" + err, "background-color:red; color: white;padding:5px;");
-        websocket.close();
+        ArcadeWebSocket.close();
     });
 };
+
+function parseJsonFromResponse(response){
+    let json = response.json();
+    let contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        return json;
+    } else {
+        throw new Error(response.statusText);
+    }
+}
 
 Level.prototype.sendClientLevelState = function () {
     if (!this.levelComplete && !this.gameOver) {
 
-        if (websocket) {
-            websocket.sendOverSocket(JSON.stringify({
-                x: ScalingModule.scaleXForServer(this.mypaddle.x) + ScalingModule.scaleXForServer(this.mypaddle.width) / 2,
-                y: ScalingModule.scaleYForServer(this.mypaddle.y)
-            }));
-
-        }
+        ArcadeWebSocket.sendOverSocket(JSON.stringify({
+            x: ScalingModule.scaleXForServer(this.mypaddle.x) + ScalingModule.scaleXForServer(this.mypaddle.width) / 2,
+            y: ScalingModule.scaleYForServer(this.mypaddle.y)
+        }));
 
     }
 };
@@ -120,38 +123,49 @@ Level.prototype.updateLevelData = function (json) {
         json.actions.forEach(function (message) {
             switch (message.action) {
                 case "destroy":
-                    self.brickdata = self.brickdata.filter(function (brick) {
-                        return brick.name !== message.name;
-                    });
+                    destroyBrick(message);
                     break;
                 case "hide":
-                    console.log("Hide brick " + message.name);
-                    var brickToHide = self.brickdata.find(
-                            function (brick) {
-                                return message.name === brick.name;
-                            }
-                    );
-
-                    if (brickToHide) {
-                        brickToHide.show = false;
-                    }
+                    hideBrick(message);
                     break;
                 case "show":
-                    console.log("Show brick " + message.name);
-
-                    var brickToShow = self.brickdata.find(
-                            function (brick) {
-                                return message.name === brick.name;
-                            }
-                    );
-
-                    if (brickToShow) {
-                        brickToShow.show = true;
-                    }
-
+                    showBrick(message);
                     break;
             }
         });
     }
-    updateBricks();
+    DrawingModule.updateBricks();
 };
+
+function destroyBrick(message){
+    level.brickdata = level.brickdata.filter(function (brick) {
+        return brick.name !== message.name;
+    });
+}
+
+function hideBrick(message){
+    console.log("Hide brick " + message.name);
+    let brickToHide = level.brickdata.find(
+        function (brick) {
+            return message.name === brick.name;
+        }
+    );
+
+    if (brickToHide) {
+        brickToHide.show = false;
+    }
+}
+
+function showBrick(message){
+    console.log("Show brick " + message.name);
+
+    let brickToShow = self.brickdata.find(
+        function (brick) {
+            return message.name === brick.name;
+        }
+    );
+
+    if (brickToShow) {
+        brickToShow.show = true;
+    }
+}

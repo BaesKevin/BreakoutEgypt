@@ -83,6 +83,7 @@ const ScalingModule = (function(){
     return {
         updateScalingFactors: updateScalingFactors,
         scaleLevel: scaleLevel,
+        scaleLevelToDefault: scaleLevelToDefault,
         scaleObject: scaleObject,
         scaleXForServer: scaleXForServer,
         scaleYForServer: scaleYForServer,

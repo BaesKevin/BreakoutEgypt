@@ -79,7 +79,6 @@ public class GameManager {
             if(game != null){
                 game.removePlayer(name);
                 if(game.hasNoPlayers()){
-                    
                     stopGame(game.getId());
                     games.remove(game.getId());
                 }

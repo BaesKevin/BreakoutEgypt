@@ -6,10 +6,10 @@ $(document).ready(function(){
 });
 
 $(window).resize(function(e){
-//    clearTimeout(resizeTimer);
-//    resizeTimer=setTimeout(function(){
-//        sizeCanvas();        
-//    },10);
+   clearTimeout(resizeTimer);
+   resizeTimer=setTimeout(function(){
+       sizeCanvas();
+   },10);
     sizeCanvas();
 });
 
