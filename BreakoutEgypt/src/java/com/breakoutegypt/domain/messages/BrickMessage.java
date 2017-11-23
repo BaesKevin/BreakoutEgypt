@@ -36,7 +36,7 @@ public class BrickMessage implements Message {
     @Override
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
-        actionObjectBuilder.add("action", getMessageType().name().toLowerCase());
+        actionObjectBuilder.add("brickaction", getMessageType().name().toLowerCase());
         actionObjectBuilder.add("name", getName());
         return actionObjectBuilder;
     }

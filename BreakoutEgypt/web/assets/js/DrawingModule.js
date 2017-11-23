@@ -33,8 +33,12 @@ let DrawingModule = (function(){
         // box2d draws circle from center
         movingPartsCtx.shadowBlur = 25;
         movingPartsCtx.shadowColor = "blue";
-        movingPartsCtx.arc(Math.round(level.balldata.x), Math.round(level.balldata.y), (level.balldata.width), 0, 2 * Math.PI, false);
-        movingPartsCtx.fill();
+        level.balldata.forEach(function (ball) {
+            movingPartsCtx.beginPath();
+            movingPartsCtx.arc(Math.round(ball.x), Math.round(ball.y), (ball.width), 0, 2 * Math.PI, false);
+            movingPartsCtx.fill();
+        });
+
         movingPartsCtx.shadowBlur = 0;
     }
 

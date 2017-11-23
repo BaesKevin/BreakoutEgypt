@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.messages;
 
+import com.breakoutegypt.domain.shapes.Ball;
 import java.util.Objects;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -17,10 +18,17 @@ public class BallMessage implements Message {
 
     private String name;
     private BallMessageType messageType;
+    private Ball ball;
 
     public BallMessage(String name, BallMessageType type) {
         this.name = name;
         this.messageType = type;
+    }
+
+    public BallMessage(Ball b, BallMessageType type) {
+        this.name = b.getName();
+        this.messageType = type;
+        this.ball = b;
     }
 
     @Override
@@ -36,8 +44,17 @@ public class BallMessage implements Message {
     @Override
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
-        actionObjectBuilder.add("action", getMessageType().name().toLowerCase());
-        actionObjectBuilder.add("name", getName());
+        actionObjectBuilder.add("ballaction", getMessageType().name().toLowerCase());
+        if (ball != null) {
+            actionObjectBuilder.add("ball", getName());
+            actionObjectBuilder.add("x", ball.getShape().getPosX());
+            actionObjectBuilder.add("y", ball.getShape().getPosY());
+            actionObjectBuilder.add("width", ball.getShape().getWidth());
+            actionObjectBuilder.add("height", ball.getShape().getHeight());
+        } else {
+            actionObjectBuilder.add("ball", getName());
+        }
+
         return actionObjectBuilder;
     }
 
@@ -72,8 +89,5 @@ public class BallMessage implements Message {
         }
         return true;
     }
-    
-    
-    
 
 }

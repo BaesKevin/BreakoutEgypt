@@ -47,7 +47,7 @@ public class BallPositionMessage implements Message {
     @Override
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        job.add("name", getName());
+        job.add("ball", getName());
         job.add("x", x);
         job.add("y", y);
         return job;

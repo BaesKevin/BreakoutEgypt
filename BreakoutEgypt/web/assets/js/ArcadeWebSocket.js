@@ -1,10 +1,10 @@
-let ArcadeWebSocket = (function(){
+let ArcadeWebSocket = (function () {
     let Socket = function () {
         this.gameId = getParameterByName("gameId");
         this.wsUri = "ws://" + document.location.host + "/BreakoutEgypt/gameplay?gameId=" + this.gameId;
     };
 
-    Socket.prototype.connect = function(){
+    Socket.prototype.connect = function () {
         this.websocket = new WebSocket(this.wsUri);
 
         this.websocket.onerror = function (evt) {
@@ -20,16 +20,16 @@ let ArcadeWebSocket = (function(){
         };
     };
 
-    Socket.prototype.isConnected = function(){
-         let isSocketCreated = typeof this.websocket !== "undefined";
+    Socket.prototype.isConnected = function () {
+        let isSocketCreated = typeof this.websocket !== "undefined";
 
-         if( isSocketCreated ){
-             let isSocketOpen = this.websocket.readyState === this.websocket.OPEN;
+        if (isSocketCreated) {
+            let isSocketOpen = this.websocket.readyState === this.websocket.OPEN;
 
-             return isSocketOpen;
-         }
+            return isSocketOpen;
+        }
 
-         return false;
+        return false;
     };
 
     Socket.prototype.sendOverSocket = function (json) {
@@ -53,12 +53,20 @@ let ArcadeWebSocket = (function(){
     function onMessage(evt) {
         try {
             let json = JSON.parse(evt.data);
-
             if (json && !json.error) {
-
-                if (json.gameOver) {
-                    handleGameOver();
+                if (json.lifeaction) {
+                    if (json.lifeaction === 'gameover') {
+                        handleGameOver();
+                    }
+                } else if (json.ballaction) {
+                    console.log(json)
+                    if (json.ballaction === 'remove') {
+                        level.removeBall(json);
+                    } else if (json.ballaction === 'add') {
+                        level.addBall(json);
+                    }
                 } else if (json.livesLeft) {
+                    console.log(json)
                     handleLivesLeft(json);
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
@@ -76,7 +84,15 @@ let ArcadeWebSocket = (function(){
 
     }
 
-    function handleGameOver(){
+    function handleBrickActions(json) {
+        level.updateLevelData(json);
+    }
+
+    function handleBallPositionUpdate(json) {
+        level.updateBalldata(json);
+    }
+
+    function handleGameOver() {
         console.log("Gameplay: game over");
         level.lives = 0;
         DrawingModule.drawLives(level.lives);
@@ -84,13 +100,13 @@ let ArcadeWebSocket = (function(){
         ModalModule.modalGameOver();
     }
 
-    function handleLivesLeft(json){
+    function handleLivesLeft(json) {
         console.log("Gameplay: livesLeft: " + json.livesLeft);
         level.lives = json.livesLeft;
         DrawingModule.drawLives(level.lives);
     }
 
-    function handleLevelComplete(json){
+    function handleLevelComplete(json) {
         console.log("Socket received message level complete");
         console.log("%cTime to complete this level: " + json.scoreTimer, "background-color:blue;color:white;padding:5px;");
         console.log("You completed this level in " + scoreTimerFormatter(json.scoreTimer));
@@ -104,8 +120,7 @@ let ArcadeWebSocket = (function(){
         if (json.error) {
             console.log("%c" + json.error, "background-color: red; color: white;padding:5px;");
             modalErrorMessage();
-        } else
-        {
+        } else {
 //        document.location = "/breakout?error=Something went wrong";
             console.log("%cDamn something went sideways", "background-color: red; color: white;padding:5px;");
             modalErrorMessage();
@@ -114,7 +129,6 @@ let ArcadeWebSocket = (function(){
 
     return new Socket();
 })();
-
 
 
 function scoreTimerFormatter(millisecs) {

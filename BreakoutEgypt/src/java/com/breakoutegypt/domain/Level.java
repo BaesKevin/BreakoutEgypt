@@ -138,7 +138,6 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             lives--;
         } else {
             levelState.removeBall(ball);
-            levelState.getMessages().add(new BallMessage(ball.getName(), BallMessageType.REMOVE));
         }
         System.out.println("Balls left: " + this.getLevelState().getBalls().size());
         game.notifyPlayersOfBallAction();

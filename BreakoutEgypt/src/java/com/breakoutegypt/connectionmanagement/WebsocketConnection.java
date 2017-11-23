@@ -7,6 +7,7 @@ package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.messages.Message;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class WebsocketConnection implements PlayerConnection {
         if (msgs.containsKey("brickactions")) {
             job.add("brickactions", listToJsonArray(msgs.get("brickactions")));
         }
+        job.add("leveldata", job.build());
         send(job.build());
     }
 

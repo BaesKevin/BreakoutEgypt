@@ -134,7 +134,7 @@ public class LevelState {
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
         System.out.println("StartingBall: " + startingBall.getName());
-        messages.add(new BallMessage(startingBall.getName(), BallMessageType.REMOVE));
+        messages.add(new BallMessage(startingBall, BallMessageType.ADD));
         balls.add(startingBall);
         breakoutWorld.spawn(startingBall);
     }
@@ -234,6 +234,7 @@ public class LevelState {
         for (Ball b : balls) {
             if (b.getName().equals(ball.getName())) {
                 balls.remove(b);
+                messages.add(new BallMessage(ball.getName(), BallMessageType.REMOVE));
                 break;
             }
         }

@@ -1,15 +1,15 @@
-var Level = function () {
+let Level = function () {
     this.levelComplete = false;
     this.gameOver = false;
     this.allLevelsComplete = false;
     this.level = 0;
-    this.balldata = {x: 0, y: 0, width: 0, color: 'rgb(0,0,0)'};
+    this.balldata = [];
     this.brickdata = [];
     this.paddles = [
         {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'},
         {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'}
-    ], 
-            this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
+    ],
+        this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
     this.lives = 0;
 };
 
@@ -19,15 +19,18 @@ Level.prototype.reScale = function (width, height) {
     ScalingModule.scaleLevel(this);
 };
 
-Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddle, lives) {
+Level.prototype.load = function (level, jsonballdata, brickdata, paddledata, mypaddle, lives) {
 
     console.log("Load level: got data for level " + level);
-    var self = this;
+    let self = this;
     brickdata.forEach(function (brickjson) {
         self.brickdata.push(new Brick(brickjson));
     });
 
-    this.balldata = balldata;
+    for (let i = 0; i < jsonballdata.length; i++) {
+        this.balldata[i] = jsonballdata[i]; //TODO multiple balls
+    }
+
     this.paddles = [];
 
     paddledata.forEach(function (paddle) {
@@ -47,14 +50,15 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
 
 Level.prototype.loadLevel = function () {
 
-    var gameId = getParameterByName("gameId");
+    let gameId = getParameterByName("gameId");
     console.log("load level " + level + " for game  " + gameId);
-    var self = this;
+    let self = this;
 
     fetch('level?gameId=' + gameId).then(function (response) {
         return parseJsonFromResponse(response);
 
     }).then(function (response) {
+        console.log(response);
         if (!response.error) {
             if (response.allLevelsComplete) {
                 console.log("Load level: got allLevelsComplete message");
@@ -62,9 +66,10 @@ Level.prototype.loadLevel = function () {
                 self.allLevelsComplete = true;
             } else {
                 level.brickdata = [];
+                level.balldata = [];
                 console.log("Load level: got data for level " + response.level);
                 DrawingModule.drawLevelNumber(response.level);
-                self.load(response.level, response.ball, response.bricks, response.paddles, response.mypaddle, response.lives);
+                self.load(response.level, response.balls, response.bricks, response.paddles, response.mypaddle, response.lives);
                 DrawingModule.drawLives(level.lives);
             }
         } else {
@@ -90,7 +95,7 @@ Level.prototype.loadLevel = function () {
     });
 };
 
-function parseJsonFromResponse(response){
+function parseJsonFromResponse(response) {
     let json = response.json();
     let contentType = response.headers.get("content-type");
     if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -111,17 +116,38 @@ Level.prototype.sendClientLevelState = function () {
     }
 };
 
+Level.prototype.updateBalldata = function (json) {
+    for (let i = 0; i < this.balldata.length; i++) {
+        this.balldata[i].x = ScalingModule.scaleXForClient(json[i].x);
+        this.balldata[i].y = ScalingModule.scaleYForClient(json[i].y);
+    }
+};
+
+Level.prototype.removeBall = function (json) {
+    level.balldata = level.balldata.filter(function (ball) {
+        console.log(ball)
+        return ball.name !== json.ball;
+    });
+};
+
+Level.prototype.addBall = function (json) {
+    level.balldata.push({name: json.ball, x: json.x, y: json.y, width: json.width, height: json.height});
+};
+
 Level.prototype.updateLevelData = function (json) {
-    this.balldata.x = ScalingModule.scaleXForClient(json.ball.x);
-    this.balldata.y = ScalingModule.scaleYForClient(json.ball.y);
 
-    var self = this;
+    let self = this;
 
-    if (json.actions) {
+    if (json.leveldata.ballpositions) {
+        self.updateBalldata(json.leveldata.ballpositions);
+    }
+
+
+    if (json.leveldata.brickactions) {
         console.log("Received actions to perform on bricks");
 
-        json.actions.forEach(function (message) {
-            switch (message.action) {
+        json.leveldata.brickactions.forEach(function (message) {
+            switch (message.brickaction) {
                 case "destroy":
                     destroyBrick(message);
                     break;
@@ -137,13 +163,13 @@ Level.prototype.updateLevelData = function (json) {
     DrawingModule.updateBricks();
 };
 
-function destroyBrick(message){
+function destroyBrick(message) {
     level.brickdata = level.brickdata.filter(function (brick) {
         return brick.name !== message.name;
     });
 }
 
-function hideBrick(message){
+function hideBrick(message) {
     console.log("Hide brick " + message.name);
     let brickToHide = level.brickdata.find(
         function (brick) {
@@ -156,7 +182,7 @@ function hideBrick(message){
     }
 }
 
-function showBrick(message){
+function showBrick(message) {
     console.log("Show brick " + message.name);
 
     let brickToShow = self.brickdata.find(
