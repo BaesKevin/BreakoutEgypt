@@ -5,9 +5,9 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.actionmessages.BrickMessageType;
-import com.breakoutegypt.domain.actionmessages.BrickMessage;
-import com.breakoutegypt.domain.actionmessages.Message;
+import com.breakoutegypt.domain.messages.BrickMessageType;
+import com.breakoutegypt.domain.messages.BrickMessage;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;

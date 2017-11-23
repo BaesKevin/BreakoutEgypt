@@ -3,30 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.actionmessages;
+package com.breakoutegypt.domain.messages;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public class BrickMessage implements Message {
+public class BallMessage implements Message {
 
     private String name;
-    private BrickMessageType messageType;
+    private BallMessageType messageType;
 
-    public BrickMessage(String name, BrickMessageType messageType) {
+    public BallMessage(String name, BallMessageType type) {
         this.name = name;
-        this.messageType = messageType;
+        this.messageType = type;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public BrickMessageType getMessageType() {
+    @Override
+    public BallMessageType getMessageType() {
         return messageType;
     }
 
@@ -37,4 +39,12 @@ public class BrickMessage implements Message {
         actionObjectBuilder.add("name", getName());
         return actionObjectBuilder;
     }
+
+    @Override
+    public String toString() {
+        return "BallMessage{" + "name=" + name + ", messageType=" + messageType + '}';
+    }
+    
+    
+
 }

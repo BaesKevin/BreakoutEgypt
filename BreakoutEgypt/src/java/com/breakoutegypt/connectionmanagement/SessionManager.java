@@ -7,10 +7,12 @@ package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
-import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ScoreTimer;
-import com.breakoutegypt.domain.actionmessages.Message;
+import com.breakoutegypt.domain.messages.BallPositionMessage;
+import com.breakoutegypt.domain.messages.LifeMessage;
+import com.breakoutegypt.domain.messages.LifeMessageType;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.shapes.Ball;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,7 +75,7 @@ public class SessionManager {
                 toFind = player;
             }
         }
-
+        
         return toFind;
     }
 
@@ -151,14 +153,24 @@ public class SessionManager {
     public void notifyPlayersOfLivesLeft(Level currentLevel) {
         System.out.println("SessionManager: notifying players of lives left");
         boolean noLivesLeft = currentLevel.noLivesLeft();
-        json = createLivesLeftJson(currentLevel.getLives(), noLivesLeft);
+        //TODO User uit session halen en meegeven ipv 'jef'
+        Message lifeMessage;
+        if (noLivesLeft) {
+            lifeMessage = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
+        } else {
+            lifeMessage = new LifeMessage("jef", currentLevel.getLives(), LifeMessageType.PLAYING);
+        }
+        
+        json = lifeMessage.toJson().build();
         sendJsonToPlayers(json);
     }
     
     public void notifyPlayersOfBallAction(Level currentLevel) {
         List<Message> ballMessages = currentLevel.getLevelState().getMessages();
-        json = createBallActionJson(currentLevel.getLevelState().getMessages());
-        sendJsonToPlayers(json);
+//        json = createBallActionJson(currentLevel.getLevelState().getMessages());
+        for (Message msg: ballMessages) {
+            sendJsonToPlayers(msg);
+        }
         currentLevel.getLevelState().clearMessages();
     }
     
@@ -197,13 +209,11 @@ public class SessionManager {
 
         JsonObjectBuilder ballObjectBuilder = Json.createObjectBuilder();
         for (Ball b : balls) {
-            ballObjectBuilder.add("name", b.getName());
-            ballObjectBuilder.add("x", b.getPosition().x);
-            ballObjectBuilder.add("y", b.getPosition().y);
-            ballArrayBuilder.add(ballObjectBuilder.build());
+            BallPositionMessage bpm = new BallPositionMessage(b);
+            ballArrayBuilder.add(bpm.toJson().build());
         }
 
-        job.add("balls", ballArrayBuilder.build());        
+        job.add("ballpositions", ballArrayBuilder.build());        
         
 
         JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
@@ -237,4 +247,11 @@ public class SessionManager {
         }
     }
 
+    private void sendJsonToPlayers(Message msg) {
+        PlayerConnection conn;
+        for (Player player : connectedPlayers) {
+            conn = player.getConnection();
+            conn.send(msg);
+        }
+    }
 }

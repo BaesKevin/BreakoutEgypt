@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.actionmessages;
+package com.breakoutegypt.domain.messages;
 
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public enum BrickMessageType implements MessageType {
-    DESTROY, SHOW, HIDE
+public interface MessageType {
+    
 }

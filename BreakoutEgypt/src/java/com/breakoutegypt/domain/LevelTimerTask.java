@@ -12,6 +12,7 @@ import java.util.TimerTask;
  * @author kevin
  */
 public class LevelTimerTask extends TimerTask {
+
     private BreakoutWorld breakoutWorld;
     private Game game;
     private Level level;
@@ -21,13 +22,10 @@ public class LevelTimerTask extends TimerTask {
         this.game = game;
         this.level = level;
     }
-    
+
     @Override
     public void run() {
-        breakoutWorld.step();
-
-        game.notifyPlayers(level, breakoutWorld);
-
+        level.step();
     }
 
 }

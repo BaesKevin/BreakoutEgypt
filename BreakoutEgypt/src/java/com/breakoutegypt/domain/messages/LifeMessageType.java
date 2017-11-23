@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.actionmessages;
+package com.breakoutegypt.domain.messages;
 
 /**
  *
  * @author BenDB
  */
-public enum BallMessageType implements MessageType {
-    ADD, REMOVE
+public enum LifeMessageType implements MessageType {
+    GAMEOVER, PLAYING
 }

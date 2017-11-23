@@ -5,9 +5,9 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.actionmessages.BallMessage;
-import com.breakoutegypt.domain.actionmessages.BallMessageType;
-import com.breakoutegypt.domain.actionmessages.Message;
+import com.breakoutegypt.domain.messages.BallMessage;
+import com.breakoutegypt.domain.messages.BallMessageType;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;

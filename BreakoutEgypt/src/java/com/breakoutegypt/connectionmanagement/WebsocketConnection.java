@@ -6,6 +6,7 @@
 package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.messages.Message;
 import java.io.IOException;
 import javax.json.JsonObject;
 import javax.websocket.EncodeException;
@@ -32,5 +33,10 @@ public class WebsocketConnection implements PlayerConnection {
         } catch (IOException | EncodeException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void send(Message msg) {
+        send(msg.toJson().build());
     }
 }

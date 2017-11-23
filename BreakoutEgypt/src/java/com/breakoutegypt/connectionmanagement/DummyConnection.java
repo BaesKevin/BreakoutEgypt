@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.connectionmanagement;
 
-import com.breakoutegypt.domain.actionmessages.Message;
+import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.JsonObject;
@@ -17,6 +17,7 @@ import javax.json.JsonObject;
 public class DummyConnection implements PlayerConnection {
 
     List<JsonObject> jsonMessages = new ArrayList();
+    List<Message> messages = new ArrayList();
     
     @Override
     public void send(JsonObject json) {
@@ -25,6 +26,15 @@ public class DummyConnection implements PlayerConnection {
     
     public List<JsonObject> getJsonMessages() {
         return jsonMessages;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    @Override
+    public void send(Message msg) {
+        messages.add(msg);
     }
     
 }
