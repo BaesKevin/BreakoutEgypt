@@ -54,6 +54,12 @@ public class TestLevelFactory extends LevelFactory {
             case 5:
                 currentLevel = getLevelWithMultipleBalls();
                 break;
+            case 6:
+                currentLevel = getLevelWithOnlyOneLife();
+                break;
+            case 7:
+                currentLevel = getLevelWithOneBrick();
+                break;
         }
     }
 
@@ -151,6 +157,33 @@ public class TestLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
         Level level = new Level(1, game, initialState, 3);
+        level.setRunManual(true);
+        return level;
+    }
+    
+    public Level getLevelWithOnlyOneLife() {
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape2 = new ShapeDimension("ball2", 70, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+        balls.add(new Ball(ballShape2));
+
+        LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
+        Level level = new Level(1, game, initialState, 1);
+        level.setRunManual(true);
+        return level;
+    }
+    
+    public Level getLevelWithOneBrick() {
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 125, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+
+        List<Brick> bricks = new ArrayList();
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 100, 20, 10), new Point(0, 1)));
+        
+        LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
+        Level level = new Level(1, game, initialState, 1);
         level.setRunManual(true);
         return level;
     }

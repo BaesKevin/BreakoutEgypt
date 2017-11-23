@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.messages;
 
+import java.util.Objects;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
@@ -38,5 +39,37 @@ public class BrickMessage implements Message {
         actionObjectBuilder.add("action", getMessageType().name().toLowerCase());
         actionObjectBuilder.add("name", getName());
         return actionObjectBuilder;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BrickMessage other = (BrickMessage) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.messageType != other.messageType) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "BrickMessage{" + "name=" + name + ", messageType=" + messageType + '}';
     }
 }

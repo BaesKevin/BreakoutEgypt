@@ -14,6 +14,10 @@ import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
+import com.breakoutegypt.domain.messages.BrickMessage;
+import com.breakoutegypt.domain.messages.BrickMessageType;
+import com.breakoutegypt.domain.messages.LifeMessage;
+import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,44 +60,59 @@ public class MessageTest {
     }
 
     @Test
-    public void testDummyConnectionGetMessages() {
+    public void testDummyConnectionGetBallMessages() {
         game.setCurrentLevel(5);
         level = game.getLevel();
 
         level.startBall();
 
-        stepTimes(level, 240);
+        stepTimes(level, 120);
 
         DummyConnection conn = (DummyConnection) player.getConnection();
-        List<Message> actualMessages = conn.getMessages();
-        List<JsonObject> expectedMessages = new ArrayList();
+        List<Message> actualMessages = conn.getBallMessages();
+        List<Message> expectedMessages = new ArrayList();
 
-        System.out.println("Messages: " + actualMessages);
-        
-//        createExpectedMessages(expectedMessages);
-        
-//        assertEquals(expectedMessages, actualMessages);
+        expectedMessages.add(new BallMessage("ball2", BallMessageType.REMOVE));
+        expectedMessages.add(new BallMessage("ball", BallMessageType.REMOVE));
+        System.out.println("Expected: " + expectedMessages);
+        System.out.println("Actual: " + actualMessages);
+        assertEquals(expectedMessages, actualMessages);
     }
 
-    private void createExpectedMessages(List<JsonObject> expectedMessages) {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-        JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
+    @Test
+    public void testDummyConnectionGetLifeMessages() {
+        game.setCurrentLevel(6);
+        level = game.getLevel();
 
-        JsonObjectBuilder actionObjectBuilder = new BallMessage("ball2", BallMessageType.REMOVE).toJson();
-        actionsArrayBuilder.add(actionObjectBuilder.build());
-        job.add("ballactions", actionsArrayBuilder.build());
-        expectedMessages.add(job.build());
-        job.add("livesLeft", 3);
-        job.add("gameOver", false);
-        expectedMessages.add(job.build());
-        actionsArrayBuilder = Json.createArrayBuilder();
-        actionObjectBuilder = new BallMessage("ball", BallMessageType.REMOVE).toJson();
-        actionsArrayBuilder.add(actionObjectBuilder.build());
-        job.add("ballactions", actionsArrayBuilder.build());
-        expectedMessages.add(job.build());
-        job.add("livesLeft", 2);
-        job.add("gameOver", false);
-        expectedMessages.add(job.build());
+        level.startBall();
+
+        stepTimes(level, 120);
+
+        DummyConnection conn = (DummyConnection) player.getConnection();
+        List<Message> actualMessages = conn.getLifeMessages();
+        List<Message> expectedMessages = new ArrayList();
+        System.out.println(actualMessages);
+        //TODO get name of actual player in session
+        expectedMessages.add(new LifeMessage("jef", 1, LifeMessageType.PLAYING));
+        expectedMessages.add(new LifeMessage("jef", 0, LifeMessageType.GAMEOVER));
+        assertEquals(expectedMessages, actualMessages);
+    }
+
+    @Test
+    public void testDummyConnectionNotifyPlayers() {
+        game.setCurrentLevel(7);
+        level = game.getLevel();
+
+        level.startBall();
+        level.getLevelState().getBall().setLinearVelocity(0, -100);
+
+        stepTimes(level, 60);
+
+        DummyConnection conn = (DummyConnection) player.getConnection();
+        List<Message> actualMessages = conn.getBrickMessages();
+        List<Message> expectedMessages = new ArrayList();
+        expectedMessages.add(new BrickMessage("regularbrick", BrickMessageType.DESTROY));
+        assertEquals(expectedMessages, actualMessages);
     }
 
     private void stepTimes(Level level, int times) {

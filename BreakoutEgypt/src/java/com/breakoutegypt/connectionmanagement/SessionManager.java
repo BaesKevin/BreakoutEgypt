@@ -8,20 +8,20 @@ package com.breakoutegypt.connectionmanagement;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.ScoreTimer;
 import com.breakoutegypt.domain.messages.BallPositionMessage;
+import com.breakoutegypt.domain.messages.LevelMessage;
+import com.breakoutegypt.domain.messages.LevelMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.shapes.Ball;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 /**
  * Keeps track of connected players in a game
@@ -33,7 +33,6 @@ public class SessionManager {
     private int maxPlayers;
     private Set<Player> connectedPlayers;
     private Set<Player> connectingPlayers;
-    private JsonObject json;
 
     public SessionManager() {
         this(1);
@@ -75,7 +74,7 @@ public class SessionManager {
                 toFind = player;
             }
         }
-        
+
         return toFind;
     }
 
@@ -138,16 +137,17 @@ public class SessionManager {
     }
 
     public void notifyLevelComplete(Level currentLevel) {
-        json = createLevelCompleteJson(currentLevel.getId(), currentLevel.isLastLevel(), currentLevel.getScoreTimer());
+        LevelMessage lm = new LevelMessage("jef", currentLevel.isLastLevel(), currentLevel.getScoreTimer().getDuration(), LevelMessageType.COMPLETE);
         System.out.println("SessionManager: notifying of level complete");
-        sendJsonToPlayers(json);
+        sendJsonToPlayers(lm);
     }
 
     public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
-        // System.out.println("SessionManager: sending json");
-        json = createJson(currentLevel, simulation);
+        Map<String, List<Message>> messages = createMessageMap(currentLevel, simulation);
 
-        sendJsonToPlayers(json);
+        sendJsonToPlayers(messages);
+        simulation.clearMessages();
+        currentLevel.getLevelState().clearMessages();
     }
 
     public void notifyPlayersOfLivesLeft(Level currentLevel) {
@@ -160,91 +160,38 @@ public class SessionManager {
         } else {
             lifeMessage = new LifeMessage("jef", currentLevel.getLives(), LifeMessageType.PLAYING);
         }
-        
-        json = lifeMessage.toJson().build();
-        sendJsonToPlayers(json);
+        sendJsonToPlayers(lifeMessage);
     }
-    
+
     public void notifyPlayersOfBallAction(Level currentLevel) {
         List<Message> ballMessages = currentLevel.getLevelState().getMessages();
-//        json = createBallActionJson(currentLevel.getLevelState().getMessages());
-        for (Message msg: ballMessages) {
+        for (Message msg : ballMessages) {
             sendJsonToPlayers(msg);
         }
         currentLevel.getLevelState().clearMessages();
     }
-    
-    private JsonObject createBallActionJson(List<Message> messages) {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-        JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
-        for (Message message : messages) {
-            JsonObjectBuilder actionObjectBuilder = message.toJson();
-            actionsArrayBuilder.add(actionObjectBuilder.build());
-        }
-        job.add("ballactions", actionsArrayBuilder.build());
-        return job.build();
-    }
 
-    private JsonObject createLivesLeftJson(int livesLeft, boolean noLivesLeft) {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-        job.add("livesLeft", livesLeft);
-        job.add("gameOver", noLivesLeft);
-        return job.build();
-    }
+    private Map<String, List<Message>> createMessageMap(Level currentLevel, BreakoutWorld simulation) {
 
-    private JsonObject createLevelCompleteJson(int nextLevel, boolean isLastLevel, ScoreTimer t) {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-
-        job.add("levelComplete", true);
-        job.add("scoreTimer", t.getDuration());
-        job.add("isLastLevel", isLastLevel);
-        return job.build();
-    }
-
-    private JsonObject createJson(Level currentLevel, BreakoutWorld simulation) {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-        
+        Map<String, List<Message>> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
-        JsonArrayBuilder ballArrayBuilder = Json.createArrayBuilder();
+        List<Message> ballPositionMessages = new ArrayList();
+        List<Message> brickMessages = simulation.getMessages();
 
-        JsonObjectBuilder ballObjectBuilder = Json.createObjectBuilder();
         for (Ball b : balls) {
             BallPositionMessage bpm = new BallPositionMessage(b);
-            ballArrayBuilder.add(bpm.toJson().build());
+            ballPositionMessages.add(bpm);
         }
 
-        job.add("ballpositions", ballArrayBuilder.build());        
-        
-
-        JsonArrayBuilder actionsArrayBuilder = Json.createArrayBuilder();
-        
-        List<Message> messages = simulation.getMessages();
-        
-        for (Message message : messages) {
-            JsonObjectBuilder actionObjectBuilder = message.toJson();
-            actionsArrayBuilder.add(actionObjectBuilder.build());
-        }
-        simulation.clearMessages();
-        currentLevel.getLevelState().clearMessages();
-
-        //BODIES to HIDE
-        //BODIES to SHOW
-        if (messages.size() > 0) {
-            job.add("brickactions", actionsArrayBuilder.build());
-            System.out.println("SessionManager: sending bodies to destroy");
+        if (ballPositionMessages.size() > 0) {
+            messages.put("ballpositions", ballPositionMessages);
         }
 
-        simulation.clearMessages();
-
-        return job.build();
-    }
-
-    private void sendJsonToPlayers(JsonObject json) {
-        PlayerConnection conn;
-        for (Player player : connectedPlayers) {
-            conn = player.getConnection();
-            conn.send(json);
+        if (brickMessages.size() > 0) {
+            messages.put("brickactions", brickMessages);
         }
+
+        return messages;
     }
 
     private void sendJsonToPlayers(Message msg) {
@@ -252,6 +199,14 @@ public class SessionManager {
         for (Player player : connectedPlayers) {
             conn = player.getConnection();
             conn.send(msg);
+        }
+    }
+
+    private void sendJsonToPlayers(Map<String, List<Message>> messages) {
+        PlayerConnection conn;
+        for (Player player : connectedPlayers) {
+            conn = player.getConnection();
+            conn.send(messages);
         }
     }
 }

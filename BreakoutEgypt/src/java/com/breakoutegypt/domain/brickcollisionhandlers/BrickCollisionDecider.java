@@ -24,7 +24,7 @@ public class BrickCollisionDecider {
     }
 
     public void handleCollision() {
-        System.out.printf("Brick visible: %s Brick breakable: %s", brick.isVisible(), brick.isBreakable());
+        System.out.printf("Brick visible: %s Brick breakable: %s \n", brick.isVisible(), brick.isBreakable());
         if (brick.isVisible() && brick.isBreakable()) {
             
             for(Effect effect : brick.getEffects()){

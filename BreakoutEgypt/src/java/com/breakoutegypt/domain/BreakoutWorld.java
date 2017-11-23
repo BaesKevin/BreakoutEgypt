@@ -111,6 +111,7 @@ public class BreakoutWorld {
                 listener.removeBrick(brick);
                 bodiesToDestroy.add(brick.getBody());
                 messages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
+                System.out.println("Hello i added a brick message");
             }
         }
     }

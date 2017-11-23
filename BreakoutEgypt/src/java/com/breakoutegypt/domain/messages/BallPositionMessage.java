@@ -53,4 +53,9 @@ public class BallPositionMessage implements Message {
         return job;
     }
 
+    @Override
+    public String toString() {
+        return "BallPositionMessage{" + "ballName=" + ballName + ", x=" + x + ", y=" + y + ", messageType=" + messageType + '}';
+    }
+
 }
