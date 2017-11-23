@@ -1,3 +1,6 @@
+// CanvasModule.js
+// canvas' and ctx's as module variables
+
 function draw() {
     // initial values 300 x 300
     movingPartsCtx.clearRect(0, 0, movingPartsCanvas.width, movingPartsCanvas.height);
@@ -8,10 +11,6 @@ function draw() {
     movingPartsCtx.shadowOffsetY = 1;
 
     drawBall();
-
-//    level.brickdata.forEach(function (brick) {
-//        brick.draw(brickCtx);
-//    });
 
     setPaddleX();
     level.sendClientLevelState();

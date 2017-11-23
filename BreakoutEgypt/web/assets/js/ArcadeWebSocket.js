@@ -59,9 +59,6 @@ function onMessage(evt) {
 
                 time = scoreTimerFormatter(json.scoreTimer);
                 modalLevelCompleted(level.level, scoreTimerFormatter(json.scoreTimer));
-
-//            level.loadLevel();
-
             } else {
                 level.updateLevelData(json);
             }

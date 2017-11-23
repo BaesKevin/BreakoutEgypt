@@ -1,3 +1,5 @@
+// DynamicModalModule.js
+
 var shareButton = "<button id='share' class='btn'>Share</button>";
 var mainMenuButton = "<button id='mainMenuModalButton' class='btn'>Main Menu</button>";
 

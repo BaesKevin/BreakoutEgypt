@@ -1,3 +1,5 @@
+// BrickModule.js
+
 var Brick = function (brickdata) {
     this.name = brickdata.name;
     this.x = brickdata.x;
@@ -28,6 +30,7 @@ Brick.prototype.draw = function (brickCtx) {
     }
 };
 
+// private function in module
 function getColor(brick) {
 
     //REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH

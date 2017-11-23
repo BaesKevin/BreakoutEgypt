@@ -1,14 +1,21 @@
+// ArcadeIndex.js
+
 var mouse, brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
 
 var level = new Level();
+
+// move to ImageAssetModule
 var brickImg = new Image();
 var godImg = new Image();
 var liveImg = new Image();
 var goldImg = new Image();
 var fireImg = new Image();
 var brickPattern, goldPattern, firePattern;
+
+
 var websocket = false; // don't open connection untill level has start
 
+// move to ImageAssetModule
 var imageAssets = [
     {image: godImg, src: "assets/media/egyptian.png"},
     {image: brickImg, src: "assets/media/brick-wall.png"},
@@ -17,16 +24,17 @@ var imageAssets = [
     {image: fireImg, src: "assets/media/blue-fire.jpg"}
 ];
 
+
+
 document.addEventListener("DOMContentLoaded", function () {
     brickCanvas = $('#stationaryParts')[0];
     brickCtx = brickCanvas.getContext('2d');
     movingPartsCanvas = $('#movingParts')[0];
     movingPartsCtx = movingPartsCanvas.getContext('2d');
-    
-    
-    level.xscaling = brickCanvas.width / 300;
-    level.yscaling = brickCanvas.height / 300;
-    console.log("xscaling: " + level.xscaling + " yscaling: " + level.yscaling);
+
+    ScalingModule.updateScalingFactors(brickCanvas.width, brickCanvas.height);
+
+
 
     mouse = {
         x: 0,

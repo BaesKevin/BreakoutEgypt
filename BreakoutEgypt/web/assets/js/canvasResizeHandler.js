@@ -1,3 +1,4 @@
+// move all of this to ScalingModule
 var resizeTimer;
 
 $(document).ready(function(){
@@ -9,7 +10,7 @@ $(window).resize(function(e){
 //    resizeTimer=setTimeout(function(){
 //        sizeCanvas();        
 //    },10);
-    sizeCanvas();  
+    sizeCanvas();
 });
 
 var sizeCanvas=function(){
@@ -20,8 +21,9 @@ var sizeCanvas=function(){
     brickCanvas.height=gameMainWidth*0.8;
     movingCanvas.width = brickCanvas.width;
     movingCanvas.height = brickCanvas.height;
-    level.reScale(brickCanvas.width,brickCanvas.height);
+    // level.reScale(brickCanvas.width,brickCanvas.height);
     var pos = brickCanvas.getBoundingClientRect();
-    console.log(pos)
+    console.log("Brickcanvas left margin: " + pos);
     movingCanvas.style.left = pos.left + "px";
+    level.reScale(brickCanvas.width, brickCanvas.height);
 };

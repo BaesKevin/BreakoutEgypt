@@ -1,3 +1,5 @@
+// ArcadeButtonsModule
+
 var checkKey = function (e) {
     if (level !== undefined) {
         if (e.which === 112)

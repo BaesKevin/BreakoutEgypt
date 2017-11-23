@@ -11,39 +11,11 @@ var Level = function () {
     ], 
             this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
     this.lives = 0;
-    this.xscaling = 1;
-    this.yscaling = 1;
-};
-
-Level.prototype.defaultScale = function () {
-    console.log("Scaling to default");
-    this.balldata = scaleObject(this.balldata, false);
-    var scaledPaddles = [];
-    this.paddles.forEach(function (paddle) {
-        scaledPaddles.push(scaleObject(paddle, false));
-    });
-    this.paddles = scaledPaddles;
-    console.log("My paddle after default scale: " + this.mypaddle.x + " " + this.mypaddle.y);
-
-    for (var i = 0; i < this.brickdata.length; i++) {
-        this.brickdata[i] = scaleBrick(this.brickdata[i], false);
-    }
 };
 
 Level.prototype.reScale = function (width, height) {
-    this.defaultScale();
-    this.xscaling = width / 300;
-    this.yscaling = height / 300;
-
-    this.balldata = scaleObject(this.balldata, true);
-    var scaledPaddles = [];
-    this.paddles.forEach(function (paddle) {
-        scaledPaddles.push(scaleObject(paddle, true));
-    });
-    this.paddles = scaledPaddles;
-    for (var i = 0; i < this.brickdata.length; i++) {
-        this.brickdata[i] = scaleBrick(this.brickdata[i], true);
-    }
+    ScalingModule.updateScalingFactors(width, height);
+    ScalingModule.scaleLevel(this);
 };
 
 Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddle, lives) {
@@ -51,14 +23,14 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
     console.log("Load level: got data for level " + level);
     var self = this;
     brickdata.forEach(function (brickjson) {
-        self.brickdata.push(scaleObject(new Brick(brickjson), true));
+        self.brickdata.push(new Brick(brickjson));
     });
 
     this.balldata = balldata;
     this.paddles = [];
 
     paddledata.forEach(function (paddle) {
-        self.paddles.push(scaleObject(paddle, true));
+        self.paddles.push(paddle);
     });
 
     this.mypaddle = this.paddles.find(function (paddle) {
@@ -68,6 +40,8 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
     this.lives = lives;
     this.level = level;
     loadLives(lives);
+
+    ScalingModule.scaleLevel(this);
 };
 
 Level.prototype.loadLevel = function () {
@@ -120,27 +94,13 @@ Level.prototype.loadLevel = function () {
     });
 };
 
-var scaleObject = function (object, isIncoming) {
-    var scaleobj = object;
-    scaleobj.x = xscale(object.x, isIncoming);
-    scaleobj.y = yscale(object.y, isIncoming);
-    scaleobj.width = xscale(object.width, isIncoming);
-    scaleobj.height = yscale(object.height, isIncoming);
-
-    return scaleobj;
-};
-
-var scaleBrick = function (brick, state) {
-    return new Brick(scaleObject(brick, state));
-};
-
 Level.prototype.sendClientLevelState = function () {
     if (!this.levelComplete && !this.gameOver) {
 
         if (websocket) {
             websocket.sendOverSocket(JSON.stringify({
-                x: xscale(this.mypaddle.x, false) + xscale(this.mypaddle.width, false) / 2,
-                y: yscale(this.mypaddle.y, false)
+                x: ScalingModule.scaleXForServer(this.mypaddle.x) + ScalingModule.scaleXForServer(this.mypaddle.width) / 2,
+                y: ScalingModule.scaleYForServer(this.mypaddle.y)
             }));
 
         }
@@ -149,8 +109,8 @@ Level.prototype.sendClientLevelState = function () {
 };
 
 Level.prototype.updateLevelData = function (json) {
-    this.balldata.x = xscale(json.ball.x, true);
-    this.balldata.y = yscale(json.ball.y, true);
+    this.balldata.x = ScalingModule.scaleXForClient(json.ball.x);
+    this.balldata.y = ScalingModule.scaleYForClient(json.ball.y);
 
     var self = this;
 
@@ -195,19 +155,3 @@ Level.prototype.updateLevelData = function (json) {
     }
     updateBricks();
 };
-
-function xscale(value, isIncoming) {
-    if (isIncoming) {
-        return value * level.xscaling;
-    } else {
-        return value / level.xscaling;
-    }
-}
-function yscale(value, isIncoming) {
-    if (isIncoming) {
-        return value * level.yscaling;
-    } else {
-        return value / level.yscaling;
-    }
-}
-;

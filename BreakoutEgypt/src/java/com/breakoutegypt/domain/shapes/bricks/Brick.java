@@ -109,7 +109,7 @@ public class Brick  extends RegularBody{
     }
     
     public List<Effect> getEffects(){
-        return effects;
+        return effects; // TODO unmodifyable
     }
     
 //    public void accept(ShapeUser u){
