@@ -5,11 +5,8 @@ const ScalingModule = (function(){
     let defaultCanvasHeight = 300;
 
     function updateScalingFactors(newWidth, newHeight){
-        console.log(`new width: ${newWidth} new height: ${newHeight}`);
         xscaling = newWidth / defaultCanvasWidth;
         yscaling = newHeight / defaultCanvasHeight;
-
-        console.log("ScalingModule: xscaling: " + xscaling + " yscaling: " + yscaling);
     }
 
     function xscale(value, isIncoming) {
@@ -64,7 +61,6 @@ const ScalingModule = (function(){
             scaledPaddles.push(scaleObject(paddle, xScalingFunction, yScalingFunction));
         });
         level.paddles = scaledPaddles;
-        console.log("My paddle after default scale: " + level.mypaddle.x + " " + level.mypaddle.y);
 
         for (let i = 0; i < level.brickdata.length; i++) {
             level.brickdata[i] = scaleBrick(level.brickdata[i], xScalingFunction, yScalingFunction);
@@ -80,6 +76,12 @@ const ScalingModule = (function(){
         genericLevelScale(level, scaleXForClient, scaleYForClient);
     }
 
+    function doDocumentLoaded(){
+        let canvasDimensions = DrawingModule.getBrickCanvasDimensions();
+        updateScalingFactors(canvasDimensions.width, canvasDimensions.height);
+
+    }
+
     return {
         updateScalingFactors: updateScalingFactors,
         scaleLevel: scaleLevel,
@@ -88,7 +90,8 @@ const ScalingModule = (function(){
         scaleXForServer: scaleXForServer,
         scaleYForServer: scaleYForServer,
         scaleXForClient: scaleXForClient,
-        scaleYForClient: scaleYForClient
+        scaleYForClient: scaleYForClient,
+        doDocumentLoaded: doDocumentLoaded
     }
 
 

@@ -78,6 +78,7 @@ const ModalModule = (function(){
 
     function redirectToArcade(e) {
         e.preventDefault();
+        console.log("got to redirectarcade");
         modalChooseDifficulty();
     }
 
@@ -96,6 +97,18 @@ const ModalModule = (function(){
         location.replace('highscore.html');
     }
 
+    function doDocumentLoaded(){
+        $("#arcade").on("click", redirectToArcade);
+        $("#logout").on("click", logout);
+        $("#returnToMain").on("click", redirectToMainMenu);
+        $("#toMultiplayer").on("click", redirectToMultiplayer);
+        $("#toHighscores").on("click", redirectToHighscore);
+//    $("#modalPlaceholder").on("click", "#retry", restartLevel); //TODO
+        $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
+        $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
+        $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
+    }
+
     return {
         redirectToArcade,
         logout,
@@ -106,19 +119,7 @@ const ModalModule = (function(){
         modalQuit,
         modalErrorMessage,
         modalGameOver,
-        modalLevelCompleted
+        modalLevelCompleted,
+        doDocumentLoaded
     }
 })();
-
-
-$(document).ready(function () {
-    $("#arcade").on("click", ModalModule.redirectToArcade);
-    $("#logout").on("click", ModalModule.logout);
-    $("#returnToMain").on("click", ModalModule.redirectToMainMenu);
-    $("#toMultiplayer").on("click", ModalModule.redirectToMultiplayer);
-    $("#toHighscores").on("click", ModalModule.redirectToHighscore);
-//    $("#modalPlaceholder").on("click", "#retry", restartLevel); //TODO
-    $("#modalPlaceholder").on("click", "#mainMenuModalButton", ModalModule.redirectToMainMenu);
-    $("#modalPlaceholder").on("click", "#highscoreModalButton", ModalModule.redirectToHighscore);
-    $("#modalPlaceholder").on("click", "#returnToMain", ModalModule.redirectToMainMenu);
- });

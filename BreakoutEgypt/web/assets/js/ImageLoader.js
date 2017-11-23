@@ -26,9 +26,10 @@ const ImageLoader = (function(){
     ImageLoader.prototype.loadImages = function(){
         let self = this;
         return getImageRequestPromiseChain().then(function () {
-            self.patterns["brick"] = brickCtx.createPattern(images["brick"], "repeat");
-            self.patterns["gold"] = brickCtx.createPattern(images["gold"], "repeat");
-            self.patterns["fire"] = brickCtx.createPattern(images["fire"], "repeat");
+
+            self.patterns["brick"] = DrawingModule.createPattern(images["brick"], "repeat");
+            self.patterns["gold"] = DrawingModule.createPattern(images["gold"], "repeat");
+            self.patterns["fire"] = DrawingModule.createPattern(images["fire"], "repeat");
         }).catch(function (err) {
             console.log(err);
         });

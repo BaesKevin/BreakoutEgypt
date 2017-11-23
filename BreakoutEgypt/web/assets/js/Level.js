@@ -47,7 +47,7 @@ Level.prototype.load = function (level, balldata, brickdata, paddledata, mypaddl
 
 Level.prototype.loadLevel = function () {
 
-    var gameId = getParameterByName("gameId");
+    var gameId = UtilModule.getParameterByName("gameId");
     console.log("load level " + level + " for game  " + gameId);
     var self = this;
 
