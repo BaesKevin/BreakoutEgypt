@@ -1,24 +1,12 @@
 // ArcadeIndex.js
 
-var mouse;
-
 var level = new Level();
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    brickCanvas = $('#stationaryParts')[0];
-    brickCtx = brickCanvas.getContext('2d');
-    movingPartsCanvas = $('#movingParts')[0];
-    movingPartsCtx = movingPartsCanvas.getContext('2d');
-
-    ScalingModule.updateScalingFactors(brickCanvas.width, brickCanvas.height);
-
-    mouse = {
-        x: 0,
-        y: brickCanvas.height - 50
-    };
-
-    $('canvas').on('mousemove', getMouseX);
+    DrawingModule.doDocumentLoaded();
+    ModalModule.doDocumentLoaded();
+    ScalingModule.doDocumentLoaded();
 
     ImageLoader.loadImages().then(function () {
         level.loadLevel();
@@ -29,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 $("#movingParts")[0].addEventListener("click", function () {
 
-    var gameId = getParameterByName("gameId");
+    var gameId = UtilModule.getParameterByName("gameId");
     console.log("Doing post for game " + gameId + " to start the ball.");
     fetch('level', {method: "POST", body: "gameId=" + gameId,
         headers: {
@@ -41,7 +29,4 @@ $("#movingParts")[0].addEventListener("click", function () {
 
 });
 
-function getMouseX(e) {
-    var bounds = this.getBoundingClientRect();
-    mouse.x = e.clientX - bounds.left;
-}
+

@@ -15,7 +15,7 @@ var quitGame = function () {
 };
 
 var pauseGame = function () {
-    var gameId = getParameterByName("gameId");
+    var gameId = UtilModule.getParameterByName("gameId");
     $.ajax({
         url: "pause?gameid=" + gameId
     }).fail(function (err) {

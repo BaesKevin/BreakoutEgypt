@@ -50,7 +50,11 @@ Level.prototype.load = function (level, jsonballdata, brickdata, paddledata, myp
 
 Level.prototype.loadLevel = function () {
 
+<<<<<<< HEAD
     let gameId = getParameterByName("gameId");
+=======
+    var gameId = UtilModule.getParameterByName("gameId");
+>>>>>>> typescript
     console.log("load level " + level + " for game  " + gameId);
     let self = this;
 

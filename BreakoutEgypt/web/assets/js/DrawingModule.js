@@ -1,8 +1,32 @@
 // CanvasModule.js
 // canvas' and ctx's as module variables
-let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
+
 
 let DrawingModule = (function(){
+    let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
+    let mouse = {
+        x: 0,
+        y: 0
+    };
+
+    function doDocumentLoaded(){
+        $('canvas').on('mousemove', updateMouseX);
+        initCanvasAndContextFields();
+
+        mouse.y = getBrickCanvasDimensions().height - 50;
+    }
+
+    function updateMouseX(e) {
+        let bounds = this.getBoundingClientRect();
+        mouse.x = e.clientX - bounds.left;
+    }
+
+    function initCanvasAndContextFields(){
+        brickCanvas = $('#stationaryParts')[0];
+        brickCtx = brickCanvas.getContext('2d');
+        movingPartsCanvas = $('#movingParts')[0];
+        movingPartsCtx = movingPartsCanvas.getContext('2d');
+    }
 
     function draw() {
         // initial values 300 x 300
@@ -88,11 +112,38 @@ let DrawingModule = (function(){
         $("#gameMain").find("#level").html("Level: " + levelnumber);
     }
 
+    function getBrickCanvasDimensions(){
+        return {
+            width: brickCanvas.width,
+            height: brickCanvas.height
+        }
+    }
+
+
+    function resizeCanvasses(width, height){
+        brickCanvas.width=width;
+        brickCanvas.height=height;
+        movingPartsCanvas.width = brickCanvas.width;
+        movingPartsCanvas.height = brickCanvas.height;
+
+        let pos = brickCanvas.getBoundingClientRect();
+        movingPartsCanvas.style.left = pos.left + "px";
+    }
+
+    function createPattern(image, mode){
+        return brickCtx.createPattern(image, mode);
+    }
+
     return {
+        initCanvasAndContextFields: initCanvasAndContextFields,
         draw: draw,
         updateBricks: updateBricks,
         drawLives: drawLives,
-        drawLevelNumber: drawLevelNumber
+        drawLevelNumber: drawLevelNumber,
+        getBrickCanvasDimensions: getBrickCanvasDimensions,
+        resizeCanvasses: resizeCanvasses,
+        createPattern: createPattern,
+        doDocumentLoaded: doDocumentLoaded
     }
 
 })();
