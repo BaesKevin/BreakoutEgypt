@@ -1,6 +1,5 @@
 let ArcadeWebSocket = (function () {
     let Socket = function () {
-        this.gameId = getParameterByName("gameId");
         this.gameId = UtilModule.getParameterByName("gameId");
         this.wsUri = "ws://" + document.location.host + "/BreakoutEgypt/gameplay?gameId=" + this.gameId;
     };
@@ -135,8 +134,6 @@ let ArcadeWebSocket = (function () {
     return new Socket();
 })();
 
-
-<<<<<<< HEAD
 function scoreTimerFormatter(millisecs) {
 
     var secs = Math.round(millisecs / 1000);
@@ -152,9 +149,4 @@ function prenull(number) {
     return number < 10 ? "0" + number : "" + number;
 
 }
-;
-
-
-=======
->>>>>>> typescript
 
