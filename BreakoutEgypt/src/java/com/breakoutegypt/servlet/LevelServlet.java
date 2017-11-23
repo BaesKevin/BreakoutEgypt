@@ -35,6 +35,7 @@ public class LevelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //TODO SESSION for player
         int gameId = Integer.parseInt(request.getParameter("gameId"));
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
@@ -46,6 +47,7 @@ public class LevelServlet extends HttpServlet {
             Level level = game.getLevel();
             
             // already initialize player and give him a paddle
+            
             String name = "player";
             Player player = game.getPlayer(name);
             

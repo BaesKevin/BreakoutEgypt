@@ -1,3 +1,10 @@
+<%-- 
+    Document   : registration
+    Created on : 23-nov-2017, 15:51:34
+    Author     : Bjarne Deketelaere
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>

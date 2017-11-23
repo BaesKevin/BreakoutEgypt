@@ -77,17 +77,17 @@ var redirectToArcade = function (e) {
 
 var redirectToMainMenu = function (e) {
     e.preventDefault();
-    location.replace('index.html');
+    location.replace('index.jsp');
 };
 
 var redirectToMultiplayer = function (e) {
     e.preventDefault();
-    location.replace('multiplayerMenu.html');
+    location.replace('multiplayerMenu.jsp');
 };
 
 var redirectToHighscore = function (e) {
     e.preventDefault();
-    location.replace('highscore.html');
+    location.replace('highscore.jsp');
 };
 
 $(document).ready(function () {

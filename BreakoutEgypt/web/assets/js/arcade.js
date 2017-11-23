@@ -9,7 +9,7 @@ var checkKey = function (e) {
 
 var quitGame = function () {
     websocket.close();
-    location.replace("index.html");
+    location.replace("index.jsp");
 };
 
 var pauseGame = function () {
@@ -23,7 +23,7 @@ var pauseGame = function () {
 
 var redirectToMainMenu = function (e) {
     e.preventDefault();
-    location.replace('index.html');
+    location.replace('index.jsp');
 };
 
 $(document).ready(function () {

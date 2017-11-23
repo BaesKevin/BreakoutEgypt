@@ -38,7 +38,7 @@ public class ArcadeServlet extends HttpServlet{
         int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE);
         
         // TODO redirect to level choice page
-        response.sendRedirect(String.format("arcade.html?gameId=%d&level=%d",gameId, 1));
+        response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d",gameId, 1));
     }
 
 }
