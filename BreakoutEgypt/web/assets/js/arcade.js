@@ -5,12 +5,12 @@ var checkKey = function (e) {
         if (e.which === 112)
             pauseGame();
         else if (e.which === 113)
-            modalQuit();
+            ModalModule.modalQuit();
     }
 };
 
 var quitGame = function () {
-    websocket.close();
+    ArcadeWebSocket.close();
     location.replace("index.html");
 };
 

@@ -24,11 +24,15 @@ const UtilModule = (function(){
         return number < 10 ? "0" + number : "" + number;
 
     }
-    ;
+
+    function redirect(url){
+        window.location = url;
+    }
 
     return {
         getParameterByName,
-        scoreTimerFormatter
+        scoreTimerFormatter,
+        redirect
     }
 })();
 

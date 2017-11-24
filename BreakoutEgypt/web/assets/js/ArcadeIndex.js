@@ -2,6 +2,30 @@
 
 var level = new Level();
 
+// move all of this to ScalingModule
+var resizeTimer;
+
+$(document).ready(function(){
+    // sizeCanvas();
+    ScalingModule.scaleAfterResize();
+});
+
+
+var sizeCanvas=function(){
+    var gameMainWidth=$("#gameMain").width();
+    let newWidth = newHeight = gameMainWidth * 0.8;
+
+    level.reScale(newWidth, newHeight);
+};
+
+$(window).resize(function(e){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(function(){
+        // sizeCanvas();
+        ScalingModule.scaleAfterResize();
+    },10);
+});
+
 
 document.addEventListener("DOMContentLoaded", function () {
     DrawingModule.doDocumentLoaded();
@@ -14,6 +38,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
 });
+
+
 
 $("#movingParts")[0].addEventListener("click", function () {
 

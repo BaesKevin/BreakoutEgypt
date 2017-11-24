@@ -53,9 +53,7 @@ let DrawingModule = (function(){
 
     function drawBall() {
         movingPartsCtx.fillStyle = ImageLoader.patterns["fire"];
-
         // box2d draws circle from center
-        movingPartsCtx.shadowBlur = 25;
         movingPartsCtx.shadowColor = "blue";
         level.balldata.forEach(function (ball) {
             movingPartsCtx.beginPath();
@@ -80,7 +78,7 @@ let DrawingModule = (function(){
         level.brickdata.forEach(function (brick) {
             brick.draw(brickCtx);
         });
-        drawLives(level.lives);
+        // drawLives(level.lives);
     }
 
     function setPaddleX() {
@@ -92,6 +90,7 @@ let DrawingModule = (function(){
         } else if (movingPartsCanvas.width - paddle.width < paddle.x) {
             paddle.x = movingPartsCanvas.width - paddle.width;
         }
+
         let godImg = ImageLoader.images["god"];
 
         let godImgPosition = {x: level.mypaddle.x + (level.mypaddle.width / 2) - (godImg.width / 2),
@@ -128,6 +127,8 @@ let DrawingModule = (function(){
 
         let pos = brickCanvas.getBoundingClientRect();
         movingPartsCanvas.style.left = pos.left + "px";
+
+        updateBricks();
     }
 
     function createPattern(image, mode){

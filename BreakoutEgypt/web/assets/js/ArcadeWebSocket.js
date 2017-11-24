@@ -39,7 +39,9 @@ let ArcadeWebSocket = (function () {
     };
 
     Socket.prototype.close = function () {
-        this.websocket.close();
+        if(this.isConnected()){
+            this.websocket.close();
+        }
     };
 
     function onOpen(evt) {
@@ -66,7 +68,7 @@ let ArcadeWebSocket = (function () {
                         level.addBall(json);
                     }
                 } else if (json.livesLeft) {
-                    console.log(json)
+                    console.log("Update lives left");
                     handleLivesLeft(json);
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
@@ -79,8 +81,7 @@ let ArcadeWebSocket = (function () {
 
         } catch (err) {
             ModalModule.modalErrorMessage(err);
-            websocket.close();
-            this.websocket.close();
+            ArcadeWebSocket.close();
         }
 
     }
@@ -110,12 +111,9 @@ let ArcadeWebSocket = (function () {
     function handleLevelComplete(json) {
         console.log("Socket received message level complete");
         console.log("%cTime to complete this level: " + json.scoreTimer, "background-color:blue;color:white;padding:5px;");
-        console.log("You completed this level in " + scoreTimerFormatter(json.scoreTimer));
         console.log("You completed this level in " + UtilModule.scoreTimerFormatter(json.scoreTimer));
         level.levelComplete = true;
 
-        time = scoreTimerFormatter(json.scoreTimer);
-        ModalModule.modalLevelCompleted(level.level, scoreTimerFormatter(json.scoreTimer));
         let time = UtilModule.scoreTimerFormatter(json.scoreTimer);
         ModalModule.modalLevelCompleted(level.level, time);
     }
@@ -133,20 +131,4 @@ let ArcadeWebSocket = (function () {
 
     return new Socket();
 })();
-
-function scoreTimerFormatter(millisecs) {
-
-    var secs = Math.round(millisecs / 1000);
-
-    var mins = parseInt(secs / 60);
-    secs = secs % 60;
-
-    return prenull(mins) + ":" + prenull(secs);
-}
-
-function prenull(number) {
-
-    return number < 10 ? "0" + number : "" + number;
-
-}
 

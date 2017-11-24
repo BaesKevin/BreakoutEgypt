@@ -30,8 +30,6 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
 
     public void createCurrentLevel() {
-        System.out.printf("LevelFactory: Get level %d of %d", currentLevelId, totalLevels);
-
         currentLevel = makePong();
     }
     

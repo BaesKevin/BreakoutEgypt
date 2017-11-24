@@ -133,7 +133,6 @@ public class LevelState {
     void resetBall(BreakoutWorld breakoutWorld) {
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
-        System.out.println("StartingBall: " + startingBall.getName());
         messages.add(new BallMessage(startingBall, BallMessageType.ADD));
         balls.add(startingBall);
         breakoutWorld.spawn(startingBall);

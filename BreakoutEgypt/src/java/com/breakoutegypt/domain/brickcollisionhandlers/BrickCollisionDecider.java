@@ -24,14 +24,11 @@ public class BrickCollisionDecider {
     }
 
     public void handleCollision() {
-        System.out.printf("Brick visible: %s Brick breakable: %s \n", brick.isVisible(), brick.isBreakable());
         if (brick.isVisible() && brick.isBreakable()) {
             
             for(Effect effect : brick.getEffects()){
                 effect.accept(collisionEventHandler);
             }
-        } else {
-            System.out.println("BrickCollisionHandler: collision with switched off brick, going through...");
         }
 
     }

@@ -34,7 +34,7 @@ public class BreakoutWorld {
     // TODO use these!
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    public static final float TIMESTEP_DEFAULT = 1.0f / 60f;
+    public static final float TIMESTEP_DEFAULT = 0.5f / 60f;
     private float timestepSeconds;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
@@ -111,7 +111,6 @@ public class BreakoutWorld {
                 listener.removeBrick(brick);
                 bodiesToDestroy.add(brick.getBody());
                 messages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
-                System.out.println("Hello i added a brick message");
             }
         }
     }
@@ -163,7 +162,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-            adjustBallDirection();
+//            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             listener.ballOutOfBounds(outOfBoundsBall);
@@ -177,7 +176,6 @@ public class BreakoutWorld {
         float relativeDistance = (ballToChangeDirectionOff.getBody().getPosition().x - adjustedX) / width;
 
         float newX = -100 + relativeDistance * 200;
-//        System.out.printf("New ball direction: (%f,%f)", newX, ballToChangeDirectionOff.getLinearVelocity().y);
         ballToChangeDirectionOff.setLinearVelocity(newX, ballToChangeDirectionOff.getLinearVelocity().y);
     }
 

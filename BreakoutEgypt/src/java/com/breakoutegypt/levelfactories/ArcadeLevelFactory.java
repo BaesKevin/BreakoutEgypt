@@ -36,7 +36,6 @@ public class ArcadeLevelFactory extends LevelFactory {
 
     @Override
     protected void createCurrentLevel() {
-        System.out.println("LevelFactory: creating level " + currentLevelId);
         switch (currentLevelId) {
             case 1:
                 currentLevel = getSimpleTestLevel();
@@ -149,25 +148,16 @@ public class ArcadeLevelFactory extends LevelFactory {
 
     public Level getLevelWithMultipleBalls() {
         ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
-        ShapeDimension ballShape = new ShapeDimension("ball", 60, 70, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-        ShapeDimension ballShape2 = new ShapeDimension("ball2", 80, 90, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-        ShapeDimension ballShape3 = new ShapeDimension("ball3", 100, 110, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-        ShapeDimension ballShape4 = new ShapeDimension("ball4", 120, 130, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-        ShapeDimension ballShape5 = new ShapeDimension("ball5", 140, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
-        Ball ball = new Ball(ballShape);
-        Ball ball2 = new Ball(ballShape2);
-        Ball ball3 = new Ball(ballShape3);
-        Ball ball4 = new Ball(ballShape4);
-        Ball ball5 = new Ball(ballShape5);
-        List<Ball> balls = new ArrayList<>();
-        balls.add(ball);
-        balls.add(ball2);
-        balls.add(ball3);
-        balls.add(ball4);
-        balls.add(ball5);
         List<Brick> bricks = new ArrayList();
+
+        ShapeDimension shape;
+        List<Ball> balls = new ArrayList();
+        for (int i = 0; i < 50; i++) {
+            shape = new ShapeDimension("ball" + i,4 + i, 100, 2, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+            balls.add(new Ball(shape));
+        }
 
         List<Paddle> paddles = new ArrayList<Paddle>();
         paddles.add(paddle);
