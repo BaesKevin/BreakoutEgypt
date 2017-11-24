@@ -138,6 +138,8 @@ public class BreakoutWorld {
         ballHitPaddle = true;
         ballToChangeDirectionOff = ball;
         paddleHitByBall = paddle;
+        //TODO remove print
+        //System.out.printf("Ball (%s) hit paddle (%s)\n", ball.getName(), paddle.getName());
     }
 
     public void addMessage(Message m) {
@@ -163,7 +165,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-            adjustBallDirection();
+//            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             listener.ballOutOfBounds(outOfBoundsBall);

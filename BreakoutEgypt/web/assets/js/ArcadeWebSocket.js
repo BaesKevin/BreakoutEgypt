@@ -114,8 +114,6 @@ let ArcadeWebSocket = (function () {
         console.log("You completed this level in " + UtilModule.scoreTimerFormatter(json.scoreTimer));
         level.levelComplete = true;
 
-        time = scoreTimerFormatter(json.scoreTimer);
-        ModalModule.modalLevelCompleted(level.level, scoreTimerFormatter(json.scoreTimer));
         let time = UtilModule.scoreTimerFormatter(json.scoreTimer);
         ModalModule.modalLevelCompleted(level.level, time);
     }

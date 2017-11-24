@@ -10,6 +10,7 @@ import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Floor;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
@@ -134,12 +135,14 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         if (this.getLevelState().getBalls().size() == 1) {
             setLevelStarted(false);
             levelState.removeBall(ball);
+            System.out.println("Balls left: " + this.getLevelState().getBalls().size());
             levelState.resetBall(breakoutWorld);
             lives--;
         } else {
             levelState.removeBall(ball);
+            System.out.println("Balls left: " + this.getLevelState().getBalls().size());
         }
-        System.out.println("Balls left: " + this.getLevelState().getBalls().size());
+//        System.out.println("Balls left: " + this.getLevelState().getBalls().size());
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
     }
@@ -228,5 +231,9 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             dummyRepo.getScoresByLevel(getId(), "hard");
             initNextLevel();
         }
+    }
+
+    public void addFloor(Floor floor) {
+        levelState.spawnFloor(floor, breakoutWorld);
     }
 }

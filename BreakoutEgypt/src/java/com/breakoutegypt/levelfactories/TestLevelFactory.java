@@ -12,6 +12,7 @@ import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.BrokenPaddle;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
@@ -60,6 +61,11 @@ public class TestLevelFactory extends LevelFactory {
             case 7:
                 currentLevel = getLevelWithOneBrick();
                 break;
+            case 8:
+                currentLevel = getLevelWithBrokenPaddle();
+                break;
+            case 9:
+                currentLevel = getLevelWithFloor();
         }
     }
 
@@ -184,6 +190,43 @@ public class TestLevelFactory extends LevelFactory {
         
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
         Level level = new Level(1, game, initialState, 1);
+        level.setRunManual(true);
+        return level;
+    }
+    
+    public Level getLevelWithBrokenPaddle() {
+        
+        ShapeDimension basePaddleShape = new ShapeDimension("paddle", 70, 250, 100, 4);
+        Paddle basePaddle = new Paddle(basePaddleShape);
+
+        BrokenPaddle bp = new BrokenPaddle(basePaddle);
+        List<Paddle> brokenPaddle = bp.getBrokenPaddle();
+        
+        ShapeDimension ballShape = new ShapeDimension("ball", brokenPaddle.get(0).getShape().getPosX(), 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape2 = new ShapeDimension("ball2", brokenPaddle.get(0).getShape().getPosX() + brokenPaddle.get(0).getShape().getWidth(), 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape3 = new ShapeDimension("ball3", brokenPaddle.get(1).getShape().getPosX(), 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+        balls.add(new Ball(ballShape2));
+        balls.add(new Ball(ballShape3));
+
+        LevelState initialState = new LevelState(balls, brokenPaddle, new ArrayList());
+        Level level = new Level(1, game, initialState, 3);
+        level.setRunManual(true);
+        return level;
+    }
+
+    private Level getLevelWithFloor() {
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 250, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape2 = new ShapeDimension("ball2", 70, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+        balls.add(new Ball(ballShape2));
+
+        LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
+        
+        Level level = new Level(1, game, initialState, 3);
         level.setRunManual(true);
         return level;
     }

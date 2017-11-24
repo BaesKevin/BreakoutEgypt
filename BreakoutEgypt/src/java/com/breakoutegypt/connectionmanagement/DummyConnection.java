@@ -50,6 +50,10 @@ public class DummyConnection implements PlayerConnection {
     public List<Message> getBallMessages() {
         return ballMessages;
     }
+    
+    public void clearBallMessages() {
+        ballMessages.clear();
+    }
 
     public List<Message> getLifeMessages() {
         return lifeMessages;
