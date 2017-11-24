@@ -8,11 +8,14 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
+import com.breakoutegypt.domain.levelprogression.UserLevel;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.levelfactories.EasyArcadeLevelFactory;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
+import java.util.List;
 
 /**
  *
@@ -24,19 +27,25 @@ public class Game {
     private int id;
     private Level currentLevel;
 
-    private LevelFactory levelFactory;
+    private EasyArcadeLevelFactory levelFactory;
+    
     private SessionManager manager;
 
-    public Game(int numberOfPlayers, int startingLevel, GameType gameType) {
+    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty) {
         id = ID++;
         manager = new SessionManager(numberOfPlayers);
 
-        levelFactory = createLevelFactoryForGameType(gameType);
+        //levelFactory = createLevelFactoryForGameType(gameType, difficulty);
+        
+        levelFactory = new EasyArcadeLevelFactory(this);
+        
+        //this.userLevelsFactory = new UserLevelsFactory(this);
+        //this.userLevels = userLevelsFactory.getUserLevelsForSomeRandomUser(33);
        
         setCurrentLevel(startingLevel);
     }
 
-    private LevelFactory createLevelFactoryForGameType(GameType gameType){
+    private LevelFactory createLevelFactoryForGameType(GameType gameType, GameDifficulty difficulty){
         switch(gameType){
             case ARCADE:
                 return new ArcadeLevelFactory(this);
@@ -80,6 +89,7 @@ public class Game {
 
     public void assignPaddleToPlayer(Player player) {
         int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
+        //currentLevel is null
         Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
         System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
         player.setPaddle(paddleToAssign);

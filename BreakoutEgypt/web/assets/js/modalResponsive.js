@@ -9,9 +9,19 @@ var modalLevelCompleted = function (levelId, time) {
 };
 
 var modalChooseDifficulty=function(){ 
-    var buttons="<form action='arcade' method='post'><input type='submit' class='btn' value='Easy'/></form>"; 
-    buttons+="<form action='arcade' method='post'><input type='submit' class='btn' value='Medium'/></form>"; 
-    buttons+="<form action='arcade' method='post'><input type='submit' class='btn' value='Hard'/></form>"; 
+    var buttons = "";
+    buttons += "<form action='showLevels' method='post'>";
+    buttons += "<input name='difficulty' type='hidden' value='easy' />";
+    buttons += "<input type='submit' class='btn' value='Easy'/>";
+    buttons += "</form>"; 
+    buttons += "<form action='showLevels' method='post'>";
+    buttons += "<input name='difficulty' type='hidden' value='medium' />";
+    buttons += "<input type='submit' class='btn' value='Medium'/>";
+    buttons += "</form>"; 
+    buttons += "<form action='showLevels' method='post'>";
+    buttons += "<input name='difficulty' type='hidden' value='hard' />";
+    buttons += "<input type='submit' class='btn' value='Hard'/>";
+    buttons += "</form>"; 
     printModal("Choose difficulty","Choose a difficulty please:",buttons); 
 };
 

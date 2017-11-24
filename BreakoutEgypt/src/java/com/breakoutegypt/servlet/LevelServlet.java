@@ -36,8 +36,12 @@ public class LevelServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
+//        int startLevel = Integer.parseInt(request.getParameter("startLevel"));
+//        System.out.println("startLevel: " + startLevel);
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
+        // moet hier niet staan
+        //game.setCurrentLevel(startLevel);
         
         JsonObjectBuilder job;
         boolean hasNextLevel = manager.hasNextLevel(gameId);

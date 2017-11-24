@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
@@ -26,19 +27,40 @@ public class ArcadeServlet extends HttpServlet{
     
     
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("ArcadeServlet: Creating game");
+        
+        int startingLevel = Integer.parseInt(request.getParameter("startLevel"));    
+        System.out.println("startingLevel HAHA: " + startingLevel);
         
         GameManager gm = new GameManager();
         
         // TODO get from querystring
         int numberOfPlayers = 1;
-        int startingLevel = 1;
-        int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE);
+        GameDifficulty gameDifficulty;
+        switch (request.getParameter("difficulty")){
+            case "hard":
+                gameDifficulty = GameDifficulty.HARD;
+                break;
+            case "medium":
+                gameDifficulty = GameDifficulty.MEDIUM;
+                break;
+            default:
+                gameDifficulty = GameDifficulty.EASY;
+        }
+        int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE, gameDifficulty);
+        
+        //get the level progression from the user
+        //the specific user can come out of the session
+        
+        //
+        //LevelProgressionFactory lpf = new LevelProgressionFactory(gm.getGame(gameId));
+              
+        
         
         // TODO redirect to level choice page
-        response.sendRedirect(String.format("arcade.html?gameId=%d&level=%d",gameId, 1));
+        response.sendRedirect(String.format("arcade.html?gameId=%d&level=%d",gameId, startingLevel));
     }
 
 }

@@ -80,7 +80,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.add(brick);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(currentLevelId, game, initialState, 3);
+        Level level = new Level(1, game, initialState, 3);
 
         return level;
     }
@@ -141,7 +141,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 //                })
 //          );
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(currentLevelId, game, initialState, 3);
+        Level level = new Level(2, game, initialState, 3);
 
         return level;
     }

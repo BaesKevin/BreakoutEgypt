@@ -18,8 +18,8 @@ public class GameManager {
 
     private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
        
-    public int createGame(int numberOfPlayers, int startingLevel, GameType type){
-        Game game = new Game(numberOfPlayers, startingLevel, type);
+    public int createGame(int numberOfPlayers, int startingLevel, GameType type, GameDifficulty difficulty){
+        Game game = new Game(numberOfPlayers, startingLevel, type, difficulty);
         
         games.put(game.getId(), game);
                
