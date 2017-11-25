@@ -1,4 +1,3 @@
-// HighscoreModule
 const HighScoresModule = (function(){
     function getHighscoresByLevel(levelId) {
         fetch("highscore?gameId=" + levelId).then(function (response) {
@@ -12,7 +11,6 @@ const HighScoresModule = (function(){
         });
     }
 
-// move to GuiModule
     function generateHighscoreTable (scoresAsJson) {
 
         var HTMLTable = "<table><tr><th>Username</th><th>Score</th></tr>";

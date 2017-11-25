@@ -61,14 +61,12 @@ let ArcadeWebSocket = (function () {
                         handleGameOver();
                     }
                 } else if (json.ballaction) {
-                    console.log(json)
                     if (json.ballaction === 'remove') {
                         level.removeBall(json);
                     } else if (json.ballaction === 'add') {
                         level.addBall(json);
                     }
                 } else if (json.livesLeft) {
-                    console.log("Update lives left");
                     handleLivesLeft(json);
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
@@ -109,8 +107,6 @@ let ArcadeWebSocket = (function () {
     }
 
     function handleLevelComplete(json) {
-        console.log("Socket received message level complete");
-        console.log("%cTime to complete this level: " + json.scoreTimer, "background-color:blue;color:white;padding:5px;");
         console.log("You completed this level in " + UtilModule.scoreTimerFormatter(json.scoreTimer));
         level.levelComplete = true;
 

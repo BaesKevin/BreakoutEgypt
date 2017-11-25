@@ -1,7 +1,3 @@
-// CanvasModule.js
-// canvas' and ctx's as module variables
-
-
 let DrawingModule = (function(){
     let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
     let mouse = {
@@ -26,6 +22,8 @@ let DrawingModule = (function(){
         brickCtx = brickCanvas.getContext('2d');
         movingPartsCanvas = $('#movingParts')[0];
         movingPartsCtx = movingPartsCanvas.getContext('2d');
+
+        resizeCanvasses(getBrickCanvasDimensions().width, getBrickCanvasDimensions().height);
     }
 
     function draw() {
@@ -55,7 +53,7 @@ let DrawingModule = (function(){
         movingPartsCtx.fillStyle = ImageLoader.patterns["fire"];
         // box2d draws circle from center
         movingPartsCtx.shadowColor = "blue";
-        level.balldata.forEach(function (ball) {
+        level.balls.forEach(function (ball) {
             movingPartsCtx.beginPath();
             movingPartsCtx.arc(Math.round(ball.x), Math.round(ball.y), (ball.width), 0, 2 * Math.PI, false);
             movingPartsCtx.fill();
@@ -73,12 +71,16 @@ let DrawingModule = (function(){
         });
     }
 
+    function updateStaticContent(){
+        updateBricks();
+        drawLevelNumber(level.level);
+        drawLives(level.lives);
+    }
     function updateBricks() {
         brickCtx.clearRect(0, 0, brickCanvas.width, brickCanvas.height);
-        level.brickdata.forEach(function (brick) {
+        level.bricks.forEach(function (brick) {
             brick.draw(brickCtx);
         });
-        // drawLives(level.lives);
     }
 
     function setPaddleX() {
@@ -128,7 +130,7 @@ let DrawingModule = (function(){
         let pos = brickCanvas.getBoundingClientRect();
         movingPartsCanvas.style.left = pos.left + "px";
 
-        updateBricks();
+        updateStaticContent();
     }
 
     function createPattern(image, mode){
@@ -138,9 +140,7 @@ let DrawingModule = (function(){
     return {
         initCanvasAndContextFields: initCanvasAndContextFields,
         draw: draw,
-        updateBricks: updateBricks,
-        drawLives: drawLives,
-        drawLevelNumber: drawLevelNumber,
+        updateStaticContent: updateStaticContent,
         getBrickCanvasDimensions: getBrickCanvasDimensions,
         resizeCanvasses: resizeCanvasses,
         createPattern: createPattern,

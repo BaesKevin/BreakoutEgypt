@@ -60,11 +60,8 @@ const ScalingModule = (function(){
     }
 
     function genericLevelScale(level, xScalingFunction, yScalingFunction){
-
-        // level.balldata = scaleObject(level.balldata, xScalingFunction, yScalingFunction);
-        for(let i = 0; i < level.balldata.length; i++){
-
-            level.balldata[i] = scaleBall(level.balldata[i], xScalingFunction, yScalingFunction);
+        for(let i = 0; i < level.balls.length; i++){
+            level.balls[i] = scaleBall(level.balls[i], xScalingFunction, yScalingFunction);
         }
 
         let scaledPaddles = [];
@@ -73,11 +70,9 @@ const ScalingModule = (function(){
         });
         level.paddles = scaledPaddles;
 
-        for (let i = 0; i < level.brickdata.length; i++) {
-            level.brickdata[i] = scaleBrick(level.brickdata[i], xScalingFunction, yScalingFunction);
+        for (let i = 0; i < level.bricks.length; i++) {
+            level.bricks[i] = scaleBrick(level.bricks[i], xScalingFunction, yScalingFunction);
         }
-
-        DrawingModule.updateBricks();
     }
 
     function scaleLevelToDefault(level){
@@ -86,8 +81,6 @@ const ScalingModule = (function(){
     }
 
     function scaleLevel(level, width, height){
-
-
         if(width && height){
             scaleLevelToDefault(level);
             DrawingModule.resizeCanvasses(width, height);
@@ -96,19 +89,14 @@ const ScalingModule = (function(){
             updateScalingFactors(width, height);
         }
 
-        // ScalingModule.scaleLevel(this);
-
-        // scaleLevelToDefault(level);
         genericLevelScale(level, scaleXForClient, scaleYForClient);
-
-
+        DrawingModule.updateStaticContent(); // TODO change to updateStaticContent
     }
 
     function doDocumentLoaded(){
         let canvasDimensions = DrawingModule.getBrickCanvasDimensions();
         updateScalingFactors(canvasDimensions.width, canvasDimensions.height);
-        // scaleAfterResize();
-
+        scaleAfterResize();
     }
 
     function scaleAfterResize(){
@@ -116,7 +104,6 @@ const ScalingModule = (function(){
         let newWidth = newHeight = gameMainWidth * 0.8;
 
         scaleLevel(level, newWidth, newHeight);
-        // level.reScale(newWidth, newHeight);
     }
 
     return {

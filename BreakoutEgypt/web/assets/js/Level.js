@@ -1,53 +1,43 @@
 const Level = (function () {
     let Level = function () {
-        this.levelComplete = false;
-        this.gameOver = false;
-        this.allLevelsComplete = false;
-        this.level = 0;
-        this.balldata = [];
-        this.brickdata = [];
-        this.paddles = [
-            {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'},
-            {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'}
-        ];
-        this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
-        this.lives = 0;
+        this.init(0, 0, false, false, false);
+        this.initLevelState([],[],[])
     };
 
-    Level.prototype.reScale = function (width, height) {
-        ScalingModule.scaleLevel(this, width, height);
+    Level.prototype.init = function(level, lives, levelComplete, gameOver, allLevelsComplete){
+        this.levelComplete = levelComplete;
+        this.gameOver = gameOver;
+        this.allLevelsComplete = allLevelsComplete;
+        this.level = level;
+        this.lives = lives;
     };
 
+    Level.prototype.initLevelState = function(balls, bricks, paddles, myPaddleName){
+        this.bricks = [];
+        bricks.forEach((brickjson) => {
+            this.bricks.push(new Brick(brickjson));
+        });
 
+        this.balls = [];
+        for (let i = 0; i < balls.length; i++) {
+            this.balls[i] = balls[i];
+            this.balls[i].width = this.balls[i].width / 2;
+        }
 
-    // Level.prototype.load = function (level, jsonballdata, brickdata, paddledata, mypaddle, lives) {
-    //     let self = this;
-    //     brickdata.forEach(function (brickjson) {
-    //         self.brickdata.push(new Brick(brickjson));
-    //     });
-    //
-    //     for (let i = 0; i < jsonballdata.length; i++) {
-    //         this.balldata[i] = jsonballdata[i]; //TODO multiple balls
-    //         this.balldata[i].width = this.balldata[i].width / 2;
-    //     }
-    //
-    //     this.paddles = [];
-    //
-    //     paddledata.forEach(function (paddle) {
-    //         self.paddles.push(paddle);
-    //     });
-    //
-    //     this.mypaddle = this.paddles.find(function (paddle) {
-    //         return paddle.name === mypaddle;
-    //     });
-    //
-    //     this.lives = lives;
-    //     this.level = level;
-    //
-    //     DrawingModule.drawLives(lives);
-    //     ScalingModule.scaleLevel(this);
-    // };
+        this.paddles = [];
 
+        paddles.forEach((paddle) => {
+            this.paddles.push(paddle);
+        });
+
+        if(myPaddleName){
+            this.mypaddle = this.paddles.find(function (paddle) {
+                return paddle.name === myPaddleName;
+            });
+        } else {
+            this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
+        }
+    };
 
     Level.prototype.loadLevel = function () {
 
@@ -61,6 +51,7 @@ const Level = (function () {
         }).then(function () {
             LoadLevelHelper.connectAndStartDrawing(self);
         }).catch(function (err) {
+            console.log(err);
             ArcadeWebSocket.close();
         });
     };
@@ -78,20 +69,15 @@ const Level = (function () {
     };
 
     Level.prototype.updateBalldata = function (json) {
-        for (let i = 0; i < this.balldata.length; i++) {
-            this.balldata[i].x = ScalingModule.scaleXForClient(json[i].x);
-            this.balldata[i].y = ScalingModule.scaleYForClient(json[i].y);
-        }
+        UpdateLevelDataHelper.updateBalldata(json, this);
     };
 
     Level.prototype.removeBall = function (json) {
-        level.balldata = level.balldata.filter(function (ball) {
-            return ball.name !== json.ball;
-        });
+        UpdateLevelDataHelper.removeBall(json, this);
     };
 
     Level.prototype.addBall = function (json) {
-        level.balldata.push({name: json.ball, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2});
+        UpdateLevelDataHelper.addBall(json, this);
     };
 
     Level.prototype.updateLevelData = function (json) {
@@ -99,7 +85,7 @@ const Level = (function () {
         let self = this;
 
         if (json.leveldata.ballpositions) {
-            self.updateBalldata(json.leveldata.ballpositions);
+            UpdateLevelDataHelper.updateBalldata(json.leveldata.ballpositions, self);
         }
 
 
@@ -109,36 +95,37 @@ const Level = (function () {
             json.leveldata.brickactions.forEach(function (message) {
                 switch (message.brickaction) {
                     case "destroy":
-                        UpdateLevelDataHelper.destroyBrick(message);
+                        UpdateLevelDataHelper.destroyBrick(message, self);
                         break;
                     case "hide":
-                        UpdateLevelDataHelper.hideBrick(message);
+                        UpdateLevelDataHelper.hideBrick(message, self);
                         break;
                     case "show":
-                        UpdateLevelDataHelper.showBrick(message);
+                        UpdateLevelDataHelper.showBrick(message, self);
                         break;
                 }
             });
 
-            DrawingModule.updateBricks();
+
         }
 
-        DrawingModule.drawLives(level.lives);
+        DrawingModule.updateStaticContent();
 
     };
 
 
 
-    const UpdateLevelDataHelper = (function(){
-        function destroyBrick(message) {
-            level.brickdata = level.brickdata.filter(function (brick) {
+    const UpdateLevelDataHelper = (function( self ){
+
+        function destroyBrick(message, self) {
+            self.bricks = self.bricks.filter(function (brick) {
                 return brick.name !== message.name;
             });
         }
 
-        function hideBrick(message) {
+        function hideBrick(message, self) {
             console.log("Hide brick " + message.name);
-            let brickToHide = level.brickdata.find(
+            let brickToHide = self.bricks.find(
                 function (brick) {
                     return message.name === brick.name;
                 }
@@ -147,10 +134,12 @@ const Level = (function () {
             if (brickToHide) {
                 brickToHide.show = false;
             }
+
+            console.log("hide ball");
         }
 
-        function showBrick(message) {
-            let brickToShow = self.brickdata.find(
+        function showBrick(message, self) {
+            let brickToShow = self.bricks.find(
                 function (brick) {
                     return message.name === brick.name;
                 }
@@ -159,10 +148,38 @@ const Level = (function () {
             if (brickToShow) {
                 brickToShow.show = true;
             }
+            console.log("show brick");
         }
 
-        return { destroyBrick, hideBrick, showBrick };
-    })();
+        function updateBalldata(json, self) {
+            for (let i = 0; i < self.balls.length; i++) {
+                self.balls[i].x = ScalingModule.scaleXForClient(json[i].x);
+                self.balls[i].y = ScalingModule.scaleYForClient(json[i].y);
+            }
+        }
+
+        function removeBall(json, self) {
+            self.balls = self.balls.filter(function (ball) {
+                return ball.name !== json.ball;
+            });
+            console.log("remove ball");
+        }
+
+        function addBall(json, self) {
+            self.balls.push({name: json.ball, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2});
+            console.log("add ball");
+        }
+
+
+        return {
+            destroyBrick,
+            hideBrick,
+            showBrick,
+            updateBalldata,
+            removeBall,
+            addBall
+        };
+    })(  );
 
     const LoadLevelHelper = ( function (){
         function parseJsonFromResponse(response) {
@@ -182,12 +199,13 @@ const Level = (function () {
                     ModalModule.modalAllLevelsCompleted(self.level, time);
                     self.allLevelsComplete = true;
                 } else {
-                    level.brickdata = [];
-                    level.balldata = [];
                     console.log("Load level: got data for level " + response.level);
-                    DrawingModule.drawLevelNumber(response.level);
-                    load(response.level, response.balls, response.bricks, response.paddles, response.mypaddle, response.lives, self);
-                    DrawingModule.drawLives(level.lives);
+                    self.init(response.level, response.lives, false, false, false);
+                    self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
+
+                    DrawingModule.updateStaticContent();
+                    ScalingModule.scaleLevel(self);
+
                 }
             } else {
                 //            document.location = "/breakout/";
@@ -196,9 +214,6 @@ const Level = (function () {
         }
 
         function connectAndStartDrawing(self) {
-            self.levelComplete = false;
-            self.gameOver = false;
-
             if (!ArcadeWebSocket.isConnected()) {
                 ArcadeWebSocket.connect();
             }
@@ -206,34 +221,6 @@ const Level = (function () {
             if (!self.allLevelsComplete) {
                 DrawingModule.draw();
             }
-        }
-
-        function load(level, jsonballdata, brickdata, paddledata, mypaddle, lives, levelObject) {
-            // let self = this;
-            brickdata.forEach(function (brickjson) {
-                levelObject.brickdata.push(new Brick(brickjson));
-            });
-
-            for (let i = 0; i < jsonballdata.length; i++) {
-                levelObject.balldata[i] = jsonballdata[i]; //TODO multiple balls
-                levelObject.balldata[i].width = levelObject.balldata[i].width / 2;
-            }
-
-            levelObject.paddles = [];
-
-            paddledata.forEach(function (paddle) {
-                levelObject.paddles.push(paddle);
-            });
-
-            levelObject.mypaddle = levelObject.paddles.find(function (paddle) {
-                return paddle.name === mypaddle;
-            });
-
-            levelObject.lives = lives;
-            levelObject.level = level;
-
-            DrawingModule.drawLives(lives);
-            ScalingModule.scaleLevel(levelObject);
         }
 
         return {parseJsonFromResponse, initializeNextLevel, connectAndStartDrawing}

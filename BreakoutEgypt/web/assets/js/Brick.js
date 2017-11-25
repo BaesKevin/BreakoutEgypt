@@ -31,10 +31,8 @@ const Brick = (function () {
         }
     };
 
-// private function in module
     function getColor(brick) {
 
-        //REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH
         let color = {};
         switch (brick.type) {
             case "UNBREAKABLE":

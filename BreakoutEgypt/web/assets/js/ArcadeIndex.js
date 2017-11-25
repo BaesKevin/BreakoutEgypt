@@ -1,22 +1,8 @@
-// ArcadeIndex.js
 
 var level = new Level();
 
-// move all of this to ScalingModule
 var resizeTimer;
 
-$(document).ready(function(){
-    // sizeCanvas();
-    ScalingModule.scaleAfterResize();
-});
-
-
-var sizeCanvas=function(){
-    var gameMainWidth=$("#gameMain").width();
-    let newWidth = newHeight = gameMainWidth * 0.8;
-
-    level.reScale(newWidth, newHeight);
-};
 
 $(window).resize(function(e){
     clearTimeout(resizeTimer);

@@ -193,6 +193,7 @@ public class LevelState {
         }
     }
 
+    // TODO calculate range without Points, test this monstrosity
     public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
         List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();

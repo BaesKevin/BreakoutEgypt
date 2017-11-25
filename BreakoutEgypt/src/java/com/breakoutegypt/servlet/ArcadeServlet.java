@@ -32,7 +32,7 @@ public class ArcadeServlet extends HttpServlet{
         
         // TODO get from querystring
         int numberOfPlayers = 1;
-        int startingLevel = 3;
+        int startingLevel = 1;
         int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE);
         
         // TODO redirect to level choice page

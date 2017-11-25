@@ -1,5 +1,3 @@
-// DynamicModalModule.js
-
 const ModalModule = (function(){
 
     let shareButton = "<button id='share' class='btn'>Share</button>";

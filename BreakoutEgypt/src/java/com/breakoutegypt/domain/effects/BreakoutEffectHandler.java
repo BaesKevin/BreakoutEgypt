@@ -26,7 +26,7 @@ public class BreakoutEffectHandler implements EffectHandler{
     @Override
     public void handle(ExplosiveEffect e) {
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(e.getCentreBrick(), e.getRadius());
-
+        
         breakoutWorld.destroyBricks(bricks);
     }
 
