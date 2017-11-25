@@ -84,7 +84,6 @@ public class SessionManager {
 
     public boolean isPlayerInSessionManager(Player player) {
         boolean isInManager = connectingPlayers.contains(player) || getPlayers().contains(player);
-        System.out.println("SessionManager: Player " + player.getUser().getUsername() + " is in manager: " + isInManager);
         return isInManager;
     }
 
@@ -97,21 +96,20 @@ public class SessionManager {
         Player connectingPlayer = getPlayer(name, true);
 
         if (connectingPlayer != null) {
-            connectingPlayers.remove(connectingPlayer);
+            
             if (connectedPlayers.size() < maxPlayers) {
-                System.out.printf("SessionManager: Add session for connecting player %s\n", connectingPlayer.getUser().getUsername());
 
                 connectingPlayer.setConnection(conn);
                 connectedPlayers.add(connectingPlayer);
             }
+            connectingPlayers.remove(connectingPlayer);
         } else {
-            System.out.println("SessionManager: trying to addsession for player that doesn't exist");
         }
 
     }
 
     public void removePlayer(String username) {
-        Player player = getPlayer(username, true);
+        Player player = getPlayer(username);
         connectedPlayers.remove(player);
         connectingPlayers.remove(player);
     }
@@ -138,7 +136,6 @@ public class SessionManager {
 
     public void notifyLevelComplete(Level currentLevel) {
         LevelMessage lm = new LevelMessage("jef", currentLevel.isLastLevel(), currentLevel.getScoreTimer().getDuration(), LevelMessageType.COMPLETE);
-        System.out.println("SessionManager: notifying of level complete");
         sendJsonToPlayers(lm);
     }
 
@@ -151,7 +148,6 @@ public class SessionManager {
     }
 
     public void notifyPlayersOfLivesLeft(Level currentLevel) {
-        System.out.println("SessionManager: notifying players of lives left");
         boolean noLivesLeft = currentLevel.noLivesLeft();
         //TODO User uit session halen en meegeven ipv 'jef'
         Message lifeMessage;

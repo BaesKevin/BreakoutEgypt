@@ -63,13 +63,11 @@ public class Game {
         if (peer != null) {
             currentLevel.movePaddle(peer.getPaddle(), x, y);
         } else {
-            System.out.println("Game: trying to move paddle for player that doesn't exist");
         }
     }
 
     public void addConnectingPlayer(Player player) {
 
-        System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
         manager.addConnectingPlayer(player);
 
     }
@@ -81,7 +79,6 @@ public class Game {
     public void assignPaddleToPlayer(Player player) {
         int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
         Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
-        System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
         player.setPaddle(paddleToAssign);
     }
 
@@ -92,7 +89,6 @@ public class Game {
     }
 
     public void removePlayer(String username) {
-        System.out.printf("Game %d: remove player\n", id);
         manager.removePlayer(username);
     }
 

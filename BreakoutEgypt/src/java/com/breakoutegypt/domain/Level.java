@@ -88,13 +88,9 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     public void start() {
         if (!runLevelManually && levelTimerTask == null) {
-            System.out.printf("Level: start level %d", this.id);
             levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
-            System.out.printf("Expected timestep: %d, actual timestep: %d", 1000 / 60, breakoutWorld.getTimeStepAsMs());
             timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
-        } else {
-            System.out.println("Level: trying to start the level twice, ignoring call");
-        }
+        } 
 
     }
 
@@ -104,9 +100,8 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             scoreTimer.start();
             List<Ball> balls = levelState.getBalls();
             for (Ball b : balls) {
-                b.setLinearVelocity(0, 100);
+                b.setLinearVelocity(0, 200);
             }
-            System.out.println("Level: startBall()");
         }
     }
 
@@ -131,7 +126,6 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     void resetBall(Ball ball) {
-        System.out.println("Level: resetBall()");
         if (this.getLevelState().getBalls().size() == 1) {
             setLevelStarted(false);
             levelState.removeBall(ball);
@@ -142,13 +136,15 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             levelState.removeBall(ball);
             System.out.println("Balls left: " + this.getLevelState().getBalls().size());
         }
+<<<<<<< HEAD
 //        System.out.println("Balls left: " + this.getLevelState().getBalls().size());
+=======
+>>>>>>> dev_staging
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
     }
 
     private int getTargetBricksLeft() {
-        System.out.println("Targets left: " + levelState.getTargetBricksLeft());
         return levelState.getTargetBricksLeft();
     }
 
@@ -170,9 +166,8 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     public void stop() {
-        System.out.printf("Level: stop level %d", this.id);
 
-        if (!runLevelManually) {
+        if (!runLevelManually && levelTimerTask != null) {
             levelTimerTask.cancel();
             levelTimerTask = null;
         }
@@ -220,7 +215,6 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         levelState.removeBrick(brick);
 
         if (allTargetBricksDestroyed()) {
-            System.out.println("BreakoutWorld: all brick destroyed");
             getScoreTimer().stop();
 
             StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();

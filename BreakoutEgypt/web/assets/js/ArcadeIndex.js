@@ -1,6 +1,16 @@
-// ArcadeIndex.js
 
 var level = new Level();
+
+var resizeTimer;
+
+
+$(window).resize(function(e){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(function(){
+        // sizeCanvas();
+        ScalingModule.scaleAfterResize();
+    },10);
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -14,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $("#modalPlaceholder").on("click", "#nextLevelButton", level.loadLevel.bind(level));
 });
+
+
 
 $("#movingParts")[0].addEventListener("click", function () {
 

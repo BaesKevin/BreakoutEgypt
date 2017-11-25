@@ -20,7 +20,11 @@ import org.junit.runners.Suite;
    LevelTest.class,
    LevelObjectSpawningTest.class,
    MessageTest.class,
+<<<<<<< HEAD
    PowerUpTest.class
+=======
+   LevelStateTest.class
+>>>>>>> dev_staging
 })
 
 public class BreakoutTestSuite {

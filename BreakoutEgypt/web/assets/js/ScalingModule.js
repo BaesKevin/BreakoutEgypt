@@ -54,32 +54,56 @@ const ScalingModule = (function(){
         return new Brick(scaleObject(brick, xScalingFunction, yScalingFunction));
     }
 
+    function scaleBall(ball, xScalingFunction, yScalingFunction){
+        let scaled = scaleObject(ball, xScalingFunction, yScalingFunction);
+        return scaled;
+    }
+
     function genericLevelScale(level, xScalingFunction, yScalingFunction){
-        level.balldata = scaleObject(level.balldata, xScalingFunction, yScalingFunction);
+        for(let i = 0; i < level.balls.length; i++){
+            level.balls[i] = scaleBall(level.balls[i], xScalingFunction, yScalingFunction);
+        }
+
         let scaledPaddles = [];
         level.paddles.forEach(function (paddle) {
             scaledPaddles.push(scaleObject(paddle, xScalingFunction, yScalingFunction));
         });
         level.paddles = scaledPaddles;
 
-        for (let i = 0; i < level.brickdata.length; i++) {
-            level.brickdata[i] = scaleBrick(level.brickdata[i], xScalingFunction, yScalingFunction);
+        for (let i = 0; i < level.bricks.length; i++) {
+            level.bricks[i] = scaleBrick(level.bricks[i], xScalingFunction, yScalingFunction);
         }
     }
 
     function scaleLevelToDefault(level){
         genericLevelScale(level, scaleXForServer, scaleYForServer);
+
     }
 
-    function scaleLevel(level){
-        // scaleLevelToDefault(level);
+    function scaleLevel(level, width, height){
+        if(width && height){
+            scaleLevelToDefault(level);
+            DrawingModule.resizeCanvasses(width, height);
+            let canvasDimensions = DrawingModule.getBrickCanvasDimensions();
+
+            updateScalingFactors(width, height);
+        }
+
         genericLevelScale(level, scaleXForClient, scaleYForClient);
+        DrawingModule.updateStaticContent(); // TODO change to updateStaticContent
     }
 
     function doDocumentLoaded(){
         let canvasDimensions = DrawingModule.getBrickCanvasDimensions();
         updateScalingFactors(canvasDimensions.width, canvasDimensions.height);
+        scaleAfterResize();
+    }
 
+    function scaleAfterResize(){
+        let gameMainWidth=$("#gameMain").width();
+        let newWidth = newHeight = gameMainWidth * 0.8;
+
+        scaleLevel(level, newWidth, newHeight);
     }
 
     return {
@@ -91,7 +115,8 @@ const ScalingModule = (function(){
         scaleYForServer: scaleYForServer,
         scaleXForClient: scaleXForClient,
         scaleYForClient: scaleYForClient,
-        doDocumentLoaded: doDocumentLoaded
+        doDocumentLoaded: doDocumentLoaded,
+        scaleAfterResize: scaleAfterResize
     }
 
 

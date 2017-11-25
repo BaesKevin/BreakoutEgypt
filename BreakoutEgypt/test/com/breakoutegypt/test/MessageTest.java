@@ -74,8 +74,6 @@ public class MessageTest {
 
         expectedMessages.add(new BallMessage("ball2", BallMessageType.REMOVE));
         expectedMessages.add(new BallMessage("ball", BallMessageType.REMOVE));
-        System.out.println("Expected: " + expectedMessages);
-        System.out.println("Actual: " + actualMessages);
         assertEquals(expectedMessages, actualMessages);
     }
 
@@ -91,7 +89,6 @@ public class MessageTest {
         DummyConnection conn = (DummyConnection) player.getConnection();
         List<Message> actualMessages = conn.getLifeMessages();
         List<Message> expectedMessages = new ArrayList();
-        System.out.println(actualMessages);
         //TODO get name of actual player in session
         expectedMessages.add(new LifeMessage("jef", 1, LifeMessageType.PLAYING));
         expectedMessages.add(new LifeMessage("jef", 0, LifeMessageType.GAMEOVER));

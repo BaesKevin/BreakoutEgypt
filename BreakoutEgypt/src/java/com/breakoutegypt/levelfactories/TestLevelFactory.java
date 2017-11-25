@@ -38,7 +38,6 @@ public class TestLevelFactory extends LevelFactory {
 
     @Override
     protected void createCurrentLevel() {
-        System.out.println("LevelFactory: creating level " + currentLevelId);
         switch (currentLevelId) {
             case 1:
                 currentLevel = getOutOfBoundsTest();
@@ -155,11 +154,18 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithMultipleBalls() {
-        ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-        ShapeDimension ballShape2 = new ShapeDimension("ball2", 70, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension shape;
         List<Ball> balls = new ArrayList();
-        balls.add(new Ball(ballShape));
-        balls.add(new Ball(ballShape2));
+        for (int i = 0; i < 100; i++) {
+            shape = new ShapeDimension("ball" + i, 70 + i, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+            balls.add(new Ball(shape));
+        }
+        
+//        ShapeDimension ballShape = new ShapeDimension("ball", 70, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+//        ShapeDimension ballShape2 = new ShapeDimension("ball2", 70, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+//        
+//        balls.add(new Ball(ballShape));
+//        balls.add(new Ball(ballShape2));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
         Level level = new Level(1, game, initialState, 3);

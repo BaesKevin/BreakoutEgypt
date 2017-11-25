@@ -145,7 +145,6 @@ public class LevelState {
     void resetBall(BreakoutWorld breakoutWorld) {
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
-        System.out.println("StartingBall: " + startingBall.getName());
         messages.add(new BallMessage(startingBall, BallMessageType.ADD));
         balls.add(startingBall);
         breakoutWorld.spawn(startingBall);
@@ -206,6 +205,7 @@ public class LevelState {
         }
     }
 
+    // TODO calculate range without Points, test this monstrosity
     public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
         List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();

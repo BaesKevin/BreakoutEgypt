@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.test;
 
+import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -36,7 +37,7 @@ public class GameManagerTest {
     public void removeLastPlayerCleansUpGame(){
         
         game.addConnectingPlayer(player);
-        
+        game.addConnectionForPlayer(player.getUser().getUsername(), new DummyConnection());
         game.startLevel();
         gm.removePlayer(game.getId(),"player");
         

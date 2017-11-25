@@ -2,7 +2,7 @@ const UtilModule = (function(){
     function getParameterByName(name, url) {
         if (!url) url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
             results = regex.exec(url);
         if (!results) return null;
         if (!results[2]) return '';
@@ -10,10 +10,9 @@ const UtilModule = (function(){
     }
 
     function scoreTimerFormatter(millisecs) {
+        let secs = Math.round(millisecs / 1000);
+        let mins = parseInt(secs / 60);
 
-        var secs = Math.round(millisecs / 1000);
-
-        var mins = parseInt(secs / 60);
         secs = secs % 60;
 
         return prenull(mins) + ":" + prenull(secs);
@@ -24,11 +23,15 @@ const UtilModule = (function(){
         return number < 10 ? "0" + number : "" + number;
 
     }
-    ;
+
+    function redirect(url){
+        window.location = url;
+    }
 
     return {
         getParameterByName,
-        scoreTimerFormatter
+        scoreTimerFormatter,
+        redirect
     }
 })();
 

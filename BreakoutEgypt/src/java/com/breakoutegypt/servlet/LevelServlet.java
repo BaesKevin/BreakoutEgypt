@@ -42,11 +42,10 @@ public class LevelServlet extends HttpServlet {
         
         JsonObjectBuilder job;
         boolean hasNextLevel = manager.hasNextLevel(gameId);
-        //System.out.println("hasnextlevel: " + hasNextLevel);
+
         if (hasNextLevel) {
             Level level = game.getLevel();
             
-            // already initialize player and give him a paddle
             String name = "player";
             Player player = game.getPlayer(name);
             

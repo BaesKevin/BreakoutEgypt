@@ -36,7 +36,6 @@ public class LevelTest {
 
     @Test
     public void ballOutOfBoundsLosesLife() {
-        System.out.println(level.getLevelState().getBall().getPosition());
         level.start();
         level.startBall();
 

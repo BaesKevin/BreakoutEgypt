@@ -74,4 +74,13 @@ public class SessionManagerTest {
         
         Assert.assertEquals(sm.getPlayers().size(), 2);
     }
+    
+    @Test
+    public void removePlayerTest(){
+        sm.addConnectingPlayer(player1);
+        sm.addConnectionForPlayer(player1.getUser().getUsername(), new DummyConnection());
+        sm.removePlayer(player1.getUser().getUsername());
+        
+        Assert.assertEquals(0, sm.getPlayers().size());
+    }
 }
