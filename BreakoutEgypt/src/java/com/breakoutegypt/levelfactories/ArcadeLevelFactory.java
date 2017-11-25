@@ -9,14 +9,18 @@ import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
+import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,7 +30,7 @@ import java.util.List;
 public class ArcadeLevelFactory extends LevelFactory {
 
     public ArcadeLevelFactory(Game game) {
-        super(game, 3);
+        super(game, 4);
     }
 
     @Override
@@ -47,6 +51,9 @@ public class ArcadeLevelFactory extends LevelFactory {
                 break;
             case 3:
                 currentLevel = getLevelWithMultipleBalls();
+                break;
+            case 4:
+                currentLevel = getPossibleRealLevel();
                 break;
 //            default:
 //                currentLevel = getLevelWithSwitch();
@@ -176,6 +183,104 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         return level;
     }
+
+    public Level getPossibleRealLevel() {
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 275, 100, 4, Color.BLUE);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+
+        Paddle paddle = new Paddle(paddleShape);
+        Ball ball = new Ball(ballShape);
+
+        int row = 1;
+        int col = 1;
+        int rows = 3;
+        int cols = 9;
+        int width = 30;
+        int height = 30;
+
+        ShapeDimension brickShape;
+        Brick brick;
+        List<Brick> bricks = new ArrayList();
+        List<Integer> unbreakables = new ArrayList();
+        unbreakables.add(25);
+        unbreakables.add(24);
+        unbreakables.add(22);
+        unbreakables.add(19);
+        unbreakables.add(18);
+        unbreakables.add(11);
+        unbreakables.add(14);
+
+        String id;
+        int index = 0;
+        for (int x = 10; x < 10 + ((width + 1) * cols); x += width + 1) {
+            for (int y = 5; y < 5 + ((height + 1) * rows); y += height + 1) {
+                int colPadding = cols / 10 + 1;
+                int rowPadding = rows / 10 + 1;
+
+                id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
+
+                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
+
+                if (unbreakables.contains(index)) {
+                    brick = new Brick(brickShape, new Point(row, col), false, true, false);
+                    brick.setType(BrickType.UNBREAKABLE);
+                } else {
+                    brick = new Brick(brickShape, new Point(row, col));
+                }
+
+                bricks.add(brick);
+                col++;
+                index++;
+            }
+            row++;
+            col = 1;
+        }
+
+        System.out.println("bricks in level: " + bricks.size());
+        bricks.get(21).setTarget(true);
+        bricks.get(21).getShape().setColor(Color.BLACK);
+
+        bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
+        bricks.get(4).setType(BrickType.EXPLOSIVE);
+        bricks.get(23).addEffect(new ExplosiveEffect(bricks.get(23), 1));
+        bricks.get(23).setType(BrickType.EXPLOSIVE);
+
+        //11 14
+        List<Brick> bricksToToggle = new ArrayList();
+        for (int i = 0; i < 11; i++) {
+            bricksToToggle.add(bricks.get(i));
+        }
+        bricks.get(11).addEffect(new ToggleEffect(bricksToToggle));
+        bricks.get(11).setType(BrickType.SWITCH);
+        bricks.get(11).setBreakable(false);
+
+        bricksToToggle = new ArrayList();
+        for (int i = 15; i < bricks.size(); i++) {
+            bricksToToggle.add(bricks.get(i));
+        }
+        bricksToToggle.add(bricks.get(12));
+        bricksToToggle.add(bricks.get(13));
+        bricks.get(14).addEffect(new ToggleEffect(bricksToToggle));
+        bricks.get(14).setType(BrickType.SWITCH);
+        bricks.get(14).setBreakable(false);
+
+//        for (int i = 0; i <= 2; i++) {
+//            bricks.get(i).getShape().setColor(Color.YELLOW);
+//            bricks.get(i).setVisible(false);
+//        }
+//        
+//        bricks.get(4).setType(BrickType.SWITCH);
+//        bricks.get(4).setSwitchBricks(
+//                Arrays.asList(new Brick[]{
+//            bricks.get(1), bricks.get(2), bricks.get(3)
+//        })
+//        );
+        LevelState initialState = new LevelState(ball, paddle, bricks);
+        Level level = new Level(currentLevelId, game, initialState, 3);
+
+        return level;
+    }
+
 //
 //    public Level getLevelWithSwitch() {
 //        ShapeDimension paddleShape = new ShapeDimension("paddle" + currentLevelId, 45, 250, 100, 4, Color.BLUE);

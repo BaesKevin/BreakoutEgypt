@@ -119,7 +119,7 @@ public class BreakoutWorld {
     // TODO this probably belongs in LevelState
     public void toggleBricks(List<Brick> switchBricks) {
         for (Brick switchBrick : switchBricks) {
-
+            System.out.println("Toggling: " + switchBrick.toJson().build().toString());
             switchBrick.toggle();
 
             BrickMessageType toggleType;

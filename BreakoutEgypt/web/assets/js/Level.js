@@ -155,6 +155,7 @@ Level.prototype.updateLevelData = function (json) {
                     hideBrick(message);
                     break;
                 case "show":
+                    console.log(json.leveldata.brickactions)
                     showBrick(message);
                     break;
             }
@@ -184,8 +185,8 @@ function hideBrick(message) {
 
 function showBrick(message) {
     console.log("Show brick " + message.name);
-
-    let brickToShow = self.brickdata.find(
+    console.log(message)
+    let brickToShow = level.brickdata.find(
         function (brick) {
             return message.name === brick.name;
         }

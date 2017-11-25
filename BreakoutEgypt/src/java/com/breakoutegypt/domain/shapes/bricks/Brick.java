@@ -42,7 +42,7 @@ public class Brick  extends RegularBody{
         this.gridPosition = gridPosition;
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
-        brickTypeName = "REGULAR";
+        this.brickTypeName = BrickType.REGULAR.name();
         
         effects = new ArrayList();
         
@@ -51,7 +51,9 @@ public class Brick  extends RegularBody{
         }
     }
     
-
+    public void setBreakable(boolean b) {
+        isBreakable =  b;
+    }
     
     public void toggle() {
         isVisibible = !isVisibible;
@@ -115,6 +117,10 @@ public class Brick  extends RegularBody{
 //    public void accept(ShapeUser u){
 //        u.doForBrick(this);
 //    }
+
+    public void setType(BrickType brickType) {
+        this.brickTypeName = brickType.name();
+    }
     
     
 }
