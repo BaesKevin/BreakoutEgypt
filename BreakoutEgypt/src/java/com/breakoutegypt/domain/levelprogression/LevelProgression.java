@@ -11,6 +11,9 @@ import java.util.List;
  *
  * @author snc
  */
+// deze klass zou je kunnen gebruiken om de map besproken in Player.java bij te houden
+// elke speler zou dan 1 levelprogression object hebben dat je gebruikt om operaties op de map
+// te vereenvoudigen en de gebruikte datastructuur te encapsuleren.
 public class LevelProgression {
     
     private List<UserLevel> userLevels;

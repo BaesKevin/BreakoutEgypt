@@ -14,6 +14,11 @@ import javax.websocket.Session;
  *
  * @author kevin
  */
+
+// voorstel: hier levelprogressie bijhouden, een map tussen GameType en ints lijkt me voldoende
+// de int houdt dan het hoogst bereikte level bij. Op deze manier kan in Game bij het stoppen van het
+// spelletje aan het level zijn id vragen en zo bijhouden in de map. In de LevelFactorys kunnen we 
+// een extra field defaultMaxLevel maken. als dit bv. 5 is dan zijn de eerste 5 levels altijd beschikbaar.
 public class Player {
     private User user;
     private Paddle paddle;
