@@ -4,6 +4,8 @@
     Author     : Bjarne Deketelaere
 --%>
 
+<%@page import="com.breakoutegypt.domain.User"%>
+<%@page import="com.breakoutegypt.domain.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -18,6 +20,15 @@
     </head>
     <body>
         <div class="container-fluid">
+            <%
+            User user=(User)request.getSession().getAttribute("user");
+            //Development purpose
+            if(user==null){
+                user=new User("test","test@hotmail.com","test");
+                request.getSession().setAttribute("user",user);
+            }
+            out.println(user.getUsername());
+        %>
         <main class="row">
                 <div id="gameMain" class="clearfix">
                     <canvas id="stationaryParts" height="300" width="300"></canvas>

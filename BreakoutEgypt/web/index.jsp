@@ -4,6 +4,7 @@
     Author     : Bjarne Deketelaere
 --%>
 
+<%@page import="com.breakoutegypt.domain.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -25,6 +26,14 @@
     </header>
     <main class="row">
         <div class="col-lg-12 text-center">
+            <%
+            User user=(User)request.getSession().getAttribute("user");
+            //Development purpose
+            if(user==null){
+                user=new User("test","test@hotmail.com","test");
+                request.getSession().setAttribute("user",user);
+            }
+        %>
             <div id="menu">
                 <ul class="list-group">
                     <li class="list-group-item">

@@ -55,7 +55,8 @@ public class LoginSystemServlet extends HttpServlet {
                 
                 if(userRepo.inList(loginUser)){
                     session.setAttribute("user",loginUser);
-                    response.sendRedirect("index.jsp?message=you are logged in");
+                    
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                 } else {
                     response.sendRedirect("login.jsp?error=could not find user");
                 }
