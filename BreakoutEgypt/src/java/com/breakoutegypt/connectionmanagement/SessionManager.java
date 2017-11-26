@@ -143,7 +143,8 @@ public class SessionManager {
         Map<String, List<Message>> messages = createMessageMap(currentLevel, simulation);
 
         sendJsonToPlayers(messages);
-        simulation.clearMessages();
+        simulation.clearBrickMessages();
+        simulation.clearPowerupMessages();
         currentLevel.getLevelState().clearMessages();
     }
 
@@ -172,11 +173,16 @@ public class SessionManager {
         Map<String, List<Message>> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
         List<Message> ballPositionMessages = new ArrayList();
-        List<Message> brickMessages = simulation.getMessages();
+        List<Message> brickMessages = simulation.getBrickMessages();
+        List<Message> powerupMessages = simulation.getPowerupMessages();
 
         for (Ball b : balls) {
             BallPositionMessage bpm = new BallPositionMessage(b);
             ballPositionMessages.add(bpm);
+        }
+        
+        if (powerupMessages.size() > 0) {
+            messages.put("powerupactions", powerupMessages);
         }
 
         if (ballPositionMessages.size() > 0) {

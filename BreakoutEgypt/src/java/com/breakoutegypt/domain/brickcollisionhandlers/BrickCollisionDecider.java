@@ -7,6 +7,8 @@ package com.breakoutegypt.domain.brickcollisionhandlers;
 
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.EffectHandler;
+import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.effects.PowerUpHandler;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 
 /**
@@ -17,21 +19,21 @@ public class BrickCollisionDecider {
 
     private EffectHandler collisionEventHandler;
     private Brick brick;
+    private PowerUpHandler powerupHandler;
 
-    public BrickCollisionDecider(Brick brick, EffectHandler collisionEventHandler) {
+    public BrickCollisionDecider(Brick brick, EffectHandler collisionEventHandler, PowerUpHandler powerupHandler) {
         this.brick = brick;
         this.collisionEventHandler = collisionEventHandler;
+        this.powerupHandler = powerupHandler;
     }
 
     public void handleCollision() {
-<<<<<<< HEAD
-        System.out.printf("Brick visible: %s Brick breakable: %s \n", brick.isVisible(), brick.isBreakable());
         if (brick.isVisible()) {
-=======
-        if (brick.isVisible() && brick.isBreakable()) {
->>>>>>> dev_staging
-            
-            for(Effect effect : brick.getEffects()){
+            if (brick.hasPowerUp()) {
+                PowerUp pu = brick.getPowerUp();
+                pu.accept(powerupHandler);
+            }
+            for (Effect effect : brick.getEffects()) {
                 effect.accept(collisionEventHandler);
             }
         }

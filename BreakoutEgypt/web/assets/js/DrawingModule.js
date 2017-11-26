@@ -1,11 +1,11 @@
-let DrawingModule = (function(){
+let DrawingModule = (function () {
     let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
     let mouse = {
         x: 0,
         y: 0
     };
 
-    function doDocumentLoaded(){
+    function doDocumentLoaded() {
         $('canvas').on('mousemove', updateMouseX);
         initCanvasAndContextFields();
 
@@ -17,7 +17,7 @@ let DrawingModule = (function(){
         mouse.x = e.clientX - bounds.left;
     }
 
-    function initCanvasAndContextFields(){
+    function initCanvasAndContextFields() {
         brickCanvas = $('#stationaryParts')[0];
         brickCtx = brickCanvas.getContext('2d');
         movingPartsCanvas = $('#movingParts')[0];
@@ -71,16 +71,24 @@ let DrawingModule = (function(){
         });
     }
 
-    function updateStaticContent(){
+    function updateStaticContent() {
         updateBricks();
         drawLevelNumber(level.level);
         drawLives(level.lives);
+        drawFloor();
     }
+
     function updateBricks() {
         brickCtx.clearRect(0, 0, brickCanvas.width, brickCanvas.height);
         level.bricks.forEach(function (brick) {
             brick.draw(brickCtx);
         });
+    }
+    
+    function drawFloor() {
+        if (level.floor)
+            brickCtx.fillStyle = "gray";
+            brickCtx.fillRect(level.floor.x, level.floor.y, level.floor.width, level.floor.height);
     }
 
     function setPaddleX() {
@@ -113,7 +121,7 @@ let DrawingModule = (function(){
         $("#gameMain").find("#level").html("Level: " + levelnumber);
     }
 
-    function getBrickCanvasDimensions(){
+    function getBrickCanvasDimensions() {
         return {
             width: brickCanvas.width,
             height: brickCanvas.height
@@ -121,9 +129,9 @@ let DrawingModule = (function(){
     }
 
 
-    function resizeCanvasses(width, height){
-        brickCanvas.width=width;
-        brickCanvas.height=height;
+    function resizeCanvasses(width, height) {
+        brickCanvas.width = width;
+        brickCanvas.height = height;
         movingPartsCanvas.width = brickCanvas.width;
         movingPartsCanvas.height = brickCanvas.height;
 
@@ -133,7 +141,7 @@ let DrawingModule = (function(){
         updateStaticContent();
     }
 
-    function createPattern(image, mode){
+    function createPattern(image, mode) {
         return brickCtx.createPattern(image, mode);
     }
 

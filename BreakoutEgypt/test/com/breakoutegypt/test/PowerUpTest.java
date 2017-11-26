@@ -14,7 +14,7 @@ import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Floor;
+import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.util.List;
 import org.junit.Assert;
@@ -85,7 +85,7 @@ public class PowerUpTest {
         System.out.println(messagesWithFloor);
         assertEquals(1, messagesWithFloor.size());
     }
-    
+
     @Test
     public void testFloorInLevel2() {
         game.setCurrentLevel(9);
@@ -95,15 +95,15 @@ public class PowerUpTest {
     }
 
     private List<Message> runLevelWithFloor(boolean hasFloor) {
-        
+
         level = game.getLevel();
 
         level.startBall();
         stepTimes(level, 30);
-        
+
         if (hasFloor) {
             ShapeDimension s = new ShapeDimension("floor", 0, 290, 300, 1);
-            Floor floor = new Floor(s);
+            FloorPowerUp floor = new FloorPowerUp(s);
             level.addFloor(floor);
         }
 
@@ -111,10 +111,20 @@ public class PowerUpTest {
 
         DummyConnection dc = (DummyConnection) player.getConnection();
         List<Message> ballmessages = dc.getBallMessages();
-        
+
         level.getLevelState().getBalls();
-        
+
         return ballmessages;
+    }
+
+    @Test
+    public void activatePowerUpTest() {
+
+        game.setCurrentLevel(10);
+        level = game.getLevel();
+
+        level.startBall();
+        stepTimes(level, 60);
     }
 
     private void stepTimes(Level level, int times) {

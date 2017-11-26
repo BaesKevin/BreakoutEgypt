@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
@@ -13,7 +14,6 @@ import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
-import com.breakoutegypt.domain.shapes.Floor;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
@@ -36,7 +36,7 @@ public class LevelState {
     private Ball startingBall;
     private List<Ball> balls;
     private List<Message> messages;
-    private Floor floor;
+    private FloorPowerUp floor;
 
     public List<Message> getMessages() {
         return messages;
@@ -112,9 +112,9 @@ public class LevelState {
         }
     }
 
-    public void spawnFloor(Floor floor, BreakoutWorld world) {
+    public void setFloor(FloorPowerUp floor, BreakoutWorld world) {
         this.floor = floor;
-        world.spawn(floor);
+        world.setFloorToAdd(floor);
     }
 
     public void removeFloor() {

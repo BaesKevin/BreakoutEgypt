@@ -5,12 +5,13 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
+import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Floor;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
@@ -63,7 +64,8 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
                 new BreakoutEffectHandler(levelState, breakoutWorld),
-                this);
+                this,
+                new BreakoutPowerUpHandler(this, levelState, breakoutWorld));
 
         this.lives = lives;
         this.timer = new Timer();
@@ -90,7 +92,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         if (!runLevelManually && levelTimerTask == null) {
             levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
             timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
-        } 
+        }
 
     }
 
@@ -136,10 +138,6 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             levelState.removeBall(ball);
             System.out.println("Balls left: " + this.getLevelState().getBalls().size());
         }
-<<<<<<< HEAD
-//        System.out.println("Balls left: " + this.getLevelState().getBalls().size());
-=======
->>>>>>> dev_staging
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
     }
@@ -207,7 +205,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         /*
         TODO
         probleem oplossen voor als meerdere ballen tegelijk out of bounds gaan
-        */
+         */
     }
 
     @Override
@@ -227,7 +225,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         }
     }
 
-    public void addFloor(Floor floor) {
-        levelState.spawnFloor(floor, breakoutWorld);
+    public void addFloor(FloorPowerUp floor) {
+        levelState.setFloor(floor, breakoutWorld);
     }
 }

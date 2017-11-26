@@ -8,33 +8,27 @@ package com.breakoutegypt.domain.effects;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
-import com.breakoutegypt.domain.shapes.bricks.Brick;
-import java.util.List;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public class BreakoutEffectHandler implements EffectHandler {
+public class BreakoutPowerUpHandler implements PowerUpHandler {
 
     private LevelState levelState;
     private BreakoutWorld breakoutWorld;
+    private Level level;
 
-    public BreakoutEffectHandler(LevelState levelState, BreakoutWorld breakoutWorld) {
+    public BreakoutPowerUpHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
+        this.level = level;
         this.levelState = levelState;
         this.breakoutWorld = breakoutWorld;
     }
 
     @Override
-    public void handle(ExplosiveEffect e) {
-        List<Brick> bricks = levelState.getRangeOfBricksAroundBody(e.getCentreBrick(), e.getRadius());
-
-        breakoutWorld.destroyBricks(bricks);
+    public void handle(FloorPowerUp pu) {
+        pu.setIsVisable(true);
+        level.addFloor(pu);
     }
-
-    @Override
-    public void handle(ToggleEffect e) {
-        breakoutWorld.toggleBricks(e.getBricksToToggle());
-    }
-
 }

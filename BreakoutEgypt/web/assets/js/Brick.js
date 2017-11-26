@@ -48,13 +48,12 @@ const Brick = (function () {
                 color.pattern = ImageLoader.patterns["brick"];
                 break;
             case "REGULAR":
-                if (brick.isTarget) {
-                    color.color = "gold";
-                    color.pattern = ImageLoader.patterns["gold"];
-                } else {
-                    color.color = "green";
-                    color.pattern = ImageLoader.patterns["brick"];
-                }
+                color.color = "green";
+                color.pattern = ImageLoader.patterns["brick"];
+                break;
+            case "TARGET":
+                color.color = "gold";
+                color.pattern = ImageLoader.patterns["gold"];
                 break;
             default :
                 color.color = "black";

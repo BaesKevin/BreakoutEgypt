@@ -73,6 +73,11 @@ const ScalingModule = (function(){
         for (let i = 0; i < level.bricks.length; i++) {
             level.bricks[i] = scaleBrick(level.bricks[i], xScalingFunction, yScalingFunction);
         }
+        if (level.floor) {
+            console.log("before: ", level.floor)
+            level.floor = scaleObject(level.floor, xScalingFunction, yScalingFunction);
+            console.log("after: ", level.floor)
+        }
     }
 
     function scaleLevelToDefault(level){
@@ -88,7 +93,6 @@ const ScalingModule = (function(){
 
             updateScalingFactors(width, height);
         }
-
         genericLevelScale(level, scaleXForClient, scaleYForClient);
         DrawingModule.updateStaticContent(); // TODO change to updateStaticContent
     }

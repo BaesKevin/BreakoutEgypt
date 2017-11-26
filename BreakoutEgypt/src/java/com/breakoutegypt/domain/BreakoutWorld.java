@@ -5,10 +5,16 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.EffectHandler;
+import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.effects.PowerUpHandler;
+import com.breakoutegypt.domain.effects.PowerUpType;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -40,52 +46,54 @@ public class BreakoutWorld {
     private final int positionIterations = 8;
 //    private Level currentLevel;
     private BreakoutWorldEventListener listener;
-    
+
     private boolean isBallOutOfBounds = false;
 
     // keep a seperate list of bodies to dstroy in the frontend since we only want to send this info once
     private List<Body> bodiesToDestroy;
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
-    private List<Message> messages;
+    private List<Message> brickMessages;
+    private List<Message> powerupMessages;
 
     private Ball ballToChangeDirectionOff;
     private Paddle paddleHitByBall;
     private Ball outOfBoundsBall;
-    
+    private FloorPowerUp floorToAdd;
+    private FloorPowerUp floorInGame;
+
     public BreakoutWorld(/*Level level*/) {
         this(/*level, */TIMESTEP_DEFAULT);
     }
-    
-    public BreakoutWorld(/*Level level, */float timestepSeconds){
+
+    public BreakoutWorld(/*Level level, */float timestepSeconds) {
         bodiesToDestroy = new ArrayList();
         keysOfBodiesToDestroy = new ArrayList();
-        
-        world = new World(new Vec2(0.0f, 0.0f));
-        
 
-//        this.currentLevel = level;
-        messages = new ArrayList();
-        
+        world = new World(new Vec2(0.0f, 0.0f));
+
+        brickMessages = new ArrayList();
+        powerupMessages = new ArrayList();
+
         this.timestepSeconds = timestepSeconds;
     }
-    
-    public void initContactListener(EffectHandler eventHandler, BallEventHandler ballEventHandler){
-        world.setContactListener(new BreakoutContactListener(eventHandler, ballEventHandler));
+
+    public void initContactListener(EffectHandler eventHandler, BallEventHandler ballEventHandler, PowerUpHandler powerupHandler) {
+        world.setContactListener(new BreakoutContactListener(eventHandler, ballEventHandler, powerupHandler));
     }
-    
-    public long getTimeStepAsMs(){
+
+    public long getTimeStepAsMs() {
         return Math.round(Math.floor(timestepSeconds * 1000));
     }
-    
-    public void spawn(RegularBody gameObject){
+
+    public void spawn(RegularBody gameObject) {
         BodyConfiguration bodyConfig = gameObject.getConfig();
         BodyDef bodyDef = bodyConfig.getBodyDefinition().getBox2dBodyDef();
         FixtureDef fixtureDef = bodyConfig.getFixtureConfig().getBox2dFixtureDef();
         Shape shape = bodyConfig.getShape();
-        
+
         fixtureDef.shape = shape;
-               
+
         Body body = world.createBody(bodyDef);
         body.createFixture(fixtureDef);
         body.setUserData(gameObject);
@@ -98,19 +106,18 @@ public class BreakoutWorld {
         destroyBricks(bricks);
     }
 
-    public void destroyBody(Body body){
+    public void destroyBody(Body body) {
         world.destroyBody(body);
     }
-    
+
     public void destroyBricks(List<Brick> bricks) {
         String brickName;
         for (Brick brick : bricks) {
             if (!bodiesToDestroy.contains(brick.getBody())) {
                 brickName = brick.getName();
-//                currentLevel.removeBrick(brick);
                 listener.removeBrick(brick);
                 bodiesToDestroy.add(brick.getBody());
-                messages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
+                brickMessages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
             }
         }
     }
@@ -118,7 +125,6 @@ public class BreakoutWorld {
     // TODO this probably belongs in LevelState
     public void toggleBricks(List<Brick> switchBricks) {
         for (Brick switchBrick : switchBricks) {
-            System.out.println("Toggling: " + switchBrick.toJson().build().toString());
             switchBrick.toggle();
 
             BrickMessageType toggleType;
@@ -128,7 +134,7 @@ public class BreakoutWorld {
                 toggleType = BrickMessageType.HIDE;
             }
 
-            messages.add(new BrickMessage(switchBrick.getName(), toggleType));
+            brickMessages.add(new BrickMessage(switchBrick.getName(), toggleType));
 
         }
     }
@@ -141,16 +147,28 @@ public class BreakoutWorld {
         //System.out.printf("Ball (%s) hit paddle (%s)\n", ball.getName(), paddle.getName());
     }
 
-    public void addMessage(Message m) {
-        messages.add(m);
-    }
-    
-    public List<Message> getMessages() {
-        return messages;
+    public void addBrickMessage(Message m) {
+        brickMessages.add(m);
     }
 
-    public void clearMessages() {
-        messages.clear();
+    public List<Message> getBrickMessages() {
+        return brickMessages;
+    }
+
+    public void clearBrickMessages() {
+        brickMessages.clear();
+    }
+
+    public void addPowerupMessages(Message m) {
+        powerupMessages.add(m);
+    }
+
+    public void clearPowerupMessages() {
+        powerupMessages.clear();
+    }
+
+    public List<Message> getPowerupMessages() {
+        return powerupMessages;
     }
 
     // any changes to the world state must be made here to try to avoid concurrency issues where the game is 
@@ -170,6 +188,29 @@ public class BreakoutWorld {
             listener.ballOutOfBounds(outOfBoundsBall);
             isBallOutOfBounds = false;
         }
+        addFloorIfNecessary();
+    }
+
+    private void addFloorIfNecessary() {
+        if (floorToAdd != null && floorToAdd.isVisable()) {
+            if (floorInGame != null) {
+                world.destroyBody(floorInGame.getBody());
+                floorInGame = null;
+            }
+            spawn(floorToAdd);
+            floorInGame = floorToAdd;
+            floorToAdd = null;
+            addPowerupMessages(new PowerUpMessage("name", floorInGame, PowerUpMessageType.ADDFLOOR));
+        } else if (floorInGame != null) {
+            int timeLeft = floorInGame.getTimeVisable();
+            if (timeLeft > 0) {
+                floorInGame.setTimeVisable(timeLeft - 1);
+            } else {
+                world.destroyBody(floorInGame.getBody());
+                addPowerupMessages(new PowerUpMessage("name", floorInGame, PowerUpMessageType.REMOVEFLOOR));
+                floorInGame = null;
+            }
+        }
     }
 
     private void adjustBallDirection() {
@@ -181,7 +222,7 @@ public class BreakoutWorld {
         ballToChangeDirectionOff.setLinearVelocity(newX, ballToChangeDirectionOff.getLinearVelocity().y);
     }
 
-    public int countWorldObjects(){
+    public int countWorldObjects() {
         return world.getBodyCount();
     }
 
@@ -190,8 +231,12 @@ public class BreakoutWorld {
         outOfBoundsBall = ball;
     }
 
-    public void setBreakoutWorldEventListener(BreakoutWorldEventListener listener){
+    public void setBreakoutWorldEventListener(BreakoutWorldEventListener listener) {
         this.listener = listener;
     }
-    
+
+    void setFloorToAdd(FloorPowerUp floorToAdd) {
+        this.floorToAdd = floorToAdd;
+    }
+
 }

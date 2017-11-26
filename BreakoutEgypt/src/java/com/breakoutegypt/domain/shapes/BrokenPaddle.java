@@ -61,8 +61,6 @@ public class BrokenPaddle {
             leftX = rightX - (newWidth*2);
         }
         
-        
-        
         int[] newXs = new int[2];
         newXs[0] = leftX;
         newXs[1] = rightX;

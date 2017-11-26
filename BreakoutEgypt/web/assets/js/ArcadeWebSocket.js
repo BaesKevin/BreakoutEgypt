@@ -39,7 +39,7 @@ let ArcadeWebSocket = (function () {
     };
 
     Socket.prototype.close = function () {
-        if(this.isConnected()){
+        if (this.isConnected()) {
             this.websocket.close();
         }
     };
@@ -71,6 +71,9 @@ let ArcadeWebSocket = (function () {
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
                 } else {
+                    if (json.leveldata.powerupactions) {
+                        level.handleUpdate(json.leveldata.powerupactions);
+                    }
                     level.updateLevelData(json);
                 }
             } else {

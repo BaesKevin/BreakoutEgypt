@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
@@ -22,6 +23,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  *
@@ -51,13 +55,8 @@ public class ArcadeLevelFactory extends LevelFactory {
             case 3:
                 currentLevel = getLevelWithMultipleBalls();
                 break;
-<<<<<<< HEAD
             case 4:
                 currentLevel = getPossibleRealLevel();
-=======
-            case 4: 
-                currentLevel = getLevelWithSwitch();
->>>>>>> dev_staging
                 break;
 //            default:
 //                currentLevel = getLevelWithSwitch();
@@ -154,7 +153,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         ShapeDimension shape;
         List<Ball> balls = new ArrayList();
         for (int i = 0; i < 50; i++) {
-            shape = new ShapeDimension("ball" + i,4 + i, 100, 2, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+            shape = new ShapeDimension("ball" + i, 4 + i, 100, 2, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
             balls.add(new Ball(shape));
         }
 
@@ -208,6 +207,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                     brick.setType(BrickType.UNBREAKABLE);
                 } else {
                     brick = new Brick(brickShape, new Point(row, col));
+                    brick.setType(BrickType.REGULAR);
                 }
 
                 bricks.add(brick);
@@ -217,17 +217,15 @@ public class ArcadeLevelFactory extends LevelFactory {
             row++;
             col = 1;
         }
-
-        System.out.println("bricks in level: " + bricks.size());
+        
         bricks.get(21).setTarget(true);
-        bricks.get(21).getShape().setColor(Color.BLACK);
+        bricks.get(21).setType(BrickType.TARGET);
 
         bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
         bricks.get(4).setType(BrickType.EXPLOSIVE);
         bricks.get(23).addEffect(new ExplosiveEffect(bricks.get(23), 1));
         bricks.get(23).setType(BrickType.EXPLOSIVE);
 
-        //11 14
         List<Brick> bricksToToggle = new ArrayList();
         for (int i = 0; i < 11; i++) {
             bricksToToggle.add(bricks.get(i));
@@ -246,17 +244,11 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(14).setType(BrickType.SWITCH);
         bricks.get(14).setBreakable(false);
 
-//        for (int i = 0; i <= 2; i++) {
-//            bricks.get(i).getShape().setColor(Color.YELLOW);
-//            bricks.get(i).setVisible(false);
-//        }
-//        
-//        bricks.get(4).setType(BrickType.SWITCH);
-//        bricks.get(4).setSwitchBricks(
-//                Arrays.asList(new Brick[]{
-//            bricks.get(1), bricks.get(2), bricks.get(3)
-//        })
-//        );
+        bricks = generatePowerUps(bricks, 3);
+        bricks.get(2).setPowerUp(PowerUpType.FLOOR);
+//        bricks.get(5).setPowerUp(PowerUpType.FLOOR);
+//        bricks.get(8).setPowerUp(PowerUpType.FLOOR);
+        
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(currentLevelId, game, initialState, 3);
 
@@ -318,10 +310,34 @@ public class ArcadeLevelFactory extends LevelFactory {
         toggles.add(bricks.get(2));
         toggles.add(bricks.get(3));
         bricks.get(4).addEffect(new ToggleEffect(toggles));
-        
+
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
+    }
+
+    private List<Brick> generatePowerUps(List<Brick> bricks, int noOfPowerups) {
+
+        Random r = new Random();
+        List<Integer> bricksWithPowerup = new ArrayList();
+        int bricknr = r.nextInt(bricks.size());
+        Brick powerUpBrick;
+        for (int i = 0; i < noOfPowerups; i++) {
+            powerUpBrick = bricks.get(bricknr);
+
+            while (bricksWithPowerup.contains(bricknr) || !powerUpBrick.getType().equals("REGULAR")) {
+                bricknr = r.nextInt(bricks.size());
+                powerUpBrick = bricks.get(bricknr);
+            }
+
+            bricksWithPowerup.add(bricknr);
+            powerUpBrick.setPowerUp(PowerUpType.FLOOR);
+            bricknr = r.nextInt(bricks.size());
+        }
+        
+        System.out.println("Bricks with powerup: " + bricksWithPowerup);
+
+        return bricks;
     }
 }

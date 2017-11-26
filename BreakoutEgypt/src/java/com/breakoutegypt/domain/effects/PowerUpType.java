@@ -7,10 +7,8 @@ package com.breakoutegypt.domain.effects;
 
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public interface EffectHandler {
-
-    void handle(ExplosiveEffect e);
-    void handle(ToggleEffect e);
+public enum PowerUpType {
+    FLOOR, BROKENPADDLE
 }

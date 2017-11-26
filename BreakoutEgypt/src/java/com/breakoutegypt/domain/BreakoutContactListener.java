@@ -7,6 +7,7 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.effects.EffectHandler;
+import com.breakoutegypt.domain.effects.PowerUpHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -25,8 +26,10 @@ public class BreakoutContactListener implements ContactListener {
 
     private EffectHandler effectHandler;
     private BallEventHandler ballEventHandler; 
+    private PowerUpHandler powerupHandler;
     
-    public BreakoutContactListener(EffectHandler effectHandler, BallEventHandler ballEventHandler) {
+    public BreakoutContactListener(EffectHandler effectHandler, BallEventHandler ballEventHandler, PowerUpHandler powerupHandler) {
+        this.powerupHandler = powerupHandler;
         this.effectHandler = effectHandler;
         this.ballEventHandler = ballEventHandler;
     }
@@ -43,7 +46,7 @@ public class BreakoutContactListener implements ContactListener {
         boolean isBallOutOfBounds = isBallOutOfBounds(f1, f2, s1, s2);
 
         if (brick != null) {
-            new BrickCollisionDecider(brick, effectHandler).handleCollision();
+            new BrickCollisionDecider(brick, effectHandler, powerupHandler).handleCollision();
         } else if (isBallOutOfBounds) {
             Ball ball = getOutOfBoundsBall(s1, s2);
             ballEventHandler.setResetBallFlag(ball);
