@@ -8,7 +8,10 @@ package com.breakoutegypt.domain.effects;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
-import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.shapes.Paddle;
+import java.util.List;
 
 /**
  *
@@ -30,5 +33,14 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     public void handle(FloorPowerUp pu) {
         pu.setIsVisable(true);
         level.addFloor(pu);
+    }
+
+    @Override
+    public void handle(BrokenPaddlePowerUp bppu) {
+        breakoutWorld.addPowerupMessages(new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.BROKENPADDLE));
+        List<Paddle> brokenPaddle = bppu.getBrokenPaddle();
+        for (Paddle p : brokenPaddle){
+            levelState.addPaddle(p);
+        }
     }
 }

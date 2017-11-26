@@ -126,6 +126,16 @@ public class PowerUpTest {
         level.startBall();
         stepTimes(level, 60);
     }
+    
+    @Test
+    public void activatePowerUpWithExplosiveTest() {
+
+        game.setCurrentLevel(11);
+        level = game.getLevel();
+
+        level.startBall();
+        stepTimes(level, 60);
+    }
 
     private void stepTimes(Level level, int times) {
         for (int i = 1; i <= times; i++) {

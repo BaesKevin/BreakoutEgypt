@@ -11,8 +11,8 @@ import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.PowerUpHandler;
-import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
@@ -143,8 +143,6 @@ public class BreakoutWorld {
         ballHitPaddle = true;
         ballToChangeDirectionOff = ball;
         paddleHitByBall = paddle;
-        //TODO remove print
-        //System.out.printf("Ball (%s) hit paddle (%s)\n", ball.getName(), paddle.getName());
     }
 
     public void addBrickMessage(Message m) {
@@ -237,6 +235,24 @@ public class BreakoutWorld {
 
     void setFloorToAdd(FloorPowerUp floorToAdd) {
         this.floorToAdd = floorToAdd;
+    }
+
+    public void destroyBricks(Level level, LevelState levelState, List<Brick> bricks) {
+        String brickName;
+        for (Brick brick : bricks) {
+            if (!bodiesToDestroy.contains(brick.getBody())) {
+                brickName = brick.getName();
+
+                if (brick.hasPowerUp()) {
+                    PowerUp pu = brick.getPowerUp();
+                    pu.accept(new BreakoutPowerUpHandler(level, levelState, this));
+                }
+
+                listener.removeBrick(brick);
+                bodiesToDestroy.add(brick.getBody());
+                brickMessages.add(new BrickMessage(brickName, BrickMessageType.DESTROY));
+            }
+        }
     }
 
 }

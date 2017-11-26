@@ -17,10 +17,12 @@ import java.util.List;
  */
 public class BreakoutEffectHandler implements EffectHandler {
 
+    private Level level;
     private LevelState levelState;
     private BreakoutWorld breakoutWorld;
 
-    public BreakoutEffectHandler(LevelState levelState, BreakoutWorld breakoutWorld) {
+    public BreakoutEffectHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
+        this.level = level;
         this.levelState = levelState;
         this.breakoutWorld = breakoutWorld;
     }
@@ -29,7 +31,7 @@ public class BreakoutEffectHandler implements EffectHandler {
     public void handle(ExplosiveEffect e) {
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(e.getCentreBrick(), e.getRadius());
 
-        breakoutWorld.destroyBricks(bricks);
+        breakoutWorld.destroyBricks(level, levelState, bricks);
     }
 
     @Override

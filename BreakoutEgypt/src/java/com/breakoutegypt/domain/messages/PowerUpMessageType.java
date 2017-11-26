@@ -10,5 +10,5 @@ package com.breakoutegypt.domain.messages;
  * @author BenDB
  */
 public enum PowerUpMessageType implements MessageType{
-    ADDFLOOR, REMOVEFLOOR
+    ADDFLOOR, REMOVEFLOOR, BROKENPADDLE
 }

@@ -10,7 +10,6 @@ import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.effects.PowerUpType;
-import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
@@ -21,11 +20,8 @@ import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import javax.json.Json;
-import javax.json.JsonObject;
 
 /**
  *
@@ -217,7 +213,7 @@ public class ArcadeLevelFactory extends LevelFactory {
             row++;
             col = 1;
         }
-        
+
         bricks.get(21).setTarget(true);
         bricks.get(21).setType(BrickType.TARGET);
 
@@ -237,6 +233,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricksToToggle = new ArrayList();
         for (int i = 15; i < bricks.size(); i++) {
             bricksToToggle.add(bricks.get(i));
+            bricks.get(i).setVisible(false);
         }
         bricksToToggle.add(bricks.get(12));
         bricksToToggle.add(bricks.get(13));
@@ -245,10 +242,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(14).setBreakable(false);
 
         bricks = generatePowerUps(bricks, 3);
-        bricks.get(2).setPowerUp(PowerUpType.FLOOR);
-//        bricks.get(5).setPowerUp(PowerUpType.FLOOR);
-//        bricks.get(8).setPowerUp(PowerUpType.FLOOR);
-        
+        bricks.get(2).setPowerUp(PowerUpType.BROKENPADDLE, paddle);
+
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(currentLevelId, game, initialState, 3);
 
@@ -318,7 +313,7 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     private List<Brick> generatePowerUps(List<Brick> bricks, int noOfPowerups) {
-
+        PowerUpType[] poweruptypes = PowerUpType.values();
         Random r = new Random();
         List<Integer> bricksWithPowerup = new ArrayList();
         int bricknr = r.nextInt(bricks.size());
@@ -332,11 +327,11 @@ public class ArcadeLevelFactory extends LevelFactory {
             }
 
             bricksWithPowerup.add(bricknr);
-            powerUpBrick.setPowerUp(PowerUpType.FLOOR);
+            int idx = r.nextInt(poweruptypes.length);
+            System.out.println(poweruptypes[idx]);
+            powerUpBrick.setPowerUp(poweruptypes[idx], null);
             bricknr = r.nextInt(bricks.size());
         }
-        
-        System.out.println("Bricks with powerup: " + bricksWithPowerup);
 
         return bricks;
     }

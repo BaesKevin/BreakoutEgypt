@@ -3,28 +3,42 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.shapes;
+package com.breakoutegypt.domain.effects;
 
-import java.awt.Color;
+import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 
 /**
  *
  * @author BenDB
  */
-public class BrokenPaddle {
+public class BrokenPaddlePowerUp implements PowerUp {
 
     private Paddle base;
     private List<Paddle> brokenPaddle;
 
-    public BrokenPaddle(Paddle p) {
+    public BrokenPaddlePowerUp(Paddle p) {
         base = p;
         brokenPaddle = new ArrayList();
         breakPaddle();
     }
 
+    public BrokenPaddlePowerUp() {
+        brokenPaddle = new ArrayList();
+    }
+
     public List<Paddle> getBrokenPaddle() {
+        return brokenPaddle;
+    }
+    
+    public List<Paddle> getBrokenPaddle(Paddle p) {
+        base = p;
+        breakPaddle();
         return brokenPaddle;
     }
 
@@ -65,6 +79,17 @@ public class BrokenPaddle {
         newXs[0] = leftX;
         newXs[1] = rightX;
         return newXs;
+    }
+
+    @Override
+    public void accept(PowerUpHandler puh) {
+        puh.handle(this);
+    }
+
+    @Override
+    public JsonObject toJson() {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        return null;
     }
 
 }

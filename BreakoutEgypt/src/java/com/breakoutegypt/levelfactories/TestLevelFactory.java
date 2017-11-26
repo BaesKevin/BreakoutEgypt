@@ -13,10 +13,11 @@ import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.BrokenPaddle;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -66,8 +67,13 @@ public class TestLevelFactory extends LevelFactory {
                 break;
             case 9:
                 currentLevel = getLevelWithFloor();
+                break;
             case 10:
                 currentLevel = getLevelWithPowerUpBrick();
+                break;
+            case 11:
+                currentLevel = getLevelWithExplosiveAndPowerUpBrick();
+                break;
         }
     }
 
@@ -207,7 +213,7 @@ public class TestLevelFactory extends LevelFactory {
         ShapeDimension basePaddleShape = new ShapeDimension("paddle", 70, 250, 100, 4);
         Paddle basePaddle = new Paddle(basePaddleShape);
 
-        BrokenPaddle bp = new BrokenPaddle(basePaddle);
+        BrokenPaddlePowerUp bp = new BrokenPaddlePowerUp(basePaddle);
         List<Paddle> brokenPaddle = bp.getBrokenPaddle();
 
         ShapeDimension ballShape = new ShapeDimension("ball", brokenPaddle.get(0).getShape().getPosX(), 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
@@ -247,7 +253,29 @@ public class TestLevelFactory extends LevelFactory {
         
         List<Brick> bricks = new ArrayList();
         bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 100, 20, 10), new Point(0, 1)));
-        bricks.get(0).setPowerUp(PowerUpType.FLOOR);
+        bricks.get(0).setPowerUp(PowerUpType.FLOOR, null);
+        
+        
+        LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
+
+        Level level = new Level(1, game, initialState, 3);
+        level.setRunManual(true);
+        return level;
+        
+    }
+    
+    private Level getLevelWithExplosiveAndPowerUpBrick() {
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 50, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+        
+        
+        List<Brick> bricks = new ArrayList();
+        bricks.add(new Brick(new ShapeDimension("regularbrick", 100, 100, 20, 10), new Point(0, 1)));
+        bricks.add(new Brick(new ShapeDimension("explosivebrick", 70, 100, 20, 10), new Point(1, 1)));
+        bricks.get(0).setPowerUp(PowerUpType.FLOOR, null);
+        bricks.get(1).addEffect(new ExplosiveEffect(bricks.get(1), 1));
+        bricks.get(1).setType(BrickType.EXPLOSIVE);
         
         
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);

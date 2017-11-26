@@ -63,7 +63,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
-                new BreakoutEffectHandler(levelState, breakoutWorld),
+                new BreakoutEffectHandler(this, levelState, breakoutWorld),
                 this,
                 new BreakoutPowerUpHandler(this, levelState, breakoutWorld));
 

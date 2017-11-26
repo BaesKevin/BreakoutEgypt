@@ -5,11 +5,13 @@
  */
 package com.breakoutegypt.domain.shapes.bricks;
 
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
@@ -131,12 +133,15 @@ public class Brick extends RegularBody {
         return brickTypeName;
     }
 
-    public void setPowerUp(PowerUpType type) {
+    public void setPowerUp(PowerUpType type, Paddle p) {
         poweruptype = type;
 
         if (type.equals(PowerUpType.FLOOR)) {
             ShapeDimension s = new ShapeDimension("floor", 0, 290, 300, 3);
             powerup = new FloorPowerUp(s);
+            hasPowerUp = true;
+        } else if (type.equals(PowerUpType.BROKENPADDLE)) {
+            powerup = new BrokenPaddlePowerUp(p);
             hasPowerUp = true;
         }
     }
