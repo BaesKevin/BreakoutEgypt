@@ -7,11 +7,13 @@ package com.breakoutegypt.domain.effects;
 
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /**
  *
@@ -28,17 +30,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         breakPaddle();
     }
 
-    public BrokenPaddlePowerUp() {
-        brokenPaddle = new ArrayList();
-    }
-
     public List<Paddle> getBrokenPaddle() {
-        return brokenPaddle;
-    }
-    
-    public List<Paddle> getBrokenPaddle(Paddle p) {
-        base = p;
-        breakPaddle();
         return brokenPaddle;
     }
 
@@ -89,7 +81,13 @@ public class BrokenPaddlePowerUp implements PowerUp {
     @Override
     public JsonObject toJson() {
         JsonArrayBuilder jab = Json.createArrayBuilder();
-        return null;
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        jab.add(brokenPaddle.get(0).getShape().toJson().build());
+        jab.add(brokenPaddle.get(1).getShape().toJson().build());
+        job.add("brokenpaddle", jab.build());
+        
+        
+        return job.build();
     }
 
 }

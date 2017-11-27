@@ -133,17 +133,11 @@ public class Brick extends RegularBody {
         return brickTypeName;
     }
 
-    public void setPowerUp(PowerUpType type, Paddle p) {
-        poweruptype = type;
+    public void setPowerUp(PowerUp powerup) {
+        this.powerup = powerup;
 
-        if (type.equals(PowerUpType.FLOOR)) {
-            ShapeDimension s = new ShapeDimension("floor", 0, 290, 300, 3);
-            powerup = new FloorPowerUp(s);
-            hasPowerUp = true;
-        } else if (type.equals(PowerUpType.BROKENPADDLE)) {
-            powerup = new BrokenPaddlePowerUp(p);
-            hasPowerUp = true;
-        }
+        hasPowerUp = true;
+
     }
 
     public boolean hasPowerUp() {
@@ -153,7 +147,7 @@ public class Brick extends RegularBody {
     public PowerUpType getPowerUpType() {
         return poweruptype;
     }
-    
+
     public PowerUp getPowerUp() {
         return powerup;
     }

@@ -82,7 +82,7 @@ const Level = (function () {
     };
 
     Level.prototype.handleUpdate = function (json) {
-        console.log(json[0])
+        console.log(json)
         switch (json[0].powerupaction) {
             case "ADDFLOOR":
                 let powerup = json[0].powerup;
@@ -91,6 +91,9 @@ const Level = (function () {
             case "REMOVEFLOOR":
                 level.floor = false;
                 break;
+            case "BROKENPADDLE":
+                console.log(json[0].powerup)
+                level.paddles = json[0].powerup.brokenpaddle;
         }
         ScalingModule.scaleAfterResize();
         DrawingModule.updateStaticContent();

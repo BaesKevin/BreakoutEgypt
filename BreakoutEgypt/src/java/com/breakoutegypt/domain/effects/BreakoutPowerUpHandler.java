@@ -37,10 +37,8 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
 
     @Override
     public void handle(BrokenPaddlePowerUp bppu) {
-        breakoutWorld.addPowerupMessages(new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.BROKENPADDLE));
         List<Paddle> brokenPaddle = bppu.getBrokenPaddle();
-        for (Paddle p : brokenPaddle){
-            levelState.addPaddle(p);
-        }
+        level.deSpawn(bppu.getBasePaddle());
+        level.setBrokenPaddle(bppu);
     }
 }

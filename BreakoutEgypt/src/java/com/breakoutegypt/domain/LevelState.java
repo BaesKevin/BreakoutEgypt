@@ -112,9 +112,12 @@ public class LevelState {
         }
     }
 
-    public void setFloor(FloorPowerUp floor, BreakoutWorld world) {
+    public void addFloor(FloorPowerUp floor) {
         this.floor = floor;
-        world.setFloorToAdd(floor);
+    }
+    
+    public void removePaddle(Paddle p) {
+        paddles.remove(p);
     }
 
     public void removeFloor() {
@@ -186,23 +189,14 @@ public class LevelState {
         walls.add(rightWall);
         walls.add(topWall);
     }
-
-    public void spawnAllObjects(BreakoutWorld breakoutWorld) {
-        for (Brick b : bricks) {
-            breakoutWorld.spawn(b);
-        }
-
-        for (Ball b : balls) {
-            breakoutWorld.spawn(b);
-        }
-
-        for (Paddle p : paddles) {
-            breakoutWorld.spawn(p);
-        }
-
-        for (RegularBody wall : walls) {
-            breakoutWorld.spawn(wall);
-        }
+    
+    public List<RegularBody> getAllObjectsToSpawn() {
+        List<RegularBody> bodies = new ArrayList();
+        bodies.addAll(balls);
+        bodies.addAll(walls);
+        bodies.addAll(bricks);
+        bodies.addAll(paddles);
+        return bodies;
     }
 
     // TODO calculate range without Points, test this monstrosity

@@ -79,46 +79,7 @@ public class PowerUpTest {
     }
 
     @Test
-    public void testFloorInLevel() {
-        game.setCurrentLevel(9);
-        List<Message> messagesWithFloor = runLevelWithFloor(true);
-        System.out.println(messagesWithFloor);
-        assertEquals(1, messagesWithFloor.size());
-    }
-
-    @Test
-    public void testFloorInLevel2() {
-        game.setCurrentLevel(9);
-        List<Message> messagesWithoutFloor = runLevelWithFloor(false);
-        System.out.println(messagesWithoutFloor);
-        assertEquals(2, messagesWithoutFloor.size());
-    }
-
-    private List<Message> runLevelWithFloor(boolean hasFloor) {
-
-        level = game.getLevel();
-
-        level.startBall();
-        stepTimes(level, 30);
-
-        if (hasFloor) {
-            ShapeDimension s = new ShapeDimension("floor", 0, 290, 300, 1);
-            FloorPowerUp floor = new FloorPowerUp(s);
-            level.addFloor(floor);
-        }
-
-        stepTimes(level, 80);
-
-        DummyConnection dc = (DummyConnection) player.getConnection();
-        List<Message> ballmessages = dc.getBallMessages();
-
-        level.getLevelState().getBalls();
-
-        return ballmessages;
-    }
-
-    @Test
-    public void activatePowerUpTest() {
+    public void activateFloorPowerUpTest() {
 
         game.setCurrentLevel(10);
         level = game.getLevel();
@@ -137,6 +98,18 @@ public class PowerUpTest {
         stepTimes(level, 60);
     }
 
+    @Test
+    public void activateBrokenPaddlePowerup() {
+        
+        game.setCurrentLevel(12);
+        level = game.getLevel();
+
+        level.startBall();
+        stepTimes(level, 60);
+        
+    }
+    
+    
     private void stepTimes(Level level, int times) {
         for (int i = 1; i <= times; i++) {
             level.step();

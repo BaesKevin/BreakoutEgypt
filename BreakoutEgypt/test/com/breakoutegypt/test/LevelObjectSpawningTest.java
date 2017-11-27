@@ -11,6 +11,7 @@ import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -41,7 +42,10 @@ public class LevelObjectSpawningTest {
         LevelState initialState = new LevelState(ball, paddle, bricks);
         BreakoutWorld world = new BreakoutWorld();
         
-        initialState.spawnAllObjects(world);
+        List<RegularBody> bodies = initialState.getAllObjectsToSpawn();
+        for (RegularBody rb : bodies ) {
+            world.spawn(rb);
+        }
         
         // 4 walls, ball, brick and paddle
         Assert.assertEquals(7, world.countWorldObjects());

@@ -6,6 +6,7 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.messages.Message;
@@ -61,6 +62,9 @@ public class BreakoutWorld {
     private Ball outOfBoundsBall;
     private FloorPowerUp floorToAdd;
     private FloorPowerUp floorInGame;
+    private BrokenPaddlePowerUp brokenPaddleToAdd;
+    private BrokenPaddlePowerUp brokenPaddle;
+    
 
     public BreakoutWorld(/*Level level*/) {
         this(/*level, */TIMESTEP_DEFAULT);
@@ -186,7 +190,21 @@ public class BreakoutWorld {
             listener.ballOutOfBounds(outOfBoundsBall);
             isBallOutOfBounds = false;
         }
+        addBrokenPaddleIfNecessary();
         addFloorIfNecessary();
+    }
+
+    private void addBrokenPaddleIfNecessary() {
+
+        if (brokenPaddleToAdd != null) {
+            this.deSpawn(brokenPaddleToAdd.getBasePaddle().getBody());
+            for (Paddle p : brokenPaddleToAdd.getBrokenPaddle()) {
+                this.spawn(p);
+            }
+            this.addPowerupMessages(new PowerUpMessage("brokenPaddle", brokenPaddleToAdd, PowerUpMessageType.BROKENPADDLE));
+            this.brokenPaddle = brokenPaddleToAdd;
+            brokenPaddleToAdd = null;
+        }
     }
 
     private void addFloorIfNecessary() {
@@ -255,4 +273,11 @@ public class BreakoutWorld {
         }
     }
 
+    void deSpawn(Body rb) {
+        world.destroyBody(rb);
+    }
+
+    void setBrokenPaddleToAdd(BrokenPaddlePowerUp bppu) {
+        brokenPaddleToAdd = bppu;
+    }
 }

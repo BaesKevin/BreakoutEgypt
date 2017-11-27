@@ -11,9 +11,11 @@ import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 
@@ -59,7 +61,10 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
 
         levelState = initialState;
-        levelState.spawnAllObjects(breakoutWorld);
+        List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
+        for (RegularBody rb : bodiesToSpawn) {
+            breakoutWorld.spawn(rb);
+        }
 
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
@@ -226,6 +231,18 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     public void addFloor(FloorPowerUp floor) {
-        levelState.setFloor(floor, breakoutWorld);
+        levelState.addFloor(floor);
+        breakoutWorld.setFloorToAdd(floor);
+    }
+    
+    public void setBrokenPaddle(BrokenPaddlePowerUp bppu) {
+        for (Paddle p : bppu.getBrokenPaddle()) {
+            levelState.addPaddle(p);
+        }
+        breakoutWorld.setBrokenPaddleToAdd(bppu);
+    }
+    
+    public void deSpawn(Paddle p) {
+        levelState.removePaddle(p);
     }
 }

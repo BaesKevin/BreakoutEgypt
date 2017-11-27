@@ -9,8 +9,11 @@ import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
+import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -241,8 +244,10 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(14).setType(BrickType.SWITCH);
         bricks.get(14).setBreakable(false);
 
-        bricks = generatePowerUps(bricks, 3);
-        bricks.get(2).setPowerUp(PowerUpType.BROKENPADDLE, paddle);
+        List<PowerUp> powerups = createPowerups(3, paddle);
+        bricks = generatePowerUps(bricks, powerups);
+//        bricks.get(2).setPowerUp(PowerUpType.BROKENPADDLE, paddle);
+        bricks.get(5).setPowerUp(createBrokenPaddle(paddle));
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(currentLevelId, game, initialState, 3);
@@ -312,27 +317,55 @@ public class ArcadeLevelFactory extends LevelFactory {
         return level;
     }
 
-    private List<Brick> generatePowerUps(List<Brick> bricks, int noOfPowerups) {
+    private List<Brick> generatePowerUps(List<Brick> bricks, List<PowerUp> powerups) {
         PowerUpType[] poweruptypes = PowerUpType.values();
         Random r = new Random();
         List<Integer> bricksWithPowerup = new ArrayList();
         int bricknr = r.nextInt(bricks.size());
         Brick powerUpBrick;
-        for (int i = 0; i < noOfPowerups; i++) {
+        for (int i = 0; i < powerups.size(); i++) {
             powerUpBrick = bricks.get(bricknr);
 
             while (bricksWithPowerup.contains(bricknr) || !powerUpBrick.getType().equals("REGULAR")) {
                 bricknr = r.nextInt(bricks.size());
                 powerUpBrick = bricks.get(bricknr);
             }
-
+            
+            powerUpBrick.setPowerUp(powerups.get(i));
+            System.out.println(powerups.get(i));
             bricksWithPowerup.add(bricknr);
-            int idx = r.nextInt(poweruptypes.length);
-            System.out.println(poweruptypes[idx]);
-            powerUpBrick.setPowerUp(poweruptypes[idx], null);
             bricknr = r.nextInt(bricks.size());
         }
 
         return bricks;
+    }
+
+    private List<PowerUp> createPowerups(int noOfPowerups, Paddle paddle) {
+        
+        List<PowerUp> powerups = new ArrayList();
+        PowerUpType[] poweruptypes = PowerUpType.values();
+        
+        Random r = new Random();
+        int powerupNr = r.nextInt(poweruptypes.length);
+
+        for (int i = 0; i < noOfPowerups; i++) {
+            if (poweruptypes[powerupNr].name().equals("FLOOR")) {
+                powerups.add(createFloor());
+            } else if (poweruptypes[powerupNr].name().equals("BROKENPADDLE")) {
+                powerups.add(createBrokenPaddle(paddle));
+            }
+            powerupNr = r.nextInt(poweruptypes.length);
+        }
+
+        return powerups;
+    }
+    
+    public FloorPowerUp createFloor() {
+        ShapeDimension floorShape = new ShapeDimension("floor", 0, 290, 300, 3);
+        return new FloorPowerUp(floorShape);
+    }
+    
+    public BrokenPaddlePowerUp createBrokenPaddle(Paddle p) {
+        return new BrokenPaddlePowerUp(p);
     }
 }
