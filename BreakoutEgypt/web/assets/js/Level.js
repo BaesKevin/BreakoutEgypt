@@ -76,7 +76,11 @@ Level.prototype.loadLevel = function () {
     console.log("load level " + level + " for game  " + gameId);
     var self = this;
 
-    fetch('level?gameId=' + gameId).then(function (response) {
+    fetch('level?gameId='+gameId, {method: "GET", credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    }).then(function (response) {
         var json = response.json();
         var contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {

@@ -46,7 +46,7 @@ $("#movingParts")[0].addEventListener("click", function () {
 
     var gameId = getParameterByName("gameId");
     console.log("Doing post for game " + gameId + " to start the ball.");
-    fetch('level', {method: "POST", body: "gameId=" + gameId,
+    fetch('level', {method: "POST", body: "gameId=" + gameId,credentials: "same-origin",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         }
