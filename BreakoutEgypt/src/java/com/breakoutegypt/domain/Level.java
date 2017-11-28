@@ -73,6 +73,10 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     public boolean isLevelStarted() {
         return levelStarted;
     }
+    
+    public void setLevelNumber(int id) {
+        this.id = id;
+    }
 
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;

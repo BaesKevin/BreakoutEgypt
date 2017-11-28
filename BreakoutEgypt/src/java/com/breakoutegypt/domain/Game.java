@@ -13,7 +13,7 @@ import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.domain.shapes.Paddle;
-import com.breakoutegypt.levelfactories.EasyArcadeLevelFactory;
+import com.breakoutegypt.levelfactories.ArcadeLevelFactoryWithDifficulty;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class Game {
     private int id;
     private Level currentLevel;
 
-    private EasyArcadeLevelFactory levelFactory;
+    private ArcadeLevelFactoryWithDifficulty levelFactory;
     
     private SessionManager manager;
 
@@ -37,7 +37,7 @@ public class Game {
 
         //levelFactory = createLevelFactoryForGameType(gameType, difficulty);
         
-        levelFactory = new EasyArcadeLevelFactory(this);
+        levelFactory = new ArcadeLevelFactoryWithDifficulty(this, difficulty);
         
         //this.userLevelsFactory = new UserLevelsFactory(this);
         //this.userLevels = userLevelsFactory.getUserLevelsForSomeRandomUser(33);

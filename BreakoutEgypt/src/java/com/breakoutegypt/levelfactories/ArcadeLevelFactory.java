@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
@@ -54,6 +55,10 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getSimpleTestLevel() {
+        return getSimpleTestLevel(BreakoutWorld.TIMESTEP_DEFAULT);
+    }
+    
+    public Level getSimpleTestLevel(float timeStep) {
 //        targetBlocks = 5;
         ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
         ShapeDimension ballShape = new ShapeDimension("ball", 45, 15, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
@@ -80,12 +85,16 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.add(brick);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(1, game, initialState, 3, timeStep);
 
         return level;
     }
-
+    
     public Level getLevelWithUnbreakableAndExplosive() {
+        return getLevelWithUnbreakableAndExplosive(BreakoutWorld.TIMESTEP_DEFAULT);
+    }
+
+    public Level getLevelWithUnbreakableAndExplosive(float timeStep) {
         ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
         ShapeDimension ballShape = new ShapeDimension("ball", 60, 90, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
