@@ -21,6 +21,12 @@ import java.util.List;
  *
  * @author kevin
  */
+
+// levels zullen altijd dezelfde initiele LevelState bevatten, 
+// voorstel: Game maakt een DiffucultyConfiguration obv Difficulty enum en geeft die door aan 
+// LevelFactory die hem dan weer doorgeeft aan Level. 
+// obv dat object kan dan bv. in Level startBall de snelheid van een bal worden uitgelezen, 
+// bij overgang van levels gekeken worden met hoeveel levens een level moet starten, etc...
 public class Game {
 
     private static int ID = 0;
@@ -41,12 +47,12 @@ public class Game {
         
         //this.userLevelsFactory = new UserLevelsFactory(this);
         //this.userLevels = userLevelsFactory.getUserLevelsForSomeRandomUser(33);
-       
         setCurrentLevel(startingLevel);
     }
 
-    private LevelFactory createLevelFactoryForGameType(GameType gameType, GameDifficulty difficulty){
-        switch(gameType){
+    // hier zou je dan je DiffuciltyConfig aanmaken
+    private LevelFactory createLevelFactoryForGameType(GameType gameType, GameDifficulty difficulty) {
+        switch (gameType) {
             case ARCADE:
                 return new ArcadeLevelFactory(this);
             case MULTIPLAYER:
@@ -54,10 +60,11 @@ public class Game {
             case TEST:
                 return new TestLevelFactory(this);
         }
-        
+
         return null;
 
     }
+
     public int getId() {
         return id;
     }
@@ -68,7 +75,7 @@ public class Game {
 
     public void movePaddle(String username, int x, int y) {
         Player peer = manager.getPlayer(username);
-        
+
         if (peer != null) {
             currentLevel.movePaddle(peer.getPaddle(), x, y);
         } else {
@@ -130,7 +137,7 @@ public class Game {
     public void stopLevel() {
         currentLevel.stop();
     }
-    
+
     public void togglePaused() {
         currentLevel.togglePaused();
     }

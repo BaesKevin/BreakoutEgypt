@@ -11,6 +11,9 @@ import com.breakoutegypt.domain.Level;
  *
  * @author snc
  */
+// zie Player.java voor alternatieve aanpak. Naam van een level zou in Level bijgehouden worden, 
+// seqNumber is het levelId neem ik aan, en isLocked wordt bepaald door aan de Player zijn 
+// levelprogression te vragen welk level hij bereikt heeft voor een bepaalde gamemode.
 public class UserLevel {
     
     private boolean isLocked;
