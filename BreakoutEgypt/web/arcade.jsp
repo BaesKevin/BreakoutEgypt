@@ -4,6 +4,8 @@
     Author     : Bjarne Deketelaere
 --%>
 
+<%@page import="com.breakoutegypt.domain.User"%>
+<%@page import="com.breakoutegypt.domain.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
