@@ -28,8 +28,6 @@ public class ArcadeServlet extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("ArcadeServlet: Creating game");
-        
         GameManager gm = new GameManager();
         
         // TODO get from querystring

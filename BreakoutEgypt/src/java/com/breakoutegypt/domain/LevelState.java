@@ -5,6 +5,9 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.messages.BallMessage;
+import com.breakoutegypt.domain.messages.BallMessageType;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
@@ -16,6 +19,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,6 +33,12 @@ public class LevelState {
     private List<Paddle> paddles;
     private List<RegularBody> walls;
     private Ball startingBall;
+    private List<Ball> balls;
+    private List<Message> messages;
+
+    public List<Message> getMessages() {
+        return messages;
+    }
 
     private BodyConfigurationFactory factory;
 
@@ -38,14 +48,21 @@ public class LevelState {
     }
 
     public LevelState(Ball ball, List<Paddle> paddles, List<Brick> bricks) {
-        this.bricks = new ArrayList();
+        this(new ArrayList(), paddles, bricks);
+        addBall(ball);
+    }
+
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks) {
+        this.bricks = Collections.synchronizedList(new ArrayList());
         this.paddles = new ArrayList();
         this.walls = new ArrayList();
+        this.balls = Collections.synchronizedList(new ArrayList());
+        this.messages = new ArrayList();
 
         factory = new BodyConfigurationFactory();
 
         createBounds();
-        addBall(ball);
+        addBalls(balls);
 
         for (Paddle paddle : paddles) {
             addPaddle(paddle);
@@ -73,11 +90,24 @@ public class LevelState {
     }
 
     public void addBall(Ball ball) {
-        this.startingBall = ball;
+        List<Ball> tempBalls = new ArrayList<>();
+        tempBalls.add(ball);
+        addBalls(tempBalls);
+    }
 
-        BodyConfiguration ballBodyConfig = factory.createBallConfig(ball.getShape());
-        ball.setBox2dConfig(ballBodyConfig);
-        this.ball = ball;
+    public void addBalls(List<Ball> balls) {
+        boolean first = true;
+        for (Ball b : balls) {
+            BodyConfiguration ballBodyConfig = factory.createBallConfig(b.getShape());
+            b.setBox2dConfig(ballBodyConfig);
+
+            if (first) {
+                this.startingBall = b;
+                this.ball = b;
+                first = false;
+            }
+            this.balls.add(b);
+        }
     }
 
     public List<Brick> getBricks() {
@@ -86,6 +116,10 @@ public class LevelState {
 
     public Ball getBall() {
         return ball;
+    }
+
+    public List<Ball> getBalls() {
+        return balls;
     }
 
     public List<Paddle> getPaddles() {
@@ -97,9 +131,10 @@ public class LevelState {
     }
 
     void resetBall(BreakoutWorld breakoutWorld) {
-
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
+        messages.add(new BallMessage(startingBall, BallMessageType.ADD));
+        balls.add(startingBall);
         breakoutWorld.spawn(startingBall);
     }
 
@@ -145,7 +180,9 @@ public class LevelState {
             breakoutWorld.spawn(b);
         }
 
-        breakoutWorld.spawn(ball);
+        for (Ball b : balls) {
+            breakoutWorld.spawn(b);
+        }
 
         for (Paddle p : paddles) {
             breakoutWorld.spawn(p);
@@ -156,6 +193,7 @@ public class LevelState {
         }
     }
 
+    // TODO calculate range without Points, test this monstrosity
     public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
         List<Brick> bricksToRemove = new ArrayList();
         Point centre = centreBrick.getGridPosition();
@@ -168,7 +206,7 @@ public class LevelState {
             for (Brick brick : bricks) {
                 currentBrickPosition = brick.getGridPosition();
                 if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
-                    if (brick.isVisible() && !( hasToggleEffect(brick.getEffects()) )) {
+                    if (brick.isVisible() && !(hasToggleEffect(brick.getEffects()))) {
                         bricksToRemove.add(brick);
                     }
 
@@ -178,17 +216,31 @@ public class LevelState {
 
         return bricksToRemove;
     }
-    
-    private boolean hasToggleEffect(List<Effect> effects){
+
+    private boolean hasToggleEffect(List<Effect> effects) {
         boolean hasSwitch = false;
-        
-        for(Effect e : effects){
-            if( e instanceof ToggleEffect){
+
+        for (Effect e : effects) {
+            if (e instanceof ToggleEffect) {
                 hasSwitch = true;
                 break;
             }
         }
-        
+
         return hasSwitch;
+    }
+
+    void removeBall(Ball ball) {
+        for (Ball b : balls) {
+            if (b.getName().equals(ball.getName())) {
+                balls.remove(b);
+                messages.add(new BallMessage(ball.getName(), BallMessageType.REMOVE));
+                break;
+            }
+        }
+    }
+
+    public void clearMessages() {
+        messages.clear();
     }
 }

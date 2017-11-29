@@ -19,7 +19,7 @@ public class RegularBody {
     private BodyConfiguration config;
     
     public RegularBody(ShapeDimension s) {
-        this.shape = s;
+        this.shape = s; // clone
     }
 
     public String getName() {

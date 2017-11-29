@@ -23,7 +23,6 @@ public class GameManager {
         
         games.put(game.getId(), game);
                
-        System.out.println("GameManager: Created game " + game.getId());
         return game.getId();
     }
 
@@ -39,7 +38,6 @@ public class GameManager {
     }
     
     public void stopGame(int gameId){
-        System.out.println("GameManager: stopping game " + gameId );
         games.get(gameId).stopLevel();        
     }
 
@@ -49,8 +47,6 @@ public class GameManager {
         
         if(game!=null)
             game.addConnectingPlayer(player);
-        else
-            System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }
     
     public void addConnectionForPlayer(int gameId, String name, PlayerConnection conn){
@@ -58,8 +54,6 @@ public class GameManager {
         
         if(game!=null)
             game.addConnectionForPlayer(name, conn);
-        else
-            System.out.println("GameManager: Trying to add player to game that doesn't exist");
     }
     
     public void assignPaddleToPlayer(int gameId, Player player) {
@@ -67,8 +61,6 @@ public class GameManager {
                 
         if(game!=null)
             game.assignPaddleToPlayer(player);
-        else
-            System.out.println("GameManager: Trying to add player to game that doesn't exist");
         
     }
 
@@ -79,12 +71,9 @@ public class GameManager {
             if(game != null){
                 game.removePlayer(name);
                 if(game.hasNoPlayers()){
-                    
                     stopGame(game.getId());
                     games.remove(game.getId());
                 }
-            } else {
-//                System.out.println("TGameManager: rying to remove player to game that doesn't exist");
             }
         }
         

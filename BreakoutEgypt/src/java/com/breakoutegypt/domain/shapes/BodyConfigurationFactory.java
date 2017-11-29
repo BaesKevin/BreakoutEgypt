@@ -65,12 +65,12 @@ public class BodyConfigurationFactory {
 
     public BodyConfiguration createBallConfig(ShapeDimension s) {
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.DYNAMIC, new Vec2(s.getPosX(), s.getPosY()));
-
+        
         CircleShape cs = new CircleShape();
         cs.m_radius = s.getWidth() / 2;
 
-        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f);
-
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, -1);
+        
         return new BodyConfiguration(bodyDefConfig, cs, fixtureConfig);
     }
 

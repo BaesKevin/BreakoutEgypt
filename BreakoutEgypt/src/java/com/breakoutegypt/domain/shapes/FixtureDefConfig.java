@@ -14,16 +14,23 @@ import org.jbox2d.dynamics.FixtureDef;
 public class FixtureDefConfig {
     private float density, friction, restitution;
     private boolean isSensor;
+    private int groupid;
 
     public FixtureDefConfig(float density, float friction, float restitution) {
-        this(density, friction, restitution, false);
+        this(density, friction, restitution, false, 0);
     }
+    
 
     public FixtureDefConfig(float density, float friction, float restitution, boolean isSensor) {
+        this(density, friction, restitution, isSensor, 0);
+    }
+    
+    public FixtureDefConfig(float density, float friction, float restitution, boolean isSensor, int groupid) {
         this.density = density;
         this.friction = friction;
         this.restitution = restitution;
         this.isSensor = isSensor;
+        this.groupid = groupid;
     }
     
     
@@ -51,7 +58,7 @@ public class FixtureDefConfig {
         def.friction = friction;
         def.restitution = restitution;
         def.isSensor = isSensor;
-        
+        def.filter.groupIndex = groupid;
         return def;
     }
 }

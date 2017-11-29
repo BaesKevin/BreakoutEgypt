@@ -5,6 +5,9 @@
  */
 package com.breakoutegypt.connectionmanagement;
 
+import com.breakoutegypt.domain.messages.Message;
+import java.util.List;
+import java.util.Map;
 import javax.json.JsonObject;
 
 /**
@@ -13,4 +16,6 @@ import javax.json.JsonObject;
  */
 public interface PlayerConnection {
     void send(JsonObject json);
+    void send(Message msg);
+    void send(Map<String, List<Message>> msgs);
 }

@@ -5,6 +5,9 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.messages.BrickMessageType;
+import com.breakoutegypt.domain.messages.BrickMessage;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
@@ -31,7 +34,7 @@ public class BreakoutWorld {
     // TODO use these!
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    public static final float TIMESTEP_DEFAULT = 1.0f / 60f;
+    public static final float TIMESTEP_DEFAULT = 0.5f / 60f;
     private float timestepSeconds;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
@@ -44,7 +47,7 @@ public class BreakoutWorld {
     private List<Body> bodiesToDestroy;
     private List<String> keysOfBodiesToDestroy;
     private boolean ballHitPaddle = false;
-    private List<BrickMessage> messages;
+    private List<Message> messages;
 
     private Ball ballToChangeDirectionOff;
     private Paddle paddleHitByBall;
@@ -136,11 +139,15 @@ public class BreakoutWorld {
         paddleHitByBall = paddle;
     }
 
-    public List<BrickMessage> getBrickMessages() {
+    public void addMessage(Message m) {
+        messages.add(m);
+    }
+    
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void clearBrickMessages() {
+    public void clearMessages() {
         messages.clear();
     }
 
@@ -155,7 +162,7 @@ public class BreakoutWorld {
         bodiesToDestroy.clear();
 
         if (ballHitPaddle) {
-            adjustBallDirection();
+//            adjustBallDirection();
             ballHitPaddle = false;
         } else if (isBallOutOfBounds) {
             listener.ballOutOfBounds(outOfBoundsBall);
@@ -169,7 +176,6 @@ public class BreakoutWorld {
         float relativeDistance = (ballToChangeDirectionOff.getBody().getPosition().x - adjustedX) / width;
 
         float newX = -100 + relativeDistance * 200;
-//        System.out.printf("New ball direction: (%f,%f)", newX, ballToChangeDirectionOff.getLinearVelocity().y);
         ballToChangeDirectionOff.setLinearVelocity(newX, ballToChangeDirectionOff.getLinearVelocity().y);
     }
 
