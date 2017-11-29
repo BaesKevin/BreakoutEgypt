@@ -11,6 +11,8 @@ import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.domain.messages.BrickMessage;
+import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
@@ -222,6 +224,7 @@ public class LevelState {
 
         return bricksToRemove;
     }
+    
 
     private boolean hasToggleEffect(List<Effect> effects) {
         boolean hasSwitch = false;

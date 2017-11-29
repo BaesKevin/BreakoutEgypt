@@ -54,7 +54,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
 
     @Override
     public void accept(PowerUpHandler puh) {
-        puh.handle(this);
+        puh.handleFloorPowerUp(this);
     }
 
     @Override

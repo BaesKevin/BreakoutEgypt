@@ -19,12 +19,10 @@ public class BrickCollisionDecider {
 
     private EffectHandler collisionEventHandler;
     private Brick brick;
-    private PowerUpHandler powerupHandler;
 
-    public BrickCollisionDecider(Brick brick, EffectHandler collisionEventHandler, PowerUpHandler powerupHandler) {
+    public BrickCollisionDecider(Brick brick, EffectHandler collisionEventHandler) {
         this.brick = brick;
         this.collisionEventHandler = collisionEventHandler;
-        this.powerupHandler = powerupHandler;
     }
 
     public void handleCollision() {

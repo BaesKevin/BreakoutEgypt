@@ -24,7 +24,7 @@ import java.util.Timer;
  *
  * @author kevin
  */
-public class Level implements BreakoutWorldEventListener, BallEventHandler {
+public class Level implements BreakoutWorldEventListener {
 
     private int id;
 
@@ -69,7 +69,6 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
-                this,
                 new BreakoutPowerUpHandler(this, levelState, breakoutWorld));
 
         this.lives = lives;
@@ -182,7 +181,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     public void step() {
         breakoutWorld.step();
-        game.notifyPlayers(this, breakoutWorld);
+        game.notifyPlayers(this, breakoutWorld.getMessageRepo());
     }
 
     public boolean noLivesLeft() {
@@ -219,18 +218,8 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     @Override
-    public void setResetBallFlag(Ball ball) {
-        breakoutWorld.setResetBallFlag(ball);
-    }
-
-    @Override
-    public void ballHitPaddle(Ball ball, Paddle paddle) {
-        breakoutWorld.ballHitPaddle(ball, paddle);
-    }
-
-    @Override
     public void ballOutOfBounds(Ball ball) {
-        breakoutWorld.destroyBody(ball.getBody());
+        breakoutWorld.deSpawn(ball.getBody());
         resetBall(ball);
         /*
         TODO
@@ -257,18 +246,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     public void addFloor(FloorPowerUp floor) {
         levelState.addFloor(floor);
-        breakoutWorld.setFloorToAdd(floor);
-    }
-
-    public void setBrokenPaddle(BrokenPaddlePowerUp bppu) {
-        for (Paddle p : bppu.getBrokenPaddle()) {
-            levelState.addPaddle(p);
-        }
-        breakoutWorld.setBrokenPaddleToAdd(bppu);
-    }
-
-    public void deSpawn(Paddle p) {
-        levelState.removePaddle(p);
+//        breakoutWorld.setFloorToAdd(floor);
     }
 
     public void addPaddle(Paddle basePaddle) {

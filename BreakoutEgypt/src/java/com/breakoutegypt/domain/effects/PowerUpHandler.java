@@ -10,7 +10,7 @@ package com.breakoutegypt.domain.effects;
  * @author BenDB
  */
 public interface PowerUpHandler {
-    void handle(FloorPowerUp fpu);
+    void handleFloorPowerUp(FloorPowerUp fpu);
     void handleAddBrokenPaddle(BrokenPaddlePowerUp bppu);
-    void handleRemoveBrokenPaddle(BrokenPaddlePowerUp bppu);
+    void removePowerupsIfTimedOut();
 }

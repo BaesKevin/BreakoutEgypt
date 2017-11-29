@@ -246,7 +246,8 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         List<PowerUp> powerups = createPowerups(3, paddle);
 //        bricks = generatePowerUps(bricks, powerups);
-        bricks.get(5).setPowerUp(createBrokenPaddle(paddle));
+//        bricks.get(5).setPowerUp(createBrokenPaddle(paddle));
+        bricks.get(5).setPowerUp(createFloor());
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(currentLevelId, game, initialState, 3);
