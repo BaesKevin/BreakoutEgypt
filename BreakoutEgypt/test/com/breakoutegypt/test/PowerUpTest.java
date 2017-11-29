@@ -12,13 +12,9 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.effects.FloorPowerUp;
-import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,7 +63,7 @@ public class PowerUpTest {
             b.setLinearVelocity(0, 100);
         }
 
-        stepTimes(level, 60);
+        stepTimes(level, 100);
 
         for (Ball b : balls) {
             System.out.printf("Ball %s: x = %2.2f\n", b.getName(), b.getPosition().y);
@@ -75,6 +71,23 @@ public class PowerUpTest {
 
         DummyConnection conn = (DummyConnection) player.getConnection();
         System.out.println(conn.getBallMessages());
+
+    }
+
+    @Test
+    public void testBrokenPaddleMovement() {
+        game.setCurrentLevel(8);
+        level = game.getLevel();
+        List<Paddle> paddles = level.getLevelState().getPaddles();
+        System.out.println("Paddle position: ");
+        for (Paddle p : paddles) {
+            System.out.println(p.getPosition());
+        }
+        level.movePaddle(paddles.get(0), 151, 156);
+        System.out.println("Paddle position: ");
+        for (Paddle p : paddles) {
+            System.out.println(p.getPosition());
+        }
 
     }
 
@@ -87,7 +100,7 @@ public class PowerUpTest {
         level.startBall();
         stepTimes(level, 60);
     }
-    
+
     @Test
     public void activatePowerUpWithExplosiveTest() {
 
@@ -100,16 +113,24 @@ public class PowerUpTest {
 
     @Test
     public void activateBrokenPaddlePowerup() {
-        
+
         game.setCurrentLevel(12);
         level = game.getLevel();
 
         level.startBall();
+        level.getLevelState().getBall().setLinearVelocity(0, 100);
+        List<Ball> balls = level.getLevelState().getBalls();
+        List<Paddle> paddles = level.getLevelState().getPaddles();
+        for (Paddle p : paddles ) {
+            System.out.println("Before: " + p.getPosition());
+        }
         stepTimes(level, 60);
-        
+        paddles = level.getLevelState().getPaddles();
+        for (Paddle p : paddles ) {
+            System.out.println("After: " + p.getPosition());
+        }
     }
-    
-    
+
     private void stepTimes(Level level, int times) {
         for (int i = 1; i <= times; i++) {
             level.step();

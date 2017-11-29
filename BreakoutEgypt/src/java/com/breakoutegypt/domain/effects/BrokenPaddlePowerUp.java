@@ -20,6 +20,10 @@ import javax.json.JsonObjectBuilder;
  * @author BenDB
  */
 public class BrokenPaddlePowerUp implements PowerUp {
+    
+    private boolean isVisable;
+    private int timeVisable = 1800; //TODO variable time in seconds (not steps)
+    private int startTime;
 
     private Paddle base;
     private List<Paddle> brokenPaddle;
@@ -28,6 +32,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         base = p;
         brokenPaddle = new ArrayList();
         breakPaddle();
+        startTime = timeVisable;
     }
 
     public List<Paddle> getBrokenPaddle() {
@@ -49,10 +54,31 @@ public class BrokenPaddlePowerUp implements PowerUp {
         
         int[] newXs = calculateNewX(basePaddleWidth, baseX, spaceBetween, newWidth);
 
-        ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], (int) baseY, newWidth, newWidth);
-        ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], (int) baseY, newWidth, newWidth);
+        ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], baseY, newWidth, 4);
+        ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], baseY, newWidth, 4);
+        
         brokenPaddle.add(new Paddle(leftPaddleShape));
         brokenPaddle.add(new Paddle(rightPaddleShape));
+    }
+    
+    public boolean isVisable() {
+        return isVisable;
+    }
+
+    public void setIsVisable(boolean isVisable) {
+        this.isVisable = isVisable;
+    }
+
+    public void setTimeVisable(int time) {
+        this.timeVisable = time;
+    }
+
+    public int getTimeVisable() {
+        return timeVisable;
+    }
+    
+    public void resetTime() {
+        timeVisable = startTime;
     }
 
     private int[] calculateNewX(int basePaddleWidth, int baseX, double spaceBetween, int newWidth) {
@@ -75,7 +101,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     @Override
     public void accept(PowerUpHandler puh) {
-        puh.handle(this);
+        puh.handleAddBrokenPaddle(this);
     }
 
     @Override
@@ -84,6 +110,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         JsonObjectBuilder job = Json.createObjectBuilder();
         jab.add(brokenPaddle.get(0).getShape().toJson().build());
         jab.add(brokenPaddle.get(1).getShape().toJson().build());
+        jab.add(base.getShape().toJson().build());
         job.add("brokenpaddle", jab.build());
         
         

@@ -78,7 +78,7 @@ public class LevelState {
     public void addPaddle(Paddle p) {
         BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
         p.setBox2dConfig(domePaddleConfig);
-
+        System.out.println("LevelState: added paddle Y: " + p.getShape().getPosY());
         paddles.add(p);
     }
 
@@ -115,7 +115,7 @@ public class LevelState {
     public void addFloor(FloorPowerUp floor) {
         this.floor = floor;
     }
-    
+
     public void removePaddle(Paddle p) {
         paddles.remove(p);
     }
@@ -189,7 +189,7 @@ public class LevelState {
         walls.add(rightWall);
         walls.add(topWall);
     }
-    
+
     public List<RegularBody> getAllObjectsToSpawn() {
         List<RegularBody> bodies = new ArrayList();
         bodies.addAll(balls);
@@ -248,5 +248,14 @@ public class LevelState {
 
     public void clearMessages() {
         messages.clear();
+    }
+
+    public int calculatePaddleWidthWithGaps() {
+        List<Paddle> paddles = getPaddles();
+        int paddlewidth = paddles.get(0).getShape().getWidth();
+        int noOfPaddles = paddles.size();
+        int noOfGaps = noOfPaddles - 1;
+        int width = noOfPaddles * paddlewidth + noOfGaps * paddlewidth;
+        return width;
     }
 }

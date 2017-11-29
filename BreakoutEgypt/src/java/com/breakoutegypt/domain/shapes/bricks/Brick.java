@@ -137,7 +137,6 @@ public class Brick extends RegularBody {
         this.powerup = powerup;
 
         hasPowerUp = true;
-
     }
 
     public boolean hasPowerUp() {

@@ -84,29 +84,56 @@ let DrawingModule = (function () {
             brick.draw(brickCtx);
         });
     }
-    
+
     function drawFloor() {
         if (level.floor)
             brickCtx.fillStyle = "gray";
-            brickCtx.fillRect(level.floor.x, level.floor.y, level.floor.width, level.floor.height);
+        brickCtx.fillRect(level.floor.x, level.floor.y, level.floor.width, level.floor.height);
     }
 
     function setPaddleX() {
         let paddle = level.mypaddle;
-        paddle.x = mouse.x - paddle.width / 2;
+        let paddlewidth = calculateWidth();
 
-        if (paddle.x < 0) {
-            paddle.x = 0;
-        } else if (movingPartsCanvas.width - paddle.width < paddle.x) {
-            paddle.x = movingPartsCanvas.width - paddle.width;
+        paddle[0].x = mouse.x - paddlewidth / 2;
+
+        for (let i = 1; i < level.mypaddle.length; i++) {
+            paddle[i].x = (paddle[i - 1].x + 2 * paddle[i - 1].width);
+        }
+        let lastPaddleNo = level.mypaddle.length - 1;
+
+        if (paddle[0].x < 0) {
+            paddle[0].x = 0;
+        } else if (movingPartsCanvas.width - paddle[lastPaddleNo].width < paddle[lastPaddleNo].x) {
+            paddle[lastPaddleNo].x = movingPartsCanvas.width - paddle[lastPaddleNo].width;
+        }
+        
+        if (paddle.length > 1) {
+            if (paddle[0].x <= 0) {
+                paddle[1].x = (paddle[0].x + (2*paddle[0].width));
+            } else if (paddle[0].x > (movingPartsCanvas.width - paddle[1].width - paddle[1].width*2)) {
+                paddle[0].x = movingPartsCanvas.width - paddle[1].width - paddle[1].width*2;
+            }
         }
 
         let godImg = ImageLoader.images["god"];
 
-        let godImgPosition = {x: level.mypaddle.x + (level.mypaddle.width / 2) - (godImg.width / 2),
-            y: level.mypaddle.y - (level.mypaddle.width * 0.4)};
-        movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y);
+        level.mypaddle.forEach(function (paddle) {
+            let godImgPosition = {x: paddle.x + (paddle.width / 2) - (godImg.width / 2),
+                y: paddle.y - (paddle.width * 0.4)};
+            movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y);
+        })
     }
+
+    function calculateWidth() {
+
+        let paddlewidth = level.mypaddle[0].width;
+        let noOfPaddles = level.mypaddle.length;
+        let noOfGaps = noOfPaddles - 1;
+        let width = noOfPaddles * paddlewidth + noOfGaps * paddlewidth;
+        return width;
+    }
+
 
     function drawLives(lives) {
         let height = (brickCanvas.height - level.mypaddle.y) * 0.7;

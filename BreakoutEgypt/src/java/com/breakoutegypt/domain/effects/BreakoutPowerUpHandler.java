@@ -36,9 +36,16 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     }
 
     @Override
-    public void handle(BrokenPaddlePowerUp bppu) {
-        List<Paddle> brokenPaddle = bppu.getBrokenPaddle();
+    public void handleAddBrokenPaddle(BrokenPaddlePowerUp bppu) {
         level.deSpawn(bppu.getBasePaddle());
         level.setBrokenPaddle(bppu);
+    }
+
+    @Override
+    public void handleRemoveBrokenPaddle(BrokenPaddlePowerUp bppu) {
+        for (Paddle p : bppu.getBrokenPaddle()) {
+            level.deSpawn(p);
+        }
+        level.addPaddle(bppu.getBasePaddle());
     }
 }

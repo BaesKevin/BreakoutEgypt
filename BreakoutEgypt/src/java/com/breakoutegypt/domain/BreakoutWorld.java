@@ -18,6 +18,7 @@ import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
+import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
@@ -47,6 +48,7 @@ public class BreakoutWorld {
     private final int positionIterations = 8;
 //    private Level currentLevel;
     private BreakoutWorldEventListener listener;
+    private PowerUpHandler poweruphandler;
 
     private boolean isBallOutOfBounds = false;
 
@@ -64,7 +66,6 @@ public class BreakoutWorld {
     private FloorPowerUp floorInGame;
     private BrokenPaddlePowerUp brokenPaddleToAdd;
     private BrokenPaddlePowerUp brokenPaddle;
-    
 
     public BreakoutWorld(/*Level level*/) {
         this(/*level, */TIMESTEP_DEFAULT);
@@ -83,6 +84,7 @@ public class BreakoutWorld {
     }
 
     public void initContactListener(EffectHandler eventHandler, BallEventHandler ballEventHandler, PowerUpHandler powerupHandler) {
+        this.poweruphandler = powerupHandler;
         world.setContactListener(new BreakoutContactListener(eventHandler, ballEventHandler, powerupHandler));
     }
 
@@ -201,9 +203,26 @@ public class BreakoutWorld {
             for (Paddle p : brokenPaddleToAdd.getBrokenPaddle()) {
                 this.spawn(p);
             }
-            this.addPowerupMessages(new PowerUpMessage("brokenPaddle", brokenPaddleToAdd, PowerUpMessageType.BROKENPADDLE));
+            this.addPowerupMessages(new PowerUpMessage("brokenPaddle", brokenPaddleToAdd, PowerUpMessageType.ADDBROKENPADDLE));
             this.brokenPaddle = brokenPaddleToAdd;
             brokenPaddleToAdd = null;
+        } else if (brokenPaddle != null) {
+            int timeLeft = brokenPaddle.getTimeVisable();
+            if (timeLeft > 0) {
+                brokenPaddle.setTimeVisable(timeLeft - 1);
+            } else {
+                Paddle base = brokenPaddle.getBasePaddle();
+
+                poweruphandler.handleRemoveBrokenPaddle(brokenPaddle);
+                
+                for (Paddle p : brokenPaddle.getBrokenPaddle()) {
+                    this.deSpawn(p.getBody());
+                }
+
+                addPowerupMessages(new PowerUpMessage("name", brokenPaddle, PowerUpMessageType.REMOVEBROKENPADDLE));
+                brokenPaddle = null;
+                spawn(base);
+            }
         }
     }
 

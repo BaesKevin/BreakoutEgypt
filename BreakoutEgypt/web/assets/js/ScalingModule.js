@@ -109,6 +109,10 @@ const ScalingModule = (function(){
 
         scaleLevel(level, newWidth, newHeight);
     }
+    
+    function scaleIncoming(obj) {
+        return scaleObject(obj, scaleXForClient, scaleYForClient);
+    }
 
     return {
         updateScalingFactors: updateScalingFactors,
@@ -120,7 +124,8 @@ const ScalingModule = (function(){
         scaleXForClient: scaleXForClient,
         scaleYForClient: scaleYForClient,
         doDocumentLoaded: doDocumentLoaded,
-        scaleAfterResize: scaleAfterResize
+        scaleAfterResize: scaleAfterResize,
+        scaleIncoming: scaleIncoming
     }
 
 

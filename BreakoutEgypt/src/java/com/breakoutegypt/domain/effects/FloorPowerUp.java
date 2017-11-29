@@ -21,11 +21,13 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
 
     private boolean isVisable;
     private int timeVisable = 1800; //TODO variable time in seconds (not steps)
+    private int startTime;
 
     public FloorPowerUp(ShapeDimension s) {
         // s = new ShapeDimension("floor", 0, 290, 300, 1);
         super(s);
         isVisable = false;
+        startTime = timeVisable;
         BodyConfiguration floorConfig = new BodyConfigurationFactory().createWallConfig(s, false);
         this.setBox2dConfig(floorConfig);
     }
@@ -44,6 +46,10 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
 
     public int getTimeVisable() {
         return timeVisable;
+    }
+    
+    public void resetTime() {
+        timeVisable = startTime;
     }
 
     @Override

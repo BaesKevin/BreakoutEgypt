@@ -112,16 +112,43 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         }
     }
 
+    // x coordinate is the center of the most left paddle
     public void movePaddle(Paddle paddle, int x, int y) {
+        
+        List<Paddle> paddles = levelState.getPaddles();
+        int totalWidth = levelState.calculatePaddleWidthWithGaps();
+        int paddleWidth = paddles.get(0).getShape().getWidth();
+        
+        int min = paddleWidth / 2;
+        int max = 300 - totalWidth + (paddleWidth / 2);
+
         if (!levelStarted) {
             float yPos = levelState.getBall().getPosition().y;
             List<Ball> balls = levelState.getBalls();
-            if (balls.size() > 0) {
-                balls.get(0).moveTo(x, yPos);
+
+            float temp = x;
+            for (Ball ball : balls) {
+                ball.moveTo(temp, yPos);
+                temp += paddleWidth;
             }
+            
+            
+        }
+        
+        float xpos = x;
+        if( xpos < min){
+            xpos = min;
+        } else if (xpos > max) {
+            xpos = max;
+        }
+        
+        for(Paddle p : paddles){
+            p.moveTo(xpos, p.getPosition().y);
+            
+            xpos += 2*paddleWidth;
         }
 
-        paddle.moveTo(x, y);
+        
     }
 
     public int getId() {
@@ -136,12 +163,10 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         if (this.getLevelState().getBalls().size() == 1) {
             setLevelStarted(false);
             levelState.removeBall(ball);
-            System.out.println("Balls left: " + this.getLevelState().getBalls().size());
             levelState.resetBall(breakoutWorld);
             lives--;
         } else {
             levelState.removeBall(ball);
-            System.out.println("Balls left: " + this.getLevelState().getBalls().size());
         }
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
@@ -234,15 +259,19 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         levelState.addFloor(floor);
         breakoutWorld.setFloorToAdd(floor);
     }
-    
+
     public void setBrokenPaddle(BrokenPaddlePowerUp bppu) {
         for (Paddle p : bppu.getBrokenPaddle()) {
             levelState.addPaddle(p);
         }
         breakoutWorld.setBrokenPaddleToAdd(bppu);
     }
-    
+
     public void deSpawn(Paddle p) {
         levelState.removePaddle(p);
+    }
+
+    public void addPaddle(Paddle basePaddle) {
+        levelState.addPaddle(basePaddle);
     }
 }

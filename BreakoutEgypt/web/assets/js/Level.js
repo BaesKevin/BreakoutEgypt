@@ -32,11 +32,12 @@ const Level = (function () {
         });
 
         if (myPaddleName) {
-            this.mypaddle = this.paddles.find(function (paddle) {
+            this.mypaddle = [];
+            this.mypaddle.push(this.paddles.find(function (paddle) {
                 return paddle.name === myPaddleName;
-            });
+            }));
         } else {
-            this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
+            this.mypaddle = [{x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'}];
         }
     };
 
@@ -62,8 +63,8 @@ const Level = (function () {
         if (!this.levelComplete && !this.gameOver) {
 
             ArcadeWebSocket.sendOverSocket(JSON.stringify({
-                x: ScalingModule.scaleXForServer(this.mypaddle.x) + ScalingModule.scaleXForServer(this.mypaddle.width) / 2,
-                y: ScalingModule.scaleYForServer(this.mypaddle.y)
+                x: ScalingModule.scaleXForServer(this.mypaddle[0].x) + ScalingModule.scaleXForServer(this.mypaddle[0].width) / 2,
+                y: ScalingModule.scaleYForServer(this.mypaddle[0].y)
             }));
 
         }
@@ -91,9 +92,32 @@ const Level = (function () {
             case "REMOVEFLOOR":
                 level.floor = false;
                 break;
-            case "BROKENPADDLE":
-                console.log(json[0].powerup)
-                level.paddles = json[0].powerup.brokenpaddle;
+            case "ADDBROKENPADDLE":
+                level.paddles = level.paddles.filter(function (paddle) {
+                    return level.mypaddle.name === paddle.name;
+                })
+                level.mypaddle = [];
+                for (let i = 0; i < json[0].powerup.brokenpaddle.length - 1; i++) {
+                    level.mypaddle.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                    level.paddles.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                }
+                break;
+            case "REMOVEBROKENPADDLE":
+                level.mypaddle.forEach(function (mypaddle) {
+                    level.paddles = level.paddles.filter(function (paddle) {
+                        return mypaddle.name === paddle.name;
+                    })
+                })
+//                level.paddles = level.paddles.filter(function (paddle) {
+//                    return level.mypaddle[0].name === paddle.name;
+//                })
+//                level.paddles = level.paddles.filter(function (paddle) {
+//                    return level.mypaddle[1].name === paddle.name;
+//                })
+                level.mypaddle = [];
+                level.mypaddle.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                level.paddles.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                break;
         }
         ScalingModule.scaleAfterResize();
         DrawingModule.updateStaticContent();
@@ -141,7 +165,6 @@ const Level = (function () {
         }
 
         function hideBrick(message, self) {
-            console.log("Hide brick " + message.name);
             let brickToHide = self.bricks.find(
                     function (brick) {
                         return message.name === brick.name;
@@ -152,7 +175,6 @@ const Level = (function () {
                 brickToHide.show = false;
             }
 
-            console.log("hide ball");
         }
 
         function showBrick(message, self) {

@@ -29,10 +29,6 @@ public class BrickCollisionDecider {
 
     public void handleCollision() {
         if (brick.isVisible()) {
-            if (brick.hasPowerUp()) {
-                PowerUp pu = brick.getPowerUp();
-                pu.accept(powerupHandler);
-            }
             for (Effect effect : brick.getEffects()) {
                 effect.accept(collisionEventHandler);
             }
