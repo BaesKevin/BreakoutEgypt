@@ -11,7 +11,7 @@ var checkKey = function (e) {
 
 var quitGame = function () {
     ArcadeWebSocket.close();
-    location.replace("index.html");
+    location.replace("index");
 };
 
 var pauseGame = function () {
@@ -25,7 +25,8 @@ var pauseGame = function () {
 
 var redirectToMainMenu = function (e) {
     e.preventDefault();
-    location.replace('index.jsp');
+    console.log("test");
+    location.replace('index');
 };
 
 $(document).ready(function () {

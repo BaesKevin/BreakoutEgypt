@@ -45,7 +45,7 @@ const Level = (function () {
 
         let gameId = UtilModule.getParameterByName("gameId");
         let self = this;
-
+        
         fetch('level?gameId=' + gameId, {method: "GET", credentials: "same-origin",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
