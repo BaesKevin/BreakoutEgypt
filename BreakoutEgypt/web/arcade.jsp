@@ -1,9 +1,13 @@
+<%-- 
+    Document   : arcade
+    Created on : 23-nov-2017, 15:53:56
+    Author     : Bjarne Deketelaere
+--%>
+
+<%@page import="com.breakoutegypt.domain.User"%>
+<%@page import="com.breakoutegypt.domain.User"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <title>Breakout</title>
@@ -15,7 +19,7 @@ and open the template in the editor.
         <link rel="stylesheet" href="assets/css/arcade.css"/>
     </head>
     <body>
-    <div class="container-fluid">
+        <div class="container-fluid">
         <main class="row">
                 <div id="gameMain" class="clearfix">
                     <canvas id="stationaryParts" height="300" width="300"></canvas>
@@ -30,15 +34,16 @@ and open the template in the editor.
         <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="assets/js/popper.min.js"></script>
         <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+        
+        <script type="text/javascript" src="assets/js/ScalingModule.js"></script>
         <script type="text/javascript" src="assets/js/Level.js"></script>
         <script type="text/javascript" src="assets/js/Brick.js"></script>
-        <script type="text/javascript" src="assets/js/util.js"></script>
-        <script type="text/javascript" src="assets/js/modalResponsive.js"></script>
+        <script type="text/javascript" src="assets/js/UtilModule.js"></script>
+        <script type="text/javascript" src="assets/js/ModalModule.js"></script>
         <script type="text/javascript" src="assets/js/ArcadeWebSocket.js"></script>
         <script type="text/javascript" src="assets/js/ImageLoader.js"></script>
-        <script type="text/javascript" src="assets/js/breakoutendpoint.js"></script>
-        <script type="text/javascript" src="assets/js/canvasResizeHandler.js"></script>
-        <script type="text/javascript" src="assets/js/canvasDrawHandler.js"></script>
+        <script type="text/javascript" src="assets/js/ArcadeIndex.js"></script>
+        <script type="text/javascript" src="assets/js/DrawingModule.js"></script>
         <script type="text/javascript" src="assets/js/arcade.js"></script>
     </body>
 </html>

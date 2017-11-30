@@ -5,11 +5,18 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
+import com.breakoutegypt.domain.messages.BallMessage;
+import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
+import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
+import java.util.List;
 import java.util.Timer;
 
 /**
@@ -17,7 +24,7 @@ import java.util.Timer;
  *
  * @author kevin
  */
-public class Level implements BreakoutWorldEventListener, BallEventHandler {
+public class Level implements BreakoutWorldEventListener {
 
     private int id;
 
@@ -52,14 +59,17 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         scoreTimer = new ScoreTimer();
 
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
-        
+
         levelState = initialState;
-        levelState.spawnAllObjects(breakoutWorld);
-        
+        List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
+        for (RegularBody rb : bodiesToSpawn) {
+            breakoutWorld.spawn(rb);
+        }
+
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
-                new BreakoutEffectHandler(levelState, breakoutWorld),
-                this);
+                new BreakoutEffectHandler(this, levelState, breakoutWorld),
+                new BreakoutPowerUpHandler(this, levelState, breakoutWorld));
 
         this.lives = lives;
         this.timer = new Timer();
@@ -88,12 +98,8 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     public void start() {
         if (!runLevelManually && levelTimerTask == null) {
-            System.out.printf("Level: start level %d", this.id);
             levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
-            System.out.printf("Expected timestep: %d, actual timestep: %d", 1000 / 60, breakoutWorld.getTimeStepAsMs());
             timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
-        } else {
-            System.out.println("Level: trying to start the level twice, ignoring call");
         }
 
     }
@@ -102,18 +108,50 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         if (!levelStarted) {
             setLevelStarted(true);
             scoreTimer.start();
-            levelState.getBall().setLinearVelocity(0, 100);
-            System.out.println("Level: startBall()");
+            List<Ball> balls = levelState.getBalls();
+            for (Ball b : balls) {
+                b.setLinearVelocity(0, 200);
+            }
         }
     }
 
+    // x coordinate is the center of the most left paddle
     public void movePaddle(Paddle paddle, int x, int y) {
+        
+        List<Paddle> paddles = levelState.getPaddles();
+        int totalWidth = levelState.calculatePaddleWidthWithGaps();
+        int paddleWidth = paddles.get(0).getShape().getWidth();
+        
+        int min = paddleWidth / 2;
+        int max = 300 - totalWidth + (paddleWidth / 2);
+
         if (!levelStarted) {
             float yPos = levelState.getBall().getPosition().y;
-            levelState.getBall().moveTo(x, yPos);
+            List<Ball> balls = levelState.getBalls();
+
+            float temp = x;
+            for (Ball ball : balls) {
+                ball.moveTo(temp, yPos);
+                temp += paddleWidth;
+            }
+            
+            
+        }
+        
+        float xpos = x;
+        if( xpos < min){
+            xpos = min;
+        } else if (xpos > max) {
+            xpos = max;
+        }
+        
+        for(Paddle p : paddles){
+            p.moveTo(xpos, p.getPosition().y);
+            
+            xpos += 2*paddleWidth;
         }
 
-        paddle.moveTo(x, y);
+        
     }
 
     public int getId() {
@@ -124,16 +162,20 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         return levelState;
     }
 
-    void resetBall() {
-        System.out.println("LeveL: resetBall()");
-        levelState.resetBall(breakoutWorld);
-
-        lives--;
+    void resetBall(Ball ball) {
+        if (this.getLevelState().getBalls().size() == 1) {
+            setLevelStarted(false);
+            levelState.removeBall(ball);
+            levelState.resetBall(breakoutWorld);
+            lives--;
+        } else {
+            levelState.removeBall(ball);
+        }
+        game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
     }
 
     private int getTargetBricksLeft() {
-        System.out.println("Targets left: " + levelState.getTargetBricksLeft());
         return levelState.getTargetBricksLeft();
     }
 
@@ -143,6 +185,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     public void step() {
         breakoutWorld.step();
+        game.notifyPlayers(this, breakoutWorld.getMessageRepo());
     }
 
     public boolean noLivesLeft() {
@@ -154,9 +197,8 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     public void stop() {
-        System.out.printf("Level: stop level %d", this.id);
 
-        if (!runLevelManually) {
+        if (!runLevelManually && levelTimerTask != null) {
             levelTimerTask.cancel();
             levelTimerTask = null;
         }
@@ -180,22 +222,13 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     @Override
-    public void setResetBallFlag(Ball ball) {
-        breakoutWorld.setResetBallFlag(ball);
-    }
-
-    @Override
-    public void ballHitPaddle(Ball ball, Paddle paddle) {
-        breakoutWorld.ballHitPaddle(ball, paddle);
-    }
-
-
-
-    @Override
     public void ballOutOfBounds(Ball ball) {
-        setLevelStarted(false);
-        breakoutWorld.destroyBody(ball.getBody());
-        resetBall();
+        breakoutWorld.deSpawn(ball.getBody());
+        resetBall(ball);
+        /*
+        TODO
+        probleem oplossen voor als meerdere ballen tegelijk out of bounds gaan
+         */
     }
 
     @Override
@@ -203,7 +236,6 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         levelState.removeBrick(brick);
 
         if (allTargetBricksDestroyed()) {
-            System.out.println("BreakoutWorld: all brick destroyed");
             getScoreTimer().stop();
 
             StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
@@ -214,5 +246,14 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             dummyRepo.getScoresByLevel(getId(), "hard");
             initNextLevel();
         }
+    }
+
+    public void addFloor(FloorPowerUp floor) {
+        levelState.addFloor(floor);
+//        breakoutWorld.setFloorToAdd(floor);
+    }
+
+    public void addPaddle(Paddle basePaddle) {
+        levelState.addPaddle(basePaddle);
     }
 }

@@ -13,6 +13,6 @@ import com.breakoutegypt.domain.shapes.Paddle;
  * @author kevin
  */
 public interface BallEventHandler {
-    void setResetBallFlag(Ball ball);
+//    void setResetBallFlag(Ball ball);
     void ballHitPaddle(Ball ball, Paddle paddle);
 }

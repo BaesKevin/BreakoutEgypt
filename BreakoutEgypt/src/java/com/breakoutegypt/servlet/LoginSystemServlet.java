@@ -55,18 +55,19 @@ public class LoginSystemServlet extends HttpServlet {
                 
                 if(userRepo.inList(loginUser)){
                     session.setAttribute("user",loginUser);
-                    response.sendRedirect("index.html?message=you are logged in");
+                    
+                    request.getRequestDispatcher("index.jsp").forward(request, response);
                 } else {
-                    response.sendRedirect("login.html?error=could not find user");
+                    response.sendRedirect("login.jsp?error=could not find user");
                 }
             } else if(register!=null){
                 String username=request.getParameter("username");
                 User registerUser=new User(username,email,password);
                 if(!userRepo.alreadyExists(registerUser)){
                     userRepo.addUser(registerUser);
-                    response.sendRedirect("login.html?message=now you can login");
+                    response.sendRedirect("login.jsp?message=now you can login");
                 } else {
-                    response.sendRedirect("registration.html?error=user already exists");
+                    response.sendRedirect("registration.jsp?error=user already exists");
                 }
             }
             

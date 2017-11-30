@@ -1,19 +1,21 @@
+// ArcadeButtonsModule
+
 var checkKey = function (e) {
     if (level !== undefined) {
         if (e.which === 112)
             pauseGame();
         else if (e.which === 113)
-            modalQuit();
+            ModalModule.modalQuit();
     }
 };
 
 var quitGame = function () {
-    websocket.close();
+    ArcadeWebSocket.close();
     location.replace("index.html");
 };
 
 var pauseGame = function () {
-    var gameId = getParameterByName("gameId");
+    var gameId = UtilModule.getParameterByName("gameId");
     $.ajax({
         url: "pause?gameid=" + gameId
     }).fail(function (err) {
@@ -23,11 +25,11 @@ var pauseGame = function () {
 
 var redirectToMainMenu = function (e) {
     e.preventDefault();
-    location.replace('index.html');
+    location.replace('index.jsp');
 };
 
 $(document).ready(function () {
-    $(".quit").on("click", modalQuit);
+    $(".quit").on("click", ModalModule.modalQuit);
     $("#modalPlaceholder").on("click", "#quit", quitGame);
     $("#pause").on("click", pauseGame);
     $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);

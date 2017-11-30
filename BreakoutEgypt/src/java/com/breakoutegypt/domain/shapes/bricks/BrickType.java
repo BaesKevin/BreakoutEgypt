@@ -10,5 +10,5 @@ package com.breakoutegypt.domain.shapes.bricks;
  * @author kevin
  */
 public enum BrickType {
-    REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH
+    REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH, TARGET
 }

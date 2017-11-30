@@ -5,9 +5,6 @@
  */
 package com.breakoutegypt.domain.effects;
 
-import com.breakoutegypt.domain.shapes.Ball;
-import com.breakoutegypt.domain.shapes.Paddle;
-
 /**
  *
  * @author kevin

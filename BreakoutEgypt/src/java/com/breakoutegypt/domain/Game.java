@@ -79,13 +79,11 @@ public class Game {
         if (peer != null) {
             currentLevel.movePaddle(peer.getPaddle(), x, y);
         } else {
-            System.out.println("Game: trying to move paddle for player that doesn't exist");
         }
     }
 
     public void addConnectingPlayer(Player player) {
 
-        System.out.printf("Game %d: Add connecting player %s\n", id, player.getUser().getUsername());
         manager.addConnectingPlayer(player);
 
     }
@@ -98,7 +96,6 @@ public class Game {
         int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
         //currentLevel is null
         Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
-        System.out.println("Name of assigned paddle: " + paddleToAssign.getName());
         player.setPaddle(paddleToAssign);
     }
 
@@ -109,7 +106,6 @@ public class Game {
     }
 
     public void removePlayer(String username) {
-        System.out.printf("Game %d: remove player\n", id);
         manager.removePlayer(username);
     }
 
@@ -117,8 +113,8 @@ public class Game {
         return manager.hasNoPlayers();
     }
 
-    public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
-        manager.notifyPlayers(currentLevel, simulation);
+    public void notifyPlayers(Level currentLevel,ServerClientMessageRepository messageRepo) {
+        manager.notifyPlayers(currentLevel, messageRepo);
     }
 
     public void notifyPlayersOfLivesLeft() {
@@ -128,6 +124,10 @@ public class Game {
             currentLevel.stop();
         }
 
+    }
+    
+    public void notifyPlayersOfBallAction() {
+        manager.notifyPlayersOfBallAction(currentLevel);
     }
 
     public void startLevel() {

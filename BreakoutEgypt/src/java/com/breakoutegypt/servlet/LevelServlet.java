@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,6 +12,7 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -35,39 +38,48 @@ public class LevelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User)session.getAttribute("user");
+        System.out.println("USER: "+user);
+        
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-//        int startLevel = Integer.parseInt(request.getParameter("startLevel"));
-//        System.out.println("startLevel: " + startLevel);
+        System.out.println("GAMEID: "+gameId);
+        
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
-        // moet hier niet staan
-        //game.setCurrentLevel(startLevel);
         
         JsonObjectBuilder job;
+
         boolean hasNextLevel = manager.hasNextLevel(gameId);
-        //System.out.println("hasnextlevel: " + hasNextLevel);
+
         if (hasNextLevel) {
             Level level = game.getLevel();
             
             // already initialize player and give him a paddle
-            String name = "player";
-            Player player = game.getPlayer(name);
+            if(user!=null){
+                String name = user.getUsername();
+                Player player = game.getPlayer(name);
             
-            if(player == null){
-                player = new Player(new User(name));
-                manager.addConnectingPlayer(gameId, player);
-            }
-            manager.assignPaddleToPlayer(gameId, player);
+                if(player == null){
+                    player = new Player(new User(name));
+                    manager.addConnectingPlayer(gameId, player);
+                }
+                manager.assignPaddleToPlayer(gameId, player);
             
-            job = Json.createObjectBuilder();
-            if (level != null) {
-                JsonArrayBuilder jab = Json.createArrayBuilder();
-                levelToJson(level, jab, job, player);
+                job = Json.createObjectBuilder();
+                if (level != null) {
+                    JsonArrayBuilder jab = Json.createArrayBuilder();
+                    levelToJson(level, jab, job, player);
 
-                manager.startGame(gameId);
+                    manager.startGame(gameId);
+                } else {
+                    job.add("error", "Tried to get level for game that doesn't exist");
+                }
             } else {
-                job.add("error", "Tried to get level for game that doesn't exist");
+                job=Json.createObjectBuilder();
+                job.add("error","No user in the session");
             }
+            
         } else {
             job = Json.createObjectBuilder();
             job.add("allLevelsComplete", true);
@@ -86,7 +98,7 @@ public class LevelServlet extends HttpServlet {
         
        
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-        
+                
         GameManager manager = new GameManager();
 
         JsonObjectBuilder job;       
@@ -107,7 +119,12 @@ public class LevelServlet extends HttpServlet {
             jab.add(brick.toJson().build());
         }
         job.add("bricks", jab);
-        job.add("ball", state.getBall().getShape().toJson());
+        List<Ball> balls = state.getBalls();
+        JsonArrayBuilder ballBuilder = Json.createArrayBuilder();
+        for(int i = 0; i < balls.size(); i++) {
+            ballBuilder.add( balls.get(i).getShape().toJson().build());
+        }
+        job.add("balls", ballBuilder.build());
         
         JsonArrayBuilder paddleBuilder = Json.createArrayBuilder();
         List<Paddle> paddles = state.getPaddles();
@@ -120,3 +137,4 @@ public class LevelServlet extends HttpServlet {
         job.add("lives", level.getLives());
     }
 }
+

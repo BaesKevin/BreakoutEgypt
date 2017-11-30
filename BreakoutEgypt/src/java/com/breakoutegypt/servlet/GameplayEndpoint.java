@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.servlet.util.HttpSessionConfigurator;
 import com.breakoutegypt.connectionmanagement.WebsocketConnection;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
@@ -13,7 +14,9 @@ import com.breakoutegypt.domain.User;
 import com.breakoutegypt.servlet.util.JsonMoveCommand;
 import com.breakoutegypt.servlet.util.MoveCommandDecoder;
 import java.io.IOException;
+import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -25,35 +28,35 @@ import javax.websocket.server.ServerEndpoint;
  * @author kevin
  */
 @ServerEndpoint(
-        value="/gameplay",
+        value="/gameplay", configurator=HttpSessionConfigurator.class,
         decoders={MoveCommandDecoder.class}
 )
 public class GameplayEndpoint {
     private Game game;
-    
+    private User user;
     public GameplayEndpoint(){
         
     }
     
     @OnOpen
-    public void onOpen(Session peer) {
+    public void onOpen(Session peer,EndpointConfig config) {
         
-        System.out.println("GamePlayEndpoint: Opening socket connection");
         GameManager gm = new GameManager();
         
         int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
-        
+        HttpSession httpSession=(HttpSession) config.getUserProperties().get(HttpSession.class.getName());
+        user=(User)httpSession.getAttribute("user");
         game = gm.getGame(gameId);
         
         // TODO retrieve actual username from session/path parameter
-        gm.addConnectionForPlayer(gameId, "player", new WebsocketConnection(peer));
+        gm.addConnectionForPlayer(gameId, user.getUsername(), new WebsocketConnection(peer));
 //        gm.setSessionForPlayer(name, session); 
     }
 
     @OnClose
     public void onClose(Session peer) {
         int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
-        new GameManager().removePlayer(gameId, "player");
+        new GameManager().removePlayer(gameId, user.getUsername());
     }
     
     @OnMessage
@@ -62,11 +65,7 @@ public class GameplayEndpoint {
         int y = moveCommand.getJson().getInt("y");
         
         if(game != null){
-            game.movePaddle("player", x,y);
-        }
-        else
-        {
-            System.out.println("GamePlayEndpoint: Trying to move paddle for game that doesn't exist");
+            game.movePaddle(user.getUsername(), x,y);
         }
     }
 }

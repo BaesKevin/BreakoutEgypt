@@ -5,13 +5,14 @@
  */
 package com.breakoutegypt.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  *
  * @author Bjarne Deketelaere
  */
-public class User {
+public class User implements Serializable{
     private String username;
     private String email;
     private String password;

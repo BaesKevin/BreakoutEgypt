@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -32,7 +33,7 @@ public class ArcadeServlet extends HttpServlet{
         System.out.println("ArcadeServlet: Creating game");
         
         int startingLevel = Integer.parseInt(request.getParameter("startLevel"));    
-        System.out.println("startingLevel HAHA: " + startingLevel);
+        System.out.println("startingLevel : " + startingLevel);
         
         GameManager gm = new GameManager();
         
@@ -60,7 +61,7 @@ public class ArcadeServlet extends HttpServlet{
         
         
         // TODO redirect to level choice page
-        response.sendRedirect(String.format("arcade.html?gameId=%d&level=%d",gameId, startingLevel));
+        response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d",gameId, startingLevel));
     }
 
 }

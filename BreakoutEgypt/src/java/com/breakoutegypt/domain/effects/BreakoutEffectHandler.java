@@ -6,7 +6,11 @@
 package com.breakoutegypt.domain.effects;
 
 import com.breakoutegypt.domain.BreakoutWorld;
+import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.ServerClientMessageRepository;
+import com.breakoutegypt.domain.messages.BrickMessage;
+import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import java.util.List;
 
@@ -14,15 +18,18 @@ import java.util.List;
  *
  * @author kevin
  */
-public class BreakoutEffectHandler implements EffectHandler{
+public class BreakoutEffectHandler implements EffectHandler {
+
+    private Level level;
     private LevelState levelState;
     private BreakoutWorld breakoutWorld;
 
-    public BreakoutEffectHandler(LevelState levelState, BreakoutWorld breakoutWorld) {
+    public BreakoutEffectHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
+        this.level = level;
         this.levelState = levelState;
         this.breakoutWorld = breakoutWorld;
     }
-    
+
     @Override
     public void handle(ExplosiveEffect e) {
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(e.getCentreBrick(), e.getRadius());
@@ -32,8 +39,21 @@ public class BreakoutEffectHandler implements EffectHandler{
 
     @Override
     public void handle(ToggleEffect e) {
-        breakoutWorld.toggleBricks(e.getBricksToToggle());
+        List<Brick> bricksToToggle = e.getBricksToToggle();
+        ServerClientMessageRepository repo = breakoutWorld.getMessageRepo();
+
+        for (Brick brick : bricksToToggle) {
+            brick.toggle();
+
+            BrickMessageType toggleType;
+            if (brick.isVisible()) {
+                toggleType = BrickMessageType.SHOW;
+            } else {
+                toggleType = BrickMessageType.HIDE;
+            }
+            
+            repo.addBrickMessage(new BrickMessage(brick.getName(), toggleType));
+        }
     }
-    
-    
+
 }
