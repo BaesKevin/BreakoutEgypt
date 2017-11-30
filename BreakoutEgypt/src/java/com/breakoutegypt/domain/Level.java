@@ -7,8 +7,6 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
-import com.breakoutegypt.domain.messages.BallMessage;
-import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
@@ -112,39 +110,39 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     // x coordinate is the center of the most left paddle
-    public void movePaddle(Paddle paddle, int x, int y) {
+    public void movePaddle(Paddle paddle, int firstPaddleCenter, int y) {
         
         List<Paddle> paddles = levelState.getPaddles();
         int totalWidth = levelState.calculatePaddleWidthWithGaps();
         int paddleWidth = paddles.get(0).getShape().getWidth();
-        
+        // x is the center of the most left paddle
         int min = paddleWidth / 2;
         int max = 300 - totalWidth + (paddleWidth / 2);
 
+        float paddleCenter = firstPaddleCenter;
+        if( paddleCenter < min){
+            paddleCenter = min;
+        } else if (paddleCenter > max) {
+            paddleCenter = max;
+        }
+        
+        for(Paddle p : paddles){
+            p.moveTo(paddleCenter, p.getPosition().y);
+            
+            paddleCenter += (paddleWidth + BrokenPaddlePowerUp.GAP);
+        }
+        
         if (!levelStarted) {
             float yPos = levelState.getBall().getPosition().y;
             List<Ball> balls = levelState.getBalls();
 
-            float temp = x;
+            float temp = firstPaddleCenter;
             for (Ball ball : balls) {
                 ball.moveTo(temp, yPos);
                 temp += paddleWidth;
             }
             
             
-        }
-        
-        float xpos = x;
-        if( xpos < min){
-            xpos = min;
-        } else if (xpos > max) {
-            xpos = max;
-        }
-        
-        for(Paddle p : paddles){
-            p.moveTo(xpos, p.getPosition().y);
-            
-            xpos += 2*paddleWidth;
         }
 
         

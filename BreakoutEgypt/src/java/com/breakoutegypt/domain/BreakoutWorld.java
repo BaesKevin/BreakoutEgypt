@@ -13,11 +13,13 @@ import com.breakoutegypt.domain.brickcollisionhandlers.ContactHandler;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.effects.EffectHandler;
+import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.PowerUpHandler;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.RegularBody;
+import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import java.util.ArrayList;
 import java.util.List;
 import org.jbox2d.collision.shapes.Shape;
@@ -49,6 +51,7 @@ public class BreakoutWorld implements ContactHandler {
     private EffectHandler effectHandler;
     private PowerUpHandler powerupHandler;
     private ServerClientMessageRepository messageRepo;
+    private boolean acidBall = false;
     
     public BreakoutWorld() {
         this(TIMESTEP_DEFAULT);
@@ -106,7 +109,13 @@ public class BreakoutWorld implements ContactHandler {
 
     @Override
     public void handle(BallBrickContact bbc) {
-        new BrickCollisionDecider(bbc.getBrick(), this.effectHandler).handleCollision();
+        Brick b = bbc.getBrick();
+        if (acidBall) {
+            b.setType(BrickType.EXPLOSIVE);
+            b.addEffect(new ExplosiveEffect(b, 1));
+            acidBall = false;
+        }
+        new BrickCollisionDecider(b, this.effectHandler).handleCollision();
     }
 
     @Override
@@ -144,6 +153,10 @@ public class BreakoutWorld implements ContactHandler {
 
     public long getTimeStepAsMs() {
         return Math.round(Math.floor(timestepSeconds * 1000));
+    }
+
+    public void setAcidBall() {
+        acidBall = true;
     }
 
 }

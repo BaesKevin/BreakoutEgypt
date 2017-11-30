@@ -10,5 +10,5 @@ package com.breakoutegypt.domain.effects;
  * @author BenDB
  */
 public enum PowerUpType {
-    FLOOR, BROKENPADDLE
+    FLOOR, BROKENPADDLE, ACIDBALL
 }

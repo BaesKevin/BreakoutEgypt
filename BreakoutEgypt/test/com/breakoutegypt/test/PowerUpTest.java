@@ -12,6 +12,7 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
@@ -104,7 +105,7 @@ public class PowerUpTest {
         }
 
         // left paddle x must be smaller than (level width - the total width of the 2 paddles - half its width)
-        assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() * 2 - paddles.get(0).getShape().getWidth() / 2);
+        assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() - BrokenPaddlePowerUp.GAP - paddles.get(0).getShape().getWidth() / 2);
     }
 
     @Test

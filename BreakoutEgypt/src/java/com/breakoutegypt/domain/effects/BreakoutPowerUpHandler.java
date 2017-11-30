@@ -118,4 +118,9 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         breakoutWorld.spawn(bppu.getBasePaddle());
     }
 
+    @Override
+    public void handleAcidBall() {
+        breakoutWorld.setAcidBall();
+    }
+
 }

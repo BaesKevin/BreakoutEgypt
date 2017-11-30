@@ -11,6 +11,7 @@ const Level = (function () {
         this.level = level;
         this.lives = lives;
         this.floor = false;
+        this.gap = 0;
     };
 
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
@@ -101,8 +102,10 @@ const Level = (function () {
                     return level.mypaddle.name === paddle.name;
                 })
                 level.mypaddle = [];
-                for (let i = 0; i < json[0].powerup.brokenpaddle.length - 1; i++) {
+                for (let i = 0; i < json[0].powerup.brokenpaddle.length; i++) {
                     let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                    let gap = ScalingModule.scaleXForClient(json[0].powerup.gap);
+                    level.gap = gap;
                     level.mypaddle.push(paddleToAdd);
                     level.paddles.push(paddleToAdd);
                 }
@@ -114,7 +117,8 @@ const Level = (function () {
                     })
                 })
                 level.mypaddle = [];
-                let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.base, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                level.gap = 0;
                 level.mypaddle.push(paddleToAdd);
                 level.paddles.push(paddleToAdd);
                 break;
@@ -205,7 +209,8 @@ const Level = (function () {
         }
 
         function addBall(json, self) {
-            self.balls.push({name: json.ball, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2});
+            self.balls.push(ScalingModule.scaleObject({name: json.ball, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2},
+                            ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
             console.log("add ball");
         }
 

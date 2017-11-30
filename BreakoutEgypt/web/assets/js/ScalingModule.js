@@ -74,9 +74,7 @@ const ScalingModule = (function(){
             level.bricks[i] = scaleBrick(level.bricks[i], xScalingFunction, yScalingFunction);
         }
         if (level.floor) {
-            console.log("before: ", level.floor)
             level.floor = scaleObject(level.floor, xScalingFunction, yScalingFunction);
-            console.log("after: ", level.floor)
         }
     }
 

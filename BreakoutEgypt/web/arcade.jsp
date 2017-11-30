@@ -20,7 +20,7 @@
     </head>
     <body>
         <div class="container-fluid">
-        <main class="row">
+            <main class="row">
                 <div id="gameMain" class="clearfix">
                     <canvas id="stationaryParts" height="300" width="300"></canvas>
                     <canvas id="movingParts" height="300" width="300"></canvas>
@@ -28,13 +28,13 @@
                     <p id="pause"><a>Pause (P)</a></p>
                     <p class="quit"><a>Quit (Q)</a></p>
                 </div>
-        </main>
-    </div>
+            </main>
+        </div>
         <div id="modalPlaceholder"></div>
         <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="assets/js/popper.min.js"></script>
         <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-        
+
         <script type="text/javascript" src="assets/js/ScalingModule.js"></script>
         <script type="text/javascript" src="assets/js/Level.js"></script>
         <script type="text/javascript" src="assets/js/Brick.js"></script>

@@ -5,17 +5,17 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.effects.AcidBallPowerUp;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.Effect;
+import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.ToggleEffect;
-import com.breakoutegypt.domain.messages.BrickMessage;
-import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
@@ -86,8 +86,8 @@ public class LevelState {
         if (noOfPowerups > 0) {
             List<PowerUp> powerups = createPowerups(3, paddles.get(0));
             bricks = generatePowerUps(bricks, powerups);
-            bricks.get(5).setPowerUp(createBrokenPaddle(paddles.get(0)));
         }
+        bricks.get(5).setPowerUp(new AcidBallPowerUp());
     }
 
     public void addPaddle(Paddle p) {
@@ -214,8 +214,7 @@ public class LevelState {
     }
 
     // TODO calculate range without Points, test this monstrosity
-    public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
-        List<Brick> bricksToRemove = new ArrayList();
+    private List<Brick> getRangeOfBricksAroundBodyHelper(Brick centreBrick, int range, List<Brick> bricksToRemove) {
         Point centre = centreBrick.getGridPosition();
 
         Point currentBrickPosition;
@@ -227,16 +226,29 @@ public class LevelState {
                 currentBrickPosition = brick.getGridPosition();
                 if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
                     if (brick.isVisible() && !(hasToggleEffect(brick.getEffects()))) {
-                        bricksToRemove.add(brick);
+                        ExplosiveEffect e = getExplosiveEffect(brick.getEffects());
+                        if (e != null && e.getRadius() > 0) {
+                            if (!bricksToRemove.contains(brick)) {
+                                bricksToRemove.add(brick);
+                                bricksToRemove = getRangeOfBricksAroundBodyHelper(brick, e.getRadius(), bricksToRemove);
+                            }
+                        } else {
+                            if (!bricksToRemove.contains(brick)) {
+                                bricksToRemove.add(brick);
+                            }
+                        }
                     }
-
                 }
             }
         }
-
         return bricksToRemove;
     }
-    
+
+    public List<Brick> getRangeOfBricksAroundBody(Brick centreBrick, int range) {
+
+        return getRangeOfBricksAroundBodyHelper(centreBrick, range, new ArrayList<>());
+
+    }
 
     private boolean hasToggleEffect(List<Effect> effects) {
         boolean hasSwitch = false;
@@ -249,6 +261,18 @@ public class LevelState {
         }
 
         return hasSwitch;
+    }
+
+    private ExplosiveEffect getExplosiveEffect(List<Effect> effects) {
+
+        for (Effect e : effects) {
+            if (e instanceof ExplosiveEffect) {
+                if (((ExplosiveEffect) e).getRadius() > 0) {
+                    return (ExplosiveEffect) e;
+                }
+            }
+        }
+        return null;
     }
 
     void removeBall(Ball ball) {
@@ -270,7 +294,8 @@ public class LevelState {
         int paddlewidth = paddles.get(0).getShape().getWidth();
         int noOfPaddles = paddles.size();
         int noOfGaps = noOfPaddles - 1;
-        int width = noOfPaddles * paddlewidth + noOfGaps * paddlewidth;
+
+        int width = noOfPaddles * paddlewidth + noOfGaps * BrokenPaddlePowerUp.GAP;
         return width;
     }
 
@@ -300,7 +325,7 @@ public class LevelState {
 
         List<PowerUp> powerups = new ArrayList();
         PowerUpType[] poweruptypes = PowerUpType.values();
-
+        System.out.println("Poweruptype length: " + poweruptypes.length);
         Random r = new Random();
         int powerupNr = r.nextInt(poweruptypes.length);
 
@@ -309,6 +334,9 @@ public class LevelState {
                 powerups.add(createFloor());
             } else if (poweruptypes[powerupNr].name().equals("BROKENPADDLE")) {
                 powerups.add(createBrokenPaddle(paddle));
+            } else if (poweruptypes[powerupNr].name().equals("ACIDBALL")) {
+                System.out.println("AcidBall");
+                powerups.add(new AcidBallPowerUp());
             }
             powerupNr = r.nextInt(poweruptypes.length);
         }

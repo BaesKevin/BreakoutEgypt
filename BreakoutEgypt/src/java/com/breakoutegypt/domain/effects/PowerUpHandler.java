@@ -12,5 +12,6 @@ package com.breakoutegypt.domain.effects;
 public interface PowerUpHandler {
     void handleFloorPowerUp(FloorPowerUp fpu);
     void handleAddBrokenPaddle(BrokenPaddlePowerUp bppu);
+    void handleAcidBall();
     void removePowerupsIfTimedOut();
 }

@@ -58,8 +58,11 @@ let ArcadeWebSocket = (function () {
             
             if (json && !json.error) {
                 if (json.lifeaction) {
+                    console.log(json);
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();
+                    } else if (json.lifeaction === 'playing') {
+                        handleLivesLeft(json);
                     }
                 } else if (json.ballaction) {
                     if (json.ballaction === 'remove') {
@@ -67,8 +70,6 @@ let ArcadeWebSocket = (function () {
                     } else if (json.ballaction === 'add') {
                         level.addBall(json);
                     }
-                } else if (json.livesLeft) {
-                    handleLivesLeft(json);
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
                 } else {

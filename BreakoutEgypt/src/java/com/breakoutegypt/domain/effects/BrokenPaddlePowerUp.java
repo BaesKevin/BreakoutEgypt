@@ -26,6 +26,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     private Paddle base;
     private List<Paddle> brokenPaddle;
+    public static final int GAP = 20;
 
     public BrokenPaddlePowerUp(Paddle p) {
         base = p;
@@ -50,7 +51,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
         int newWidth = (int) Math.round(basePaddleWidth * 0.6);
         
-        int[] newXs = calculateNewX(baseX, newWidth);
+        int[] newXs = calculateNewX(baseX, newWidth, GAP);
 
         ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], baseY, newWidth, 4);
         ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], baseY, newWidth, 4);
@@ -79,7 +80,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         timeVisable = startTime;
     }
 
-    private int[] calculateNewX(int baseX, int newWidth) {
+    private int[] calculateNewX(int baseX, int newWidth, int gap) {
 
         // the new width is 60% of the old paddles width;
         // new x position is calculated for both of the paddles.
@@ -89,10 +90,10 @@ public class BrokenPaddlePowerUp implements PowerUp {
         if (leftX - newWidth / 2 < 0) {
             leftX = newWidth / 2;
         }
-        int rightX = leftX + (newWidth*2);
+        int rightX = leftX + newWidth + gap;
         if (rightX + (newWidth / 2) > 300) {
             rightX = 300 - (newWidth / 2);
-            leftX = rightX - (newWidth*2);
+            leftX = rightX - newWidth - gap;
         }
         
         int[] newXs = new int[2];
@@ -112,9 +113,9 @@ public class BrokenPaddlePowerUp implements PowerUp {
         JsonObjectBuilder job = Json.createObjectBuilder();
         jab.add(brokenPaddle.get(0).getShape().toJson().build());
         jab.add(brokenPaddle.get(1).getShape().toJson().build());
-        jab.add(base.getShape().toJson().build());
+        job.add("base", base.getShape().toJson().build());
         job.add("brokenpaddle", jab.build());
-        
+        job.add("gap", GAP);
         
         return job.build();
     }
