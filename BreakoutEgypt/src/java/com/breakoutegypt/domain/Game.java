@@ -96,8 +96,8 @@ public class Game {
         return manager.hasNoPlayers();
     }
 
-    public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
-        manager.notifyPlayers(currentLevel, simulation);
+    public void notifyPlayers(Level currentLevel,ServerClientMessageRepository messageRepo) {
+        manager.notifyPlayers(currentLevel, messageRepo);
     }
 
     public void notifyPlayersOfLivesLeft() {

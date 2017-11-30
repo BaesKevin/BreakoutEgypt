@@ -5,12 +5,15 @@
  */
 package com.breakoutegypt.domain.effects;
 
+import javax.json.JsonObject;
+
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public interface EffectHandler {
+public interface PowerUp {
+    
+    public void accept(PowerUpHandler puh);
 
-    void handle(ExplosiveEffect e);
-    void handle(ToggleEffect e);
+    public JsonObject toJson();
 }

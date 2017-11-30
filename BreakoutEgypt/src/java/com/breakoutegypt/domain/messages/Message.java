@@ -12,7 +12,7 @@ import javax.json.JsonObjectBuilder;
  * @author BenDB
  */
 public interface Message {
-
+    
     public String getName();
     public MessageType getMessageType();
     public JsonObjectBuilder toJson();

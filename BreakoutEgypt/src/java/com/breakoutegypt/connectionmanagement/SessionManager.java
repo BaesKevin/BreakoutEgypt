@@ -8,6 +8,7 @@ package com.breakoutegypt.connectionmanagement;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.ServerClientMessageRepository;
 import com.breakoutegypt.domain.messages.BallPositionMessage;
 import com.breakoutegypt.domain.messages.LevelMessage;
 import com.breakoutegypt.domain.messages.LevelMessageType;
@@ -139,11 +140,12 @@ public class SessionManager {
         sendJsonToPlayers(lm);
     }
 
-    public void notifyPlayers(Level currentLevel, BreakoutWorld simulation) {
-        Map<String, List<Message>> messages = createMessageMap(currentLevel, simulation);
+    public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
+        Map<String, List<Message>> messages = createMessageMap(currentLevel, messageRepo);
 
         sendJsonToPlayers(messages);
-        simulation.clearMessages();
+        messageRepo.clearBrickMessages();
+        messageRepo.clearPowerupMessages();
         currentLevel.getLevelState().clearMessages();
     }
 
@@ -167,16 +169,21 @@ public class SessionManager {
         currentLevel.getLevelState().clearMessages();
     }
 
-    private Map<String, List<Message>> createMessageMap(Level currentLevel, BreakoutWorld simulation) {
+    private Map<String, List<Message>> createMessageMap(Level currentLevel, ServerClientMessageRepository messageRepo) {
 
         Map<String, List<Message>> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
         List<Message> ballPositionMessages = new ArrayList();
-        List<Message> brickMessages = simulation.getMessages();
+        List<Message> brickMessages = messageRepo.getBrickMessages();
+        List<Message> powerupMessages = messageRepo.getPowerupMessages();
 
         for (Ball b : balls) {
             BallPositionMessage bpm = new BallPositionMessage(b);
             ballPositionMessages.add(bpm);
+        }
+        
+        if (powerupMessages.size() > 0) {
+            messages.put("powerupactions", powerupMessages);
         }
 
         if (ballPositionMessages.size() > 0) {

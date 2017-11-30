@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.effects;
+package com.breakoutegypt.domain.brickcollisionhandlers;
 
 /**
  *
  * @author kevin
  */
-public interface EffectHandler {
-
-    void handle(ExplosiveEffect e);
-    void handle(ToggleEffect e);
+public interface ContactHandler {
+    void handle(BallBrickContact bbc);
+    void handle(BallGroundContact bgc);
+    
 }

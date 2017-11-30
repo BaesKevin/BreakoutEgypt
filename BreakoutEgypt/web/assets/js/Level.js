@@ -1,18 +1,19 @@
 const Level = (function () {
     let Level = function () {
         this.init(0, 0, false, false, false);
-        this.initLevelState([],[],[])
+        this.initLevelState([], [], []);
     };
 
-    Level.prototype.init = function(level, lives, levelComplete, gameOver, allLevelsComplete){
+    Level.prototype.init = function (level, lives, levelComplete, gameOver, allLevelsComplete) {
         this.levelComplete = levelComplete;
         this.gameOver = gameOver;
         this.allLevelsComplete = allLevelsComplete;
         this.level = level;
         this.lives = lives;
+        this.floor = false;
     };
 
-    Level.prototype.initLevelState = function(balls, bricks, paddles, myPaddleName){
+    Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
         this.bricks = [];
         bricks.forEach((brickjson) => {
             this.bricks.push(new Brick(brickjson));
@@ -30,12 +31,13 @@ const Level = (function () {
             this.paddles.push(paddle);
         });
 
-        if(myPaddleName){
-            this.mypaddle = this.paddles.find(function (paddle) {
+        if (myPaddleName) {
+            this.mypaddle = [];
+            this.mypaddle.push(this.paddles.find(function (paddle) {
                 return paddle.name === myPaddleName;
-            });
+            }));
         } else {
-            this.mypaddle = {x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'};
+            this.mypaddle = [{x: 0, y: 0, width: 0, height: 0, color: 'rgb(0,0,0)'}];
         }
     };
 
@@ -65,8 +67,8 @@ const Level = (function () {
         if (!this.levelComplete && !this.gameOver) {
 
             ArcadeWebSocket.sendOverSocket(JSON.stringify({
-                x: ScalingModule.scaleXForServer(this.mypaddle.x) + ScalingModule.scaleXForServer(this.mypaddle.width) / 2,
-                y: ScalingModule.scaleYForServer(this.mypaddle.y)
+                x: ScalingModule.scaleXForServer(this.mypaddle[0].x) + ScalingModule.scaleXForServer(this.mypaddle[0].width) / 2,
+                y: ScalingModule.scaleYForServer(this.mypaddle[0].y)
             }));
 
         }
@@ -82,6 +84,43 @@ const Level = (function () {
 
     Level.prototype.addBall = function (json) {
         UpdateLevelDataHelper.addBall(json, this);
+    };
+
+    Level.prototype.handleUpdate = function (json) {
+        console.log(json);
+        switch (json[0].powerupaction) {
+            case "ADDFLOOR":
+                let powerup = json[0].powerup;
+                level.floor = ScalingModule.scaleObject({x: powerup.x, y: powerup.y, width: powerup.width, height: powerup.height}, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                break;
+            case "REMOVEFLOOR":
+                level.floor = false;
+                break;
+            case "ADDBROKENPADDLE":
+                level.paddles = level.paddles.filter(function (paddle) {
+                    return level.mypaddle.name === paddle.name;
+                })
+                level.mypaddle = [];
+                for (let i = 0; i < json[0].powerup.brokenpaddle.length - 1; i++) {
+                    let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                    level.mypaddle.push(paddleToAdd);
+                    level.paddles.push(paddleToAdd);
+                }
+                break;
+            case "REMOVEBROKENPADDLE":
+                level.mypaddle.forEach(function (mypaddle) {
+                    level.paddles = level.paddles.filter(function (paddle) {
+                        return mypaddle.name === paddle.name;
+                    })
+                })
+                level.mypaddle = [];
+                let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                level.mypaddle.push(paddleToAdd);
+                level.paddles.push(paddleToAdd);
+                break;
+        }
+        ScalingModule.scaleAfterResize();
+        DrawingModule.updateStaticContent();
     };
 
     Level.prototype.updateLevelData = function (json) {
@@ -109,17 +148,15 @@ const Level = (function () {
                         break;
                 }
             });
-
-
+            DrawingModule.updateStaticContent();
         }
-
-        DrawingModule.updateStaticContent();
+//        DrawingModule.updateStaticContent();
 
     };
 
 
 
-    const UpdateLevelDataHelper = (function( self ){
+    const UpdateLevelDataHelper = (function (self) {
 
         function destroyBrick(message, self) {
             self.bricks = self.bricks.filter(function (brick) {
@@ -128,25 +165,23 @@ const Level = (function () {
         }
 
         function hideBrick(message, self) {
-            console.log("Hide brick " + message.name);
             let brickToHide = self.bricks.find(
-                function (brick) {
-                    return message.name === brick.name;
-                }
+                    function (brick) {
+                        return message.name === brick.name;
+                    }
             );
 
             if (brickToHide) {
                 brickToHide.show = false;
             }
 
-            console.log("hide ball");
         }
 
         function showBrick(message, self) {
             let brickToShow = self.bricks.find(
-                function (brick) {
-                    return message.name === brick.name;
-                }
+                    function (brick) {
+                        return message.name === brick.name;
+                    }
             );
 
             if (brickToShow) {
@@ -185,7 +220,7 @@ const Level = (function () {
         };
     })(  );
 
-    const LoadLevelHelper = ( function (){
+    const LoadLevelHelper = (function () {
         function parseJsonFromResponse(response) {
             let json = response.json();
             let contentType = response.headers.get("content-type");
@@ -200,7 +235,8 @@ const Level = (function () {
             if (!response.error) {
                 if (response.allLevelsComplete) {
                     console.log("Load level: got allLevelsComplete message");
-                    ModalModule.modalAllLevelsCompleted(self.level, time);
+                    console.log(response)
+                    ModalModule.modalAllLevelsCompleted(self.level);
                     self.allLevelsComplete = true;
                 } else {
                     console.log("Load level: got data for level " + response.level);

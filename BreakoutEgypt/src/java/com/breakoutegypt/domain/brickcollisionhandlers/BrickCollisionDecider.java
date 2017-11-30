@@ -7,6 +7,8 @@ package com.breakoutegypt.domain.brickcollisionhandlers;
 
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.EffectHandler;
+import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.effects.PowerUpHandler;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 
 /**
@@ -24,9 +26,8 @@ public class BrickCollisionDecider {
     }
 
     public void handleCollision() {
-        if (brick.isVisible() && brick.isBreakable()) {
-            
-            for(Effect effect : brick.getEffects()){
+        if (brick.isVisible()) {
+            for (Effect effect : brick.getEffects()) {
                 effect.accept(collisionEventHandler);
             }
         }

@@ -24,7 +24,11 @@ public class BodyConfigurationFactory {
         BodyDefConfig bodyDef = new BodyDefConfig(BodyType.STATIC, new Vec2(shape.getPosX(), shape.getPosY()));
 
         PolygonShape ps = new PolygonShape();
-
+       
+        // the coordinates of the points of the lines are relative to the shape's coordinates
+        // ex. a triangle at [50,50] with width 10 will create a triangle with points [ 55, 50], [50, 60], [60,60]
+        // vertices must be given counterclockwise
+           
         Vec2[] vertices = new Vec2[3];
         vertices[0] = new Vec2(shape.getWidth() / 2, 0);
         vertices[1] = new Vec2(0, shape.getHeight());
@@ -40,7 +44,7 @@ public class BodyConfigurationFactory {
 
     public BodyConfiguration createPaddleConfig(ShapeDimension s) {
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY()));
-
+        
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(s.getWidth() / 2, s.getHeight() / 2);
 
@@ -54,9 +58,10 @@ public class BodyConfigurationFactory {
 
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY() + s.getHeight()));
 
+        // Circles are drawn from the center of the shape
+        
         CircleShape newDomePaddle = new CircleShape();
         newDomePaddle.m_radius = radius;
-//        newDomePaddle.m_p.y = radius / 2;
 
         FixtureDefConfig fixtureDefConfig = new FixtureDefConfig(1f, 0f, 1f);
 

@@ -5,13 +5,17 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
+import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 
@@ -20,7 +24,7 @@ import java.util.Timer;
  *
  * @author kevin
  */
-public class Level implements BreakoutWorldEventListener, BallEventHandler {
+public class Level implements BreakoutWorldEventListener {
 
     private int id;
 
@@ -57,12 +61,15 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
 
         levelState = initialState;
-        levelState.spawnAllObjects(breakoutWorld);
+        List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
+        for (RegularBody rb : bodiesToSpawn) {
+            breakoutWorld.spawn(rb);
+        }
 
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
-                new BreakoutEffectHandler(levelState, breakoutWorld),
-                this);
+                new BreakoutEffectHandler(this, levelState, breakoutWorld),
+                new BreakoutPowerUpHandler(this, levelState, breakoutWorld));
 
         this.lives = lives;
         this.timer = new Timer();
@@ -89,7 +96,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         if (!runLevelManually && levelTimerTask == null) {
             levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
             timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
-        } 
+        }
 
     }
 
@@ -104,16 +111,43 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
         }
     }
 
+    // x coordinate is the center of the most left paddle
     public void movePaddle(Paddle paddle, int x, int y) {
+        
+        List<Paddle> paddles = levelState.getPaddles();
+        int totalWidth = levelState.calculatePaddleWidthWithGaps();
+        int paddleWidth = paddles.get(0).getShape().getWidth();
+        
+        int min = paddleWidth / 2;
+        int max = 300 - totalWidth + (paddleWidth / 2);
+
         if (!levelStarted) {
             float yPos = levelState.getBall().getPosition().y;
             List<Ball> balls = levelState.getBalls();
-            if (balls.size() > 0) {
-                balls.get(0).moveTo(x, yPos);
+
+            float temp = x;
+            for (Ball ball : balls) {
+                ball.moveTo(temp, yPos);
+                temp += paddleWidth;
             }
+            
+            
+        }
+        
+        float xpos = x;
+        if( xpos < min){
+            xpos = min;
+        } else if (xpos > max) {
+            xpos = max;
+        }
+        
+        for(Paddle p : paddles){
+            p.moveTo(xpos, p.getPosition().y);
+            
+            xpos += 2*paddleWidth;
         }
 
-        paddle.moveTo(x, y);
+        
     }
 
     public int getId() {
@@ -147,7 +181,7 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
 
     public void step() {
         breakoutWorld.step();
-        game.notifyPlayers(this, breakoutWorld);
+        game.notifyPlayers(this, breakoutWorld.getMessageRepo());
     }
 
     public boolean noLivesLeft() {
@@ -184,23 +218,13 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
     }
 
     @Override
-    public void setResetBallFlag(Ball ball) {
-        breakoutWorld.setResetBallFlag(ball);
-    }
-
-    @Override
-    public void ballHitPaddle(Ball ball, Paddle paddle) {
-        breakoutWorld.ballHitPaddle(ball, paddle);
-    }
-
-    @Override
     public void ballOutOfBounds(Ball ball) {
-        breakoutWorld.destroyBody(ball.getBody());
+        breakoutWorld.deSpawn(ball.getBody());
         resetBall(ball);
         /*
         TODO
         probleem oplossen voor als meerdere ballen tegelijk out of bounds gaan
-        */
+         */
     }
 
     @Override
@@ -218,5 +242,14 @@ public class Level implements BreakoutWorldEventListener, BallEventHandler {
             dummyRepo.getScoresByLevel(getId(), "hard");
             initNextLevel();
         }
+    }
+
+    public void addFloor(FloorPowerUp floor) {
+        levelState.addFloor(floor);
+//        breakoutWorld.setFloorToAdd(floor);
+    }
+
+    public void addPaddle(Paddle basePaddle) {
+        levelState.addPaddle(basePaddle);
     }
 }

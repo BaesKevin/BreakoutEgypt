@@ -17,7 +17,7 @@ const ModalModule = (function(){
         printModal("Choose difficulty","Choose a difficulty please:",buttons);
     }
 
-    function modalAllLevelsCompleted(levelId, time) {
+    function modalAllLevelsCompleted(levelId) {
         let buttons = shareButton;
         buttons += mainMenuButton;
         buttons += "<button id='highscoreModalButton' class='btn'>Highscores</button>";

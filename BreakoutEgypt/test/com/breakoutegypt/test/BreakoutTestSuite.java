@@ -20,6 +20,7 @@ import org.junit.runners.Suite;
    LevelTest.class,
    LevelObjectSpawningTest.class,
    MessageTest.class,
+   PowerUpTest.class,
    LevelStateTest.class
 })
 
