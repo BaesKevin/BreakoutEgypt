@@ -1,7 +1,7 @@
 const Level = (function () {
     let Level = function () {
         this.init(0, 0, false, false, false);
-        this.initLevelState([], [], [])
+        this.initLevelState([], [], []);
     };
 
     Level.prototype.init = function (level, lives, levelComplete, gameOver, allLevelsComplete) {
@@ -83,7 +83,7 @@ const Level = (function () {
     };
 
     Level.prototype.handleUpdate = function (json) {
-        console.log(json)
+        console.log(json);
         switch (json[0].powerupaction) {
             case "ADDFLOOR":
                 let powerup = json[0].powerup;
@@ -98,8 +98,9 @@ const Level = (function () {
                 })
                 level.mypaddle = [];
                 for (let i = 0; i < json[0].powerup.brokenpaddle.length - 1; i++) {
-                    level.mypaddle.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
-                    level.paddles.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                    let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                    level.mypaddle.push(paddleToAdd);
+                    level.paddles.push(paddleToAdd);
                 }
                 break;
             case "REMOVEBROKENPADDLE":
@@ -108,15 +109,10 @@ const Level = (function () {
                         return mypaddle.name === paddle.name;
                     })
                 })
-//                level.paddles = level.paddles.filter(function (paddle) {
-//                    return level.mypaddle[0].name === paddle.name;
-//                })
-//                level.paddles = level.paddles.filter(function (paddle) {
-//                    return level.mypaddle[1].name === paddle.name;
-//                })
                 level.mypaddle = [];
-                level.mypaddle.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
-                level.paddles.push(ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[2], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                level.mypaddle.push(paddleToAdd);
+                level.paddles.push(paddleToAdd);
                 break;
         }
         ScalingModule.scaleAfterResize();

@@ -7,7 +7,6 @@ package com.breakoutegypt.domain.effects;
 
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
@@ -48,11 +47,10 @@ public class BrokenPaddlePowerUp implements PowerUp {
         int basePaddleWidth = base.getShape().getWidth();
         int baseX = (int) base.getShape().getPosX();
         int baseY = (int) base.getShape().getPosY();
-        double spaceBetween = basePaddleWidth * 0.4;
 
         int newWidth = (int) Math.round(basePaddleWidth * 0.6);
         
-        int[] newXs = calculateNewX(basePaddleWidth, baseX, spaceBetween, newWidth);
+        int[] newXs = calculateNewX(baseX, newWidth);
 
         ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], baseY, newWidth, 4);
         ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], baseY, newWidth, 4);
@@ -81,9 +79,13 @@ public class BrokenPaddlePowerUp implements PowerUp {
         timeVisable = startTime;
     }
 
-    private int[] calculateNewX(int basePaddleWidth, int baseX, double spaceBetween, int newWidth) {
+    private int[] calculateNewX(int baseX, int newWidth) {
 
-        int leftX = (int) Math.round(baseX - spaceBetween);
+        // the new width is 60% of the old paddles width;
+        // new x position is calculated for both of the paddles.
+        // second paddle is first paddle x + the gap (width of a paddle) and the width of one paddle.
+        
+        int leftX = (int) Math.round(baseX - newWidth);
         if (leftX - newWidth / 2 < 0) {
             leftX = newWidth / 2;
         }

@@ -8,7 +8,6 @@ package com.breakoutegypt.connectionmanagement;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,11 @@ public class DummyConnection implements PlayerConnection {
     private List<Message> lifeMessages = new ArrayList();
     private List<Message> ballPositionMessages = new ArrayList();
     private List<Message> brickMessages = new ArrayList();
+    private List<Message> powerupMessages = new ArrayList();
+
+    public List<Message> getPowerupMessages() {
+        return powerupMessages;
+    }
 
     public List<Message> getBallPositionMessages() {
         return ballPositionMessages;
@@ -79,6 +83,10 @@ public class DummyConnection implements PlayerConnection {
         if (msgs.containsKey("brickactions")) {
             brickMessages.addAll(msgs.get("brickactions"));
             job.add("brickactions", listToJsonArray(brickMessages));
+        }
+        if (msgs.containsKey("powerupactions")) {
+            powerupMessages.addAll(msgs.get("powerupactions"));
+            job.add("powerupactions", listToJsonArray(powerupMessages));
         }
         jsonMessages.add(job.build());
     }

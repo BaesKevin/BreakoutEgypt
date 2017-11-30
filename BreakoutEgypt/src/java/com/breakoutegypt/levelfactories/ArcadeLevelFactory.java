@@ -243,13 +243,14 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(14).addEffect(new ToggleEffect(bricksToToggle));
         bricks.get(14).setType(BrickType.SWITCH);
         bricks.get(14).setBreakable(false);
+        
+        List<Ball> balls = new ArrayList();
+        balls.add(ball);
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(paddle);
+        int noOfPowerups = 3;
 
-        List<PowerUp> powerups = createPowerups(3, paddle);
-//        bricks = generatePowerUps(bricks, powerups);
-//        bricks.get(5).setPowerUp(createBrokenPaddle(paddle));
-        bricks.get(5).setPowerUp(createFloor());
-
-        LevelState initialState = new LevelState(ball, paddle, bricks);
+        LevelState initialState = new LevelState(balls, paddles, bricks, noOfPowerups);
         Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
@@ -315,57 +316,5 @@ public class ArcadeLevelFactory extends LevelFactory {
         Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
-    }
-
-    private List<Brick> generatePowerUps(List<Brick> bricks, List<PowerUp> powerups) {
-        PowerUpType[] poweruptypes = PowerUpType.values();
-        Random r = new Random();
-        List<Integer> bricksWithPowerup = new ArrayList();
-        int bricknr = r.nextInt(bricks.size());
-        Brick powerUpBrick;
-        for (int i = 0; i < powerups.size(); i++) {
-            powerUpBrick = bricks.get(bricknr);
-
-            while (bricksWithPowerup.contains(bricknr) || !powerUpBrick.getType().equals("REGULAR")) {
-                bricknr = r.nextInt(bricks.size());
-                powerUpBrick = bricks.get(bricknr);
-            }
-            
-            powerUpBrick.setPowerUp(powerups.get(i));
-            System.out.println(powerups.get(i));
-            bricksWithPowerup.add(bricknr);
-            bricknr = r.nextInt(bricks.size());
-        }
-
-        return bricks;
-    }
-
-    private List<PowerUp> createPowerups(int noOfPowerups, Paddle paddle) {
-        
-        List<PowerUp> powerups = new ArrayList();
-        PowerUpType[] poweruptypes = PowerUpType.values();
-        
-        Random r = new Random();
-        int powerupNr = r.nextInt(poweruptypes.length);
-
-        for (int i = 0; i < noOfPowerups; i++) {
-            if (poweruptypes[powerupNr].name().equals("FLOOR")) {
-                powerups.add(createFloor());
-            } else if (poweruptypes[powerupNr].name().equals("BROKENPADDLE")) {
-                powerups.add(createBrokenPaddle(paddle));
-            }
-            powerupNr = r.nextInt(poweruptypes.length);
-        }
-
-        return powerups;
-    }
-    
-    public FloorPowerUp createFloor() {
-        ShapeDimension floorShape = new ShapeDimension("floor", 0, 290, 300, 3);
-        return new FloorPowerUp(floorShape);
-    }
-    
-    public BrokenPaddlePowerUp createBrokenPaddle(Paddle p) {
-        return new BrokenPaddlePowerUp(p);
     }
 }

@@ -55,6 +55,7 @@ let ArcadeWebSocket = (function () {
     function onMessage(evt) {
         try {
             let json = JSON.parse(evt.data);
+            
             if (json && !json.error) {
                 if (json.lifeaction) {
                     if (json.lifeaction === 'gameover') {
