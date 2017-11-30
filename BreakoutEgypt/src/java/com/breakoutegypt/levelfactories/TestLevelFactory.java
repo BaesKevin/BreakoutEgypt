@@ -250,7 +250,7 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     private Level getLevelWithPowerUpBrick() {
-        ShapeDimension ballShape = new ShapeDimension("ball", 70, 50, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape = new ShapeDimension("ball", 70, 130, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
         List<Ball> balls = new ArrayList();
         balls.add(new Ball(ballShape));
         ShapeDimension floorShape = new ShapeDimension("floor", 0, 290, 300, 3);
@@ -294,8 +294,12 @@ public class TestLevelFactory extends LevelFactory {
         ShapeDimension basePaddleShape = new ShapeDimension("paddle", 70, 250, 100, 4);
         Paddle basePaddle = new Paddle(basePaddleShape);
         ShapeDimension ballShape = new ShapeDimension("ball", 70, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape2 = new ShapeDimension("ball2", 30, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape3 = new ShapeDimension("ball3", 295, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
         List<Ball> balls = new ArrayList();
         balls.add(new Ball(ballShape));
+        balls.add(new Ball(ballShape2));
+        balls.add(new Ball(ballShape3));
         
         List<Brick> bricks = new ArrayList();
         bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 150, 20, 10), new Point(0, 1)));
