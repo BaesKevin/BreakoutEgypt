@@ -46,9 +46,9 @@ public class BreakoutController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path=request.getServletPath();
-        System.out.println("PATH: "+path);
-        switch(path){
+        String path = request.getServletPath();
+        System.out.println("PATH: " + path);
+        switch (path) {
             case "/index.jsp":
                 request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 break;
@@ -68,27 +68,33 @@ public class BreakoutController extends HttpServlet {
                 handleHighscores(request, response);
                 break;
             case "/arcade":
-                GameManager gm = new GameManager();
-        
-                // TODO get from querystring
-                int numberOfPlayers = 1;
-                int startingLevel = 4;
-                int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE);
-        
-                // TODO redirect to level choice page
-                request.setAttribute("gameId", gameId);
-                request.setAttribute("level", 1);
-                request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+                handleArcade(request, response);
                 break;
             default:
         }
     }
-    private void handleHighscores(HttpServletRequest request,HttpServletResponse response) 
-            throws ServletException, IOException{
+
+    private void handleArcade(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        GameManager gm = new GameManager();
+
+        // TODO get from querystring
+        int numberOfPlayers = 1;
+        int startingLevel = 4;
+        int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE);
+
+        // TODO redirect to level choice page
+        request.setAttribute("gameId", gameId);
+        request.setAttribute("level", 1);
+        request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+    }
+
+    private void handleHighscores(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String levelId = request.getParameter("gameId");
 
-        if(levelId==null){
-            levelId="1";
+        if (levelId == null) {
+            levelId = "1";
         }
         HighscoreRepo hr = Repositories.getHighscoreRepository();
         List<Score> scores = hr.getScoresByLevel(Integer.parseInt(levelId), "hard");

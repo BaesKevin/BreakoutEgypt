@@ -33,7 +33,7 @@
                 user=new User("test","test@hotmail.com","test");
                 request.getSession().setAttribute("user",user);
             }
-            out.println("Username"+user.getEmail());
+            out.println(user.getEmail());
         %>
             <div id="menu">
                 <ul class="list-group">
