@@ -43,7 +43,8 @@ const Level = (function () {
 
     Level.prototype.loadLevel = function () {
 
-        let gameId = UtilModule.getParameterByName("gameId");
+        //let gameId = UtilModule.getParameterByName("gameId");
+        let gameId=$("#gameId").val();
         let self = this;
         
         fetch('level?gameId=' + gameId, {method: "GET", credentials: "same-origin",

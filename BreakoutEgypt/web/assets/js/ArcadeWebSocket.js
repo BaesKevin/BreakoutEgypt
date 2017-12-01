@@ -1,6 +1,6 @@
 let ArcadeWebSocket = (function () {
     let Socket = function () {
-        this.gameId = UtilModule.getParameterByName("gameId");
+        this.gameId = $("#gameId").val();
         this.wsUri = "ws://" + document.location.host + "/BreakoutEgypt/gameplay?gameId=" + this.gameId;
     };
 

@@ -30,6 +30,13 @@
                 </div>
         </main>
     </div>
+        <%
+            int id=Integer.parseInt(request.getAttribute("gameId").toString());
+            int levelId=Integer.parseInt(request.getAttribute("level").toString());
+            out.println("<input type='hidden' value='"+id+"' id='gameId'/>");
+            out.println("<input type='hidden' value='"+levelId+"' id='level'/>");
+        %>
+        
         <div id="modalPlaceholder"></div>
         <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="assets/js/popper.min.js"></script>
