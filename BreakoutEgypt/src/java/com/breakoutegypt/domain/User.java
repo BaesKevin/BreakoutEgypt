@@ -7,6 +7,7 @@ package com.breakoutegypt.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -49,7 +50,7 @@ public class User implements Serializable{
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     @Override
