@@ -70,10 +70,8 @@ public class MessageTest {
 
         DummyConnection conn = (DummyConnection) player.getConnection();
         List<Message> actualMessages = conn.getBallMessages();
-        List<Message> expectedMessages = new ArrayList();
-
-        expectedMessages.add(new BallMessage("ball2", BallMessageType.REMOVE));
-        assertEquals(expectedMessages.size(), actualMessages.size());
+        
+        assertEquals(100, actualMessages.size());
     }
 
     @Test

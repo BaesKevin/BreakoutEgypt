@@ -12,6 +12,8 @@ import com.breakoutegypt.domain.ServerClientMessageRepository;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Paddle;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -23,20 +25,38 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     private BreakoutWorld breakoutWorld;
     private Level level;
 
+    // powerups might need to be stored as a player field
     private BrokenPaddlePowerUp paddlePowerup;
     private FloorPowerUp floorPowerup;
-
+    private List<PowerUp> powerups;
+    
     public BreakoutPowerUpHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
         this.level = level;
         this.levelState = levelState;
         this.breakoutWorld = breakoutWorld;
+        powerups = new ArrayList();
+    }
+    
+    @Override
+    public void addPowerUp(PowerUp up){
+        this.powerups.add(up); // TODO check if powerup is already in the list
     }
 
+    @Override
+    public List<PowerUp> getPowerUps() {
+        return powerups;
+    }
+    
+    @Override
+    public void emptyPowerups(){
+        this.powerups = new ArrayList();
+    }
+    
     @Override
     public void handleFloorPowerUp(FloorPowerUp floorPowerup) {
         if (this.floorPowerup == null) {
             this.floorPowerup = floorPowerup;
-
+            
             floorPowerup.setIsVisable(true);
 //        level.addFloor(pu);
 

@@ -75,6 +75,15 @@ public class BreakoutWorld implements ContactHandler {
         }
         contacts = new ArrayList();
         
+        // get all powerups and trigger them immediately
+        List<PowerUp> powerups = powerupHandler.getPowerUps();
+        
+        for(PowerUp up : powerups){
+            up.accept(powerupHandler);
+        }
+        
+        powerupHandler.emptyPowerups();
+        
         powerupHandler.removePowerupsIfTimedOut();
     }
 
@@ -131,14 +140,17 @@ public class BreakoutWorld implements ContactHandler {
         this.worldEventListener = listener;
     }
 
+    // add playerToGivePowerUps parameter
     public void destroyBricks(List<Brick> bricks) {
         String brickName;
         for (Brick brick : bricks) {
             brickName = brick.getName();
 
             if (brick.hasPowerUp()) {
+                // player.addPowerUp(powerup)
                 PowerUp pu = brick.getPowerUp();
-                pu.accept(powerupHandler);
+//                pu.accept(powerupHandler);
+                powerupHandler.addPowerUp(pu);
             }
 
             worldEventListener.removeBrick(brick);
