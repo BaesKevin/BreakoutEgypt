@@ -5,11 +5,16 @@
  */
 package com.breakoutegypt.domain.effects;
 
+import java.util.List;
+
 /**
  *
  * @author BenDB
  */
 public interface PowerUpHandler {
+    void addPowerUp(PowerUp up);
+    List<PowerUp> getPowerUps();
+    void emptyPowerups();
     void handleFloorPowerUp(FloorPowerUp fpu);
     void handleAddBrokenPaddle(BrokenPaddlePowerUp bppu);
     void handleAcidBall();

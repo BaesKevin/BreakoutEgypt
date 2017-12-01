@@ -87,7 +87,7 @@ public class LevelState {
             List<PowerUp> powerups = createPowerups(3, paddles.get(0));
             bricks = generatePowerUps(bricks, powerups);
         }
-        bricks.get(5).setPowerUp(new AcidBallPowerUp());
+//        bricks.get(5).setPowerUp(new AcidBallPowerUp()); Ben pls...
     }
 
     public void addPaddle(Paddle p) {
