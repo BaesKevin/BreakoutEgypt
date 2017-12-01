@@ -11,6 +11,8 @@ const Brick = (function () {
         this.show = brickdata.show;
         this.type = brickdata.type;
         this.isTarget = brickdata.isTarget;
+        this.effect = brickdata.effect;
+        this.isBreakable = brickdata.isBreakable;
     };
 
     Brick.prototype.draw = function (brickCtx) {
@@ -32,33 +34,22 @@ const Brick = (function () {
     };
 
     function getColor(brick) {
-
+        
         let color = {};
-        switch (brick.type) {
-            case "UNBREAKABLE":
-                color.color = "gray";
-                color.pattern = ImageLoader.patterns["brick"];
-                break;
-            case "EXPLOSIVE":
-                color.color = "red";
-                color.pattern = ImageLoader.patterns["brick"];
-                break;
-            case "SWITCH":
-                color.color = "blue";
-                color.pattern = ImageLoader.patterns["brick"];
-                break;
-            case "REGULAR":
-                color.color = "green";
-                color.pattern = ImageLoader.patterns["brick"];
-                break;
-            case "TARGET":
-                color.color = "gold";
-                color.pattern = ImageLoader.patterns["gold"];
-                break;
-            default :
-                color.color = "black";
-                color.pattern = ImageLoader.patterns["brick"];
+        color.color = "green";
+        color.pattern = ImageLoader.patterns["brick"];
+        
+        if (brick.effect === "toggle") {
+            color.color = "blue";
+        } else if (brick.effect === "explosive") {
+            color.color = "red";
+        } else if (!brick.isBreakable) {
+            color.color = "gray";
+        } else if (brick.isTarget) {
+            color.color = "gold";
+            color.pattern = ImageLoader.patterns["gold"];
         }
+
         return color;
 
     }

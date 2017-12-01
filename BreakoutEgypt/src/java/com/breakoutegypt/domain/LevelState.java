@@ -225,8 +225,8 @@ public class LevelState {
             for (Brick brick : bricks) {
                 currentBrickPosition = brick.getGridPosition();
                 if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
-                    if (brick.isVisible() && !(hasToggleEffect(brick.getEffects()))) {
-                        ExplosiveEffect e = getExplosiveEffect(brick.getEffects());
+                    if (brick.isVisible() && !(brick.hasToggleEffect())) {
+                        ExplosiveEffect e = brick.getExplosiveEffect();
                         if (e != null && e.getRadius() > 0) {
                             if (!bricksToRemove.contains(brick)) {
                                 bricksToRemove.add(brick);
@@ -259,7 +259,6 @@ public class LevelState {
                 break;
             }
         }
-
         return hasSwitch;
     }
 

@@ -17,6 +17,7 @@ const Level = (function () {
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
         this.bricks = [];
         bricks.forEach((brickjson) => {
+            console.log(brickjson);
             this.bricks.push(new Brick(brickjson));
         });
 

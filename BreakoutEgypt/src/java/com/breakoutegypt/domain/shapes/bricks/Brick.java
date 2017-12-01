@@ -11,6 +11,7 @@ import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
@@ -110,8 +111,40 @@ public class Brick extends RegularBody {
         builder.add("show", isVisibible);
         builder.add("type", getBrickTypeName());
         builder.add("isTarget", isTarget());
-
+        if (hasToggleEffect()) {
+            builder.add("effect", "toggle");
+        } else if (getExplosiveEffect() != null) {
+            builder.add("effect", "explosive");
+        } else {
+            builder.add("effect", "");
+        }
+        builder.add("isBreakable", isBreakable);
         return builder;
+    }
+
+    public ExplosiveEffect getExplosiveEffect() {
+        List<Effect> effects = getEffects();
+        for (Effect e : effects) {
+            if (e instanceof ExplosiveEffect) {
+                if (((ExplosiveEffect) e).getRadius() > 0) {
+                    return (ExplosiveEffect) e;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean hasToggleEffect() {
+        List<Effect> effects = getEffects();
+        boolean hasSwitch = false;
+
+        for (Effect e : effects) {
+            if (e instanceof ToggleEffect) {
+                hasSwitch = true;
+                break;
+            }
+        }
+        return hasSwitch;
     }
 
     public void addEffect(Effect effect) {
