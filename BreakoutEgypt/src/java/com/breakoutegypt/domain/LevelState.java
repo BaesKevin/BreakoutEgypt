@@ -84,10 +84,9 @@ public class LevelState {
         }
 
         if (noOfPowerups > 0) {
-            List<PowerUp> powerups = createPowerups(3, paddles.get(0));
+            List<PowerUp> powerups = createPowerups(noOfPowerups, paddles.get(0));
             bricks = generatePowerUps(bricks, powerups);
         }
-//        bricks.get(5).setPowerUp(new AcidBallPowerUp()); Ben pls...
     }
 
     public void addPaddle(Paddle p) {
@@ -330,12 +329,11 @@ public class LevelState {
 
         for (int i = 0; i < noOfPowerups; i++) {
             if (poweruptypes[powerupNr].name().equals("FLOOR")) {
-                powerups.add(createFloor());
+                powerups.add(createFloor(i));
             } else if (poweruptypes[powerupNr].name().equals("BROKENPADDLE")) {
-                powerups.add(createBrokenPaddle(paddle));
+                powerups.add(createBrokenPaddle(paddle, i));
             } else if (poweruptypes[powerupNr].name().equals("ACIDBALL")) {
-                System.out.println("AcidBall");
-                powerups.add(new AcidBallPowerUp());
+                powerups.add(new AcidBallPowerUp("acidball" + i));
             }
             powerupNr = r.nextInt(poweruptypes.length);
         }
@@ -343,12 +341,12 @@ public class LevelState {
         return powerups;
     }
 
-    public FloorPowerUp createFloor() {
-        ShapeDimension floorShape = new ShapeDimension("floor", 0, 290, 300, 3);
+    public FloorPowerUp createFloor(int x) {
+        ShapeDimension floorShape = new ShapeDimension("floor" + x, 0, 290, 300, 3);
         return new FloorPowerUp(floorShape);
     }
 
-    public BrokenPaddlePowerUp createBrokenPaddle(Paddle p) {
-        return new BrokenPaddlePowerUp(p);
+    public BrokenPaddlePowerUp createBrokenPaddle(Paddle p, int x) {
+        return new BrokenPaddlePowerUp(p, x);
     }
 }

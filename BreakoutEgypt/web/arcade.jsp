@@ -23,6 +23,7 @@
             <main class="row">
                 <div id="gameMain" class="clearfix">
                     <canvas id="stationaryParts" height="300" width="300"></canvas>
+                    <canvas id="effectCanvas" height="300" width="300"></canvas>
                     <canvas id="movingParts" height="300" width="300"></canvas>
                     <p id="level"></p>
                     <p id="pause"><a>Pause (P)</a></p>
@@ -34,7 +35,9 @@
         <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="assets/js/popper.min.js"></script>
         <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-
+        <script type="text/javascript" src="assets/js/effects/vector.js"></script>
+        <script type="text/javascript" src="assets/js/effects/Particle.js"></script>
+        <script type="text/javascript" src="assets/js/effects/Explosion.js"></script>
         <script type="text/javascript" src="assets/js/ScalingModule.js"></script>
         <script type="text/javascript" src="assets/js/Level.js"></script>
         <script type="text/javascript" src="assets/js/Brick.js"></script>
@@ -45,5 +48,6 @@
         <script type="text/javascript" src="assets/js/ArcadeIndex.js"></script>
         <script type="text/javascript" src="assets/js/DrawingModule.js"></script>
         <script type="text/javascript" src="assets/js/arcade.js"></script>
+        <script type="text/javascript" src="assets/js/PowerUpModule.js"></script>
     </body>
 </html>

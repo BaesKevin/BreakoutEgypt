@@ -40,10 +40,8 @@ public class LevelServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute("user");
-        System.out.println("USER: "+user);
         
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-        System.out.println("GAMEID: "+gameId);
         
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
@@ -51,7 +49,7 @@ public class LevelServlet extends HttpServlet {
         JsonObjectBuilder job;
 
         boolean hasNextLevel = manager.hasNextLevel(gameId);
-
+        
         if (hasNextLevel) {
             Level level = game.getLevel();
             
@@ -80,6 +78,9 @@ public class LevelServlet extends HttpServlet {
                 job.add("error","No user in the session");
             }
             
+        } else if (game == null) {
+            job = Json.createObjectBuilder();
+            job.add("error", "Connection lost...");
         } else {
             job = Json.createObjectBuilder();
             job.add("allLevelsComplete", true);

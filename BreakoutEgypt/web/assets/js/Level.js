@@ -11,13 +11,13 @@ const Level = (function () {
         this.level = level;
         this.lives = lives;
         this.floor = false;
+        this.powerups = [];
         this.gap = 0;
     };
 
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
         this.bricks = [];
         bricks.forEach((brickjson) => {
-            console.log(brickjson);
             this.bricks.push(new Brick(brickjson));
         });
 
@@ -88,46 +88,6 @@ const Level = (function () {
         UpdateLevelDataHelper.addBall(json, this);
     };
 
-    Level.prototype.handleUpdate = function (json) {
-        console.log(json);
-        switch (json[0].powerupaction) {
-            case "ADDFLOOR":
-                let powerup = json[0].powerup;
-                level.floor = ScalingModule.scaleObject({x: powerup.x, y: powerup.y, width: powerup.width, height: powerup.height}, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
-                break;
-            case "REMOVEFLOOR":
-                level.floor = false;
-                break;
-            case "ADDBROKENPADDLE":
-                level.paddles = level.paddles.filter(function (paddle) {
-                    return level.mypaddle.name === paddle.name;
-                })
-                level.mypaddle = [];
-                for (let i = 0; i < json[0].powerup.brokenpaddle.length; i++) {
-                    let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
-                    let gap = ScalingModule.scaleXForClient(json[0].powerup.gap);
-                    level.gap = gap;
-                    level.mypaddle.push(paddleToAdd);
-                    level.paddles.push(paddleToAdd);
-                }
-                break;
-            case "REMOVEBROKENPADDLE":
-                level.mypaddle.forEach(function (mypaddle) {
-                    level.paddles = level.paddles.filter(function (paddle) {
-                        return mypaddle.name === paddle.name;
-                    })
-                })
-                level.mypaddle = [];
-                let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.base, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
-                level.gap = 0;
-                level.mypaddle.push(paddleToAdd);
-                level.paddles.push(paddleToAdd);
-                break;
-        }
-        ScalingModule.scaleAfterResize();
-        DrawingModule.updateStaticContent();
-    };
-
     Level.prototype.updateLevelData = function (json) {
 
         let self = this;
@@ -138,7 +98,6 @@ const Level = (function () {
 
 
         if (json.leveldata.brickactions) {
-            console.log("Received actions to perform on bricks");
 
             json.leveldata.brickactions.forEach(function (message) {
                 switch (message.brickaction) {
@@ -164,9 +123,13 @@ const Level = (function () {
     const UpdateLevelDataHelper = (function (self) {
 
         function destroyBrick(message, self) {
+            let brickToRemove = self.bricks.find(function (brick) {
+                return brick.name === message.name;
+            })
             self.bricks = self.bricks.filter(function (brick) {
                 return brick.name !== message.name;
             });
+            DrawingModule.createExplosion(100, brickToRemove.x + brickToRemove.width / 2, brickToRemove.y + brickToRemove.height / 2)
         }
 
         function hideBrick(message, self) {
@@ -254,8 +217,8 @@ const Level = (function () {
 
                 }
             } else {
-                //            document.location = "/breakout/";
                 console.log("%c" + response.error, "background-color:red; color: white;padding:5px;");
+                ModalModule.modalErrorMessage(response.error);
             }
         }
 

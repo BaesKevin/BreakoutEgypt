@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.shapes;
 
+import com.breakoutegypt.domain.effects.AcidBallPowerUp;
 import org.jbox2d.common.Vec2;
 
 /**
@@ -12,6 +13,17 @@ import org.jbox2d.common.Vec2;
  * @author kevin
  */
 public class Ball extends RegularBody {
+
+    private AcidBallPowerUp acidBall;
+
+    public void setAcidballPowerup(AcidBallPowerUp acidBall) {
+        this.acidBall = acidBall;
+    }
+
+    public AcidBallPowerUp getAcidBall() {
+        return acidBall;
+    }
+    
     public Ball(ShapeDimension s) {
         super(s);
     }

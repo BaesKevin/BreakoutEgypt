@@ -2,19 +2,26 @@
 
 var checkKey = function (e) {
     if (level !== undefined) {
-        if (e.which === 112)
-            pauseGame();
-        else if (e.which === 113)
-            ModalModule.modalQuit();
+        switch (e.which) {
+            case 80:
+            case 112:
+                pauseGame();
+                break;
+            case 81:
+            case 113:
+                ModalModule.modalQuit();
+                break;
+        }
     }
 };
 
 var quitGame = function () {
     ArcadeWebSocket.close();
-    location.replace("index.html");
+    location.replace("index.jsp");
 };
 
 var pauseGame = function () {
+    console.log()
     var gameId = UtilModule.getParameterByName("gameId");
     $.ajax({
         url: "pause?gameid=" + gameId

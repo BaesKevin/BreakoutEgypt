@@ -1,14 +1,15 @@
 let DrawingModule = (function () {
-    let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
+    let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas, effectCanvas, effectCtx;
     let mouse = {
         x: 0,
         y: 0
     };
+    let explosions = [];
 
     function doDocumentLoaded() {
         $('canvas').on('mousemove', updateMouseX);
         initCanvasAndContextFields();
-
+        requestAnimationFrame(doExplosions);
         mouse.y = getBrickCanvasDimensions().height - 50;
     }
 
@@ -22,6 +23,8 @@ let DrawingModule = (function () {
         brickCtx = brickCanvas.getContext('2d');
         movingPartsCanvas = $('#movingParts')[0];
         movingPartsCtx = movingPartsCanvas.getContext('2d');
+        effectCanvas = $('#effectCanvas')[0];
+        effectCtx = effectCanvas.getContext('2d');
 
         resizeCanvasses(getBrickCanvasDimensions().width, getBrickCanvasDimensions().height);
     }
@@ -78,6 +81,25 @@ let DrawingModule = (function () {
         drawLevelNumber(level.level);
         drawLives(level.lives);
         drawFloor();
+        updatePowerups();
+    }
+
+    function updatePowerups() {
+        let imgObj = {x: 1, y: 275, width: 20, height: 20};
+        imgObj = ScalingModule.scaleObject(imgObj, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+        let allPowerups = [];
+        level.powerups.forEach(function (powerup) {
+            
+            if (powerup.active) {
+                brickCtx.fillStyle = "lightgreen";
+            } else {
+                brickCtx.fillStyle = "lightblue";
+            }
+            let powerupname = powerup.name.replace(/[0-9]/g, "");
+            brickCtx.fillRect(imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+            brickCtx.drawImage(ImageLoader.images[powerupname], imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+            imgObj.x += ScalingModule.scaleXForClient(20);
+        });
     }
 
     function updateBricks() {
@@ -121,10 +143,10 @@ let DrawingModule = (function () {
         }
 
         level.mypaddle.forEach(function (paddle) {
-            let godImgPosition = {x: paddle.x + (paddle.width / 2) - ((godImgSize.width*scale) /2),
+            let godImgPosition = {x: paddle.x + (paddle.width / 2) - ((godImgSize.width * scale) / 2),
                 y: paddle.y - (paddle.width * 0.4)};
 
-            movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y, godImgSize.width*scale, godImgSize.height*scale);
+            movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y, godImgSize.width * scale, godImgSize.height * scale);
         });
     }
 
@@ -160,16 +182,44 @@ let DrawingModule = (function () {
     }
 
 
+
+
     function resizeCanvasses(width, height) {
         brickCanvas.width = width;
         brickCanvas.height = height;
         movingPartsCanvas.width = brickCanvas.width;
         movingPartsCanvas.height = brickCanvas.height;
+        effectCanvas.width = brickCanvas.width;
+        effectCanvas.height = brickCanvas.height;
 
         let pos = brickCanvas.getBoundingClientRect();
         movingPartsCanvas.style.left = pos.left + "px";
+        effectCanvas.style.left = pos.left + "px";
 
         updateStaticContent();
+    }
+
+    function doExplosions() {
+        effectCtx.clearRect(0, 0, effectCanvas.width, effectCanvas.height);
+        explosions.forEach(function (myExplosion) {
+            if (myExplosion.isActive) {
+                myExplosion.explode();
+            } else {
+                removeExplosion(myExplosion);
+            }
+        });
+        requestAnimationFrame(doExplosions);
+    }
+
+    function removeExplosion(explosionToRemove) {
+        explosions = explosions.filter(function (explosion) {
+            return explosionToRemove.name !== explosion.name;
+        })
+    }
+
+    function createExplosion(noOfParticles, x, y) {
+        let boom = new Explosion(noOfParticles, x, y, effectCtx);
+        explosions.push(boom);
     }
 
     function createPattern(image, mode) {
@@ -183,7 +233,8 @@ let DrawingModule = (function () {
         getBrickCanvasDimensions: getBrickCanvasDimensions,
         resizeCanvasses: resizeCanvasses,
         createPattern: createPattern,
-        doDocumentLoaded: doDocumentLoaded
+        doDocumentLoaded: doDocumentLoaded,
+        createExplosion: createExplosion,
     }
 
 })();

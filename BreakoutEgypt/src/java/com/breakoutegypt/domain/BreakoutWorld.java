@@ -10,16 +10,19 @@ import com.breakoutegypt.domain.brickcollisionhandlers.BallGroundContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.brickcollisionhandlers.Contact;
 import com.breakoutegypt.domain.brickcollisionhandlers.ContactHandler;
+import com.breakoutegypt.domain.effects.AcidBallPowerUp;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.PowerUpHandler;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.RegularBody;
-import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import java.util.ArrayList;
 import java.util.List;
 import org.jbox2d.collision.shapes.Shape;
@@ -75,15 +78,6 @@ public class BreakoutWorld implements ContactHandler {
         }
         contacts = new ArrayList();
         
-        // get all powerups and trigger them immediately
-        List<PowerUp> powerups = powerupHandler.getPowerUps();
-        
-        for(PowerUp up : powerups){
-            up.accept(powerupHandler);
-        }
-        
-        powerupHandler.emptyPowerups();
-        
         powerupHandler.removePowerupsIfTimedOut();
     }
 
@@ -119,10 +113,12 @@ public class BreakoutWorld implements ContactHandler {
     @Override
     public void handle(BallBrickContact bbc) {
         Brick b = bbc.getBrick();
-        if (acidBall) {
-            b.setType(BrickType.EXPLOSIVE);
+        Ball ball = bbc.getBall();
+        AcidBallPowerUp abpu = ball.getAcidBall();
+        if (abpu != null) {
             b.addEffect(new ExplosiveEffect(b, 1));
-            acidBall = false;
+            ball.setAcidballPowerup(null);
+            messageRepo.addPowerupMessages(new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL));
         }
         new BrickCollisionDecider(b, this.effectHandler).handleCollision();
     }

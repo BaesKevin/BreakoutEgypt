@@ -217,7 +217,7 @@ public class TestLevelFactory extends LevelFactory {
         ShapeDimension basePaddleShape = new ShapeDimension("paddle", 70, 250, 100, 4);
         Paddle basePaddle = new Paddle(basePaddleShape);
 
-        BrokenPaddlePowerUp bp = new BrokenPaddlePowerUp(basePaddle);
+        BrokenPaddlePowerUp bp = new BrokenPaddlePowerUp(basePaddle, 0);
         List<Paddle> brokenPaddle = bp.getBrokenPaddle();
 
         ShapeDimension ballShape = new ShapeDimension("ball", brokenPaddle.get(0).getShape().getPosX(), 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
@@ -303,7 +303,7 @@ public class TestLevelFactory extends LevelFactory {
         
         List<Brick> bricks = new ArrayList();
         bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 150, 20, 10), new Point(0, 1)));
-        bricks.get(0).setPowerUp(new BrokenPaddlePowerUp(basePaddle));
+        bricks.get(0).setPowerUp(new BrokenPaddlePowerUp(basePaddle, 1));
         
         List<Paddle> paddles = new ArrayList();
         paddles.add(basePaddle);

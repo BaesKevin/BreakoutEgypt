@@ -40,6 +40,8 @@ const HighScoresModule = (function(){
 
 $(document).ready(function () {
     HighScoresModule.getHighscoresByLevel(1);
-    $("#returnToMain").on("click", UtilModule.redirect("index.html"));
+    $("#returnToMain").on("click", function () {
+        UtilModule.redirect("index.jsp");
+    });
     $("form").on("submit", HighScoresModule.getHighscores);
 })

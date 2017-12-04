@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.brickcollisionhandlers;
 
+import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.bricks.Brick;

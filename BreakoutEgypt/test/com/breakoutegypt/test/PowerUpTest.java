@@ -12,7 +12,9 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.effects.AcidBallPowerUp;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
@@ -166,6 +168,16 @@ public class PowerUpTest {
         assertTrue(conn.getBallMessages().get(0).getName().equals("ball3"));
         assertTrue(balls.get(1).getPosition().y < paddles.get(0).getPosition().y);
         assertTrue(conn.getPowerupMessages().size() > 0);
+    }
+    
+    @Test
+    public void AcidBallMessageTest() {
+        
+        PowerUp p = new AcidBallPowerUp("acidball");
+        
+        p.toJson().toString();
+        
+        
     }
 
     private void stepTimes(Level level, int times) {

@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.domain.effects;
 
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.util.ArrayList;
@@ -27,8 +29,11 @@ public class BrokenPaddlePowerUp implements PowerUp {
     private Paddle base;
     private List<Paddle> brokenPaddle;
     public static final int GAP = 20;
+    
+    private String name;
 
-    public BrokenPaddlePowerUp(Paddle p) {
+    public BrokenPaddlePowerUp(Paddle p,  int i) {
+        this.name = "brokenpaddle" + i;
         base = p;
         brokenPaddle = new ArrayList();
         breakPaddle();
@@ -103,8 +108,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
     }
 
     @Override
-    public void accept(PowerUpHandler puh) {
-        puh.handleAddBrokenPaddle(this);
+    public PowerUpMessage accept(PowerUpHandler puh) {
+        return puh.handleAddBrokenPaddle(this);
     }
 
     @Override
@@ -115,9 +120,20 @@ public class BrokenPaddlePowerUp implements PowerUp {
         jab.add(brokenPaddle.get(1).getShape().toJson().build());
         job.add("base", base.getShape().toJson().build());
         job.add("brokenpaddle", jab.build());
+        job.add("powerupname", getName());
         job.add("gap", GAP);
         
         return job.build();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public PowerUpMessageType getType() {
+        return PowerUpMessageType.ADDBROKENPADDLE;
     }
 
 }

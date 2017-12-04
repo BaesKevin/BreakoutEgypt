@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.domain.effects;
 
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.RegularBody;
@@ -22,9 +24,9 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     private boolean isVisable;
     private int timeVisable = 1800; //TODO variable time in seconds (not steps)
     private int startTime;
+    private String name;
 
     public FloorPowerUp(ShapeDimension s) {
-        // s = new ShapeDimension("floor", 0, 290, 300, 1);
         super(s);
         isVisable = false;
         startTime = timeVisable;
@@ -53,8 +55,8 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     }
 
     @Override
-    public void accept(PowerUpHandler puh) {
-        puh.handleFloorPowerUp(this);
+    public PowerUpMessage accept(PowerUpHandler puh) {
+        return puh.handleFloorPowerUp(this);
     }
 
     @Override
@@ -65,7 +67,17 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
         job.add("y", shape.getPosY());
         job.add("width", shape.getWidth());
         job.add("height", shape.getHeight());
+        job.add("powerupname", getName());
         return job.build();
     }
 
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+
+    @Override
+    public PowerUpMessageType getType() {
+        return PowerUpMessageType.ADDFLOOR;
+    }
 }
