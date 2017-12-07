@@ -38,6 +38,8 @@ public class Brick extends RegularBody {
     private PowerUpType poweruptype;
     private PowerUp powerup;
 
+    private int points = 2000;
+    
     public Brick(ShapeDimension s, Point position) {
         this(s, position, false, true);
     }
@@ -47,6 +49,10 @@ public class Brick extends RegularBody {
     }
 
     public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable) {
+        this(s, gridPosition, isTarget, isVisible, isBreakable, 2000);
+    }
+    
+    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable, int points) {
         super(s);
         this.gridPosition = gridPosition;
         this.isVisibible = isVisible;
@@ -58,7 +64,9 @@ public class Brick extends RegularBody {
         if (isVisible && isBreakable) {
             effects.add(new ExplosiveEffect(this, 0));
         }
+        this.points = points;
     }
+        
 
     public void setBreakable(boolean b) {
         isBreakable = b;
@@ -122,9 +130,6 @@ public class Brick extends RegularBody {
         return effects; // TODO unmodifyable
     }
 
-//    public void accept(ShapeUser u){
-//        u.doForBrick(this);
-//    }
     public void setType(BrickType brickType) {
         this.brickTypeName = brickType.name();
     }
@@ -149,5 +154,13 @@ public class Brick extends RegularBody {
 
     public PowerUp getPowerUp() {
         return powerup;
+    }
+    
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public int getPoints() {
+        return points;
     }
 }

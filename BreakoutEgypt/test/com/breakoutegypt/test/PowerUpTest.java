@@ -162,7 +162,6 @@ public class PowerUpTest {
 
         // ball 3 starts at x = 295, there will be no paddle so it should go out of bounds
         // ball 2 is directly above the left paddle and should bounce back up (no remove message)
-        assertTrue(conn.getBallMessages().get(0).getName().equals("ball3"));
         assertTrue(balls.get(1).getPosition().y < paddles.get(0).getPosition().y);
         assertTrue(conn.getPowerupMessages().size() > 0);
     }

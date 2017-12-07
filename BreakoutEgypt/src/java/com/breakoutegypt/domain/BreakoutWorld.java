@@ -7,6 +7,7 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.brickcollisionhandlers.BallBrickContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BallGroundContact;
+import com.breakoutegypt.domain.brickcollisionhandlers.BallPaddleContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.brickcollisionhandlers.Contact;
 import com.breakoutegypt.domain.brickcollisionhandlers.ContactHandler;
@@ -49,7 +50,7 @@ public class BreakoutWorld implements ContactHandler {
     private EffectHandler effectHandler;
     private PowerUpHandler powerupHandler;
     private ServerClientMessageRepository messageRepo;
-    
+        
     public BreakoutWorld() {
         this(TIMESTEP_DEFAULT);
     }
@@ -114,6 +115,11 @@ public class BreakoutWorld implements ContactHandler {
         worldEventListener.ballOutOfBounds(bgc.getOutofbounds());
     }
 
+    @Override
+    public void handle(BallPaddleContact bpc) {
+        worldEventListener.ballHitPaddle();
+    }
+
     public int countWorldObjects() {
         return world.getBodyCount();
     }
@@ -131,7 +137,7 @@ public class BreakoutWorld implements ContactHandler {
                 PowerUp pu = brick.getPowerUp();
                 pu.accept(powerupHandler);
             }
-
+            
             worldEventListener.removeBrick(brick);
             this.deSpawn(brick.getBody());
             messageRepo.addBrickMessage(new BrickMessage(brickName, BrickMessageType.DESTROY));
@@ -145,5 +151,5 @@ public class BreakoutWorld implements ContactHandler {
     public long getTimeStepAsMs() {
         return Math.round(Math.floor(timestepSeconds * 1000));
     }
-
+    
 }

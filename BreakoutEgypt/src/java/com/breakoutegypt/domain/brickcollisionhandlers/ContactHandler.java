@@ -12,5 +12,5 @@ package com.breakoutegypt.domain.brickcollisionhandlers;
 public interface ContactHandler {
     void handle(BallBrickContact bbc);
     void handle(BallGroundContact bgc);
-    
+    void handle(BallPaddleContact bpc);
 }

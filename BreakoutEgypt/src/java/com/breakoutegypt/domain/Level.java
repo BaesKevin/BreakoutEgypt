@@ -40,9 +40,11 @@ public class Level implements BreakoutWorldEventListener {
 
     private boolean levelStarted;
 
-    private ScoreTimer scoreTimer;
+    private TimeScore scoreTimer;
     private LevelTimerTask levelTimerTask;
     private boolean runLevelManually;
+    
+    private BrickScoreCalculator brickScoreCalc;
 
     public Level(int id, Game game, LevelState initialObjects, int lives
     ) {
@@ -56,7 +58,9 @@ public class Level implements BreakoutWorldEventListener {
 
         this.levelStarted = false;
 
-        scoreTimer = new ScoreTimer();
+        scoreTimer = new TimeScore();       
+        this.brickScoreCalc = new BrickScoreCalculator();
+
 
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
 
@@ -76,7 +80,7 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
     }
 
-    public ScoreTimer getScoreTimer() {
+    public TimeScore getScoreTimer() {
         return scoreTimer;
     }
 
@@ -206,6 +210,7 @@ public class Level implements BreakoutWorldEventListener {
         } else {
             stop();
         }
+        scoreTimer.pauseTimer();
     }
 
     public void initNextLevel() {
@@ -221,15 +226,12 @@ public class Level implements BreakoutWorldEventListener {
     public void ballOutOfBounds(Ball ball) {
         breakoutWorld.deSpawn(ball.getBody());
         resetBall(ball);
-        /*
-        TODO
-        probleem oplossen voor als meerdere ballen tegelijk out of bounds gaan
-         */
     }
 
     @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
+        brickScoreCalc.addPointsToScore(brick);
 
         if (allTargetBricksDestroyed()) {
             getScoreTimer().stop();
@@ -244,12 +246,20 @@ public class Level implements BreakoutWorldEventListener {
         }
     }
 
+    @Override
+    public void ballHitPaddle() {
+        brickScoreCalc.resetMultiplier();
+    }
+
     public void addFloor(FloorPowerUp floor) {
         levelState.addFloor(floor);
-//        breakoutWorld.setFloorToAdd(floor);
     }
 
     public void addPaddle(Paddle basePaddle) {
         levelState.addPaddle(basePaddle);
+    }
+
+    public int getBrickScore() {
+        return brickScoreCalc.getScore();
     }
 }

@@ -11,14 +11,18 @@ import java.util.Date;
  *
  * @author BenDB
  */
-public class ScoreTimer {
+public class TimeScore {
     
     private long beginTime;
     private long endTime;
+    private long totalPausedTime;
+    private long beginPause;
     private boolean running;
+    private boolean paused;
     
-    public ScoreTimer () {
+    public TimeScore () {
         running = false;
+        paused = false;
     }
     
     public void start () {
@@ -33,7 +37,18 @@ public class ScoreTimer {
         running = false;
     }
     
+    public void pauseTimer() {
+        if (!paused) {
+            paused = true;
+            beginPause = new Date().getTime();
+        } else {
+            paused = false;
+            long pauseTime = new Date().getTime() - beginPause;
+            totalPausedTime += pauseTime;
+        }
+    }
+    
     public long getDuration () {
-        return endTime - beginTime;
+        return (endTime - beginTime) - totalPausedTime;
     }
 }

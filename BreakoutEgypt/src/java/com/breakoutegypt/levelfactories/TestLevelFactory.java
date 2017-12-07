@@ -78,8 +78,31 @@ public class TestLevelFactory extends LevelFactory {
             case 12:
                 currentLevel = getLevelWithBrokenPaddlePowerup();
                 break;
+            case 13:
+                currentLevel = getSimpleScoreTestLevel();
+                break;
         }
     }
+    
+    public Level getSimpleScoreTestLevel() {
+        ShapeDimension ballShape = new ShapeDimension("ball", 150, 10, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        List<Ball> balls = new ArrayList();
+        balls.add(new Ball(ballShape));
+
+        List<Brick> bricks = new ArrayList();
+        ShapeDimension brickshape1 = new ShapeDimension("brick1", 150, 70, 20, 20);
+        ShapeDimension brickshape2 = new ShapeDimension("brick2", 110, 70, 20, 20);
+        ShapeDimension brickshape3 = new ShapeDimension("brick3", 130, 65, 20, 20);
+        bricks.add(new Brick(brickshape1, new Point(1, 1)));
+        bricks.add(new Brick(brickshape2, new Point(0, 1)));
+        bricks.add(new Brick(brickshape3, new Point(1, 0)));
+
+        LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
+        Level level = new Level(1, game, initialState, 1);
+        level.setRunManual(true);
+        return level;
+    }
+    
 
     public Level getOutOfBoundsTest() {
 //        targetBlocks = 5;

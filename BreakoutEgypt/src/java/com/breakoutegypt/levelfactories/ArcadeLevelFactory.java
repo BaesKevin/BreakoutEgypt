@@ -57,9 +57,6 @@ public class ArcadeLevelFactory extends LevelFactory {
             case 4:
                 currentLevel = getPossibleRealLevel();
                 break;
-//            default:
-//                currentLevel = getLevelWithSwitch();
-//                break;
         }
     }
 
@@ -243,7 +240,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(14).addEffect(new ToggleEffect(bricksToToggle));
         bricks.get(14).setType(BrickType.SWITCH);
         bricks.get(14).setBreakable(false);
-        
+
         List<Ball> balls = new ArrayList();
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();
