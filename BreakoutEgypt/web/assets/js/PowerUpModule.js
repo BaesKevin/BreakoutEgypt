@@ -23,7 +23,6 @@ let PowerUpModule = (function () {
 
     function requestActivatePowerUp(name) {
         var gameId = UtilModule.getParameterByName("gameId");
-        console.log("Ajax")
         $.ajax({
             url: "powerup?gameId=" + gameId + "&powerup=" + name,
             method: "POST",

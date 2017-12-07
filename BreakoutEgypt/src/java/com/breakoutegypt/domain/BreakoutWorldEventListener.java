@@ -15,4 +15,5 @@ import com.breakoutegypt.domain.shapes.bricks.Brick;
 public interface BreakoutWorldEventListener {
     void removeBrick(Brick brick);
     void ballOutOfBounds(Ball ball);
+    void ballHitPaddle();
 }

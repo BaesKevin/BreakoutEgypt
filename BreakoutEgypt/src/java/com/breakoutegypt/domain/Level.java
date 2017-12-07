@@ -11,10 +11,13 @@ import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Timer;
 
@@ -39,9 +42,11 @@ public class Level implements BreakoutWorldEventListener {
 
     private boolean levelStarted;
 
-    private ScoreTimer scoreTimer;
+    private TimeScore scoreTimer;
     private LevelTimerTask levelTimerTask;
     private boolean runLevelManually;
+
+    private BrickScoreCalculator brickScoreCalc;
 
     BreakoutPowerUpHandler bpuh;
 
@@ -56,7 +61,8 @@ public class Level implements BreakoutWorldEventListener {
 
         this.levelStarted = false;
 
-        scoreTimer = new ScoreTimer();
+        scoreTimer = new TimeScore();
+        this.brickScoreCalc = new BrickScoreCalculator();
 
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
 
@@ -78,7 +84,7 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
     }
 
-    public ScoreTimer getScoreTimer() {
+    public TimeScore getScoreTimer() {
         return scoreTimer;
     }
 
@@ -108,7 +114,7 @@ public class Level implements BreakoutWorldEventListener {
             scoreTimer.start();
             List<Ball> balls = levelState.getBalls();
             for (Ball b : balls) {
-                b.setLinearVelocity(20, 150);
+                b.setLinearVelocity(0, 150);
             }
         }
     }
@@ -206,6 +212,7 @@ public class Level implements BreakoutWorldEventListener {
         } else {
             stop();
         }
+        scoreTimer.pauseTimer();
     }
 
     public void initNextLevel() {
@@ -221,15 +228,12 @@ public class Level implements BreakoutWorldEventListener {
     public void ballOutOfBounds(Ball ball) {
         breakoutWorld.deSpawn(ball.getBody());
         resetBall(ball);
-        /*
-        TODO
-        probleem oplossen voor als meerdere ballen tegelijk out of bounds gaan
-         */
     }
 
     @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
+        brickScoreCalc.addPointsToScore(brick);
 
         if (allTargetBricksDestroyed()) {
             getScoreTimer().stop();
@@ -244,26 +248,31 @@ public class Level implements BreakoutWorldEventListener {
         }
     }
 
+    @Override
+    public void ballHitPaddle() {
+        brickScoreCalc.resetMultiplier();
+    }
+
     public void addFloor(FloorPowerUp floor) {
         levelState.addFloor(floor);
-//        breakoutWorld.setFloorToAdd(floor);
     }
 
     public void addPaddle(Paddle basePaddle) {
         levelState.addPaddle(basePaddle);
     }
-    
-    public BreakoutPowerUpHandler getPowerUpHandler() {
-        return bpuh;
+
+    public int getBrickScore() {
+        return brickScoreCalc.getScore();
     }
-    
-    public PowerUp getPowerUpFromPowerups(String name) {
+
+    public PowerUpMessage triggerPowerup(String powerup) {
+        PowerUp p = bpuh.getPowerupByName(powerup);
+
+        PowerUpMessage msg = new PowerUpMessage("You are trying to trigger a powerup that doesn't exist", null, PowerUpMessageType.NOSUCHPOWERUP);
         
-        for (PowerUp p : bpuh.getPowerUps()) {
-            if (p.getName().equals(name)) {
-                return p;
-            }
+        if (p != null) {
+            msg = p.accept(bpuh);
         }
-        return null;
+        return msg;
     }
 }

@@ -33,7 +33,6 @@ public class LevelStateTest {
         bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
         
         List<Brick> bricksToRemove = ls.getRangeOfBricksAroundBody(bricks.get(5), 1);
-        System.out.println(bricksToRemove.size());
         assertTrue(bricksToRemove.size() == 9);
     }
     
@@ -46,7 +45,6 @@ public class LevelStateTest {
         bricks.get(5).addEffect(new ExplosiveEffect(bricks.get(5), 1));
         
         List<Brick> bricksToRemove = ls.getRangeOfBricksAroundBody(bricks.get(5), 1);
-        System.out.println(bricksToRemove.size());
         assertTrue(bricksToRemove.size() == 6);
     }
     
@@ -59,7 +57,6 @@ public class LevelStateTest {
         bricks.get(5).addEffect(new ExplosiveEffect(bricks.get(5), 1));
         
         List<Brick> bricksToRemove = ls.getRangeOfBricksAroundBody(bricks.get(1), 0);
-        System.out.println(bricksToRemove.size());
         assertTrue(bricksToRemove.size() == 1);
     }
     
@@ -74,7 +71,6 @@ public class LevelStateTest {
         
         
         List<Brick> bricksToRemove = ls.getRangeOfBricksAroundBody(bricks.get(1), 1);
-        System.out.println(bricksToRemove.size());
         assertTrue(bricksToRemove.size() == 8);
     }
     
@@ -89,11 +85,9 @@ public class LevelStateTest {
         
         
         List<Brick> bricksToRemove = ls.getRangeOfBricksAroundBody(bricks.get(5), 1);
-        System.out.println(bricksToRemove.size());
         assertTrue(bricksToRemove.size() == 6);
         
         bricksToRemove = ls.getRangeOfBricksAroundBody(bricks.get(0), 1);
-        System.out.println(bricksToRemove.size());
         assertTrue(bricksToRemove.size() == 4);
     }
     

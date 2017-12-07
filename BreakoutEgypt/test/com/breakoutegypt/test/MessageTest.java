@@ -87,8 +87,10 @@ public class MessageTest {
         List<Message> actualMessages = conn.getLifeMessages();
         List<Message> expectedMessages = new ArrayList();
         //TODO get name of actual player in session
-        expectedMessages.add(new LifeMessage("jef", 1, LifeMessageType.PLAYING));
-        expectedMessages.add(new LifeMessage("jef", 0, LifeMessageType.GAMEOVER));
+        Message msg1 = new LifeMessage("jef", 1, LifeMessageType.PLAYING);
+        Message msg2 = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
+        expectedMessages.add(msg1);
+        expectedMessages.add(msg2);
         assertEquals(expectedMessages, actualMessages);
     }
 

@@ -18,7 +18,7 @@ public class Score implements Comparable<Score> {
     private int level;
     private User user;
     private long score;
-    private String difficulty;
+    private String difficulty;    
     
     public Score (int level, User user, long score, String difficulty) {   
         this.level = level;

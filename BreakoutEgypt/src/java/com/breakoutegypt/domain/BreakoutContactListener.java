@@ -5,9 +5,11 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.brickcollisionhandlers.BallPaddleContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BallBrickContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BallGroundContact;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import org.jbox2d.callbacks.ContactImpulse;
@@ -35,12 +37,14 @@ public class BreakoutContactListener implements ContactListener {
 
         RegularBody s1 = (RegularBody) f1.getBody().getUserData();
         RegularBody s2 = (RegularBody) f2.getBody().getUserData();
-
+        
         // stop flow in contactlistener here, add event to ContactDuringStepListener
         if (s1 instanceof Ball && s2 instanceof Brick || s1 instanceof Brick && s2 instanceof Ball) {
             world.addContact(new BallBrickContact(s1, s2));
         } else if (s1 != null && s1.getName().contains("ground") || s2 != null & s2.getName().contains("ground")) {
             world.addContact(new BallGroundContact(s1, s2));
+        } else if (s1 instanceof Paddle || s2 instanceof Paddle) {
+            world.addContact(new BallPaddleContact(s1, s2));
         }
 
     }

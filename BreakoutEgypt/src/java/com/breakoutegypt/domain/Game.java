@@ -8,11 +8,15 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
+import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
+import java.io.PrintWriter;
 
 /**
  *
@@ -32,12 +36,12 @@ public class Game {
         manager = new SessionManager(numberOfPlayers);
 
         levelFactory = createLevelFactoryForGameType(gameType);
-       
+
         setCurrentLevel(startingLevel);
     }
 
-    private LevelFactory createLevelFactoryForGameType(GameType gameType){
-        switch(gameType){
+    private LevelFactory createLevelFactoryForGameType(GameType gameType) {
+        switch (gameType) {
             case ARCADE:
                 return new ArcadeLevelFactory(this);
             case MULTIPLAYER:
@@ -45,10 +49,11 @@ public class Game {
             case TEST:
                 return new TestLevelFactory(this);
         }
-        
+
         return null;
 
     }
+
     public int getId() {
         return id;
     }
@@ -59,7 +64,7 @@ public class Game {
 
     public void movePaddle(String username, int x, int y) {
         Player peer = manager.getPlayer(username);
-        
+
         if (peer != null) {
             currentLevel.movePaddle(peer.getPaddle(), x, y);
         } else {
@@ -96,7 +101,7 @@ public class Game {
         return manager.hasNoPlayers();
     }
 
-    public void notifyPlayers(Level currentLevel,ServerClientMessageRepository messageRepo) {
+    public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
         manager.notifyPlayers(currentLevel, messageRepo);
     }
 
@@ -108,7 +113,7 @@ public class Game {
         }
 
     }
-    
+
     public void notifyPlayersOfBallAction() {
         manager.notifyPlayersOfBallAction(currentLevel);
     }
@@ -120,7 +125,7 @@ public class Game {
     public void stopLevel() {
         currentLevel.stop();
     }
-    
+
     public void togglePaused() {
         currentLevel.togglePaused();
     }
@@ -151,5 +156,9 @@ public class Game {
     public void setCurrentLevel(int levelId) {
         levelFactory.setCurrentLevel(levelId);
         this.currentLevel = levelFactory.getCurrentLevel();
+    }
+
+    public PowerUpMessage triggerPowerup(String powerup) {
+        return getCurrentLevel().triggerPowerup(powerup);
     }
 }

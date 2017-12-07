@@ -7,6 +7,7 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.brickcollisionhandlers.BallBrickContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BallGroundContact;
+import com.breakoutegypt.domain.brickcollisionhandlers.BallPaddleContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.brickcollisionhandlers.Contact;
 import com.breakoutegypt.domain.brickcollisionhandlers.ContactHandler;
@@ -128,6 +129,11 @@ public class BreakoutWorld implements ContactHandler {
         worldEventListener.ballOutOfBounds(bgc.getOutofbounds());
     }
 
+    @Override
+    public void handle(BallPaddleContact bpc) {
+        worldEventListener.ballHitPaddle();
+    }
+
     public int countWorldObjects() {
         return world.getBodyCount();
     }
@@ -148,7 +154,7 @@ public class BreakoutWorld implements ContactHandler {
 //                pu.accept(powerupHandler);
                 powerupHandler.addPowerUp(pu);
             }
-
+            
             worldEventListener.removeBrick(brick);
             this.deSpawn(brick.getBody());
             messageRepo.addBrickMessage(new BrickMessage(brickName, BrickMessageType.DESTROY));

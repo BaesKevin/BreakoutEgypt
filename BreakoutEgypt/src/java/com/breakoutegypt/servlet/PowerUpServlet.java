@@ -7,13 +7,9 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
-import com.breakoutegypt.domain.Level;
-import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
-import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,26 +38,19 @@ public class PowerUpServlet extends HttpServlet {
         int gameId = Integer.parseInt(request.getParameter("gameId"));
         String powerup = request.getParameter("powerup");
 
-        System.out.println("Powerupservlet: " + gameId);
-
         if (powerup != null) {
 
             GameManager manager = new GameManager();
             Game game = manager.getGame(gameId);
 
-            Level curLevel = game.getCurrentLevel();
+            PowerUpMessage msg = game.triggerPowerup(powerup);
 
-            BreakoutPowerUpHandler bpuh = curLevel.getPowerUpHandler();
-
-            PowerUp p = bpuh.getPowerupByName(powerup);
-
-            if (p != null) {
-                PowerUpMessage msg = p.accept(bpuh);
+            if (msg != null) {
                 try (PrintWriter out = response.getWriter()) {
-                    System.out.println(msg.toJson().build().toString());
                     out.print(msg.toJson().build().toString());
                 }
             }
+
         }
 
     }

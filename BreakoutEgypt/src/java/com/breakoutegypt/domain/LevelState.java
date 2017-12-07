@@ -322,20 +322,27 @@ public class LevelState {
     private List<PowerUp> createPowerups(int noOfPowerups, Paddle paddle) {
 
         List<PowerUp> powerups = new ArrayList();
-        PowerUpType[] poweruptypes = PowerUpType.values();
-        System.out.println("Poweruptype length: " + poweruptypes.length);
+        int noOfPowerupTypes = PowerUpType.values().length;
         Random r = new Random();
-        int powerupNr = r.nextInt(poweruptypes.length);
+        int powerupNr = r.nextInt(noOfPowerupTypes) + 1;
 
         for (int i = 0; i < noOfPowerups; i++) {
-            if (poweruptypes[powerupNr].name().equals("FLOOR")) {
-                powerups.add(createFloor(i));
-            } else if (poweruptypes[powerupNr].name().equals("BROKENPADDLE")) {
-                powerups.add(createBrokenPaddle(paddle, i));
-            } else if (poweruptypes[powerupNr].name().equals("ACIDBALL")) {
-                powerups.add(new AcidBallPowerUp("acidball" + i));
+
+            switch (powerupNr) {
+                case 1:
+                    powerups.add(createFloor(i));
+                    break;
+                case 2:
+                    powerups.add(createBrokenPaddle(paddle, i));
+                    break;
+                case 3:
+                    powerups.add(new AcidBallPowerUp("acidball" + i));
+                    break;
+                default:
+                    break;
             }
-            powerupNr = r.nextInt(poweruptypes.length);
+
+            powerupNr = r.nextInt(noOfPowerupTypes) + 1;
         }
 
         return powerups;
