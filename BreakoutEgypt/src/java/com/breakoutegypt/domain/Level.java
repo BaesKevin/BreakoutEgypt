@@ -105,7 +105,6 @@ public class Level implements BreakoutWorldEventListener {
             levelTimerTask = new LevelTimerTask(breakoutWorld, game, this);
             timer.schedule(levelTimerTask, 0, breakoutWorld.getTimeStepAsMs());
         }
-
     }
 
     public void startBall() {
@@ -274,5 +273,9 @@ public class Level implements BreakoutWorldEventListener {
             msg = p.accept(bpuh);
         }
         return msg;
+    }
+    
+    public BreakoutPowerUpHandler getPoweruphandler() {
+        return bpuh;
     }
 }

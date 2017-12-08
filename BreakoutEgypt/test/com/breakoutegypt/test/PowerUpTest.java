@@ -13,11 +13,14 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.effects.AcidBallPowerUp;
+import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +87,7 @@ public class PowerUpTest {
         assertTrue(paddles.get(0).getPosition().x > paddles.get(0).getShape().getWidth() / 2 && paddles.get(0).getPosition().x < 300 - paddles.get(0).getShape().getWidth() * 2 - paddles.get(0).getShape().getWidth() / 2);
 
         level.movePaddle(paddles.get(0), 151, 156);
-        
+
         // left paddle x must be smaller than (level width - the total width of the 2 paddles - half its width)
         assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() - BrokenPaddlePowerUp.GAP - paddles.get(0).getShape().getWidth() / 2);
     }
@@ -98,12 +101,12 @@ public class PowerUpTest {
         level.startBall();
         balls.get(0).setLinearVelocity(0, -200);
         stepTimes(level, 40);
-        
+
         game.triggerPowerup("floor");
         stepTimes(level, 60);
-        
+
         DummyConnection conn = (DummyConnection) player.getConnection();
-        
+
         assertTrue(conn.getPowerupMessages().size() > 0);
         assertTrue(conn.getLifeMessages().size() == 0);
     }
@@ -116,9 +119,9 @@ public class PowerUpTest {
 
         level.startBall();
         stepTimes(level, 60);
-        
+
         DummyConnection conn = (DummyConnection) player.getConnection();
-        
+
         assertTrue(conn.getPowerupMessages().size() > 0);
     }
 
@@ -127,19 +130,19 @@ public class PowerUpTest {
 
         game.setCurrentLevel(12);
         level = game.getLevel();
-        
+
         level.getLevelState().getBall().setLinearVelocity(0, 100);
         List<Ball> balls = level.getLevelState().getBalls();
         List<Paddle> paddles = level.getLevelState().getPaddles();
         assertTrue(paddles.size() == 1);
-        
+
         stepTimes(level, 60);
         game.triggerPowerup("brokenpaddle1");
-        
+
         stepTimes(level, 10);
         paddles = level.getLevelState().getPaddles();
         assertTrue(paddles.size() > 1);
-        
+
         DummyConnection conn = (DummyConnection) player.getConnection();
 
         // ball 3 starts at x = 295, there will be no paddle so it should go out of bounds
@@ -147,12 +150,71 @@ public class PowerUpTest {
         assertTrue(balls.get(1).getPosition().y < paddles.get(0).getPosition().y);
         assertTrue(conn.getPowerupMessages().size() > 0);
     }
+
+    @Test
+    public void testDoubleAcidBallActivation() {
+        game.setCurrentLevel(14);
+        level = game.getCurrentLevel();
+
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+
+        level.startBall();
+        stepTimes(level, 60);
+
+        DummyConnection conn = (DummyConnection) player.getConnection();
+
+        List<PowerUp> powerups = bpuh.getPowerUps();
+
+        level.triggerPowerup(powerups.get(0).getName());
+        stepTimes(level, 1);
+        level.triggerPowerup(powerups.get(0).getName());
+        
+        assertEquals(2, level.getLevelState().getBall().getAcidBall().getRange());
+    }
     
+    @Test
+    public void testDoubleFloorActivation() {
+        game.setCurrentLevel(15);
+        level = game.getCurrentLevel();
+
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+
+        level.startBall();
+        stepTimes(level, 60);
+        
+        List<PowerUp> powerups = bpuh.getPowerUps();
+
+        level.triggerPowerup(powerups.get(0).getName());
+        int initialTime = level.getLevelState().getFloor().getTimeVisable();
+        level.triggerPowerup(powerups.get(0).getName());
+        
+        assertEquals(initialTime*2, level.getLevelState().getFloor().getTimeVisable());
+    }
+    
+    @Test
+    public void testDoubleBrokenPaddleActivation() {
+        game.setCurrentLevel(16);
+        level = game.getCurrentLevel();
+
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+
+        level.startBall();
+        stepTimes(level, 60);
+        
+        List<PowerUp> powerups = bpuh.getPowerUps();
+
+        level.triggerPowerup(powerups.get(0).getName());
+        int initialTime = level.getPoweruphandler().getPaddlePowerup().getTimeVisable();
+        level.triggerPowerup(powerups.get(0).getName());
+        
+        assertEquals(initialTime*2, level.getPoweruphandler().getPaddlePowerup().getTimeVisable());
+    }
+
     @Test
     public void AcidBallMessageTest() {
         PowerUp p = new AcidBallPowerUp("acidball");
-        
-        p.toJson().toString();        
+
+        p.toJson().toString();
     }
 
     private void stepTimes(Level level, int times) {

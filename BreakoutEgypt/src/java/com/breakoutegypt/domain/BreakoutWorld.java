@@ -48,7 +48,7 @@ public class BreakoutWorld implements ContactHandler {
     private float timestepSeconds;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
-    
+
     private BreakoutWorldEventListener worldEventListener;
 
     private List<Contact> contacts;
@@ -56,7 +56,7 @@ public class BreakoutWorld implements ContactHandler {
     private PowerUpHandler powerupHandler;
     private ServerClientMessageRepository messageRepo;
     private boolean acidBall = false;
-    
+
     public BreakoutWorld() {
         this(TIMESTEP_DEFAULT);
     }
@@ -78,7 +78,7 @@ public class BreakoutWorld implements ContactHandler {
             contact.accept(this);
         }
         contacts = new ArrayList();
-        
+
         powerupHandler.removePowerupsIfTimedOut();
     }
 
@@ -107,7 +107,7 @@ public class BreakoutWorld implements ContactHandler {
         world.destroyBody(rb);
     }
 
-    public ServerClientMessageRepository getMessageRepo(){
+    public ServerClientMessageRepository getMessageRepo() {
         return messageRepo;
     }
 
@@ -117,7 +117,9 @@ public class BreakoutWorld implements ContactHandler {
         Ball ball = bbc.getBall();
         AcidBallPowerUp abpu = ball.getAcidBall();
         if (abpu != null) {
-            b.addEffect(new ExplosiveEffect(b, 1));
+            if (!b.hasToggleEffect()) {
+                b.addEffect(new ExplosiveEffect(b, abpu.getRange()));
+            }
             ball.setAcidballPowerup(null);
             messageRepo.addPowerupMessages(new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL));
         }
@@ -154,7 +156,7 @@ public class BreakoutWorld implements ContactHandler {
 //                pu.accept(powerupHandler);
                 powerupHandler.addPowerUp(pu);
             }
-            
+
             worldEventListener.removeBrick(brick);
             this.deSpawn(brick.getBody());
             messageRepo.addBrickMessage(new BrickMessage(brickName, BrickMessageType.DESTROY));

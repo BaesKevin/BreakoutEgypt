@@ -79,26 +79,38 @@ let DrawingModule = (function () {
     function updateStaticContent() {
         updateBricks();
         drawLevelNumber(level.level);
-        drawLives(level.lives);
         drawFloor();
+        drawLives(level.lives);
         updatePowerups();
     }
 
     function updatePowerups() {
-        let imgObj = {x: 1, y: 275, width: 20, height: 20};
+        let imgObj = {x: 1, y: 270, width: 20, height: 30};
         imgObj = ScalingModule.scaleObject(imgObj, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
         let allPowerups = [];
+        let padding = 0;
+        let index = 1;
+        let pixels = ScalingModule.scaleYForClient(8);
         level.powerups.forEach(function (powerup) {
-            
             if (powerup.active) {
                 brickCtx.fillStyle = "lightgreen";
             } else {
                 brickCtx.fillStyle = "lightblue";
             }
             let powerupname = powerup.name.replace(/[0-9]/g, "");
+            let width = imgObj.width * 0.7;
+            let height = (imgObj.height*0.66);
+            let x = ((imgObj.width - width) / 2) + padding;
+            let y = imgObj.y;
             brickCtx.fillRect(imgObj.x, imgObj.y, imgObj.width, imgObj.height);
-            brickCtx.drawImage(ImageLoader.images[powerupname], imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+            brickCtx.drawImage(ImageLoader.images[powerupname], x, y, width, height);
+            brickCtx.font = Math.ceil(pixels) + "px Arial";
+            brickCtx.textAlign = "start";
+            brickCtx.fillStyle = "black";
+            brickCtx.fillText("" + index, Math.ceil(width) + padding, Math.ceil(imgObj.y + height + pixels));
+            padding += ScalingModule.scaleXForClient(20);
             imgObj.x += ScalingModule.scaleXForClient(20);
+            index++;
         });
     }
 

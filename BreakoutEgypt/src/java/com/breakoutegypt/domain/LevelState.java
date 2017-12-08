@@ -84,8 +84,11 @@ public class LevelState {
         }
 
         if (noOfPowerups > 0) {
-            List<PowerUp> powerups = createPowerups(noOfPowerups, paddles.get(0));
-            bricks = generatePowerUps(bricks, powerups);
+//            List<PowerUp> powerups = createPowerups(noOfPowerups, paddles.get(0));
+//            bricks = generatePowerUps(bricks, powerups);
+            bricks.get(5).setPowerUp(new AcidBallPowerUp("acidball"));
+            bricks.get(8).setPowerUp(new AcidBallPowerUp("acidball2"));
+            bricks.get(2).setPowerUp(createFloor(1));
         }
     }
 
@@ -136,6 +139,10 @@ public class LevelState {
     public void removeFloor() {
         //TODO remove floor
         this.floor = null;
+    }
+    
+    public FloorPowerUp getFloor() {
+        return this.floor;
     }
 
     public List<Brick> getBricks() {

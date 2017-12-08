@@ -18,9 +18,19 @@ import javax.json.JsonObjectBuilder;
 public class AcidBallPowerUp implements PowerUp {
     
     private String name;
-
+    private int range = 1;
+    
+    
     public AcidBallPowerUp(String name) {
         this.name = name;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
     }
     
     @Override
@@ -33,6 +43,7 @@ public class AcidBallPowerUp implements PowerUp {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("powerupaction", "ACIDBALL");
         job.add("powerupname", getName());
+        job.add("range", getRange());
         return job.build();
     }
 
@@ -44,6 +55,10 @@ public class AcidBallPowerUp implements PowerUp {
     @Override
     public PowerUpMessageType getType() {
         return PowerUpMessageType.ADDACIDBALL;
+    }
+
+    void addRange(int range) {
+        this.range += range;
     }
     
 }
