@@ -4,6 +4,8 @@
     Author     : snc
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="com.breakoutegypt.domain.levelprogression.UserLevel"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -14,8 +16,14 @@
         <title>Levels</title>
     </head>
     <body>
-        <h1>Levels</h1>
-        
+        <h1>Levels <c:out value="${difficulty}"/> </h1>
+        <form action="showLevels" method="POST" id="difficulty">            
+            <select name="difficulty">
+                <option value="easy"   <c:out value="${difficulty.equals('easy')   ? 'selected=selected':''}"/>>easy</option>
+                <option value="medium" <c:out value="${difficulty.equals('medium') ? 'selected=selected':''}"/>>medium</option>
+                <option value="hard"   <c:out value="${difficulty.equals('hard')   ? 'selected=selected':''}"/>>hard</option>
+            </select>
+        </form>
         <ul>
             <%
                 List<UserLevel> userLevels = (List<UserLevel>) request.getAttribute("userlevels");
@@ -35,8 +43,10 @@
                 }
             %>
             
-            <li><a href="arcade?startLevel=2">arcade</a></li>
+           
 
         </ul>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery-3.2.1.min.js"></script>        
+    <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/arcade_levels.js"></script>
     </body>
 </html>

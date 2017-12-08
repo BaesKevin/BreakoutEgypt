@@ -21,36 +21,44 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "showLevels", urlPatterns = {"/showLevels"})
 public class ShowLevelsServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-        // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String diff = request.getParameter("difficulty");
+        String diff = null;
+        
+        if ( request.getMethod().equals("GET")) {
+            //get last difficulty from db
+            diff = "medium";
+        } else if (request.getMethod().equals("POST")) {
+            System.out.println("got a post");
+            diff = request.getParameter("difficulty");
+        }
+        System.out.println("diff is " + diff);
+        
+        if (diff == null) return;
         
         request.setAttribute("difficulty", diff);
+        
         
         UserLevelsFactory ulf = new UserLevelsFactory();
         request.setAttribute("userlevels", ulf.getAllUserLevelsForEasyForSomeUser());
         request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
         
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        processRequest(request, response);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    
     }
 
     /**

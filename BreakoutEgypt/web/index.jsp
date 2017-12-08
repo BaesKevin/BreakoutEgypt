@@ -38,7 +38,9 @@
             <div id="menu">
                 <ul class="list-group">
                     <li class="list-group-item">
+                        <a href="showLevels">
                         <button type="button" class="btn" id="arcade" data-toggle="modal" data-target="#modal">Arcade</button>
+                        </a>
                     </li>
                     <li class="list-group-item">
                         <button type="button" id="toMultiplayer" class="btn">Multiplayer</button>

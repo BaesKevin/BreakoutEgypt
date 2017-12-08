@@ -106,7 +106,7 @@ const ModalModule = (function(){
     }
 
     function doDocumentLoaded(){
-        $("#arcade").on("click", redirectToArcade);
+        //$("#arcade").on("click", redirectToArcade);
         $("#logout").on("click", logout);
         $("#returnToMain").on("click", redirectToMainMenu);
         $("#toMultiplayer").on("click", redirectToMultiplayer);

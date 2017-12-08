@@ -28,7 +28,9 @@ var redirectToMainMenu = function (e) {
     location.replace('index.jsp');
 };
 
+
 $(document).ready(function () {
+    
     $(".quit").on("click", ModalModule.modalQuit);
     $("#modalPlaceholder").on("click", "#quit", quitGame);
     $("#pause").on("click", pauseGame);
