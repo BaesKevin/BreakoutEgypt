@@ -1,0 +1,27 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 8, 2017, 11:36:33 AM
+    Author     : snc
+*/
+
+ul#levels {
+    display: flex;
+    height: 15vh;
+    margin-top: 10px;
+}
+
+ul#levels li {
+    line-height: 15vh;
+    text-align: center;
+    list-style-type: none;
+    width: 20%;
+    height: 100%;
+    display: block;
+    border: 1px solid black;
+    margin-right: 10%;
+}
+

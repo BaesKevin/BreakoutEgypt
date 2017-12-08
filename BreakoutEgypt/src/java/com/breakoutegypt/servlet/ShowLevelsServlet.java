@@ -29,14 +29,15 @@ public class ShowLevelsServlet extends HttpServlet {
         
         if ( request.getMethod().equals("GET")) {
             //get last difficulty from db
-            diff = "medium";
+            diff = (String) request.getSession().getAttribute("lastDiff");
         } else if (request.getMethod().equals("POST")) {
             System.out.println("got a post");
             diff = request.getParameter("difficulty");
+            request.getSession().setAttribute("lastDiff", diff);
         }
         System.out.println("diff is " + diff);
         
-        if (diff == null) return;
+        if (diff == null) diff = "easy";
         
         request.setAttribute("difficulty", diff);
         
