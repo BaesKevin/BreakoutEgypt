@@ -7,21 +7,74 @@ and open the template in the editor.
     Created on : Dec 8, 2017, 11:36:33 AM
     Author     : snc
 */
+.arcadelevels-container{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.arcadelevels-formheader{
+    display: flex;
+    width: 100%;
+    margin: 20px 0px;
+}
+
+.arcadelevels-formheader h2{
+    font-size: 3rem;
+}
+
+
+.arcadelevels-formheader select {
+    margin-left: 30px;
+
+    color: #824700;
+    background-color: #fff58c;
+
+    border-color: #824700;
+
+    width: 100px;
+    height: 3rem;
+    align-self: center;
+
+    border-radius: 4px;
+}
 
 ul#levels {
     display: flex;
-    height: 15vh;
-    margin-top: 10px;
+    /*height: 15vh;*/
+    /*margin-top: 10px;*/
+    justify-content: flex-start;
+    align-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
 }
 
 ul#levels li {
-    line-height: 15vh;
+    line-height: 80px;
     text-align: center;
     list-style-type: none;
-    width: 20%;
-    height: 100%;
-    display: block;
-    border: 1px solid black;
-    margin-right: 10%;
+    width: 150px;
+    overflow: hidden;
+    height: 80px;
+    border: 1px solid #4f0000;
+
+    margin-right: 20px;
+    padding: 0px 10px;
+    background-color: #fffbbf;
+    border-radius: 5px 0px;
+}
+
+
+ul#levels li.locked{
+    background-color: #824700;
+    color: white;
+}
+
+ul#levels li a{
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4f0000;
 }
 

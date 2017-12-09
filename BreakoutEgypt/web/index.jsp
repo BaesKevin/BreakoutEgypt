@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : index
     Created on : 23-nov-2017, 14:51:32
     Author     : Bjarne Deketelaere
@@ -38,9 +38,7 @@
             <div id="menu">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <a href="showLevels?gameType=arcade">
-                            <button  type="button" class="btn" id="arcade" data-toggle="modal" data-target="#modal">Arcade</button>
-                        </a>
+                        <button  type="button" class="btn" id="arcade" data-toggle="modal" data-target="#modal">Arcade</button>
                     </li>
                     <li class="list-group-item">
                         <button type="button" id="toMultiplayer" class="btn">Multiplayer</button>

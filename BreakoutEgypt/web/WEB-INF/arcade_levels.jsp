@@ -10,40 +10,57 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Levels</title>
+        <title>Breakout</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="assets/css/screen.css"/>
         <link rel="stylesheet" href="assets/css/arcade_levels.css"/>
     </head>
     <body>
-        <h1>Levels <c:out value="${difficulty}"/> </h1>
-        <form action="arcade" method="GET" >            
-            <select name="difficulty" id="difficulty">
-                <option value="easy"   <c:out value="${difficulty.equals('easy')   ? 'selected=selected':''}"/>>easy</option>
-                <option value="medium" <c:out value="${difficulty.equals('medium') ? 'selected=selected':''}"/>>medium</option>
-                <option value="hard"   <c:out value="${difficulty.equals('hard')   ? 'selected=selected':''}"/>>hard</option>
-            </select>
 
-            <ul id="levels">
+    <body>
+        <div class="container-fluid">
+            <header class="row">
+                <div class="col-lg-12 text-center text-capitalize">
+                    <h1>Breakout Egypt</h1>
+                </div>
 
-                <c:forEach begin="1" end="${totalLevels}" varStatus="loop">
+            </header>
 
-                    <c:choose>
-                        <c:when test="${loop.index <= levelReached}">
-                                <li><a href=\"arcade?startLevel=${loop.index}&difficulty=${difficulty}\" data-level="${loop.index}">Level ${loop.index} of ${totalLevels} - unlocked</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href=\"arcade?startLevel=${loop.index}&difficulty=${difficulty}\" data-level="${loop.index}">Level ${loop.index} of ${totalLevels} - locked</a></li>
-                            </c:otherwise>
-                        </c:choose>
+            <form action="arcade" method="GET" class="arcadelevels-container">
+                <div class="arcadelevels-formheader">
+                    <h2>Arcade levels <c:out value="${difficulty}"/></h2>
+                        <select name="difficulty" id="difficulty">
+                            <option value="easy"   <c:out value="${difficulty.equals('easy')   ? 'selected=selected':''}"/>>easy</option>
+                            <option value="medium" <c:out value="${difficulty.equals('medium') ? 'selected=selected':''}"/>>medium</option>
+                            <option value="hard"   <c:out value="${difficulty.equals('hard')   ? 'selected=selected':''}"/>>hard</option>
+                        </select>
+
+                    
+                </div>
 
 
-                </c:forEach>
+                <ul id="levels">
 
-            </ul>
-        </form>
+                    <c:forEach begin="1" end="${totalLevels}" varStatus="loop">
+
+                        <c:choose>
+                            <c:when test="${loop.index <= levelReached}">
+                                    <li><a href=\"arcade?startLevel=${loop.index}&difficulty=${difficulty}\" data-level="${loop.index}">Level ${loop.index}</a></li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="locked">Level ${loop.index}</li>
+                                </c:otherwise>
+                            </c:choose>
+
+
+                    </c:forEach>
+
+                </ul>
+            </form>
+        </div>
         <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery-3.2.1.min.js"></script>        
         <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/arcade_levels.js"></script>
     </body>
