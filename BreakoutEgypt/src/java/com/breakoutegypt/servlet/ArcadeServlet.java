@@ -11,6 +11,7 @@ import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.exceptions.BreakoutException;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,22 +50,26 @@ public class ArcadeServlet extends HttpServlet {
                 gameDifficulty = GameDifficulty.EASY;
         }
 
-        int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE, gameDifficulty);
-
         Player player = (Player) request.getSession().getAttribute("player");
         if (player == null) {
             player = new Player(new User("player"));
             request.getSession().setAttribute("player", player);
         }
 
-        gm.addConnectingPlayer(gameId, player);
+        try {
+            int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE, gameDifficulty, player.getProgressions().getProgressionOrDefault(GameType.ARCADE));
+            gm.addConnectingPlayer(gameId, player);
 
+            response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d", gameId, startingLevel));
+        } catch (BreakoutException boe) {
+            request.setAttribute("error", boe.getMessage());
+        }
         //get the level progression from the user
         //the specific user can come out of the session
         //
         //LevelProgressionFactory lpf = new LevelProgressionFactory(gm.getGame(gameId));
         // TODO redirect to level choice page
-        response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d", gameId, startingLevel));
+
     }
 
 }

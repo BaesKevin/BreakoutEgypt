@@ -138,7 +138,7 @@ public class SessionManager {
     
     public void incrementLevelReachedForAllPlayers(GameType gameType) {
         for(Player p : getPlayers()){
-            p.getProgressions().getProgression(gameType).incrementHighestLevelReached();
+            p.getProgressions().getProgressionOrDefault(gameType).incrementHighestLevelReached();
         }
     }
     

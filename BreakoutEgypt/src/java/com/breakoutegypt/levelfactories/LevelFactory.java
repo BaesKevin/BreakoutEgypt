@@ -8,6 +8,7 @@ package com.breakoutegypt.levelfactories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.exceptions.BreakoutException;
 
 /**
  *
@@ -32,7 +33,6 @@ public abstract class LevelFactory {
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
-        this.defaultProgression = new LevelProgression();
         setDefaultLevel(DEFAULT_STARTING_LEVEL);
     }
 
@@ -82,7 +82,7 @@ public abstract class LevelFactory {
             this.currentLevelId = id;
             createCurrentLevel();
         } else {
-            throw new IllegalArgumentException("Level not unlocked");
+            throw new BreakoutException("Level not unlocked");
         }
     }
 

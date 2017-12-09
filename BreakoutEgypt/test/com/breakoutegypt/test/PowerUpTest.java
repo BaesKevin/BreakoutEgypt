@@ -6,6 +6,7 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
+import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
@@ -33,12 +34,12 @@ public class PowerUpTest {
     Level level;
     Game game;
     Player player;
-    private final LevelProgression ALL_LEVELS_UNLOCKED = new LevelProgression();
+    private final LevelProgression ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
     
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
+        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
 
         game = gm.getGame(id);
 

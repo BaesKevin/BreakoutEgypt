@@ -10,6 +10,10 @@ package com.breakoutegypt.exceptions;
  * @author kevin
  */
 public class BreakoutException extends RuntimeException{
+    public BreakoutException(String msg){
+        super(msg);
+    }
+    
     public BreakoutException(String msg, Exception e){
         super(msg, e);
     }

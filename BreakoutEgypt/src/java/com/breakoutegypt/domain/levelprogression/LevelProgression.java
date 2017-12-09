@@ -14,13 +14,22 @@ import java.util.List;
  */
 public class LevelProgression {
     private int highestLevelReached;
+    private int maxLevel;
     
-    public LevelProgression(){
+    public LevelProgression(int maxLevel){
         this.highestLevelReached = 1;
+        this.maxLevel = maxLevel;
+    }
+    
+    public LevelProgression(LevelProgression p) {
+        this.highestLevelReached = p.highestLevelReached;
+        this.maxLevel =p.maxLevel;
     }
             
     public void incrementHighestLevelReached(){
-        this.highestLevelReached++;
+        if(highestLevelReached < maxLevel){
+            this.highestLevelReached++;
+        }
     }
 
     public int getHighestLevelReached() {

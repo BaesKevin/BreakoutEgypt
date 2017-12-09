@@ -35,13 +35,14 @@ public class Game {
     private LevelFactory levelFactory;
 
     private SessionManager manager;
-
-    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty) {
+    
+    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty, LevelProgression progression) {
         id = ID++;
         this.gameType = gameType;
         manager = new SessionManager(numberOfPlayers);
 
         levelFactory = createLevelFactoryForGameType(gameType, difficulty);
+        levelFactory.setCurrentLevel(startingLevel, progression);
         currentLevel = levelFactory.getCurrentLevel();
         
     }
@@ -81,7 +82,7 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-        player.getProgressions().addNewProgression(this.gameType, new LevelProgression());
+        player.getProgressions().addNewProgression(this.gameType);
         manager.addConnectingPlayer(player);
         
     }

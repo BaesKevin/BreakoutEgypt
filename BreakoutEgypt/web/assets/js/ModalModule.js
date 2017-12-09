@@ -111,6 +111,7 @@ const ModalModule = (function(){
         $("#returnToMain").on("click", redirectToMainMenu);
         $("#toMultiplayer").on("click", redirectToMultiplayer);
         $("#toHighscores").on("click", redirectToHighscore);
+        
 //    $("#modalPlaceholder").on("click", "#retry", restartLevel); //TODO
         $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
         $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);

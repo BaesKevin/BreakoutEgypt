@@ -48,7 +48,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                 currentLevel = getLevelWithUnbreakableAndExplosive();
                 break;
             case 3:
-                currentLevel = getLevelWithMultipleBalls();
+                currentLevel = getSimpleTestLevel();
                 break;
             case 4:
                 currentLevel = getPossibleRealLevel();

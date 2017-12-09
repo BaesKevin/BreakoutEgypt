@@ -6,6 +6,7 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
+import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
@@ -14,8 +15,6 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.LevelProgression;
-import com.breakoutegypt.domain.messages.BallMessage;
-import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
@@ -23,10 +22,6 @@ import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
 import java.util.List;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +35,7 @@ public class MessageTest {
     Level level;
     Game game;
     Player player;
-    private final LevelProgression ALL_LEVELS_UNLOCKED = new LevelProgression();
+    private final LevelProgression ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
     
     public MessageTest() {
     }
@@ -48,7 +43,7 @@ public class MessageTest {
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
+        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
 
         game = gm.getGame(id);
 

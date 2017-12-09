@@ -6,6 +6,7 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
+import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
@@ -28,7 +29,7 @@ public class GameManagerTest {
     @Before
     public void setup(){
         gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.ARCADE, GameDifficulty.MEDIUM);
+        int id = gm.createGame(1, 1, GameType.ARCADE, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
         game = gm.getGame(id);
         
         player = new Player(new User("player"));

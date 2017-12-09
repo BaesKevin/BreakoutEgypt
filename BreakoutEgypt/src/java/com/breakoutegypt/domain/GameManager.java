@@ -6,6 +6,7 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
+import com.breakoutegypt.domain.levelprogression.LevelProgression;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +19,8 @@ public class GameManager {
 
     private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
        
-    public int createGame(int numberOfPlayers, int startingLevel, GameType type, GameDifficulty difficulty){
-        Game game = new Game(numberOfPlayers, startingLevel, type, difficulty);
+    public int createGame(int numberOfPlayers, int startingLevel, GameType type, GameDifficulty difficulty, LevelProgression progression){
+        Game game = new Game(numberOfPlayers, startingLevel, type, difficulty, progression);
         
         games.put(game.getId(), game);
                

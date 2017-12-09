@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.levelprogression;
 
+import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.GameType;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,20 +21,26 @@ public class LevelProgressionManager {
         levelProgressions = new HashMap();
     }
     
-    public void addNewProgression(GameType type, LevelProgression progressions){
+    public void addNewProgression(GameType type){
         // TODO check if levelprogression is in map
         if(levelProgressions.get(type) == null){
-            levelProgressions.put(type, progressions);
+            levelProgressions.put(type, LevelProgressionRepository.getDefault(type));
         }
     }
     
     public void incrementHighestLevel(GameType type){
-        getProgression(type).incrementHighestLevelReached();
+        getProgressionOrDefault(type).incrementHighestLevelReached();
     }
     
     // TODO clone
-    public LevelProgression getProgression(GameType type){
-        return levelProgressions.get(type);
+    public LevelProgression getProgressionOrDefault(GameType type){
+        LevelProgression prog = levelProgressions.get(type);
+        
+        if(prog == null){
+            prog = LevelProgressionRepository.getDefault(type);
+        }
+        
+        return prog;
     }
 
     public int getHighestLevelReached(GameType gameType) {
