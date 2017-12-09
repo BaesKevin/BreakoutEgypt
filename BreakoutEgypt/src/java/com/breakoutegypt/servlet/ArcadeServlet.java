@@ -23,24 +23,22 @@ import javax.servlet.http.HttpServletResponse;
  * @author kevin
  */
 @WebServlet(name = "ArcadeServlet", urlPatterns = {"/arcade"})
-public class ArcadeServlet extends HttpServlet{
+public class ArcadeServlet extends HttpServlet {
 
-    
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("ArcadeServlet: Creating game");
-        
-        int startingLevel = Integer.parseInt(request.getParameter("startLevel"));    
+
+        int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
         System.out.println("startingLevel : " + startingLevel);
-        
+
         GameManager gm = new GameManager();
-        
+
         // TODO get from querystring
         int numberOfPlayers = 1;
         GameDifficulty gameDifficulty;
-        switch (request.getParameter("difficulty")){
+        switch (request.getParameter("difficulty")) {
             case "hard":
                 gameDifficulty = GameDifficulty.HARD;
                 break;
@@ -50,18 +48,23 @@ public class ArcadeServlet extends HttpServlet{
             default:
                 gameDifficulty = GameDifficulty.EASY;
         }
+
         int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE, gameDifficulty);
-        
+
+        Player player = (Player) request.getSession().getAttribute("player");
+        if (player == null) {
+            player = new Player(new User("player"));
+            request.getSession().setAttribute("player", player);
+        }
+
+        gm.addConnectingPlayer(gameId, player);
+
         //get the level progression from the user
         //the specific user can come out of the session
-        
         //
         //LevelProgressionFactory lpf = new LevelProgressionFactory(gm.getGame(gameId));
-              
-        
-        
         // TODO redirect to level choice page
-        response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d",gameId, startingLevel));
+        response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d", gameId, startingLevel));
     }
 
 }

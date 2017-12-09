@@ -24,21 +24,21 @@
             </header>
             <div class="row">
                 <div class="card mx-auto mt-5">
-                        <div class="card-header">Login</div>
-                        <div class="card-body">
-                            <form action="LoginSystem" method="POST">
-                                <div class="form-group">
-                                    <label for="email">Email:</label>
-                                    <input type="email" id="email" class="form-control" name="email" placeholder="example@domain.com"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Password:</label>
-                                    <input type="password" id="password" class="form-control" name="password" placeholder="******"/>
-                                </div>
-                                <input type="submit" class="btn" name="login" value="Login"/>
-                            </form>
-                        </div>
+                    <div class="card-header">Login</div>
+                    <div class="card-body">
+                        <form action="LoginSystem" method="POST">
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" class="form-control" name="email" placeholder="example@domain.com"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" id="password" class="form-control" name="password" placeholder="******"/>
+                            </div>
+                            <input type="submit" class="btn" name="login" value="Login"/>
+                        </form>
                     </div>
+                </div>
             </div>
         </div>
     </body>

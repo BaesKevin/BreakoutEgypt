@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.effects;
+package com.breakoutegypt.exceptions;
 
 /**
  *
- * @author BenDB
+ * @author kevin
  */
-public enum PowerUpType {
-    FLOOR, BROKENPADDLE, ACIDBALL
+public class BreakoutException extends RuntimeException{
+    public BreakoutException(String msg, Exception e){
+        super(msg, e);
+    }
 }

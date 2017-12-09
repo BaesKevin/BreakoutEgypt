@@ -7,11 +7,16 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.domain.Game;
+import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.effects.AcidBallPowerUp;
+import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.levelprogression.LevelProgression;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
@@ -28,11 +33,12 @@ public class PowerUpTest {
     Level level;
     Game game;
     Player player;
-
+    private final LevelProgression ALL_LEVELS_UNLOCKED = new LevelProgression();
+    
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST);
+        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
 
         game = gm.getGame(id);
 
@@ -49,15 +55,10 @@ public class PowerUpTest {
     @Test
     public void testBrokenPaddle() {
 
-        game.setCurrentLevel(8);
+        game.setCurrentLevel(8,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
 
         List<Ball> balls = level.getLevelState().getBalls();
-        System.out.println(balls);
-        for (Ball b : balls) {
-            System.out.printf("Ball %s: x = %2.2f\n", b.getName(), b.getPosition().y);
-        }
-
         level.startBall();
         balls = level.getLevelState().getBalls();
         for (Ball b : balls) {
@@ -66,10 +67,6 @@ public class PowerUpTest {
 
         stepTimes(level, 100);
 
-        for (Ball b : balls) {
-            System.out.printf("Ball %s: x = %2.2f\n", b.getName(), b.getPosition().y);
-        }
-
         // check if center ball falls between the gap and the other balls bounce back up
         assertTrue(balls.get(0).getPosition().y < balls.get(1).getPosition().y && balls.get(1).getPosition().y > balls.get(2).getPosition().y);
 
@@ -77,45 +74,36 @@ public class PowerUpTest {
 
     @Test
     public void testBrokenPaddleMovement() {
-        game.setCurrentLevel(8);
+        game.setCurrentLevel(8,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         List<Paddle> paddles = level.getLevelState().getPaddles();
-        System.out.println("Paddle position: ");
-        for (Paddle p : paddles) {
-            System.out.println(p.getPosition());
-        }
 
         // left paddle x can't be smaller than the half of its width
         assertTrue(paddles.get(0).getPosition().x >= paddles.get(0).getShape().getWidth() / 2);
 
         level.movePaddle(paddles.get(0), 120, 156);
-        System.out.println("Paddle position 2: ");
-        for (Paddle p : paddles) {
-            System.out.println(p.getPosition());
-        }
 
         // left paddle x must be between half its width and (level width - the total width of the 2 paddles - half its width) 
         assertTrue(paddles.get(0).getPosition().x > paddles.get(0).getShape().getWidth() / 2 && paddles.get(0).getPosition().x < 300 - paddles.get(0).getShape().getWidth() * 2 - paddles.get(0).getShape().getWidth() / 2);
 
         level.movePaddle(paddles.get(0), 151, 156);
-        System.out.println("Paddle position 3: ");
-        for (Paddle p : paddles) {
-            System.out.println(p.getPosition());
-        }
-
+        
         // left paddle x must be smaller than (level width - the total width of the 2 paddles - half its width)
-        assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() * 2 - paddles.get(0).getShape().getWidth() / 2);
+        assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() - BrokenPaddlePowerUp.GAP - paddles.get(0).getShape().getWidth() / 2);
     }
 
     @Test
     public void activateFloorPowerUpTest() {
 
-        game.setCurrentLevel(10);
+        game.setCurrentLevel(10,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         List<Ball> balls = level.getLevelState().getBalls();
         level.startBall();
         balls.get(0).setLinearVelocity(0, -200);
-        stepTimes(level, 120);
+        stepTimes(level, 40);
+        
+        game.triggerPowerup("floor");
+        stepTimes(level, 60);
         
         DummyConnection conn = (DummyConnection) player.getConnection();
         
@@ -126,7 +114,7 @@ public class PowerUpTest {
     @Test
     public void activatePowerUpWithExplosiveTest() {
 
-        game.setCurrentLevel(11);
+        game.setCurrentLevel(11,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
 
         level.startBall();
@@ -140,31 +128,34 @@ public class PowerUpTest {
     @Test
     public void activateBrokenPaddlePowerup() {
 
-        game.setCurrentLevel(12);
+        game.setCurrentLevel(12,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
-
-        level.startBall();
+        
         level.getLevelState().getBall().setLinearVelocity(0, 100);
         List<Ball> balls = level.getLevelState().getBalls();
         List<Paddle> paddles = level.getLevelState().getPaddles();
-        for (Paddle p : paddles) {
-            System.out.println("Before: " + p.getPosition());
-        }
         assertTrue(paddles.size() == 1);
+        
         stepTimes(level, 60);
+        game.triggerPowerup("brokenpaddle1");
+        
+        stepTimes(level, 10);
         paddles = level.getLevelState().getPaddles();
-        for (Paddle p : paddles) {
-            System.out.println("After: " + p.getPosition());
-        }
         assertTrue(paddles.size() > 1);
         
         DummyConnection conn = (DummyConnection) player.getConnection();
 
         // ball 3 starts at x = 295, there will be no paddle so it should go out of bounds
         // ball 2 is directly above the left paddle and should bounce back up (no remove message)
-        assertTrue(conn.getBallMessages().get(0).getName().equals("ball3"));
         assertTrue(balls.get(1).getPosition().y < paddles.get(0).getPosition().y);
         assertTrue(conn.getPowerupMessages().size() > 0);
+    }
+    
+    @Test
+    public void AcidBallMessageTest() {
+        PowerUp p = new AcidBallPowerUp("acidball");
+        
+        p.toJson().toString();        
     }
 
     private void stepTimes(Level level, int times) {

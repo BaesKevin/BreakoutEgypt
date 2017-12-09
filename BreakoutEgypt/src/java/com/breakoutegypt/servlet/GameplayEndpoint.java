@@ -33,7 +33,10 @@ import javax.websocket.server.ServerEndpoint;
 )
 public class GameplayEndpoint {
     private Game game;
-    private User user;
+//    private User user;
+    private Player player;
+    private String username;
+    
     public GameplayEndpoint(){
         
     }
@@ -45,18 +48,21 @@ public class GameplayEndpoint {
         
         int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
         HttpSession httpSession=(HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-        user=(User)httpSession.getAttribute("user");
+//        user=(User)httpSession.getAttribute("user");
+        player = (Player) httpSession.getAttribute("player");
+        
         game = gm.getGame(gameId);
+        username = player.getUser().getUsername();
         
         // TODO retrieve actual username from session/path parameter
-        gm.addConnectionForPlayer(gameId, user.getUsername(), new WebsocketConnection(peer));
+        gm.addConnectionForPlayer(gameId, username, new WebsocketConnection(peer));
 //        gm.setSessionForPlayer(name, session); 
     }
 
     @OnClose
     public void onClose(Session peer) {
         int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
-        new GameManager().removePlayer(gameId, user.getUsername());
+        new GameManager().removePlayer(gameId, username);
     }
     
     @OnMessage
@@ -65,7 +71,7 @@ public class GameplayEndpoint {
         int y = moveCommand.getJson().getInt("y");
         
         if(game != null){
-            game.movePaddle(user.getUsername(), x,y);
+            game.movePaddle(username, x,y);
         }
     }
 }

@@ -55,11 +55,14 @@ let ArcadeWebSocket = (function () {
     function onMessage(evt) {
         try {
             let json = JSON.parse(evt.data);
-            
+
             if (json && !json.error) {
                 if (json.lifeaction) {
+                    console.log(json);
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();
+                    } else if (json.lifeaction === 'playing') {
+                        handleLivesLeft(json);
                     }
                 } else if (json.ballaction) {
                     if (json.ballaction === 'remove') {
@@ -67,13 +70,11 @@ let ArcadeWebSocket = (function () {
                     } else if (json.ballaction === 'add') {
                         level.addBall(json);
                     }
-                } else if (json.livesLeft) {
-                    handleLivesLeft(json);
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
                 } else {
                     if (json.leveldata.powerupactions) {
-                        level.handleUpdate(json.leveldata.powerupactions);
+                        PowerUpModule.handlePowerUpMessage(json.leveldata.powerupactions)
                     }
                     level.updateLevelData(json);
                 }
@@ -119,13 +120,13 @@ let ArcadeWebSocket = (function () {
     }
 
     function handleLevelUpdateError(json) {
+        console.log(json);
         if (json.error) {
             console.log("%c" + json.error, "background-color: red; color: white;padding:5px;");
-            modalErrorMessage();
+            ModalModule.modalErrorMessage(json.error);
         } else {
-//        document.location = "/breakout?error=Something went wrong";
             console.log("%cDamn something went sideways", "background-color: red; color: white;padding:5px;");
-            modalErrorMessage();
+            ModalModule.modalErrorMessage();
         }
     }
 

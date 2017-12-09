@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.domain.effects;
 
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.util.ArrayList;
@@ -26,8 +28,12 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     private Paddle base;
     private List<Paddle> brokenPaddle;
+    public static final int GAP = 20;
+    
+    private String name;
 
-    public BrokenPaddlePowerUp(Paddle p) {
+    public BrokenPaddlePowerUp(Paddle p,  int i) {
+        this.name = "brokenpaddle" + i;
         base = p;
         brokenPaddle = new ArrayList();
         breakPaddle();
@@ -50,7 +56,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
         int newWidth = (int) Math.round(basePaddleWidth * 0.6);
         
-        int[] newXs = calculateNewX(baseX, newWidth);
+        int[] newXs = calculateNewX(baseX, newWidth, GAP);
 
         ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], baseY, newWidth, 4);
         ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], baseY, newWidth, 4);
@@ -79,7 +85,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         timeVisable = startTime;
     }
 
-    private int[] calculateNewX(int baseX, int newWidth) {
+    private int[] calculateNewX(int baseX, int newWidth, int gap) {
 
         // the new width is 60% of the old paddles width;
         // new x position is calculated for both of the paddles.
@@ -89,10 +95,10 @@ public class BrokenPaddlePowerUp implements PowerUp {
         if (leftX - newWidth / 2 < 0) {
             leftX = newWidth / 2;
         }
-        int rightX = leftX + (newWidth*2);
+        int rightX = leftX + newWidth + gap;
         if (rightX + (newWidth / 2) > 300) {
             rightX = 300 - (newWidth / 2);
-            leftX = rightX - (newWidth*2);
+            leftX = rightX - newWidth - gap;
         }
         
         int[] newXs = new int[2];
@@ -102,8 +108,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
     }
 
     @Override
-    public void accept(PowerUpHandler puh) {
-        puh.handleAddBrokenPaddle(this);
+    public PowerUpMessage accept(PowerUpHandler puh) {
+        return puh.handleAddBrokenPaddle(this);
     }
 
     @Override
@@ -112,11 +118,22 @@ public class BrokenPaddlePowerUp implements PowerUp {
         JsonObjectBuilder job = Json.createObjectBuilder();
         jab.add(brokenPaddle.get(0).getShape().toJson().build());
         jab.add(brokenPaddle.get(1).getShape().toJson().build());
-        jab.add(base.getShape().toJson().build());
+        job.add("base", base.getShape().toJson().build());
         job.add("brokenpaddle", jab.build());
-        
+        job.add("powerupname", getName());
+        job.add("gap", GAP);
         
         return job.build();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public PowerUpMessageType getType() {
+        return PowerUpMessageType.ADDBROKENPADDLE;
     }
 
 }

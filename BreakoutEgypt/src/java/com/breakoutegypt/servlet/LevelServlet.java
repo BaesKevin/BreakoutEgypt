@@ -8,10 +8,12 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
+import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.levelprogression.LevelProgression;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -39,11 +41,10 @@ public class LevelServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User user = (User)session.getAttribute("user");
-        System.out.println("USER: "+user);
+//        User user = (User)session.getAttribute("user");
+        Player playerFromSession = (Player) session.getAttribute("player");
         
         int gameId = Integer.parseInt(request.getParameter("gameId"));
-        System.out.println("GAMEID: "+gameId);
         
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
@@ -51,25 +52,25 @@ public class LevelServlet extends HttpServlet {
         JsonObjectBuilder job;
 
         boolean hasNextLevel = manager.hasNextLevel(gameId);
-
+        
         if (hasNextLevel) {
             Level level = game.getLevel();
             
             // already initialize player and give him a paddle
-            if(user!=null){
-                String name = user.getUsername();
-                Player player = game.getPlayer(name);
+            if(playerFromSession!=null){
+                String name = playerFromSession.getUser().getUsername();
+                Player connectingPlayer = game.getPlayer(name);
             
-                if(player == null){
-                    player = new Player(new User(name));
-                    manager.addConnectingPlayer(gameId, player);
-                }
-                manager.assignPaddleToPlayer(gameId, player);
+//                if(player == null){
+//                    player = new Player(new User(name));
+//                    manager.addConnectingPlayer(gameId, player);
+//                }
+                manager.assignPaddleToPlayer(gameId, connectingPlayer);
             
                 job = Json.createObjectBuilder();
                 if (level != null) {
                     JsonArrayBuilder jab = Json.createArrayBuilder();
-                    levelToJson(level, jab, job, player);
+                    levelToJson(level, jab, job, playerFromSession);
 
                     manager.startGame(gameId);
                 } else {
@@ -80,6 +81,9 @@ public class LevelServlet extends HttpServlet {
                 job.add("error","No user in the session");
             }
             
+        } else if (game == null) {
+            job = Json.createObjectBuilder();
+            job.add("error", "Connection lost...");
         } else {
             job = Json.createObjectBuilder();
             job.add("allLevelsComplete", true);

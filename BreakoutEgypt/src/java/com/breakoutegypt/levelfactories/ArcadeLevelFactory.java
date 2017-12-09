@@ -10,11 +10,7 @@ import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
-import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
-import com.breakoutegypt.domain.effects.PowerUpType;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.effects.FloorPowerUp;
-import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -25,7 +21,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  *
@@ -34,7 +29,7 @@ import java.util.Random;
 public class ArcadeLevelFactory extends LevelFactory {
 
     public ArcadeLevelFactory(Game game) {
-        super(game, 4);
+        super(game, 4, 1);
     }
 
     @Override
@@ -58,9 +53,6 @@ public class ArcadeLevelFactory extends LevelFactory {
             case 4:
                 currentLevel = getPossibleRealLevel();
                 break;
-//            default:
-//                currentLevel = getLevelWithSwitch();
-//                break;
         }
     }
 
@@ -252,7 +244,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(14).addEffect(new ToggleEffect(bricksToToggle));
         bricks.get(14).setType(BrickType.SWITCH);
         bricks.get(14).setBreakable(false);
-        
+
         List<Ball> balls = new ArrayList();
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();

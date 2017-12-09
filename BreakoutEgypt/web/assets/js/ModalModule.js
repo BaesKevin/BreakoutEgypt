@@ -60,7 +60,7 @@ const ModalModule = (function(){
     }
 
     function modalQuit(){
-        let buttons= "<button class='btn' data-dismiss='modal'>Cancel</button>";
+        let buttons= "<button class='btn' data-dismiss='modal' id='cancelQuit'>Cancel</button>";
         buttons += "<button id='quit' class='btn' data-dismiss='modal'>Quit</button>";
         printModal("Quit","Are you sure?",buttons);
     }

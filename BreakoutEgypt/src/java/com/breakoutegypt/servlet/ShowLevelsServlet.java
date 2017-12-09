@@ -5,9 +5,11 @@
  */
 package com.breakoutegypt.servlet;
 
-import com.breakoutegypt.domain.levelprogression.UserLevelsFactory;
+import com.breakoutegypt.domain.GameType;
+import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.User;
+import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,30 +22,31 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "showLevels", urlPatterns = {"/showLevels"})
 public class ShowLevelsServlet extends HttpServlet {
+    public static final String TOTAL_LEVELS = "totalLevels";
+    public static final String LEVEL_REACHED = "levelReached";
 
-        
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String diff = null;
-        
-        if ( request.getMethod().equals("GET")) {
-            //get last difficulty from db
-            diff = (String) request.getSession().getAttribute("lastDiff");
-        } else if (request.getMethod().equals("POST")) {
-            System.out.println("got a post");
-            diff = request.getParameter("difficulty");
-            request.getSession().setAttribute("lastDiff", diff);
+        // TODO remove the if when sessions are fully integrated
+        Player player = (Player) request.getSession().getAttribute("player");
+        if (player == null) {
+            player = new Player(new User("player"));
+            request.getSession().setAttribute("player", player);
         }
-        System.out.println("diff is " + diff);
         
-        if (diff == null) diff = "easy";
+       
+        int levelReached = player.getProgressions().getHighestLevelReached(GameType.ARCADE);
+        int totalLevels = new ArcadeLevelFactory(null).getTotalLevels();
+        int defaultLevels = new ArcadeLevelFactory(null).getDefaultOpenLevels();
         
-        request.setAttribute("difficulty", diff);
+        if(levelReached < defaultLevels){
+            levelReached = defaultLevels;
+        }
         
+        request.setAttribute(TOTAL_LEVELS, totalLevels);
+        request.setAttribute(LEVEL_REACHED, levelReached);
         
-        UserLevelsFactory ulf = new UserLevelsFactory();
-        request.setAttribute("userlevels", ulf.getAllUserLevelsForEasyForSomeUser());
         request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
         
     }

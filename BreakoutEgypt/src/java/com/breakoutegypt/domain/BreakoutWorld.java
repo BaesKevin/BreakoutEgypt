@@ -7,14 +7,20 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.brickcollisionhandlers.BallBrickContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BallGroundContact;
+import com.breakoutegypt.domain.brickcollisionhandlers.BallPaddleContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.brickcollisionhandlers.Contact;
 import com.breakoutegypt.domain.brickcollisionhandlers.ContactHandler;
+import com.breakoutegypt.domain.effects.AcidBallPowerUp;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.effects.EffectHandler;
+import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.PowerUp;
 import com.breakoutegypt.domain.effects.PowerUpHandler;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.RegularBody;
@@ -38,7 +44,7 @@ public class BreakoutWorld implements ContactHandler {
     // TODO use these!
     public static final int WIDTH = 600;
     public static final int HEIGHT = 600;
-    public static final float TIMESTEP_DEFAULT = 0.5f / 60f;
+    public static final float TIMESTEP_DEFAULT = 1f / 60f;
     private float timestepSeconds;
     private final int velocityIterations = 8;
     private final int positionIterations = 8;
@@ -49,6 +55,7 @@ public class BreakoutWorld implements ContactHandler {
     private EffectHandler effectHandler;
     private PowerUpHandler powerupHandler;
     private ServerClientMessageRepository messageRepo;
+    private boolean acidBall = false;
     
     public BreakoutWorld() {
         this(TIMESTEP_DEFAULT);
@@ -106,12 +113,25 @@ public class BreakoutWorld implements ContactHandler {
 
     @Override
     public void handle(BallBrickContact bbc) {
-        new BrickCollisionDecider(bbc.getBrick(), this.effectHandler).handleCollision();
+        Brick b = bbc.getBrick();
+        Ball ball = bbc.getBall();
+        AcidBallPowerUp abpu = ball.getAcidBall();
+        if (abpu != null) {
+            b.addEffect(new ExplosiveEffect(b, 1));
+            ball.setAcidballPowerup(null);
+            messageRepo.addPowerupMessages(new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL));
+        }
+        new BrickCollisionDecider(b, this.effectHandler).handleCollision();
     }
 
     @Override
     public void handle(BallGroundContact bgc) {
         worldEventListener.ballOutOfBounds(bgc.getOutofbounds());
+    }
+
+    @Override
+    public void handle(BallPaddleContact bpc) {
+        worldEventListener.ballHitPaddle();
     }
 
     public int countWorldObjects() {
@@ -122,16 +142,19 @@ public class BreakoutWorld implements ContactHandler {
         this.worldEventListener = listener;
     }
 
+    // add playerToGivePowerUps parameter
     public void destroyBricks(List<Brick> bricks) {
         String brickName;
         for (Brick brick : bricks) {
             brickName = brick.getName();
 
             if (brick.hasPowerUp()) {
+                // player.addPowerUp(powerup)
                 PowerUp pu = brick.getPowerUp();
-                pu.accept(powerupHandler);
+//                pu.accept(powerupHandler);
+                powerupHandler.addPowerUp(pu);
             }
-
+            
             worldEventListener.removeBrick(brick);
             this.deSpawn(brick.getBody());
             messageRepo.addBrickMessage(new BrickMessage(brickName, BrickMessageType.DESTROY));
@@ -144,6 +167,10 @@ public class BreakoutWorld implements ContactHandler {
 
     public long getTimeStepAsMs() {
         return Math.round(Math.floor(timestepSeconds * 1000));
+    }
+
+    public void setAcidBall() {
+        acidBall = true;
     }
 
 }

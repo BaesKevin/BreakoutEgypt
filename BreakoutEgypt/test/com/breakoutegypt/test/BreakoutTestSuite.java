@@ -21,7 +21,9 @@ import org.junit.runners.Suite;
    LevelObjectSpawningTest.class,
    MessageTest.class,
    PowerUpTest.class,
-   LevelStateTest.class
+   LevelStateTest.class,
+   ScoreTester.class,
+   LevelProgressionTest.class
 })
 
 public class BreakoutTestSuite {

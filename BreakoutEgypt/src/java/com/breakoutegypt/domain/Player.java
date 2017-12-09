@@ -6,9 +6,10 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
+import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.LevelProgressionManager;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.Objects;
-import javax.websocket.Session;
 
 /**
  *
@@ -23,10 +24,13 @@ public class Player {
     private User user;
     private Paddle paddle;
     private PlayerConnection conn;
+    private LevelProgressionManager levelPackProgressions;
+    
 //    private Session session;
     
     public Player(User user){
         this.user = user;
+        this.levelPackProgressions = new LevelProgressionManager();
     }
     
     public User getUser() {
@@ -51,6 +55,10 @@ public class Player {
 
     public void setConnection(PlayerConnection conn) {
         this.conn = conn;
+    }
+    
+    public LevelProgressionManager getProgressions(){
+        return levelPackProgressions;
     }
 
     @Override

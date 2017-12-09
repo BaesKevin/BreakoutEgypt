@@ -7,15 +7,17 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
-import com.breakoutegypt.domain.messages.BallMessage;
-import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Timer;
 
@@ -40,12 +42,15 @@ public class Level implements BreakoutWorldEventListener {
 
     private boolean levelStarted;
 
-    private ScoreTimer scoreTimer;
+    private TimeScore scoreTimer;
     private LevelTimerTask levelTimerTask;
     private boolean runLevelManually;
 
-    public Level(int id, Game game, LevelState initialObjects, int lives
-    ) {
+    private BrickScoreCalculator brickScoreCalc;
+
+    BreakoutPowerUpHandler bpuh;
+
+    public Level(int id, Game game, LevelState initialObjects, int lives) {
         this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
     }
 
@@ -56,7 +61,8 @@ public class Level implements BreakoutWorldEventListener {
 
         this.levelStarted = false;
 
-        scoreTimer = new ScoreTimer();
+        scoreTimer = new TimeScore();
+        this.brickScoreCalc = new BrickScoreCalculator();
 
         breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
 
@@ -66,17 +72,19 @@ public class Level implements BreakoutWorldEventListener {
             breakoutWorld.spawn(rb);
         }
 
+        bpuh = new BreakoutPowerUpHandler(this, levelState, breakoutWorld);
+
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
-                new BreakoutPowerUpHandler(this, levelState, breakoutWorld));
+                bpuh);
 
         this.lives = lives;
         this.timer = new Timer();
         runLevelManually = false;
     }
 
-    public ScoreTimer getScoreTimer() {
+    public TimeScore getScoreTimer() {
         return scoreTimer;
     }
 
@@ -110,48 +118,46 @@ public class Level implements BreakoutWorldEventListener {
             scoreTimer.start();
             List<Ball> balls = levelState.getBalls();
             for (Ball b : balls) {
-                b.setLinearVelocity(0, 200);
+                b.setLinearVelocity(0, 150);
             }
         }
     }
 
     // x coordinate is the center of the most left paddle
-    public void movePaddle(Paddle paddle, int x, int y) {
-        
+    public void movePaddle(Paddle paddle, int firstPaddleCenter, int y) {
+
         List<Paddle> paddles = levelState.getPaddles();
         int totalWidth = levelState.calculatePaddleWidthWithGaps();
         int paddleWidth = paddles.get(0).getShape().getWidth();
-        
+        // x is the center of the most left paddle
         int min = paddleWidth / 2;
         int max = 300 - totalWidth + (paddleWidth / 2);
+
+        float paddleCenter = firstPaddleCenter;
+        if (paddleCenter < min) {
+            paddleCenter = min;
+        } else if (paddleCenter > max) {
+            paddleCenter = max;
+        }
+
+        for (Paddle p : paddles) {
+            p.moveTo(paddleCenter, p.getPosition().y);
+
+            paddleCenter += (paddleWidth + BrokenPaddlePowerUp.GAP);
+        }
 
         if (!levelStarted) {
             float yPos = levelState.getBall().getPosition().y;
             List<Ball> balls = levelState.getBalls();
 
-            float temp = x;
+            float temp = firstPaddleCenter;
             for (Ball ball : balls) {
                 ball.moveTo(temp, yPos);
                 temp += paddleWidth;
             }
-            
-            
-        }
-        
-        float xpos = x;
-        if( xpos < min){
-            xpos = min;
-        } else if (xpos > max) {
-            xpos = max;
-        }
-        
-        for(Paddle p : paddles){
-            p.moveTo(xpos, p.getPosition().y);
-            
-            xpos += 2*paddleWidth;
+
         }
 
-        
     }
 
     public int getId() {
@@ -210,6 +216,7 @@ public class Level implements BreakoutWorldEventListener {
         } else {
             stop();
         }
+        scoreTimer.pauseTimer();
     }
 
     public void initNextLevel() {
@@ -225,15 +232,12 @@ public class Level implements BreakoutWorldEventListener {
     public void ballOutOfBounds(Ball ball) {
         breakoutWorld.deSpawn(ball.getBody());
         resetBall(ball);
-        /*
-        TODO
-        probleem oplossen voor als meerdere ballen tegelijk out of bounds gaan
-         */
     }
 
     @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
+        brickScoreCalc.addPointsToScore(brick);
 
         if (allTargetBricksDestroyed()) {
             getScoreTimer().stop();
@@ -248,12 +252,31 @@ public class Level implements BreakoutWorldEventListener {
         }
     }
 
+    @Override
+    public void ballHitPaddle() {
+        brickScoreCalc.resetMultiplier();
+    }
+
     public void addFloor(FloorPowerUp floor) {
         levelState.addFloor(floor);
-//        breakoutWorld.setFloorToAdd(floor);
     }
 
     public void addPaddle(Paddle basePaddle) {
         levelState.addPaddle(basePaddle);
+    }
+
+    public int getBrickScore() {
+        return brickScoreCalc.getScore();
+    }
+
+    public PowerUpMessage triggerPowerup(String powerup) {
+        PowerUp p = bpuh.getPowerupByName(powerup);
+
+        PowerUpMessage msg = new PowerUpMessage("You are trying to trigger a powerup that doesn't exist", null, PowerUpMessageType.NOSUCHPOWERUP);
+        
+        if (p != null) {
+            msg = p.accept(bpuh);
+        }
+        return msg;
     }
 }

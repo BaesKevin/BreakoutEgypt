@@ -39,8 +39,8 @@ public class PowerUpMessage implements Message {
     @Override
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        
-        job.add("powerup", powerup.toJson());
+        if (powerup != null) 
+            job.add("powerup", powerup.toJson());
         job.add("powerupaction", getMessageType().toString());
         
         return job;

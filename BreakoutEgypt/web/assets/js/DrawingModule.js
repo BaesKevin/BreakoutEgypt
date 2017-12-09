@@ -1,14 +1,15 @@
 let DrawingModule = (function () {
-    let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas;
+    let brickCtx, movingPartsCtx, brickCanvas, movingPartsCanvas, effectCanvas, effectCtx;
     let mouse = {
         x: 0,
         y: 0
     };
+    let explosions = [];
 
     function doDocumentLoaded() {
         $('canvas').on('mousemove', updateMouseX);
         initCanvasAndContextFields();
-
+        requestAnimationFrame(doExplosions);
         mouse.y = getBrickCanvasDimensions().height - 50;
     }
 
@@ -22,6 +23,8 @@ let DrawingModule = (function () {
         brickCtx = brickCanvas.getContext('2d');
         movingPartsCanvas = $('#movingParts')[0];
         movingPartsCtx = movingPartsCanvas.getContext('2d');
+        effectCanvas = $('#effectCanvas')[0];
+        effectCtx = effectCanvas.getContext('2d');
 
         resizeCanvasses(getBrickCanvasDimensions().width, getBrickCanvasDimensions().height);
     }
@@ -63,6 +66,8 @@ let DrawingModule = (function () {
     }
 
     function drawPaddles() {
+        // X is the most left value of the paddle
+        // ctx.arc needs the center. That's why we add the half of the width
         level.paddles.forEach(function (paddle) {
             movingPartsCtx.strokeStyle = paddle.color;
             movingPartsCtx.beginPath();
@@ -76,6 +81,25 @@ let DrawingModule = (function () {
         drawLevelNumber(level.level);
         drawLives(level.lives);
         drawFloor();
+        updatePowerups();
+    }
+
+    function updatePowerups() {
+        let imgObj = {x: 1, y: 275, width: 20, height: 20};
+        imgObj = ScalingModule.scaleObject(imgObj, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+        let allPowerups = [];
+        level.powerups.forEach(function (powerup) {
+            
+            if (powerup.active) {
+                brickCtx.fillStyle = "lightgreen";
+            } else {
+                brickCtx.fillStyle = "lightblue";
+            }
+            let powerupname = powerup.name.replace(/[0-9]/g, "");
+            brickCtx.fillRect(imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+            brickCtx.drawImage(ImageLoader.images[powerupname], imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+            imgObj.x += ScalingModule.scaleXForClient(20);
+        });
     }
 
     function updateBricks() {
@@ -91,56 +115,58 @@ let DrawingModule = (function () {
         brickCtx.fillRect(level.floor.x, level.floor.y, level.floor.width, level.floor.height);
     }
 
+    // the paddle's X position is the left border of the shape, not the center 
     function setPaddleX() {
-        let paddle = level.mypaddle;
-        let paddlewidth = calculateWidth();
+        let widthOfPaddlesWithGaps = calculateWidthOfAllPaddlesWithGaps();
+        let xOfFirstPaddle = mouse.x - widthOfPaddlesWithGaps / 2;
+        let canvasWidth = movingPartsCanvas.width;
+        let maxPaddleX = canvasWidth - widthOfPaddlesWithGaps;
 
-        paddle[0].x = mouse.x - paddlewidth / 2;
+        if (xOfFirstPaddle <= 0) {
+            xOfFirstPaddle = 0;
+        } else if (xOfFirstPaddle >= maxPaddleX) {
+            xOfFirstPaddle = maxPaddleX;
+        }
 
-        for (let i = 1; i < level.mypaddle.length; i++) {
-            paddle[i].x = (paddle[i - 1].x + 2 * paddle[i - 1].width);
-        }
-        let lastPaddleNo = level.mypaddle.length - 1;
-
-        if (paddle[0].x < 0) {
-            paddle[0].x = 0;
-        } else if (movingPartsCanvas.width - paddle[lastPaddleNo].width < paddle[lastPaddleNo].x) {
-            paddle[lastPaddleNo].x = movingPartsCanvas.width - paddle[lastPaddleNo].width;
-        }
-        
-        if (paddle.length > 1) {
-            if (paddle[0].x <= 0) {
-                paddle[1].x = (paddle[0].x + (2*paddle[0].width));
-            } else if (paddle[0].x > (movingPartsCanvas.width - paddle[1].width - paddle[1].width*2)) {
-                paddle[0].x = movingPartsCanvas.width - paddle[1].width - paddle[1].width*2;
-            }
-        }
+        level.mypaddle.forEach(function (paddle) {
+            paddle.x = xOfFirstPaddle;
+            xOfFirstPaddle += level.gap + paddle.width;
+        });
 
         let godImg = ImageLoader.images["god"];
 
+        let godImgSize = {x: 0, y: 0, width: godImg.width, height: godImg.height};
+        godImgSize = ScalingModule.scaleObject(godImgSize, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+        let scale = 1;
+        if (level.paddles.length > 1) {
+            scale = 0.6;
+        }
+
         level.mypaddle.forEach(function (paddle) {
-            let godImgPosition = {x: paddle.x + (paddle.width / 2) - (godImg.width / 2),
+            let godImgPosition = {x: paddle.x + (paddle.width / 2) - ((godImgSize.width * scale) / 2),
                 y: paddle.y - (paddle.width * 0.4)};
-            movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y);
-        })
+
+            movingPartsCtx.drawImage(godImg, godImgPosition.x, godImgPosition.y, godImgSize.width * scale, godImgSize.height * scale);
+        });
     }
 
-    function calculateWidth() {
+    function calculateWidthOfAllPaddlesWithGaps() {
 
         let paddlewidth = level.mypaddle[0].width;
         let noOfPaddles = level.mypaddle.length;
         let noOfGaps = noOfPaddles - 1;
-        let width = noOfPaddles * paddlewidth + noOfGaps * paddlewidth;
+        let width = noOfPaddles * paddlewidth + noOfGaps * level.gap;
         return width;
     }
 
 
     function drawLives(lives) {
-        let height = (brickCanvas.height - level.mypaddle.y) * 0.7;
+        let height = (brickCanvas.height - level.mypaddle[0].y) * 0.7;
         let startX = brickCanvas.width - 5 - height;
+        let imgObj = {x: startX, y: level.mypaddle[0].y * 1.01, width: height, height: height};
         for (let i = 0; i < lives; i++) {
-            brickCtx.drawImage(ImageLoader.images["live"], startX, level.mypaddle.y * 1.05, height, height);
-            startX -= (height * 0.6);
+            brickCtx.drawImage(ImageLoader.images["live"], imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+            imgObj.x -= (height * 0.6);
         }
     }
 
@@ -152,8 +178,10 @@ let DrawingModule = (function () {
         return {
             width: brickCanvas.width,
             height: brickCanvas.height
-        }
+        };
     }
+
+
 
 
     function resizeCanvasses(width, height) {
@@ -161,11 +189,37 @@ let DrawingModule = (function () {
         brickCanvas.height = height;
         movingPartsCanvas.width = brickCanvas.width;
         movingPartsCanvas.height = brickCanvas.height;
+        effectCanvas.width = brickCanvas.width;
+        effectCanvas.height = brickCanvas.height;
 
         let pos = brickCanvas.getBoundingClientRect();
         movingPartsCanvas.style.left = pos.left + "px";
+        effectCanvas.style.left = pos.left + "px";
 
         updateStaticContent();
+    }
+
+    function doExplosions() {
+        effectCtx.clearRect(0, 0, effectCanvas.width, effectCanvas.height);
+        explosions.forEach(function (myExplosion) {
+            if (myExplosion.isActive) {
+                myExplosion.explode();
+            } else {
+                removeExplosion(myExplosion);
+            }
+        });
+        requestAnimationFrame(doExplosions);
+    }
+
+    function removeExplosion(explosionToRemove) {
+        explosions = explosions.filter(function (explosion) {
+            return explosionToRemove.name !== explosion.name;
+        })
+    }
+
+    function createExplosion(noOfParticles, x, y) {
+        let boom = new Explosion(noOfParticles, x, y, effectCtx);
+        explosions.push(boom);
     }
 
     function createPattern(image, mode) {
@@ -179,7 +233,8 @@ let DrawingModule = (function () {
         getBrickCanvasDimensions: getBrickCanvasDimensions,
         resizeCanvasses: resizeCanvasses,
         createPattern: createPattern,
-        doDocumentLoaded: doDocumentLoaded
+        doDocumentLoaded: doDocumentLoaded,
+        createExplosion: createExplosion,
     }
 
 })();

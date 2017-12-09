@@ -5,6 +5,9 @@ const ImageLoader = (function(){
         "live" : new Image(),
         "gold" : new Image(),
         "fire" : new Image(),
+        "acidball" : new Image(),
+        "brokenpaddle" : new Image(),
+        "floor" : new Image()
     };
 
     let imageAssets = [
@@ -12,7 +15,10 @@ const ImageLoader = (function(){
         {image: images["brick"], src: "assets/media/brick-wall.png"},
         {image: images["live"], src: "assets/media/ankLife.png"},
         {image: images["gold"], src: "assets/media/gold.jpg"},
-        {image: images["fire"], src: "assets/media/blue-fire.jpg"}
+        {image: images["fire"], src: "assets/media/blue-fire.jpg"},
+        {image: images["brokenpaddle"], src: "assets/media/brokenpaddle.png"},
+        {image: images["floor"], src: "assets/media/floor.png"},
+        {image: images["acidball"], src: "assets/media/acidball.png"}
     ];
 
 

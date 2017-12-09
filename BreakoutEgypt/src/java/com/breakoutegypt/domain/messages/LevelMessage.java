@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.domain.messages;
 
-import com.breakoutegypt.domain.ScoreTimer;
+import com.breakoutegypt.domain.TimeScore;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 

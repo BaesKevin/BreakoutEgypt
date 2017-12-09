@@ -5,6 +5,9 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.domain.Game;
+import com.breakoutegypt.domain.GameManager;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -15,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Bjarne Deketelaere
+ * @author BenDB
  */
-@WebServlet(name = "BreakoutController", urlPatterns = {"/pages/*", "/index.html" })
-public class BreakoutController extends HttpServlet {
+@WebServlet(name = "PowerUpServlet", urlPatterns = {"/powerup"})
+public class PowerUpServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,13 +34,25 @@ public class BreakoutController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path=request.getServletPath();
-//        switch(path){
-//            case "":
-//                break;
-//            default:
-//                request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
-//        }
+
+        int gameId = Integer.parseInt(request.getParameter("gameId"));
+        String powerup = request.getParameter("powerup");
+
+        if (powerup != null) {
+
+            GameManager manager = new GameManager();
+            Game game = manager.getGame(gameId);
+
+            PowerUpMessage msg = game.triggerPowerup(powerup);
+
+            if (msg != null) {
+                try (PrintWriter out = response.getWriter()) {
+                    out.print(msg.toJson().build().toString());
+                }
+            }
+
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

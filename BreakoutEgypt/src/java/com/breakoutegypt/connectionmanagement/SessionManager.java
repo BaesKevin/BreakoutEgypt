@@ -6,6 +6,7 @@
 package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.BreakoutWorld;
+import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ServerClientMessageRepository;
@@ -134,7 +135,13 @@ public class SessionManager {
     public int getNextAvailablePaddleIndex() {
         return connectedPlayers.size() + connectingPlayers.size() - 1;
     }
-
+    
+    public void incrementLevelReachedForAllPlayers(GameType gameType) {
+        for(Player p : getPlayers()){
+            p.getProgressions().getProgression(gameType).incrementHighestLevelReached();
+        }
+    }
+    
     public void notifyLevelComplete(Level currentLevel) {
         LevelMessage lm = new LevelMessage("jef", currentLevel.isLastLevel(), currentLevel.getScoreTimer().getDuration(), LevelMessageType.COMPLETE);
         sendJsonToPlayers(lm);

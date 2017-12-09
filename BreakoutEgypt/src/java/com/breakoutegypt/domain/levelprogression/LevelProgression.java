@@ -5,28 +5,25 @@
  */
 package com.breakoutegypt.domain.levelprogression;
 
+import com.breakoutegypt.domain.GameType;
 import java.util.List;
 
 /**
  *
  * @author snc
  */
-// deze klass zou je kunnen gebruiken om de map besproken in Player.java bij te houden
-// elke speler zou dan 1 levelprogression object hebben dat je gebruikt om operaties op de map
-// te vereenvoudigen en de gebruikte datastructuur te encapsuleren.
 public class LevelProgression {
+    private int highestLevelReached;
     
-    private List<UserLevel> userLevels;
-    
-    public LevelProgression( List<UserLevel> userLevels) {
-        this.userLevels = userLevels;
+    public LevelProgression(){
+        this.highestLevelReached = 1;
     }
-    
-    public int getTotalNumberOfLevels() {
-        return userLevels.size();
+            
+    public void incrementHighestLevelReached(){
+        this.highestLevelReached++;
     }
-    
-    
-    
-    
+
+    public int getHighestLevelReached() {
+        return highestLevelReached;
+    }
 }

@@ -8,20 +8,18 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
-import com.breakoutegypt.domain.levelprogression.UserLevel;
+import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.domain.shapes.Paddle;
-import com.breakoutegypt.levelfactories.ArcadeLevelFactoryWithDifficulty;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
-import java.util.List;
 
 /**
  *
  * @author kevin
  */
-
 // levels zullen altijd dezelfde initiele LevelState bevatten, 
 // voorstel: Game maakt een DiffucultyConfiguration obv Difficulty enum en geeft die door aan 
 // LevelFactory die hem dan weer doorgeeft aan Level. 
@@ -32,22 +30,20 @@ public class Game {
     private static int ID = 0;
     private int id;
     private Level currentLevel;
-
-    private ArcadeLevelFactoryWithDifficulty levelFactory;
+    private GameType gameType;
     
+    private LevelFactory levelFactory;
+
     private SessionManager manager;
 
     public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty) {
         id = ID++;
+        this.gameType = gameType;
         manager = new SessionManager(numberOfPlayers);
 
-        //levelFactory = createLevelFactoryForGameType(gameType, difficulty);
+        levelFactory = createLevelFactoryForGameType(gameType, difficulty);
+        currentLevel = levelFactory.getCurrentLevel();
         
-        levelFactory = new ArcadeLevelFactoryWithDifficulty(this, difficulty);
-        
-        //this.userLevelsFactory = new UserLevelsFactory(this);
-        //this.userLevels = userLevelsFactory.getUserLevelsForSomeRandomUser(33);
-        setCurrentLevel(startingLevel);
     }
 
     // hier zou je dan je DiffuciltyConfig aanmaken
@@ -68,6 +64,8 @@ public class Game {
     public int getId() {
         return id;
     }
+    
+    public GameType getGameType(){ return gameType; }
 
     public Level getCurrentLevel() {
         return currentLevel;
@@ -83,9 +81,9 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-
+        player.getProgressions().addNewProgression(this.gameType, new LevelProgression());
         manager.addConnectingPlayer(player);
-
+        
     }
 
     public boolean isPlayerInSessionManager(Player player) {
@@ -113,7 +111,7 @@ public class Game {
         return manager.hasNoPlayers();
     }
 
-    public void notifyPlayers(Level currentLevel,ServerClientMessageRepository messageRepo) {
+    public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
         manager.notifyPlayers(currentLevel, messageRepo);
     }
 
@@ -125,7 +123,7 @@ public class Game {
         }
 
     }
-    
+
     public void notifyPlayersOfBallAction() {
         manager.notifyPlayersOfBallAction(currentLevel);
     }
@@ -147,6 +145,7 @@ public class Game {
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {
+            manager.incrementLevelReachedForAllPlayers(gameType);
             currentLevel = levelFactory.getNextLevel();
         }
 
@@ -165,8 +164,13 @@ public class Game {
         return levelFactory.getCurrentLevel();
     }
 
-    public void setCurrentLevel(int levelId) {
-        levelFactory.setCurrentLevel(levelId);
+    
+    public void setCurrentLevel(int levelId, LevelProgression progression) {
+        levelFactory.setCurrentLevel(levelId, progression);
         this.currentLevel = levelFactory.getCurrentLevel();
+    }
+
+    public PowerUpMessage triggerPowerup(String powerup) {
+        return getCurrentLevel().triggerPowerup(powerup);
     }
 }

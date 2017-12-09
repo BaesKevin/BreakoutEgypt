@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.domain.effects;
 
+import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import javax.json.JsonObject;
 
 /**
@@ -13,7 +15,11 @@ import javax.json.JsonObject;
  */
 public interface PowerUp {
     
-    public void accept(PowerUpHandler puh);
+    public PowerUpMessage accept(PowerUpHandler puh);
 
     public JsonObject toJson();
+
+    public String getName();
+    
+    public PowerUpMessageType getType();
 }

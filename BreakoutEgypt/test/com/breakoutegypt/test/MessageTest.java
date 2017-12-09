@@ -7,11 +7,13 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.domain.Game;
+import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.levelprogression.LevelProgression;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
@@ -38,14 +40,15 @@ public class MessageTest {
     Level level;
     Game game;
     Player player;
-
+    private final LevelProgression ALL_LEVELS_UNLOCKED = new LevelProgression();
+    
     public MessageTest() {
     }
 
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST);
+        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
 
         game = gm.getGame(id);
 
@@ -61,7 +64,7 @@ public class MessageTest {
 
     @Test
     public void testDummyConnectionGetBallMessages() {
-        game.setCurrentLevel(5);
+        game.setCurrentLevel(5, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
 
         level.startBall();
@@ -70,15 +73,13 @@ public class MessageTest {
 
         DummyConnection conn = (DummyConnection) player.getConnection();
         List<Message> actualMessages = conn.getBallMessages();
-        List<Message> expectedMessages = new ArrayList();
-
-        expectedMessages.add(new BallMessage("ball2", BallMessageType.REMOVE));
-        assertEquals(expectedMessages.size(), actualMessages.size());
+        
+        assertEquals(100, actualMessages.size());
     }
 
     @Test
     public void testDummyConnectionGetLifeMessages() {
-        game.setCurrentLevel(6);
+        game.setCurrentLevel(6, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
 
         level.startBall();
@@ -89,14 +90,16 @@ public class MessageTest {
         List<Message> actualMessages = conn.getLifeMessages();
         List<Message> expectedMessages = new ArrayList();
         //TODO get name of actual player in session
-        expectedMessages.add(new LifeMessage("jef", 1, LifeMessageType.PLAYING));
-        expectedMessages.add(new LifeMessage("jef", 0, LifeMessageType.GAMEOVER));
+        Message msg1 = new LifeMessage("jef", 1, LifeMessageType.PLAYING);
+        Message msg2 = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
+        expectedMessages.add(msg1);
+        expectedMessages.add(msg2);
         assertEquals(expectedMessages, actualMessages);
     }
 
     @Test
     public void testDummyConnectionNotifyPlayers() {
-        game.setCurrentLevel(7);
+        game.setCurrentLevel(7, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
 
         level.startBall();

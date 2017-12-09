@@ -23,6 +23,6 @@
     top: 45px;
 }
 
-#movingParts {
+#movingParts, #effectCanvas {
     position: absolute;
 }
