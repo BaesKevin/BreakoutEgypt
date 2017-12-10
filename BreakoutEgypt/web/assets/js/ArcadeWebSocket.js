@@ -74,6 +74,7 @@ let ArcadeWebSocket = (function () {
                     handleLevelComplete(json);
                 } else {
                     if (json.leveldata.powerupactions) {
+                        console.log(json.leveldata.powerupactions)
                         PowerUpModule.handlePowerUpMessage(json.leveldata.powerupactions)
                     }
                     level.updateLevelData(json);

@@ -136,4 +136,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
         return PowerUpMessageType.ADDBROKENPADDLE;
     }
 
+    void addTime(int othersTime) {
+        this.timeVisable += othersTime;
+    }
+
 }

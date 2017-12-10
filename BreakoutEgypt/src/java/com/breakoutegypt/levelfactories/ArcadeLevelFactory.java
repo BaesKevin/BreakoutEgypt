@@ -49,6 +49,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                 break;
             case 3:
                 currentLevel = getSimpleTestLevel();
+                currentLevel.setLevelNumber(3);
                 break;
             case 4:
                 currentLevel = getPossibleRealLevel();
@@ -249,7 +250,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
-        int noOfPowerups = 3;
+        int noOfPowerups = 5;
 
         LevelState initialState = new LevelState(balls, paddles, bricks, noOfPowerups);
         Level level = new Level(currentLevelId, game, initialState, 3);

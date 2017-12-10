@@ -82,7 +82,7 @@ public class LevelState {
         for (Brick brick : bricks) {
             addBrick(brick);
         }
-
+        
         if (noOfPowerups > 0) {
             List<PowerUp> powerups = createPowerups(noOfPowerups, paddles.get(0));
             bricks = generatePowerUps(bricks, powerups);
@@ -136,6 +136,10 @@ public class LevelState {
     public void removeFloor() {
         //TODO remove floor
         this.floor = null;
+    }
+    
+    public FloorPowerUp getFloor() {
+        return this.floor;
     }
 
     public List<Brick> getBricks() {

@@ -1,37 +1,27 @@
 let PowerUpModule = (function () {
     let powerups = [];
-    
+
     function checkKey(e) {
-        console.log("PowerUpModule: " + e.which);
         if (level !== undefined) {
-            switch (e.which) {
-                case 49:
-                    if (powerups[0] !== undefined)
-                        requestActivatePowerUp(powerups[0].name);
-                    break;
-                case 50:
-                    if (powerups[1] !== undefined)
-                        requestActivatePowerUp(powerups[1].name);
-                    break;
-                case 51:
-                    if (powerups[2] !== undefined)
-                        requestActivatePowerUp(powerups[2].name);
-                    break;
+            if (e.which >= 49 && e.which <= 57) {
+                let powerupindex = e.which - 49;
+                if (powerups[powerupindex] !== undefined) {
+                    requestActivatePowerUp(powerups[powerupindex].name);
+                }
             }
         }
     }
 
     function requestActivatePowerUp(name) {
         var gameId = UtilModule.getParameterByName("gameId");
-        $.ajax({
-            url: "powerup?gameId=" + gameId + "&powerup=" + name,
-            method: "POST",
-            credentials: "same-origin",
+        fetch("powerup?gameId=" + gameId + "&powerup=" + name, {method: "post", credentials: "same-origin",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
-        }).done(function (response) {
-            let json = JSON.parse(response);
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            console.log(json);
             activatePowerUp([json]);
             let powerup = powerups.find(function (powerup) {
                 return powerup.name === name;
@@ -39,16 +29,17 @@ let PowerUpModule = (function () {
             powerup.active = true;
             level.powerups = powerups;
             DrawingModule.updateStaticContent();
-        }).fail(function (err) {
-            console.log(err);
-        });
+        })
     }
 
     function activatePowerUp(json) {
         switch (json[0].powerupaction) {
             case "ACTIVATEFLOOR":
                 let jsonpowerup = json[0].powerup;
-                level.floor = ScalingModule.scaleObject({x: jsonpowerup.x, y: jsonpowerup.y, width: jsonpowerup.width, height: jsonpowerup.height}, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                if (!level.floor) {
+                    level.floor = ScalingModule.scaleObject({x: jsonpowerup.x, y: jsonpowerup.y, width: jsonpowerup.width, height: jsonpowerup.height},
+                            ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+                }
                 break;
             case "ACTIVATEBROKENPADDLE":
                 addBrokenPaddle(json);
@@ -60,30 +51,40 @@ let PowerUpModule = (function () {
 
     function removeActivePowerup(name) {
         powerups = powerups.filter(function (powerup) {
-            return name !== powerup.name;
+            let sameType = powerup.name.replace(/[0-9]/g, "") === name.replace(/[0-9]/g, "");
+            let differentType = !sameType;
+            console.log(sameType, powerup.active);
+            return differentType || ( !powerup.active && sameType );
         });
+
     }
 
     function handlePowerUpMessage(json) {
-        switch (json[0].powerupaction) {
+        json.forEach(function (data) {
+            doPowerupaction(data);
+            level.powerups = powerups;
+            DrawingModule.updateStaticContent();
+        });
+    }
+
+    function doPowerupaction(json) {
+        switch (json.powerupaction) {
             case "REMOVEFLOOR":
                 level.floor = false;
-                removeActivePowerup(json[0].powerup.powerupname);
+                removeActivePowerup(json.powerup.powerupname);
                 break;
             case "REMOVEBROKENPADDLE":
                 removeBrokenPaddle(json);
-                removeActivePowerup(json[0].powerup.powerupname);
+                removeActivePowerup(json.powerup.powerupname);
                 break;
             case "REMOVEACIDBALL":
-                removeActivePowerup(json[0].powerup.powerupname);
+                removeActivePowerup(json.powerup.powerupname);
                 break;
             case "ADDFLOOR":
             case "ADDBROKENPADDLE":
             case "ADDACIDBALL":
-                powerups.push({name: json[0].powerup.powerupname, active: false});
+                powerups.push({name: json.powerup.powerupname, active: false});
         }
-        level.powerups = powerups;
-        DrawingModule.updateStaticContent();
     }
 
     function removeBrokenPaddle(json) {
@@ -98,6 +99,7 @@ let PowerUpModule = (function () {
         level.mypaddle.push(paddleToAdd);
         level.paddles.push(paddleToAdd);
     }
+
     function addBrokenPaddle(json) {
         level.paddles = level.paddles.filter(function (paddle) {
             return level.mypaddle.name === paddle.name;

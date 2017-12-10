@@ -131,7 +131,7 @@ public class LevelProgressionTest {
         
         LevelProgression playerProgression = player.getProgressions().getProgressionOrDefault(GameType.TEST);
         
-        game.setCurrentLevel(14, playerProgression);
+        game.setCurrentLevel(17, playerProgression);
         
         level =  game.getCurrentLevel();
         

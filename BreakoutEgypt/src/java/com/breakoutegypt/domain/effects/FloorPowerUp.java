@@ -80,4 +80,8 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     public PowerUpMessageType getType() {
         return PowerUpMessageType.ADDFLOOR;
     }
+
+    void addTime(int othersTimeVisable) {
+        this.timeVisable += othersTimeVisable;
+    }
 }
