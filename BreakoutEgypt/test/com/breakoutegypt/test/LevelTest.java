@@ -7,12 +7,12 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import org.jbox2d.common.Vec2;
 import org.junit.Assert;
@@ -28,15 +28,15 @@ public class LevelTest {
     private Game game;
     private Level level;
     private Player player;
-    private final LevelProgression ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
     
     @Before
     public void setup() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
+        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
+        game.setCurrentLevel(1, ALL_LEVELS_UNLOCKED);
         
-
         game.startLevel();
         level = game.getCurrentLevel();
         

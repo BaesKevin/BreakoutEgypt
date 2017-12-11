@@ -8,14 +8,14 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
-import com.breakoutegypt.domain.levelprogression.LevelProgressionManager;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
+import com.breakoutegypt.domain.levelprogression.LevelProgressManager;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
@@ -27,11 +27,12 @@ import org.junit.Test;
  *
  * @author kevin
  */
-public class LevelProgressionTest {
+public class LevelPackProgressTest {
     private Player player;
-    private LevelProgressionManager progressions;
+    private LevelProgressManager progressions;
     private TestLevelFactory factory;
     private Level level;
+    private GameManager gm;
     
     private static final int DEFAULT_OPEN_TEST_LEVELS = TestLevelFactory.DEFAULT_OPEN_LEVELS;
     
@@ -39,14 +40,15 @@ public class LevelProgressionTest {
     public void before(){
         player = new Player(new User("player"));
         factory = new TestLevelFactory(null);
+        gm = new GameManager();
     }
     
     @Test
     public void textGetReachedLevelDefaultNotOpen() {
         progressions = player.getProgressions();
         
-        progressions.addNewProgression(GameType.TEST);
-        LevelProgression prog = progressions.getProgressionOrDefault(GameType.TEST);
+        progressions.addNewProgression(GameType.TEST, GameDifficulty.EASY);
+        LevelProgress prog = progressions.getProgress(GameType.TEST,GameDifficulty.EASY).getLevelProgress();
         
         for (int i = 1; i < DEFAULT_OPEN_TEST_LEVELS + 1; i++) {
             prog.incrementHighestLevelReached();
@@ -62,8 +64,8 @@ public class LevelProgressionTest {
         progressions = player.getProgressions();
         
         
-        progressions.addNewProgression(GameType.TEST);
-        LevelProgression prog = progressions.getProgressionOrDefault(GameType.TEST);
+        progressions.addNewProgression(GameType.TEST, GameDifficulty.EASY);
+        LevelProgress prog = progressions.getProgress(GameType.TEST, GameDifficulty.EASY).getLevelProgress();
                 
         factory.setCurrentLevel(DEFAULT_OPEN_TEST_LEVELS, prog);
         
@@ -75,8 +77,8 @@ public class LevelProgressionTest {
         progressions = player.getProgressions();
         
         
-        progressions.addNewProgression(GameType.TEST);
-        LevelProgression prog = progressions.getProgressionOrDefault(GameType.TEST);
+        progressions.addNewProgression(GameType.TEST, GameDifficulty.EASY);
+        LevelProgress prog = progressions.getProgress(GameType.TEST, GameDifficulty.EASY).getLevelProgress();
                 
         factory.setCurrentLevel(DEFAULT_OPEN_TEST_LEVELS + 1, prog);
     }
@@ -85,9 +87,11 @@ public class LevelProgressionTest {
     public void gameStartsAtLevelOneByDefault(){
         int numberOfPlayerse = 1;
         int startingLevel = 1;
-        int id = new GameManager().createGame(numberOfPlayerse, startingLevel, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
+        int id = gm.createGame(numberOfPlayerse, startingLevel, GameType.TEST, GameDifficulty.MEDIUM);
         final String playername = "kevin";
-        Game game = new GameManager().getGame(id);
+        
+        Game game = gm.getGame(id);
+        game.setCurrentLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
         player = new Player(new User(playername));
         
         game.addConnectingPlayer(player);
@@ -103,16 +107,18 @@ public class LevelProgressionTest {
     public void gameCrashesWhenIllegalLevelIsSet(){
         int numberOfPlayerse = 1;
         int startingLevel = 1;
-        int id = new GameManager().createGame(numberOfPlayerse, startingLevel, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
+        int id = gm.createGame(numberOfPlayerse, startingLevel, GameType.TEST, GameDifficulty.EASY);
+        
         final String playername = "kevin";
         Game game = new GameManager().getGame(id);
+        game.setCurrentLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
         player = new Player(new User(playername));
-        player.getProgressions().addNewProgression(GameType.TEST);
+        player.getProgressions().addNewProgression(GameType.TEST, GameDifficulty.EASY);
         
         game.addConnectingPlayer(player);
         game.addConnectionForPlayer("kevin", new DummyConnection());
         
-        game.setCurrentLevel(DEFAULT_OPEN_TEST_LEVELS + 1, player.getProgressions().getProgressionOrDefault(GameType.TEST));
+        game.setCurrentLevel(DEFAULT_OPEN_TEST_LEVELS + 1, player.getProgressions().getProgress(GameType.TEST, GameDifficulty.EASY).getLevelProgress());
         
     }
     
@@ -120,16 +126,18 @@ public class LevelProgressionTest {
     public void gameIncrementsLevelReachedOnLevelCompletion(){
         int numberOfPlayerse = 1;
         int startingLevel = 1;
-        int id = new GameManager().createGame(numberOfPlayerse, startingLevel, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
+        int id = gm.createGame(numberOfPlayerse, startingLevel, GameType.TEST, GameDifficulty.BRUTAL);
+        
         final String playername = "kevin";
         Game game = new GameManager().getGame(id);
+        game.setCurrentLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
         player = new Player(new User(playername));
-        player.getProgressions().addNewProgression(GameType.TEST);
+        player.getProgressions().addNewProgression(GameType.TEST, GameDifficulty.BRUTAL);
         
         game.addConnectingPlayer(player);
         game.addConnectionForPlayer("kevin", new DummyConnection());
         
-        LevelProgression playerProgression = player.getProgressions().getProgressionOrDefault(GameType.TEST);
+        LevelProgress playerProgression = player.getProgressions().getProgress(GameType.TEST, GameDifficulty.BRUTAL).getLevelProgress();
         
         game.setCurrentLevel(17, playerProgression);
         
@@ -140,7 +148,7 @@ public class LevelProgressionTest {
         
         stepTimes(60);
         
-        int levelReached = player.getProgressions().getProgressionOrDefault(GameType.TEST).getHighestLevelReached();
+        int levelReached = player.getProgressions().getProgress(GameType.TEST, GameDifficulty.BRUTAL).getLevelProgress().getHighestLevelReached();
         
         Assert.assertEquals(2, levelReached);
     }

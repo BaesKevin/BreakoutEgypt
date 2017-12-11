@@ -10,8 +10,25 @@ function requestLevelWithDifficulty(e){
     form.submit();
 }
 
+function changeLevelDifficulty(e){
+    let difficulty = $(this).val();
+
+    document.location = `showLevels?gameType=arcade&difficulty=${difficulty}`;
+}
+
+function setDifficultySelect(){
+    let diffFromQueryString = UtilModule.getParameterByName("difficulty");
+    let select = $("#difficulty");
+    
+    if(diffFromQueryString){
+        console.log("diff from querystring " + diffFromQueryString);
+        select.val(diffFromQueryString);
+    }
+}
 $(document).ready(function () {
+    setDifficultySelect();
     $("#levels li a").on("click", requestLevelWithDifficulty);
+    $("#difficulty").on("change", changeLevelDifficulty); //TODO ajax call
 });
 
 

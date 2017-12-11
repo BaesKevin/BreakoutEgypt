@@ -12,16 +12,16 @@ import java.util.List;
  *
  * @author snc
  */
-public class LevelProgression {
+public class LevelProgress {
     private int highestLevelReached;
     private int maxLevel;
     
-    public LevelProgression(int maxLevel){
+    public LevelProgress(int maxLevel){
         this.highestLevelReached = 1;
         this.maxLevel = maxLevel;
     }
     
-    public LevelProgression(LevelProgression p) {
+    public LevelProgress(LevelProgress p) {
         this.highestLevelReached = p.highestLevelReached;
         this.maxLevel =p.maxLevel;
     }

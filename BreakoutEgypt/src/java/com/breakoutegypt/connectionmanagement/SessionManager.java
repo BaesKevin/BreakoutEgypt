@@ -10,6 +10,7 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ServerClientMessageRepository;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.messages.BallPositionMessage;
 import com.breakoutegypt.domain.messages.LevelMessage;
 import com.breakoutegypt.domain.messages.LevelMessageType;
@@ -136,9 +137,9 @@ public class SessionManager {
         return connectedPlayers.size() + connectingPlayers.size() - 1;
     }
     
-    public void incrementLevelReachedForAllPlayers(GameType gameType) {
+    public void incrementLevelReachedForAllPlayers(GameType gameType, GameDifficulty difficulty) {
         for(Player p : getPlayers()){
-            p.getProgressions().getProgressionOrDefault(gameType).incrementHighestLevelReached();
+            p.getProgressions().incrementHighestLevel(gameType, difficulty);
         }
     }
     

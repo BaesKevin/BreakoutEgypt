@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain;
+package com.breakoutegypt.domain.levelprogression;
 
 /**
  *
  * @author snc
  */
 public enum GameDifficulty {
-    EASY, MEDIUM, HARD
+    EASY, MEDIUM, HARD, BRUTAL
 }

@@ -6,9 +6,10 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
@@ -31,19 +32,22 @@ public class Game {
     private int id;
     private Level currentLevel;
     private GameType gameType;
+    private GameDifficulty difficulty;
     
     private LevelFactory levelFactory;
 
     private SessionManager manager;
     
-    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty, LevelProgression progression) {
+    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty/*, LevelProgress progression*/) {
         id = ID++;
         this.gameType = gameType;
+        this.difficulty = difficulty;
+        
         manager = new SessionManager(numberOfPlayers);
 
         levelFactory = createLevelFactoryForGameType(gameType, difficulty);
-        levelFactory.setCurrentLevel(startingLevel, progression);
-        currentLevel = levelFactory.getCurrentLevel();
+//        levelFactory.setCurrentLevel(startingLevel/*, progression*/);
+//        currentLevel = levelFactory.getCurrentLevel();
         
     }
 
@@ -82,7 +86,7 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-        player.getProgressions().addNewProgression(this.gameType);
+        player.getProgressions().addNewProgression(this.gameType, this.difficulty);
         manager.addConnectingPlayer(player);
         
     }
@@ -128,7 +132,7 @@ public class Game {
     public void notifyPlayersOfBallAction() {
         manager.notifyPlayersOfBallAction(currentLevel);
     }
-
+    
     public void startLevel() {
         this.currentLevel.start();
     }
@@ -146,7 +150,7 @@ public class Game {
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {
-            manager.incrementLevelReachedForAllPlayers(gameType);
+            manager.incrementLevelReachedForAllPlayers(gameType, difficulty);
             currentLevel = levelFactory.getNextLevel();
         }
 
@@ -166,7 +170,7 @@ public class Game {
     }
 
     
-    public void setCurrentLevel(int levelId, LevelProgression progression) {
+    public void setCurrentLevel(int levelId, LevelProgress progression) {
         levelFactory.setCurrentLevel(levelId, progression);
         this.currentLevel = levelFactory.getCurrentLevel();
     }
