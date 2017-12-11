@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
@@ -35,6 +36,8 @@ public class ShowLevelsServlet extends HttpServlet {
     public static final String HARD = "hard";
     public static final String BRUTAL = "brutal";
     
+    public static String DIFFICULTIES = "difficulties";
+    
     public static final GameDifficulty DEFAULT_DIFFICULTY = GameDifficulty.MEDIUM;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -61,6 +64,7 @@ public class ShowLevelsServlet extends HttpServlet {
 
             request.setAttribute(TOTAL_LEVELS, totalLevels);
             request.setAttribute(LEVEL_REACHED, levelReached);
+            request.setAttribute(DIFFICULTIES, Repositories.getDifficultyRepository().findAll());
             
             request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
         } catch (BreakoutException boe) {

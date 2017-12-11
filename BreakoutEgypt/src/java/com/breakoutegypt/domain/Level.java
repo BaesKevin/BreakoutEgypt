@@ -117,7 +117,7 @@ public class Level implements BreakoutWorldEventListener {
             scoreTimer.start();
             List<Ball> balls = levelState.getBalls();
             for (Ball b : balls) {
-                b.setLinearVelocity(0, 150);
+                b.setLinearVelocity(0, game.getDifficulty().getBallspeed());
             }
         }
     }

@@ -33,14 +33,11 @@
                 <div class="arcadelevels-formheader">
                     <h2>Arcade levels <c:out value="${difficulty}"/></h2>
                         <select name="difficulty" id="difficulty">
-                            <option value="easy"   <c:out value="${difficulty.equals('easy')   ? 'selected=selected':''}"/>>easy</option>
-                            <option selected value="medium" <c:out value="${difficulty.equals('medium') ? 'selected=selected':''}"/>>medium</option>
-                            <option value="hard"   <c:out value="${difficulty.equals('hard')   ? 'selected=selected':''}"/>>hard</option>
+                            <c:forEach items="${difficulties}" var="difficulty">
+                                <option value="${difficulty.name}">${difficulty.name}</option>
+                            </c:forEach>
                         </select>
-
-                    
                 </div>
-
 
                 <ul id="levels">
 

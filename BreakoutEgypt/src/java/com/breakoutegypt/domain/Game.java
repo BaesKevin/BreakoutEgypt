@@ -9,6 +9,8 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
+import com.breakoutegypt.data.Repositories;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
@@ -32,16 +34,18 @@ public class Game {
     private int id;
     private Level currentLevel;
     private GameType gameType;
-    private GameDifficulty difficulty;
+    private GameDifficulty difficultyType;
+    private Difficulty difficulty;
     
     private LevelFactory levelFactory;
 
     private SessionManager manager;
     
-    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty/*, LevelProgress progression*/) {
+    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficultyType/*, LevelProgress progression*/) {
         id = ID++;
         this.gameType = gameType;
-        this.difficulty = difficulty;
+        this.difficultyType = difficultyType;
+        this.difficulty = Repositories.getDifficultyRepository().findByName(difficultyType); // TODO CLONE
         
         manager = new SessionManager(numberOfPlayers);
 
@@ -52,7 +56,7 @@ public class Game {
     }
 
     // hier zou je dan je DiffuciltyConfig aanmaken
-    private LevelFactory createLevelFactoryForGameType(GameType gameType, GameDifficulty difficulty) {
+    private LevelFactory createLevelFactoryForGameType(GameType gameType, Difficulty difficulty) {
         switch (gameType) {
             case ARCADE:
                 return new ArcadeLevelFactory(this);
@@ -86,7 +90,7 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-        player.getProgressions().addNewProgression(this.gameType, this.difficulty);
+        player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
         manager.addConnectingPlayer(player);
         
     }
@@ -150,7 +154,7 @@ public class Game {
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {
-            manager.incrementLevelReachedForAllPlayers(gameType, difficulty);
+            manager.incrementLevelReachedForAllPlayers(gameType, difficultyType);
             currentLevel = levelFactory.getNextLevel();
         }
 
@@ -177,5 +181,9 @@ public class Game {
 
     public PowerUpMessage triggerPowerup(String powerup) {
         return getCurrentLevel().triggerPowerup(powerup);
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 }

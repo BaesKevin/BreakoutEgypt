@@ -7,6 +7,7 @@ package com.breakoutegypt.levelfactories;
 
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 
@@ -23,7 +24,7 @@ public abstract class LevelFactory {
     protected int defaultOpenLevels;
     protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
-
+    
     public LevelFactory(Game game, int totalLevels) {
         this(game, totalLevels, totalLevels);
     }
@@ -33,6 +34,7 @@ public abstract class LevelFactory {
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
+        
         setDefaultLevel(DEFAULT_STARTING_LEVEL);
     }
 
