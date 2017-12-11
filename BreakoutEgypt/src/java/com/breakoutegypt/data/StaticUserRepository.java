@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -31,7 +32,15 @@ public class StaticUserRepository implements UserRepository{
     public void addUser(User user){
         users.add(user);
     }
-
+    @Override
+    public User getUser(String email,String password){
+        for(User selectedUser:this.users){
+            if(selectedUser.getEmail().equals(email) && BCrypt.checkpw(password, selectedUser.getPassword())){
+                return selectedUser;
+            }
+        }
+        return null;
+    }
     @Override
     public boolean inList(User user) {
         boolean found=false;

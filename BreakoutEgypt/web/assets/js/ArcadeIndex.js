@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 $("#movingParts")[0].addEventListener("click", function () {
 
-    var gameId = UtilModule.getParameterByName("gameId");
+    var gameId = $("#gameId").val();
     console.log("Doing post for game " + gameId + " to start the ball.");
     fetch('level', {method: "POST", body: "gameId=" + gameId,
         headers: {

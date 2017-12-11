@@ -92,17 +92,17 @@ const ModalModule = (function(){
 
     function redirectToMainMenu(e) {
         e.preventDefault();
-        location.replace('index.jsp');
+        location.replace('index');
     }
 
     function redirectToMultiplayer(e) {
         e.preventDefault();
-        location.replace('multiplayerMenu.jsp');
+        location.replace('multiplayerMenu');
     }
 
     function redirectToHighscore(e) {
         e.preventDefault();
-        location.replace('highscore.jsp');
+        location.replace('highscores');
     }
 
     function doDocumentLoaded(){
