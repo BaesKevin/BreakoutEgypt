@@ -17,4 +17,5 @@ public interface UserRepository {
     public void addUser(User user);
     public boolean inList(User user);
     public boolean alreadyExists(User user);
+    public User getUser(String email,String password);
 }

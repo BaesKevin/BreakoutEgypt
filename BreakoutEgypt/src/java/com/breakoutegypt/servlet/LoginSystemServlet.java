@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -51,23 +52,21 @@ public class LoginSystemServlet extends HttpServlet {
             
             String password=request.getParameter("password");
             if(login!=null){
-                User loginUser=new User(email,password);
-                
-                if(userRepo.inList(loginUser)){
-                    session.setAttribute("user",loginUser);
-                    
-                    request.getRequestDispatcher("index.jsp").forward(request, response);
+                User user=userRepo.getUser(email,password);
+                if(user!=null){
+                    session.setAttribute("user",user);
+                    request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 } else {
-                    response.sendRedirect("login.jsp?error=could not find user");
+                    response.sendRedirect("WEB-INF/pages/login.jsp?error=could not find user");
                 }
             } else if(register!=null){
                 String username=request.getParameter("username");
                 User registerUser=new User(username,email,password);
                 if(!userRepo.alreadyExists(registerUser)){
                     userRepo.addUser(registerUser);
-                    response.sendRedirect("login.jsp?message=now you can login");
+                    response.sendRedirect("WEB-INF/pages/slogin.jsp?message=now you can login");
                 } else {
-                    response.sendRedirect("registration.jsp?error=user already exists");
+                    response.sendRedirect("WEB-INF/pages/registration.jsp?error=user already exists");
                 }
             }
             

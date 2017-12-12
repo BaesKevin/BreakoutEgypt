@@ -4,7 +4,10 @@
     Author     : Bjarne Deketelaere
 --%>
 
+<%@page import="com.breakoutegypt.domain.Score"%>
+<%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,12 +25,17 @@
             </div>
         </header>
         <main>
-            <form>
-                level: <input type="number" value="1" min="1" max="100" id="levelId"/>
+            <form action="highscores" method="POST">
+                
+                <label for="gameId">level:</label> <input type="number" value="<c:out value="${gameIdentification}"/>" min="1" max="100" name="gameId" id="gameId"/>
                 <input type="submit" value="show">
             </form>
             <div id="highscoreTablePlaceholder">
-
+            <table><tr><th>Username</th><th>Score</th></tr>
+                <c:forEach var="score" items="${scores}">
+                    <tr><td><c:out value="${score.getUser()}"/></td><td><c:out value="${score.getScore()}"/></td></tr>
+                </c:forEach>
+            </table>
             </div>
             <button type="button" id="returnToMain" class="btn">Main Menu</button>
         </main>
@@ -55,11 +63,10 @@
                 <p class="copyright text-muted text-center">Copyright &copy; Breakout Egypt 2017</p>
             </div>
         </footer>
-        <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="assets/js/popper.min.js"></script>
-        <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/UtilModule.js" type="text/javascript"></script>
-        <script type="text/javascript" src="assets/js/HighScoreModule.js"></script>
-        <script type="text/javascript" src="assets/js/ModalModule.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/ModalModule.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/highscore.js"></script>
     </body>
 </html>
