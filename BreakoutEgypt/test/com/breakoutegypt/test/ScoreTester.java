@@ -31,36 +31,34 @@ public class ScoreTester {
     Player player;
     private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
     
-    @Before
-    public void init() {
+     private void createGame(int startingLevel) {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
-
+        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
-        game.setCurrentLevel(1, ALL_LEVELS_UNLOCKED);
-        
+        game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
+
+        level = game.getCurrentLevel();
+
+        for (int i = 0; i < 1000; i++) {
+            ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
+        }
+
         player = new Player(new User("Kevin"));
 
         game.addConnectingPlayer(player);
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
-
-        game.assignPaddleToPlayer(player);
     }
-    
+     
     @Test
     public void testMultiplier() {
         
         // Level with 3 bricks, each 2000 points, multiplier goes up after 2 hits without hitting the paddle or losing a ball/life.
         // Score should be 8000
-        
-        game.setCurrentLevel(13, ALL_LEVELS_UNLOCKED);
+        createGame(13);
+//        game.setCurrentLevel(13, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         
-        
-        
-        level.start();
-        level.startBall();
         level.getLevelState().getBalls().get(0).setLinearVelocity(0, 100);
         
         stepTimes(level, 120);

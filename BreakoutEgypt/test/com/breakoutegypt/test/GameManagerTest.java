@@ -29,9 +29,9 @@ public class GameManagerTest {
     @Before
     public void setup(){
         gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.ARCADE, GameDifficulty.MEDIUM);
+        int id = gm.createGame(GameType.ARCADE, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
-        game.setCurrentLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
+        game.initStartingLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
         player = new Player(new User("player"));
     }
     

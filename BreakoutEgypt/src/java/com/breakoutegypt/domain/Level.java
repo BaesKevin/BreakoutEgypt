@@ -11,6 +11,7 @@ import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
 import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
@@ -49,12 +50,12 @@ public class Level implements BreakoutWorldEventListener {
     private BrickScoreCalculator brickScoreCalc;
 
     BreakoutPowerUpHandler bpuh;
-
-    public Level(int id, Game game, LevelState initialObjects, int lives) {
-        this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
+        
+    public Level(int id, Game game, LevelState initialObjects) {
+        this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
     }
 
-    public Level(int id, Game game, LevelState initialState, int lives, float worldTimeStepInMs) {
+    private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
         this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
@@ -64,7 +65,7 @@ public class Level implements BreakoutWorldEventListener {
         scoreTimer = new TimeScore();
         this.brickScoreCalc = new BrickScoreCalculator();
 
-        breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
+        breakoutWorld = new BreakoutWorld(worldTimeStepInMs);
 
         levelState = initialState;
         List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
@@ -79,7 +80,7 @@ public class Level implements BreakoutWorldEventListener {
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
                 bpuh);
 
-        this.lives = lives;
+        this.lives = game.getInitialLives();
         this.timer = new Timer();
         runLevelManually = false;
     }
@@ -172,12 +173,21 @@ public class Level implements BreakoutWorldEventListener {
             setLevelStarted(false);
             levelState.removeBall(ball);
             levelState.resetBall(breakoutWorld);
-            lives--;
+
+            loseLifeBasedOnDifficulty();
         } else {
             levelState.removeBall(ball);
         }
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
+    }
+    
+    private void loseLifeBasedOnDifficulty(){
+        Difficulty diff = game.getDifficulty();
+       
+        if(diff.getLives() != Difficulty.INFINITE_LIVES){
+            lives--;
+        }
     }
 
     private int getTargetBricksLeft() {

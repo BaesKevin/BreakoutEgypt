@@ -45,19 +45,14 @@ public class ArcadeServlet extends HttpServlet {
             }
             
             LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.ARCADE, gameDifficulty);
-            int gameId = gm.createGame(numberOfPlayers, startingLevel, GameType.ARCADE, gameDifficulty);
-            gm.getGame(gameId).setCurrentLevel(startingLevel, progress);
+            int gameId = gm.createGame(GameType.ARCADE, gameDifficulty);
+            gm.getGame(gameId).initStartingLevel(startingLevel, progress);
             gm.addConnectingPlayer(gameId, player);
 
             response.sendRedirect(String.format("arcade.jsp?gameId=%d&level=%d", gameId, startingLevel));
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());
         }
-        //get the level progression from the user
-        //the specific user can come out of the session
-        //
-        //LevelProgressionFactory lpf = new LevelProgressionFactory(gm.getGame(gameId));
-        // TODO redirect to level choice page
 
     }
 

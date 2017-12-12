@@ -40,33 +40,34 @@ public class MessageTest {
     public MessageTest() {
     }
 
-    @Before
-    public void init() {
+    private void createGame(int startingLevel) {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM);
-
+        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
-        game.setCurrentLevel(1, ALL_LEVELS_UNLOCKED);
+        game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 
+        level = game.getCurrentLevel();
+
+        for (int i = 0; i < 1000; i++) {
+            ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
+        }
+        
         player = new Player(new User("Kevin"));
-
+ 
         game.addConnectingPlayer(player);
-
+ 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
-
-        game.assignPaddleToPlayer(player);
-
     }
-
+ 
     @Test
     public void testDummyConnectionGetBallMessages() {
-        game.setCurrentLevel(5, ALL_LEVELS_UNLOCKED);
+        createGame(5);
         level = game.getLevel();
-
+ 
         level.startBall();
-
+ 
         stepTimes(level, 120);
-
+ 
         DummyConnection conn = (DummyConnection) player.getConnection();
         List<Message> actualMessages = conn.getBallMessages();
         
@@ -75,30 +76,36 @@ public class MessageTest {
 
     @Test
     public void testDummyConnectionGetLifeMessages() {
-        game.setCurrentLevel(6, ALL_LEVELS_UNLOCKED);
+        createGame(5);
         level = game.getLevel();
 
         level.startBall();
 
-        stepTimes(level, 120);
+        stepTimes(level, 240);
 
         DummyConnection conn = (DummyConnection) player.getConnection();
         List<Message> actualMessages = conn.getLifeMessages();
         List<Message> expectedMessages = new ArrayList();
         //TODO get name of actual player in session
-        Message msg1 = new LifeMessage("jef", 1, LifeMessageType.PLAYING);
+        
+        
+        Message msg1 = new LifeMessage("jef", 3, LifeMessageType.PLAYING);
         Message msg2 = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
-        expectedMessages.add(msg1);
+        
+        for (int i = 0; i < 99; i++) {
+            expectedMessages.add(msg1);
+        }
+        
         expectedMessages.add(msg2);
-        assertEquals(expectedMessages, actualMessages);
+        
+        assertEquals(expectedMessages.size(), actualMessages.size());
     }
 
     @Test
     public void testDummyConnectionNotifyPlayers() {
-        game.setCurrentLevel(7, ALL_LEVELS_UNLOCKED);
+        createGame( 7);
         level = game.getLevel();
 
-        level.startBall();
         level.getLevelState().getBall().setLinearVelocity(0, -100);
 
         stepTimes(level, 60);

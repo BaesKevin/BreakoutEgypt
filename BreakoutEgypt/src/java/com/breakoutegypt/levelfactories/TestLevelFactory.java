@@ -96,6 +96,9 @@ public class TestLevelFactory extends LevelFactory {
             case 17:
                 currentLevel = getOneTargetBrickTest();
                 break;
+            default:
+                // if there is a last level in this factory the liferegeneration can't be tested
+                currentLevel = getOneTargetBrickTest();
         }
     }
 
@@ -124,7 +127,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.get(2).setPowerUp(new BrokenPaddlePowerUp(paddle, 2));
 
         LevelState initialState = new LevelState(balls, paddles, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(1, game, initialState);
         level.setRunManual(true);
         return level;
 
@@ -151,7 +154,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.get(2).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 2, 0, 290, 300, 3)));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(2, game, initialState);
         level.setRunManual(true);
         return level;
 
@@ -178,7 +181,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.get(2).setPowerUp(new AcidBallPowerUp("acidball2"));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(3, game, initialState);
         level.setRunManual(true);
         return level;
 
@@ -198,7 +201,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(new Brick(brickshape3, new Point(1, 0)));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
-        Level level = new Level(1, game, initialState, 1);
+        Level level = new Level(4, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -212,7 +215,7 @@ public class TestLevelFactory extends LevelFactory {
         Ball ball = new Ball(ballShape);
 
         LevelState initialState = new LevelState(ball, paddle, new ArrayList());
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(5, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -230,7 +233,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.get(0).setTarget(true);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(6, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -250,7 +253,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.get(1).setTarget(true);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(7, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -276,7 +279,7 @@ public class TestLevelFactory extends LevelFactory {
         switchBrick.addEffect(new ToggleEffect(switchTaregts));
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(8, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -301,7 +304,7 @@ public class TestLevelFactory extends LevelFactory {
         explosive.addEffect(new ExplosiveEffect(explosive, 1));
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(9, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -315,7 +318,7 @@ public class TestLevelFactory extends LevelFactory {
         }
 
         LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(10, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -328,7 +331,7 @@ public class TestLevelFactory extends LevelFactory {
         balls.add(new Ball(ballShape2));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
-        Level level = new Level(1, game, initialState, 1);
+        Level level = new Level(11, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -342,7 +345,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 100, 20, 10), new Point(0, 1)));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
-        Level level = new Level(1, game, initialState, 1);
+        Level level = new Level(12, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -364,7 +367,7 @@ public class TestLevelFactory extends LevelFactory {
         balls.add(new Ball(ballShape3));
 
         LevelState initialState = new LevelState(balls, brokenPaddle, new ArrayList());
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(13, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -379,7 +382,7 @@ public class TestLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, new ArrayList(), new ArrayList());
 
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(14, game, initialState);
         level.setRunManual(true);
         return level;
     }
@@ -397,7 +400,7 @@ public class TestLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
 
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(15, game, initialState);
         level.setRunManual(true);
         return level;
 
@@ -418,7 +421,7 @@ public class TestLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
 
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(16, game, initialState);
         level.setRunManual(true);
         return level;
 
@@ -446,7 +449,7 @@ public class TestLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, paddles, bricks);
 
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(17, game, initialState);
         level.setRunManual(true);
         return level;
 

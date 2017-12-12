@@ -34,8 +34,6 @@ public abstract class LevelFactory {
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
-        
-        setDefaultLevel(DEFAULT_STARTING_LEVEL);
     }
 
     public boolean hasNextLevel() {
@@ -59,11 +57,6 @@ public abstract class LevelFactory {
         return hasNextLevel() && currentLevelId < progression.getHighestLevelReached();
     }
 
-    private void setDefaultLevel(int id) {
-        this.currentLevelId = id;
-        createCurrentLevel();
-    }
-    
     public int getDefaultOpenLevels(){
         return this.defaultOpenLevels;
     }

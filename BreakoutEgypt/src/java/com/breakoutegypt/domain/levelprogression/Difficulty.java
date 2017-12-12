@@ -10,21 +10,47 @@ package com.breakoutegypt.domain.levelprogression;
  * @author kevin
  */
 public class Difficulty {
+
     private int ballspeed;
-    private String name;
+    private int lives;
+    public static int INFINITE_LIVES = -1;
+    private boolean livesRegenBetweenLevels;
+    private int pointsPerBlock;
     
-    public Difficulty(String name, int ballspeed){
+    private String name;
+
+    public static final String EASY = "easy";
+    public static final String MEDIUM = "medium";
+    public static final String HARD = "hard";
+    public static final String BRUTAL = "brutal";
+
+    
+    
+    public Difficulty(String name, int ballspeed, int lives, boolean livesRegenBetweenLevels, int pointsPerBlock) {
         this.name = name;
         this.ballspeed = ballspeed;
+        this.lives = lives;
+        this.livesRegenBetweenLevels = livesRegenBetweenLevels;
     }
-
+    
     public String getName() {
         return name;
     }
-    
+
     public int getBallspeed() {
         return ballspeed;
     }
-    
-    
+
+    public int getLives() {
+        return lives;
+    }
+
+    public boolean isLivesRegenBetweenLevels() {
+        return livesRegenBetweenLevels;
+    }
+
+    public int getPointsPerBlock() {
+        return pointsPerBlock;
+    }
+
 }
