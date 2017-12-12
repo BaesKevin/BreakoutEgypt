@@ -63,7 +63,7 @@ public class Level implements BreakoutWorldEventListener {
         this.levelStarted = false;
 
         scoreTimer = new TimeScore();
-        this.brickScoreCalc = new BrickScoreCalculator();
+        this.brickScoreCalc = new BrickScoreCalculator(game.getDifficulty().getPointsPerBlock());
 
         breakoutWorld = new BreakoutWorld(worldTimeStepInMs);
 
@@ -246,7 +246,7 @@ public class Level implements BreakoutWorldEventListener {
     @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
-        brickScoreCalc.addPointsToScore(brick);
+        brickScoreCalc.addPointsToScore();
 
         if (allTargetBricksDestroyed()) {
             getScoreTimer().stop();

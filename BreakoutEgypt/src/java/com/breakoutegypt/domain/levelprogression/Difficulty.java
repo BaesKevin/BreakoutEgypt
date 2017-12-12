@@ -31,6 +31,7 @@ public class Difficulty {
         this.ballspeed = ballspeed;
         this.lives = lives;
         this.livesRegenBetweenLevels = livesRegenBetweenLevels;
+        this.pointsPerBlock = pointsPerBlock;
     }
     
     public String getName() {

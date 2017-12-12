@@ -189,8 +189,9 @@ public class TestLevelFactory extends LevelFactory {
 
     public Level getSimpleScoreTestLevel() {
         ShapeDimension ballShape = new ShapeDimension("ball", 150, 10, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-        List<Ball> balls = new ArrayList();
-        balls.add(new Ball(ballShape));
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        
+        Ball ball = new Ball(ballShape);
 
         List<Brick> bricks = new ArrayList();
         ShapeDimension brickshape1 = new ShapeDimension("brick1", 150, 70, 20, 20);
@@ -200,7 +201,9 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(new Brick(brickshape2, new Point(0, 1)));
         bricks.add(new Brick(brickshape3, new Point(1, 0)));
 
-        LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
+        Paddle paddle = new Paddle(paddleShape);
+        
+        LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(4, game, initialState);
         level.setRunManual(true);
         return level;
