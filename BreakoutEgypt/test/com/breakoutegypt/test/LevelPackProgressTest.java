@@ -18,6 +18,7 @@ import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.levelprogression.LevelProgressManager;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.exceptions.BreakoutException;
+import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class LevelPackProgressTest {
 
     private Player player;
     private LevelProgressManager progressions;
-    private TestLevelFactory factory;
+    private LevelFactory factory;
     private Level level;
     private GameManager gm;
     private Game game;
@@ -51,6 +52,7 @@ public class LevelPackProgressTest {
 
         int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
+        factory = game.getLevelFactory();
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 
         level = game.getCurrentLevel();
@@ -62,6 +64,7 @@ public class LevelPackProgressTest {
 
     @Test
     public void textGetReachedLevelDefaultNotOpen() {
+        createGame(DEFAULT_OPEN_TEST_LEVELS);
         progressions = player.getProgressions();
 
         progressions.addNewProgression(GameType.TEST, GameDifficulty.EASY);
@@ -78,6 +81,7 @@ public class LevelPackProgressTest {
 
     @Test
     public void textGetDefaultOpenLevel() {
+        createGame(1);
         progressions = player.getProgressions();
 
         progressions.addNewProgression(GameType.TEST, GameDifficulty.EASY);
@@ -98,21 +102,6 @@ public class LevelPackProgressTest {
         factory.setCurrentLevel(DEFAULT_OPEN_TEST_LEVELS + 1, prog);
     }
 
-    @Test
-    public void gameStartsAtLevelOneByDefault() {
-        createGame(1);
-        
-        final String playername = "kevin";
-
-        player = new Player(new User(playername));
-
-        game.addConnectingPlayer(player);
-        game.addConnectionForPlayer("kevin", new DummyConnection());
-
-        final int expectedLevel = 1;
-        Assert.assertEquals(expectedLevel, game.getCurrentLevel().getId());
-    }
-
     @Test(expected = BreakoutException.class)
     public void gameCrashesWhenIllegalLevelIsSet() {
         int id = gm.createGame(GameType.TEST, GameDifficulty.EASY);
@@ -126,7 +115,6 @@ public class LevelPackProgressTest {
         game.addConnectingPlayer(player);
         game.addConnectionForPlayer("kevin", new DummyConnection());
 
-        
         game.initStartingLevel(DEFAULT_OPEN_TEST_LEVELS + 1, player.getProgressions().getProgress(GameType.TEST, GameDifficulty.EASY).getLevelProgress());
 
     }
@@ -145,7 +133,7 @@ public class LevelPackProgressTest {
         game.addConnectionForPlayer("kevin", new DummyConnection());
 
         LevelProgress playerProgress = player.getProgressions().getProgress(GameType.TEST, GameDifficulty.BRUTAL).getLevelProgress();
-        
+
         game.initStartingLevel(17, playerProgress);
 
         level = game.getCurrentLevel();

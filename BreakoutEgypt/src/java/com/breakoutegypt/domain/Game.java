@@ -200,4 +200,8 @@ public class Game {
     public Difficulty getDifficulty() {
         return difficulty;
     }
+    
+    public LevelFactory getLevelFactory(){
+        return this.levelFactory;
+    }
 }
