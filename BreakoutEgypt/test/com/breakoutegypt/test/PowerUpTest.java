@@ -14,10 +14,10 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.effects.AcidBallPowerUp;
-import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
-import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
-import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.powers.AcidBallPowerUp;
+import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.levelprogression.LevelProgression;
 import com.breakoutegypt.domain.shapes.Ball;
@@ -212,6 +212,11 @@ public class PowerUpTest {
         level.triggerPowerup(powerups.get(0).getName());
         
         assertEquals(initialTime*2, level.getPoweruphandler().getPaddlePowerup().getTimeVisable());
+    }
+    
+    @Test
+    public void testAcidBallNotOnDecoyBall() {
+        
     }
 
     @Test

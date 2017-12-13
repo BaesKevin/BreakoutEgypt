@@ -9,6 +9,7 @@ import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.domain.levelprogression.LevelProgression;
 import com.breakoutegypt.domain.levelprogression.LevelProgressionManager;
 import com.breakoutegypt.domain.shapes.Paddle;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Objects;
 // de int houdt dan het hoogst bereikte level bij. Op deze manier kan in Game bij het stoppen van het
 // spelletje aan het level zijn id vragen en zo bijhouden in de map. In de LevelFactorys kunnen we 
 // een extra field defaultMaxLevel maken. als dit bv. 5 is dan zijn de eerste 5 levels altijd beschikbaar.
-public class Player {
+public class Player implements Serializable{
     private User user;
     private Paddle paddle;
     private PlayerConnection conn;
@@ -28,7 +29,7 @@ public class Player {
     
 //    private Session session;
     
-    public Player(User user){
+    public Player(User user) {
         this.user = user;
         this.levelPackProgressions = new LevelProgressionManager();
     }

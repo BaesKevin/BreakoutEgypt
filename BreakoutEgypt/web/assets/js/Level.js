@@ -13,6 +13,7 @@ const Level = (function () {
         this.floor = false;
         this.powerups = [];
         this.gap = 0;
+        this.projectiles = [];
     };
 
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
@@ -169,13 +170,11 @@ const Level = (function () {
             self.balls = self.balls.filter(function (ball) {
                 return ball.name !== json.ball;
             });
-            console.log("remove ball");
         }
 
         function addBall(json, self) {
-            self.balls.push(ScalingModule.scaleObject({name: json.ball, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2},
+            self.balls.push(ScalingModule.scaleObject({name: json.name, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2},
                             ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
-            console.log("add ball");
         }
 
 

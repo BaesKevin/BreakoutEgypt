@@ -58,7 +58,6 @@ let ArcadeWebSocket = (function () {
 
             if (json && !json.error) {
                 if (json.lifeaction) {
-                    console.log(json);
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();
                     } else if (json.lifeaction === 'playing') {
@@ -73,9 +72,13 @@ let ArcadeWebSocket = (function () {
                 } else if (json.levelComplete) {
                     handleLevelComplete(json);
                 } else {
+                    if (json.leveldata.length > 1) {
+                        console.log(json)
+                    }
                     if (json.leveldata.powerupactions) {
-                        console.log(json.leveldata.powerupactions)
                         PowerUpModule.handlePowerUpMessage(json.leveldata.powerupactions)
+                    } else if (json.leveldata.powerdownactions) {
+                        PowerDownModule.handlePowerDown(json.leveldata.powerdownactions);
                     }
                     level.updateLevelData(json);
                 }
@@ -84,6 +87,7 @@ let ArcadeWebSocket = (function () {
             }
 
         } catch (err) {
+            console.log(err);
             ModalModule.modalErrorMessage(err);
             ArcadeWebSocket.close();
         }

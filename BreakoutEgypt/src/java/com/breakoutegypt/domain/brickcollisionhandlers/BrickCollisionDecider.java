@@ -7,8 +7,8 @@ package com.breakoutegypt.domain.brickcollisionhandlers;
 
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.EffectHandler;
-import com.breakoutegypt.domain.effects.PowerUp;
-import com.breakoutegypt.domain.effects.PowerUpHandler;
+import com.breakoutegypt.domain.powers.PowerUp;
+import com.breakoutegypt.domain.powers.PowerUpHandler;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 
 /**

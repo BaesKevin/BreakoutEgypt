@@ -46,7 +46,7 @@ public class BallMessage implements Message {
         JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
         actionObjectBuilder.add("ballaction", getMessageType().name().toLowerCase());
         if (ball != null) {
-            actionObjectBuilder.add("ball", getName());
+            actionObjectBuilder.add("name", getName());
             actionObjectBuilder.add("x", ball.getShape().getPosX());
             actionObjectBuilder.add("y", ball.getShape().getPosY());
             actionObjectBuilder.add("width", ball.getShape().getWidth());

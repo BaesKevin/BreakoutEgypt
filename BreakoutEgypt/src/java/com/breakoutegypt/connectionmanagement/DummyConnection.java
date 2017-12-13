@@ -29,7 +29,12 @@ public class DummyConnection implements PlayerConnection {
     private List<Message> ballPositionMessages = new ArrayList();
     private List<Message> brickMessages = new ArrayList();
     private List<Message> powerupMessages = new ArrayList();
+    private List<Message> powerdownMessages = new ArrayList();
 
+    public List<Message> getPowerdownMessages() {
+        return powerdownMessages;
+    }
+    
     public List<Message> getPowerupMessages() {
         return powerupMessages;
     }
@@ -87,6 +92,10 @@ public class DummyConnection implements PlayerConnection {
         if (msgs.containsKey("powerupactions")) {
             powerupMessages.addAll(msgs.get("powerupactions"));
             job.add("powerupactions", listToJsonArray(powerupMessages));
+        }
+        if (msgs.containsKey("powerdownactions")) {
+            powerdownMessages.addAll(msgs.get("powerdownactions"));
+            job.add("powerdownactions", listToJsonArray(powerdownMessages));
         }
         jsonMessages.add(job.build());
     }

@@ -5,22 +5,23 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.effects.AcidBallPowerUp;
-import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
-import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.powers.AcidBallPowerUp;
+import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
-import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.effects.PowerUp;
-import com.breakoutegypt.domain.effects.PowerUpType;
-import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.domain.powers.FloodPowerDown;
+import com.breakoutegypt.domain.powers.PowerDownType;
+import com.breakoutegypt.domain.powers.PowerUpType;
+import com.breakoutegypt.domain.powers.ProjectilePowerDown;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
@@ -36,13 +37,13 @@ import java.util.Random;
 public class LevelState {
 
     private List<Brick> bricks;
-    private Ball ball;
     private List<Paddle> paddles;
     private List<RegularBody> walls;
     private Ball startingBall;
     private List<Ball> balls;
     private List<Message> messages;
     private FloorPowerUp floor;
+    private List<Projectile> projectiles;
 
     public List<Message> getMessages() {
         return messages;
@@ -61,15 +62,16 @@ public class LevelState {
     }
 
     public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks) {
-        this(balls, paddles, bricks, 0);
+        this(balls, paddles, bricks, 0, 0);
     }
 
-    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, int noOfPowerups) {
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, int noOfPowerups, int noOfPowerdowns) {
         this.bricks = Collections.synchronizedList(new ArrayList());
         this.paddles = new ArrayList();
         this.walls = new ArrayList();
         this.balls = Collections.synchronizedList(new ArrayList());
         this.messages = new ArrayList();
+        this.projectiles = new ArrayList();
 
         factory = new BodyConfigurationFactory();
 
@@ -82,10 +84,15 @@ public class LevelState {
         for (Brick brick : bricks) {
             addBrick(brick);
         }
+
+        if (noOfPowerups > 0 || noOfPowerdowns > 0) {
+            generatePowerUpsAndDowns(bricks, paddles, noOfPowerups, noOfPowerdowns);
+        }
         
-        if (noOfPowerups > 0) {
-            List<PowerUp> powerups = createPowerups(noOfPowerups, paddles.get(0));
-            bricks = generatePowerUps(bricks, powerups);
+        for (Brick b : bricks) {
+            if (b.hasPowerDown()) {
+                System.out.println(b.toJson().build());
+            }
         }
     }
 
@@ -99,8 +106,11 @@ public class LevelState {
     // e.g. all surrounding bricks an explosive brick
     public void addBrick(Brick brick) {
         BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
-        brick.setBox2dConfig(brickBody);
 
+        if (!brick.isVisible()) {
+            brickBody.getFixtureConfig().setMaskBits(0);
+        }
+        brick.setBox2dConfig(brickBody);
         bricks.add(brick);
     }
 
@@ -111,15 +121,12 @@ public class LevelState {
     }
 
     public void addBalls(List<Ball> balls) {
-        boolean first = true;
         for (Ball b : balls) {
             BodyConfiguration ballBodyConfig = factory.createBallConfig(b.getShape());
             b.setBox2dConfig(ballBodyConfig);
 
-            if (first) {
+            if (b.isStartingBall()) {
                 this.startingBall = b;
-                this.ball = b;
-                first = false;
             }
             this.balls.add(b);
         }
@@ -137,7 +144,7 @@ public class LevelState {
         //TODO remove floor
         this.floor = null;
     }
-    
+
     public FloorPowerUp getFloor() {
         return this.floor;
     }
@@ -147,7 +154,7 @@ public class LevelState {
     }
 
     public Ball getBall() {
-        return ball;
+        return startingBall;
     }
 
     public List<Ball> getBalls() {
@@ -163,6 +170,7 @@ public class LevelState {
     }
 
     void resetBall(BreakoutWorld breakoutWorld) {
+        startingBall.setDecoy(false);
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
         messages.add(new BallMessage(startingBall, BallMessageType.ADD));
@@ -253,31 +261,7 @@ public class LevelState {
 
     }
 
-    private boolean hasToggleEffect(List<Effect> effects) {
-        boolean hasSwitch = false;
-
-        for (Effect e : effects) {
-            if (e instanceof ToggleEffect) {
-                hasSwitch = true;
-                break;
-            }
-        }
-        return hasSwitch;
-    }
-
-    private ExplosiveEffect getExplosiveEffect(List<Effect> effects) {
-
-        for (Effect e : effects) {
-            if (e instanceof ExplosiveEffect) {
-                if (((ExplosiveEffect) e).getRadius() > 0) {
-                    return (ExplosiveEffect) e;
-                }
-            }
-        }
-        return null;
-    }
-
-    void removeBall(Ball ball) {
+    public void removeBall(Ball ball) {
         for (Ball b : balls) {
             if (b.getName().equals(ball.getName())) {
                 balls.remove(b);
@@ -301,55 +285,99 @@ public class LevelState {
         return width;
     }
 
-    private List<Brick> generatePowerUps(List<Brick> bricks, List<PowerUp> powerups) {
-        PowerUpType[] poweruptypes = PowerUpType.values();
-        Random r = new Random();
-        List<Integer> bricksWithPowerup = new ArrayList();
-        int bricknr = r.nextInt(bricks.size());
-        Brick powerUpBrick;
-        for (int i = 0; i < powerups.size(); i++) {
-            powerUpBrick = bricks.get(bricknr);
+    private void generatePowerUpsAndDowns(List<Brick> bricks, List<Paddle> paddles, int noOfPowerups, int noOfPowerdowns) {
 
-            while (bricksWithPowerup.contains(bricknr) || !powerUpBrick.getType().equals("REGULAR")) {
+        List<Brick> regularBricks = new ArrayList();
+
+        for (Brick b : bricks) {
+            if (b.isRegular()) {
+                regularBricks.add(b);
+            }
+        }
+
+        boolean reduceDowns = true;
+        while ((noOfPowerups + noOfPowerdowns) > regularBricks.size()) {
+            if (reduceDowns) {
+                noOfPowerdowns--;
+                reduceDowns = false;
+            } else {
+                noOfPowerups--;
+                reduceDowns = true;
+            }
+        }
+
+        List<Brick> bricksToAddPower = bricksToAddPowers(regularBricks, noOfPowerdowns + noOfPowerups);
+               
+        int identifier = 0;
+        for (int i = 0; i < noOfPowerdowns; i++) {
+            createPowerdown(bricksToAddPower.get(identifier), identifier);
+            identifier++;
+        }
+        for (int i = 0; i < noOfPowerups; i++) {
+            createPowerUp(bricksToAddPower.get(identifier), paddles.get(0), identifier);
+            identifier++;
+        }
+    }
+
+    private List<Brick> bricksToAddPowers(List<Brick> bricks, int noOfBricksNeeded) {
+        Random r = new Random();
+        List<Integer> bricknrs = new ArrayList();
+        List<Brick> bricksWithPowers = new ArrayList();
+
+        int bricknr = r.nextInt(bricks.size());
+
+        Brick powerUpBrick;
+
+        for (int i = 0; i < noOfBricksNeeded; i++) {
+            powerUpBrick = bricks.get(bricknr);
+            while (bricknrs.contains(bricknr)) {
                 bricknr = r.nextInt(bricks.size());
                 powerUpBrick = bricks.get(bricknr);
             }
-
-            powerUpBrick.setPowerUp(powerups.get(i));
-            bricksWithPowerup.add(bricknr);
+            bricksWithPowers.add(powerUpBrick);
+            bricknrs.add(bricknr);
             bricknr = r.nextInt(bricks.size());
         }
-
-        return bricks;
+        return bricksWithPowers;
     }
 
-    private List<PowerUp> createPowerups(int noOfPowerups, Paddle paddle) {
+    private void createPowerdown(Brick b, int identifier) {
+        
+        int noOfPowerdownTypes = PowerDownType.values().length;
+        Random r = new Random();
+        int powerupNr = r.nextInt(noOfPowerdownTypes) + 1;
 
-        List<PowerUp> powerups = new ArrayList();
+        switch (powerupNr) {
+            case 1:
+                b.setPowerdown(new FloodPowerDown(startingBall, 3));
+                break;
+            case 2:
+                b.setPowerdown(createProjectilePowerDown(b, identifier));
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void createPowerUp(Brick b, Paddle p, int identifier) {
+
         int noOfPowerupTypes = PowerUpType.values().length;
         Random r = new Random();
         int powerupNr = r.nextInt(noOfPowerupTypes) + 1;
 
-        for (int i = 0; i < noOfPowerups; i++) {
-
-            switch (powerupNr) {
-                case 1:
-                    powerups.add(createFloor(i));
-                    break;
-                case 2:
-                    powerups.add(createBrokenPaddle(paddle, i));
-                    break;
-                case 3:
-                    powerups.add(new AcidBallPowerUp("acidball" + i));
-                    break;
-                default:
-                    break;
-            }
-
-            powerupNr = r.nextInt(noOfPowerupTypes) + 1;
+        switch (powerupNr) {
+            case 1:
+                b.setPowerUp(createFloor(identifier));
+                break;
+            case 2:
+                b.setPowerUp(createBrokenPaddle(p, identifier));
+                break;
+            case 3:
+                b.setPowerUp(new AcidBallPowerUp("acidball" + identifier));
+                break;
+            default:
+                break;
         }
-
-        return powerups;
     }
 
     public FloorPowerUp createFloor(int x) {
@@ -359,5 +387,23 @@ public class LevelState {
 
     public BrokenPaddlePowerUp createBrokenPaddle(Paddle p, int x) {
         return new BrokenPaddlePowerUp(p, x);
+    }
+
+    public ProjectilePowerDown createProjectilePowerDown(Brick brick, int x) {
+        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getShape().getPosX() + brick.getShape().getWidth() / 2,
+                brick.getShape().getPosY() + brick.getShape().getHeight(), 4, 4);
+        return new ProjectilePowerDown(new Projectile(s));
+    }
+
+    public void addProjectile(Projectile projectile) {
+        projectiles.add(projectile);
+    }
+
+    void removeProjectile(Projectile projectile) {
+        projectiles.remove(projectile);
+    }
+
+    public List<Projectile> getProjectiles() {
+        return projectiles;
     }
 }

@@ -5,7 +5,6 @@
  */
 package com.breakoutegypt.connectionmanagement;
 
-import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
@@ -16,7 +15,10 @@ import com.breakoutegypt.domain.messages.LevelMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
+import com.breakoutegypt.domain.messages.PowerDownMessage;
+import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Projectile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,6 +155,7 @@ public class SessionManager {
         sendJsonToPlayers(messages);
         messageRepo.clearBrickMessages();
         messageRepo.clearPowerupMessages();
+        messageRepo.clearPowerdownMessages();
         currentLevel.getLevelState().clearMessages();
     }
 
@@ -183,6 +186,13 @@ public class SessionManager {
         List<Message> ballPositionMessages = new ArrayList();
         List<Message> brickMessages = messageRepo.getBrickMessages();
         List<Message> powerupMessages = messageRepo.getPowerupMessages();
+        List<Message> powerdownMessages = messageRepo.getPowerdownMessages();
+        List<Projectile> projectiles = currentLevel.getLevelState().getProjectiles();
+        
+        for (Projectile p : projectiles) {
+            Message m = new ProjectilePositionMessage(p);
+            powerdownMessages.add(m);
+        }
 
         for (Ball b : balls) {
             BallPositionMessage bpm = new BallPositionMessage(b);
@@ -192,7 +202,11 @@ public class SessionManager {
         if (powerupMessages.size() > 0) {
             messages.put("powerupactions", powerupMessages);
         }
-
+        
+        if (powerdownMessages.size() > 0) {
+            messages.put("powerdownactions", powerdownMessages);
+        }
+        
         if (ballPositionMessages.size() > 0) {
             messages.put("ballpositions", ballPositionMessages);
         }

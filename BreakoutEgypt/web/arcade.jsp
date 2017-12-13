@@ -49,5 +49,6 @@
         <script type="text/javascript" src="assets/js/DrawingModule.js"></script>
         <script type="text/javascript" src="assets/js/arcade.js"></script>
         <script type="text/javascript" src="assets/js/PowerUpModule.js"></script>
+        <script type="text/javascript" src="assets/js/PowerDownModule.js"></script>
     </body>
 </html>

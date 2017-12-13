@@ -28,6 +28,18 @@ let DrawingModule = (function () {
 
         resizeCanvasses(getBrickCanvasDimensions().width, getBrickCanvasDimensions().height);
     }
+    
+    function drawProjectile() {
+        movingPartsCtx.fillStyle = "red";
+        // box2d draws circle from center
+        level.projectiles.forEach(function (ball) {
+            movingPartsCtx.beginPath();
+            movingPartsCtx.arc(Math.round(ball.x), Math.round(ball.y), (ball.width), 0, 2 * Math.PI, false);
+            movingPartsCtx.fill();
+        });
+
+        movingPartsCtx.shadowBlur = 0;
+    }
 
     function draw() {
         // initial values 300 x 300
@@ -39,7 +51,7 @@ let DrawingModule = (function () {
         movingPartsCtx.shadowOffsetY = 1;
 
         drawBall();
-
+        if (level.projectiles.length > 0) drawProjectile();
         setPaddleX();
         level.sendClientLevelState();
 

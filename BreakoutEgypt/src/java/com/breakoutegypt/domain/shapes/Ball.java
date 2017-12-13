@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.domain.shapes;
 
-import com.breakoutegypt.domain.effects.AcidBallPowerUp;
+import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import org.jbox2d.common.Vec2;
 
 /**
@@ -15,6 +15,33 @@ import org.jbox2d.common.Vec2;
 public class Ball extends RegularBody {
 
     private AcidBallPowerUp acidBall;
+    private boolean decoy;
+    private boolean startingBall;
+
+    public Ball(ShapeDimension s) {
+        this(s, false);
+    }
+    
+    public Ball(ShapeDimension s, boolean decoy) {
+        super(s);
+        this.decoy = decoy;
+    }
+
+    public boolean isStartingBall() {
+        return startingBall;
+    }
+
+    public void setStartingBall(boolean startingBall) {
+        this.startingBall = startingBall;
+    }
+
+    public boolean isDecoy() {
+        return decoy;
+    }
+
+    public void setDecoy(boolean decoy) {
+        this.decoy = decoy;
+    }
 
     public void setAcidballPowerup(AcidBallPowerUp acidBall) {
         this.acidBall = acidBall;
@@ -23,16 +50,12 @@ public class Ball extends RegularBody {
     public AcidBallPowerUp getAcidBall() {
         return acidBall;
     }
-    
-    public Ball(ShapeDimension s) {
-        super(s);
+
+    public void setLinearVelocity(float x, float y) {
+        this.getBody().setLinearVelocity(new Vec2(x, y));
     }
 
-    public void setLinearVelocity(float x, float y){
-        this.getBody().setLinearVelocity(new Vec2(x,y));
-    }
-    
-    public Vec2 getLinearVelocity(){
+    public Vec2 getLinearVelocity() {
         return this.getBody().getLinearVelocity();
     }
 }

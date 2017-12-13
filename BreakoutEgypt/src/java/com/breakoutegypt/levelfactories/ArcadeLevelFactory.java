@@ -12,6 +12,7 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -29,7 +30,7 @@ import java.util.List;
 public class ArcadeLevelFactory extends LevelFactory {
 
     public ArcadeLevelFactory(Game game) {
-        super(game, 4, 1);
+        super(game, 5, 5);
     }
 
     @Override
@@ -54,13 +55,41 @@ public class ArcadeLevelFactory extends LevelFactory {
             case 4:
                 currentLevel = getPossibleRealLevel();
                 break;
+            case 5:
+                currentLevel = getLevelWithFloodPowerDown();
+                break;
         }
     }
 
     public Level getSimpleTestLevel() {
         return getSimpleTestLevel(BreakoutWorld.TIMESTEP_DEFAULT);
     }
-    
+
+    public Level getLevelWithFloodPowerDown() {
+        ShapeDimension ballShape = new ShapeDimension("ball", 120, 40, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS);
+        ShapeDimension brickshape1 = new ShapeDimension("brick1", 120, 80, 20, 20);
+        ShapeDimension brickshape2 = new ShapeDimension("brick2", 1, 1, 1, 1);
+        ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
+
+        List<Paddle> paddles = new ArrayList();
+        List<Ball> balls = new ArrayList();
+        List<Brick> bricks = new ArrayList();
+        Ball b = new Ball(ballShape);
+        balls.add(b);
+        paddles.add(new Paddle(paddleShape));
+        balls.get(0).setStartingBall(true);
+        Brick powerdownBrick = new Brick(brickshape1, new Point());
+        powerdownBrick.setPowerdown(new FloodPowerDown(b, 50));
+
+        bricks.add(powerdownBrick);
+        bricks.add(new Brick(brickshape2, new Point(9, 9), true, false));
+
+        LevelState initialState = new LevelState(balls, paddles, bricks);
+        Level level = new Level(1, game, initialState, 3);
+
+        return level;
+    }
+
     public Level getSimpleTestLevel(float timeStep) {
 //        targetBlocks = 5;
         ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 250, 100, 4, Color.BLUE);
@@ -69,7 +98,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
-
+        ball.setStartingBall(true);
         ShapeDimension brickShape;
         Brick brick;
 
@@ -92,7 +121,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         return level;
     }
-    
+
     public Level getLevelWithUnbreakableAndExplosive() {
         return getLevelWithUnbreakableAndExplosive(BreakoutWorld.TIMESTEP_DEFAULT);
     }
@@ -104,7 +133,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
-
+        ball.setStartingBall(true);
         int row = 1;
         int col = 1;
         int rows = 1;
@@ -157,7 +186,7 @@ public class ArcadeLevelFactory extends LevelFactory {
             shape = new ShapeDimension("ball" + i, 4 + i, 100, 2, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
             balls.add(new Ball(shape));
         }
-
+        balls.get(0).setStartingBall(true);
         List<Paddle> paddles = new ArrayList<Paddle>();
         paddles.add(paddle);
         LevelState initialState = new LevelState(balls, paddles, bricks);
@@ -172,7 +201,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
-
+        ball.setStartingBall(true);
         int row = 1;
         int col = 1;
         int rows = 3;
@@ -251,14 +280,14 @@ public class ArcadeLevelFactory extends LevelFactory {
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
         int noOfPowerups = 5;
+        int noOfPowerdowns = 5;
 
-        LevelState initialState = new LevelState(balls, paddles, bricks, noOfPowerups);
+        LevelState initialState = new LevelState(balls, paddles, bricks, noOfPowerups, noOfPowerdowns);
         Level level = new Level(currentLevelId, game, initialState, 3);
 
         return level;
     }
 
-//
     public Level getLevelWithSwitch() {
         ShapeDimension paddleShape = new ShapeDimension("paddle" + currentLevelId, 45, 250, 100, 4, Color.BLUE);
         ShapeDimension ballShape = new ShapeDimension("ball", 60, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
@@ -267,7 +296,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
-
+        ball.setStartingBall(true);
         int row = 1;
         int col = 1;
         int rows = 1;

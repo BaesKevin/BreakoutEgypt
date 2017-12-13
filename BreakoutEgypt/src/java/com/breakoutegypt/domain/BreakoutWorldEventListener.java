@@ -5,7 +5,9 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 
 /**
@@ -16,4 +18,5 @@ public interface BreakoutWorldEventListener {
     void removeBrick(Brick brick);
     void ballOutOfBounds(Ball ball);
     void ballHitPaddle();
+    ProjectilePositionMessage destroyProjectile(Projectile projectile, boolean lostLife);
 }

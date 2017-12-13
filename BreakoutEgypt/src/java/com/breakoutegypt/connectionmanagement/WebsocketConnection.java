@@ -58,6 +58,9 @@ public class WebsocketConnection implements PlayerConnection {
         }
         if (msgs.containsKey("powerupactions")) {
             job.add("powerupactions", listToJsonArray(msgs.get("powerupactions")));
+        } 
+        if (msgs.containsKey("powerdownactions")) {
+            job.add("powerdownactions", listToJsonArray(msgs.get("powerdownactions")));
         }
         job.add("leveldata", job.build());
         send(job.build());

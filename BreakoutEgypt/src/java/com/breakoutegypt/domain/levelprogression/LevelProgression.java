@@ -6,13 +6,14 @@
 package com.breakoutegypt.domain.levelprogression;
 
 import com.breakoutegypt.domain.GameType;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author snc
  */
-public class LevelProgression {
+public class LevelProgression implements Serializable {
     private int highestLevelReached;
     private int maxLevel;
     

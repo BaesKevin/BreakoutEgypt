@@ -22,6 +22,10 @@ public class ToggleEffect implements Effect{
     public List<Brick> getBricksToToggle() {
         return bricksToToggle;
     }
+    
+    public void removeBricksFromToggleList(List<Brick> bricks) {
+        bricksToToggle.removeAll(bricks);
+    }
 
     @Override
     public void accept(EffectHandler eh) {

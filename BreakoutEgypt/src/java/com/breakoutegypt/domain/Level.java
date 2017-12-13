@@ -5,19 +5,23 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
-import com.breakoutegypt.domain.effects.BreakoutPowerUpHandler;
-import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
-import com.breakoutegypt.domain.effects.PowerUp;
+import com.breakoutegypt.domain.messages.PowerDownMessage;
+import com.breakoutegypt.domain.messages.PowerDownMessageType;
+import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
+import com.breakoutegypt.domain.powers.BreakoutPowerDownHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.RegularBody;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Timer;
 
@@ -48,7 +52,8 @@ public class Level implements BreakoutWorldEventListener {
 
     private BrickScoreCalculator brickScoreCalc;
 
-    BreakoutPowerUpHandler bpuh;
+    private BreakoutPowerUpHandler bpuh;
+    private final BreakoutPowerDownHandler bpdh;
 
     public Level(int id, Game game, LevelState initialObjects, int lives) {
         this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
@@ -73,11 +78,12 @@ public class Level implements BreakoutWorldEventListener {
         }
 
         bpuh = new BreakoutPowerUpHandler(this, levelState, breakoutWorld);
+        bpdh = new BreakoutPowerDownHandler(this, levelState, breakoutWorld);
 
         breakoutWorld.setBreakoutWorldEventListener(this);
         breakoutWorld.initContactListener(
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
-                bpuh);
+                bpuh, bpdh);
 
         this.lives = lives;
         this.timer = new Timer();
@@ -91,7 +97,7 @@ public class Level implements BreakoutWorldEventListener {
     public boolean isLevelStarted() {
         return levelStarted;
     }
-    
+
     public void setLevelNumber(int id) {
         this.id = id;
     }
@@ -141,7 +147,6 @@ public class Level implements BreakoutWorldEventListener {
 
         for (Paddle p : paddles) {
             p.moveTo(paddleCenter, p.getPosition().y);
-
             paddleCenter += (paddleWidth + BrokenPaddlePowerUp.GAP);
         }
 
@@ -272,14 +277,25 @@ public class Level implements BreakoutWorldEventListener {
         PowerUp p = bpuh.getPowerupByName(powerup);
 
         PowerUpMessage msg = new PowerUpMessage("You are trying to trigger a powerup that doesn't exist", null, PowerUpMessageType.NOSUCHPOWERUP);
-        
+
         if (p != null) {
             msg = p.accept(bpuh);
         }
         return msg;
     }
-    
+
     public BreakoutPowerUpHandler getPoweruphandler() {
         return bpuh;
+    }
+
+    @Override
+    public ProjectilePositionMessage destroyProjectile(Projectile projectile, boolean lostLife) {
+        levelState.removeProjectile(projectile);
+        breakoutWorld.deSpawn(projectile.getBody());
+        if (lostLife) {
+            lives--;
+            game.notifyPlayersOfLivesLeft();
+        }
+        return new ProjectilePositionMessage(projectile, PowerDownMessageType.REMOVEPROJECTILE);
     }
 }

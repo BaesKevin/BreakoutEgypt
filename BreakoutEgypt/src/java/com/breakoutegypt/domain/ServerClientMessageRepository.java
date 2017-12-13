@@ -17,10 +17,12 @@ public class ServerClientMessageRepository {
 
     private List<Message> brickMessages;
     private List<Message> powerupMessages;
+    private List<Message> powerdownMessages;
 
     public ServerClientMessageRepository() {
         this.brickMessages = new ArrayList();
         this.powerupMessages = new ArrayList();
+        this.powerdownMessages = new ArrayList();
     }
     
     public void addBrickMessage(Message m) {
@@ -45,5 +47,17 @@ public class ServerClientMessageRepository {
 
     public List<Message> getPowerupMessages() {
         return powerupMessages;
+    }
+    
+    public void addPowerdownMessages(Message m) {
+        powerdownMessages.add(m);
+    }
+
+    public void clearPowerdownMessages() {
+        powerdownMessages.clear();
+    }
+
+    public List<Message> getPowerdownMessages() {
+        return powerdownMessages;
     }
 }

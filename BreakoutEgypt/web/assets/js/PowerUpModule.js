@@ -21,8 +21,7 @@ let PowerUpModule = (function () {
         }).then(function (response) {
             return response.json();
         }).then(function (json) {
-            console.log(json);
-            activatePowerUp([json]);
+            activatePowerUp(json);
             let powerup = powerups.find(function (powerup) {
                 return powerup.name === name;
             });
@@ -33,9 +32,9 @@ let PowerUpModule = (function () {
     }
 
     function activatePowerUp(json) {
-        switch (json[0].powerupaction) {
+        switch (json.powerupaction) {
             case "ACTIVATEFLOOR":
-                let jsonpowerup = json[0].powerup;
+                let jsonpowerup = json.powerup;
                 if (!level.floor) {
                     level.floor = ScalingModule.scaleObject({x: jsonpowerup.x, y: jsonpowerup.y, width: jsonpowerup.width, height: jsonpowerup.height},
                             ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
@@ -53,7 +52,6 @@ let PowerUpModule = (function () {
         powerups = powerups.filter(function (powerup) {
             let sameType = powerup.name.replace(/[0-9]/g, "") === name.replace(/[0-9]/g, "");
             let differentType = !sameType;
-            console.log(sameType, powerup.active);
             return differentType || ( !powerup.active && sameType );
         });
 
@@ -94,7 +92,7 @@ let PowerUpModule = (function () {
             })
         })
         level.mypaddle = [];
-        let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.base, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+        let paddleToAdd = ScalingModule.scaleObject(json.powerup.base, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
         level.gap = 0;
         level.mypaddle.push(paddleToAdd);
         level.paddles.push(paddleToAdd);
@@ -105,9 +103,9 @@ let PowerUpModule = (function () {
             return level.mypaddle.name === paddle.name;
         })
         level.mypaddle = [];
-        for (let i = 0; i < json[0].powerup.brokenpaddle.length; i++) {
-            let paddleToAdd = ScalingModule.scaleObject(json[0].powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
-            let gap = ScalingModule.scaleXForClient(json[0].powerup.gap);
+        for (let i = 0; i < json.powerup.brokenpaddle.length; i++) {
+            let paddleToAdd = ScalingModule.scaleObject(json.powerup.brokenpaddle[i], ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
+            let gap = ScalingModule.scaleXForClient(json.powerup.gap);
             level.gap = gap;
             level.mypaddle.push(paddleToAdd);
             level.paddles.push(paddleToAdd);

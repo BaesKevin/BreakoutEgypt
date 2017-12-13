@@ -19,23 +19,34 @@ public class BodyConfigurationFactory {
 
     public static final int BALL_RADIUS = 8;
 
+    //TESTING BITS FOR COLLISION
+    private final int BOUNDS_CATEGORY = 0x0001;
+    private final int PROJECTILE_CATEGORY = 0x0002;
+    private final int BRICK_CATEGORY = 0x0004;
+    private final int PADDLE_CATEGORY = 0x0008;
+    private final int BALL_CATEGORY = 0X0010;
+    private final int PROJECTILE_MASK = BOUNDS_CATEGORY | PADDLE_CATEGORY;
+    private final int BRICK_MASK = BALL_CATEGORY;
+    private final int PADDLE_MASK = BALL_CATEGORY | PROJECTILE_CATEGORY;
+    private final int BALL_MASK = BOUNDS_CATEGORY | BRICK_CATEGORY | PADDLE_CATEGORY;
+    private final int BOUNDS_MASK = -1;
+
     public BodyConfiguration createTriangleConfig(ShapeDimension shape) {
 
         BodyDefConfig bodyDef = new BodyDefConfig(BodyType.STATIC, new Vec2(shape.getPosX(), shape.getPosY()));
 
         PolygonShape ps = new PolygonShape();
-       
+
         // the coordinates of the points of the lines are relative to the shape's coordinates
         // ex. a triangle at [50,50] with width 10 will create a triangle with points [ 55, 50], [50, 60], [60,60]
         // vertices must be given counterclockwise
-           
         Vec2[] vertices = new Vec2[3];
         vertices[0] = new Vec2(shape.getWidth() / 2, 0);
         vertices[1] = new Vec2(0, shape.getHeight());
         vertices[2] = new Vec2(shape.getWidth(), shape.getHeight());
         ps.set(vertices, 3);
 
-        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f);
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, BRICK_CATEGORY, BRICK_MASK);
 
         BodyConfiguration config = new BodyConfiguration(bodyDef, ps, fixtureConfig);
 
@@ -44,11 +55,11 @@ public class BodyConfigurationFactory {
 
     public BodyConfiguration createPaddleConfig(ShapeDimension s) {
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY()));
-        
+
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(s.getWidth() / 2, s.getHeight() / 2);
 
-        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f);
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, PADDLE_CATEGORY, PADDLE_MASK);
 
         return new BodyConfiguration(bodyDefConfig, ps, fixtureConfig);
     }
@@ -59,23 +70,33 @@ public class BodyConfigurationFactory {
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY() + s.getHeight()));
 
         // Circles are drawn from the center of the shape
-        
         CircleShape newDomePaddle = new CircleShape();
         newDomePaddle.m_radius = radius;
 
-        FixtureDefConfig fixtureDefConfig = new FixtureDefConfig(1f, 0f, 1f);
+        FixtureDefConfig fixtureDefConfig = new FixtureDefConfig(1f, 0f, 1f, false, PADDLE_CATEGORY, PADDLE_MASK);
 
         return new BodyConfiguration(bodyDefConfig, newDomePaddle, fixtureDefConfig);
     }
 
-    public BodyConfiguration createBallConfig(ShapeDimension s) {
+    public BodyConfiguration createProjectileConfig(ShapeDimension s) {
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.DYNAMIC, new Vec2(s.getPosX(), s.getPosY()));
-        
+
         CircleShape cs = new CircleShape();
         cs.m_radius = s.getWidth() / 2;
 
-        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, -1);
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, PROJECTILE_CATEGORY, PROJECTILE_MASK);
         
+        return new BodyConfiguration(bodyDefConfig, cs, fixtureConfig);
+    }
+
+    public BodyConfiguration createBallConfig(ShapeDimension s) {
+        BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.DYNAMIC, new Vec2(s.getPosX(), s.getPosY()));
+
+        CircleShape cs = new CircleShape();
+        cs.m_radius = s.getWidth() / 2;
+
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, BALL_CATEGORY, BALL_MASK);
+
         return new BodyConfiguration(bodyDefConfig, cs, fixtureConfig);
     }
 
@@ -84,7 +105,7 @@ public class BodyConfigurationFactory {
         PolygonShape ps = new PolygonShape();
         ps.setAsBox(s.getWidth(), s.getHeight());
 
-        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, isGround);
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, isGround, BOUNDS_CATEGORY, BOUNDS_MASK);
 
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.STATIC, new Vec2(s.getPosX(), s.getPosY()));
 

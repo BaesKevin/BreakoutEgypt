@@ -11,15 +11,20 @@ import com.breakoutegypt.domain.brickcollisionhandlers.BallPaddleContact;
 import com.breakoutegypt.domain.brickcollisionhandlers.BrickCollisionDecider;
 import com.breakoutegypt.domain.brickcollisionhandlers.Contact;
 import com.breakoutegypt.domain.brickcollisionhandlers.ContactHandler;
-import com.breakoutegypt.domain.effects.AcidBallPowerUp;
+import com.breakoutegypt.domain.brickcollisionhandlers.ProjectileGroundContact;
+import com.breakoutegypt.domain.brickcollisionhandlers.ProjectilePaddleContact;
+import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.effects.PowerUp;
-import com.breakoutegypt.domain.effects.PowerUpHandler;
+import com.breakoutegypt.domain.messages.PowerDownMessage;
+import com.breakoutegypt.domain.powers.PowerUp;
+import com.breakoutegypt.domain.powers.PowerUpHandler;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.powers.PowerDown;
+import com.breakoutegypt.domain.powers.PowerDownHandler;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -54,6 +59,7 @@ public class BreakoutWorld implements ContactHandler {
     private List<Contact> contacts;
     private EffectHandler effectHandler;
     private PowerUpHandler powerupHandler;
+    private PowerDownHandler powerdownHandler;
     private ServerClientMessageRepository messageRepo;
     private boolean acidBall = false;
 
@@ -82,9 +88,10 @@ public class BreakoutWorld implements ContactHandler {
         powerupHandler.removePowerupsIfTimedOut();
     }
 
-    public void initContactListener(EffectHandler eventHandler, PowerUpHandler powerupHandler) {
+    public void initContactListener(EffectHandler eventHandler, PowerUpHandler powerupHandler, PowerDownHandler powerdownHandler) {
         this.powerupHandler = powerupHandler;
         this.effectHandler = eventHandler;
+        this.powerdownHandler = powerdownHandler;
 
         world.setContactListener(new BreakoutContactListener(this));
     }
@@ -116,14 +123,16 @@ public class BreakoutWorld implements ContactHandler {
         Brick b = bbc.getBrick();
         Ball ball = bbc.getBall();
         AcidBallPowerUp abpu = ball.getAcidBall();
-        if (abpu != null) {
-            if (!b.hasToggleEffect()) {
-                b.addEffect(new ExplosiveEffect(b, abpu.getRange()));
+        if (!ball.isDecoy()) {
+            if (abpu != null) {
+                if (!b.hasToggleEffect()) {
+                    b.addEffect(new ExplosiveEffect(b, abpu.getRange()));
+                }
+                ball.setAcidballPowerup(null);
+                messageRepo.addPowerupMessages(new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL));
             }
-            ball.setAcidballPowerup(null);
-            messageRepo.addPowerupMessages(new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL));
+            new BrickCollisionDecider(b, this.effectHandler).handleCollision();
         }
-        new BrickCollisionDecider(b, this.effectHandler).handleCollision();
     }
 
     @Override
@@ -134,6 +143,16 @@ public class BreakoutWorld implements ContactHandler {
     @Override
     public void handle(BallPaddleContact bpc) {
         worldEventListener.ballHitPaddle();
+    }
+    
+    @Override
+    public void handle(ProjectilePaddleContact ppc) {
+        messageRepo.addPowerdownMessages(worldEventListener.destroyProjectile(ppc.getProjectile(), true));
+    }
+
+    @Override
+    public void handle(ProjectileGroundContact pgc) {
+        messageRepo.addPowerdownMessages(worldEventListener.destroyProjectile(pgc.getProjectile(), false));
     }
 
     public int countWorldObjects() {
@@ -149,12 +168,13 @@ public class BreakoutWorld implements ContactHandler {
         String brickName;
         for (Brick brick : bricks) {
             brickName = brick.getName();
-
             if (brick.hasPowerUp()) {
-                // player.addPowerUp(powerup)
                 PowerUp pu = brick.getPowerUp();
-//                pu.accept(powerupHandler);
                 powerupHandler.addPowerUp(pu);
+            } else if (brick.hasPowerDown()) {
+                PowerDown pd = brick.getPowerDown();
+                PowerDownMessage msg = pd.accept(powerdownHandler);
+                messageRepo.addPowerdownMessages(msg);
             }
 
             worldEventListener.removeBrick(brick);

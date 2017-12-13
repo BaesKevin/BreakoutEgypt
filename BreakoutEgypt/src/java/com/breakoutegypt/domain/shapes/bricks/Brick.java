@@ -5,13 +5,14 @@
  */
 package com.breakoutegypt.domain.shapes.bricks;
 
-import com.breakoutegypt.domain.effects.BrokenPaddlePowerUp;
-import com.breakoutegypt.domain.effects.PowerUp;
-import com.breakoutegypt.domain.effects.PowerUpType;
+import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
+import com.breakoutegypt.domain.powers.PowerUp;
+import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.effects.FloorPowerUp;
+import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.domain.powers.PowerDown;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
@@ -38,6 +39,7 @@ public class Brick extends RegularBody {
     private List<Effect> effects;
     private PowerUpType poweruptype;
     private PowerUp powerup;
+    private PowerDown powerdown;
 
     private int points = 2000;
     
@@ -76,6 +78,11 @@ public class Brick extends RegularBody {
 
     public void toggle() {
         isVisibible = !isVisibible;
+        if (!isVisibible) {
+            this.getBody().getFixtureList().m_filter.maskBits = 0;
+        } else {
+            this.getBody().getFixtureList().m_filter.maskBits = 0x0010;
+        } 
     }
 
     public void setVisible(boolean b) {
@@ -196,5 +203,30 @@ public class Brick extends RegularBody {
 
     public int getPoints() {
         return points;
+    }
+    
+    public void setPowerdown(PowerDown powerdown) {
+        this.powerdown = powerdown;
+    }
+
+    public boolean hasPowerDown() {
+        return powerdown != null;
+    }
+
+    public PowerDown getPowerDown() {
+        return powerdown;
+    }
+
+    public boolean isRegular() {
+        if (effects.size() == 1 && !isTarget) {
+            Effect e = effects.get(0);
+            if (e instanceof ExplosiveEffect) {
+                ExplosiveEffect explosive = (ExplosiveEffect) e;
+                if (explosive.getRadius() == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

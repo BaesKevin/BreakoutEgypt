@@ -20,7 +20,7 @@ public class BallGroundContact implements Contact{
         if(body1 instanceof Ball){
             outofbounds = (Ball) body1;
             ground = body2;
-        } else {
+        } else if (body2 instanceof Ball) {
             outofbounds = (Ball) body2;
             ground = body1;
         }

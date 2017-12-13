@@ -15,6 +15,8 @@ public class FixtureDefConfig {
     private float density, friction, restitution;
     private boolean isSensor;
     private int groupid;
+    private int maskBits;
+    private int categoryBits;
 
     public FixtureDefConfig(float density, float friction, float restitution) {
         this(density, friction, restitution, false, 0);
@@ -33,7 +35,18 @@ public class FixtureDefConfig {
         this.groupid = groupid;
     }
     
+    public FixtureDefConfig(float density, float friction, float restitution, boolean isSensor, int categoryBits, int maskBits) {
+        this.density = density;
+        this.friction = friction;
+        this.restitution = restitution;
+        this.isSensor = isSensor;
+        this.maskBits = maskBits;
+        this.categoryBits = categoryBits;
+    }
     
+    public void setMaskBits(int bits) {
+        maskBits = bits;
+    }
 
     public float getDensity() {
         return density;
@@ -59,6 +72,8 @@ public class FixtureDefConfig {
         def.restitution = restitution;
         def.isSensor = isSensor;
         def.filter.groupIndex = groupid;
+        def.filter.categoryBits = categoryBits == 0 ? 0x0001 : categoryBits;
+        def.filter.maskBits = maskBits == 0 ? 0x0001 : maskBits;
         return def;
     }
 }

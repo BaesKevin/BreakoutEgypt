@@ -5,8 +5,7 @@
  */
 package com.breakoutegypt.domain.messages;
 
-import com.breakoutegypt.domain.powers.PowerUp;
-import java.math.BigDecimal;
+import com.breakoutegypt.domain.powers.PowerDown;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
@@ -14,18 +13,19 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class PowerUpMessage implements Message {
+
+public class PowerDownMessage implements Message {
 
     private String name;
-    private PowerUp powerup;
-    private PowerUpMessageType messageType;
-
-    public PowerUpMessage(String name, PowerUp powerup, PowerUpMessageType pumt) {
+    private PowerDown powerdown;
+    private PowerDownMessageType messageType;
+    
+    public PowerDownMessage(String name, PowerDown powerdown, PowerDownMessageType pdmt) {
         this.name = name;
-        this.powerup = powerup;
-        this.messageType = pumt;
+        this.powerdown = powerdown;
+        this.messageType = pdmt;
     }
-
+    
     @Override
     public String getName() {
         return name;
@@ -39,11 +39,10 @@ public class PowerUpMessage implements Message {
     @Override
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        if (powerup != null) 
-            job.add("powerup", powerup.toJson());
-        job.add("powerupaction", getMessageType().toString());
-        
+        if (powerdown != null) 
+            job.add("powerdown", powerdown.toJson());
+        job.add("powerdownaction", getMessageType().toString());
         return job;
     }
-
+    
 }

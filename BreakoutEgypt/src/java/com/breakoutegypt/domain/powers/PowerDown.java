@@ -3,23 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.breakoutegypt.domain.effects;
+package com.breakoutegypt.domain.powers;
 
-import com.breakoutegypt.domain.messages.PowerUpMessage;
-import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.messages.PowerDownMessage;
+import com.breakoutegypt.domain.messages.PowerDownMessageType;
 import javax.json.JsonObject;
 
 /**
  *
  * @author BenDB
  */
-public interface PowerUp {
+public interface PowerDown {
     
-    public PowerUpMessage accept(PowerUpHandler puh);
+    public PowerDownMessage accept(PowerDownHandler puh);
 
     public JsonObject toJson();
 
     public String getName();
     
-    public PowerUpMessageType getType();
+    public PowerDownMessageType getType();
+    
 }

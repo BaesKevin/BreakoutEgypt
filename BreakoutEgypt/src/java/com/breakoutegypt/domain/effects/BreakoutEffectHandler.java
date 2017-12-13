@@ -12,6 +12,7 @@ import com.breakoutegypt.domain.ServerClientMessageRepository;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,18 +43,24 @@ public class BreakoutEffectHandler implements EffectHandler {
         List<Brick> bricksToToggle = e.getBricksToToggle();
         ServerClientMessageRepository repo = breakoutWorld.getMessageRepo();
 
+        List<Brick> bricksToRemove = new ArrayList();
+        
         for (Brick brick : bricksToToggle) {
-            brick.toggle();
+            if (brick.getBody().getFixtureList() != null) {
+                brick.toggle();
 
-            BrickMessageType toggleType;
-            if (brick.isVisible()) {
-                toggleType = BrickMessageType.SHOW;
+                BrickMessageType toggleType;
+                if (brick.isVisible()) {
+                    toggleType = BrickMessageType.SHOW;
+                } else {
+                    toggleType = BrickMessageType.HIDE;
+                }
+                repo.addBrickMessage(new BrickMessage(brick.getName(), toggleType));
             } else {
-                toggleType = BrickMessageType.HIDE;
+                bricksToRemove.add(brick);
             }
-            
-            repo.addBrickMessage(new BrickMessage(brick.getName(), toggleType));
         }
+        e.removeBricksFromToggleList(bricksToRemove);
     }
 
 }
