@@ -47,7 +47,7 @@ public class MultiplayerLevelFactory extends LevelFactory {
         Ball ball = new Ball(ballShape);
 
         LevelState initialState = new LevelState(ball, paddle, new ArrayList());
-        return new Level(currentLevelId, game, initialState, 3);
+        return new Level(currentLevelId, game, initialState);
 
     }
 }

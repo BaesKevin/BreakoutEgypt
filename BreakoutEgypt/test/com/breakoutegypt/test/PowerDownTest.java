@@ -8,14 +8,13 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
-import com.breakoutegypt.domain.messages.Message;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import java.util.List;
 import static org.junit.Assert.assertTrue;
@@ -31,13 +30,12 @@ public class PowerDownTest {
     Level level;
     Game game;
     Player player;
-    private final LevelProgression ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
 
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
-
+        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
 
         player = new Player(new User("Kevin"));
@@ -46,12 +44,12 @@ public class PowerDownTest {
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
 
-        game.assignPaddleToPlayer(player);
+//        game.assignPaddleToPlayer(player);
     }
 
     @Test
     public void testFloodPowerDown() {
-        game.setCurrentLevel(18, ALL_LEVELS_UNLOCKED);
+        game.initStartingLevel(18, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         List<Ball> balls;
         level.startBall();
@@ -63,7 +61,7 @@ public class PowerDownTest {
     
     @Test
     public void testProjectilePowerDown() {
-        game.setCurrentLevel(19, ALL_LEVELS_UNLOCKED);
+        game.initStartingLevel(19, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         level.startBall();
         
@@ -75,7 +73,7 @@ public class PowerDownTest {
     @Test
     public void testTriggerPowerdownWithExplosive() {
                 
-        game.setCurrentLevel(20, ALL_LEVELS_UNLOCKED);
+        game.initStartingLevel(20, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         level.startBall();
         

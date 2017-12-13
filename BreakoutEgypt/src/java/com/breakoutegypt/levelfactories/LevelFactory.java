@@ -7,7 +7,8 @@ package com.breakoutegypt.levelfactories;
 
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 
 /**
@@ -21,9 +22,9 @@ public abstract class LevelFactory {
     protected int totalLevels;
     protected Level currentLevel;
     protected int defaultOpenLevels;
-    protected LevelProgression defaultProgression;
+    protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
-
+    
     public LevelFactory(Game game, int totalLevels) {
         this(game, totalLevels, totalLevels);
     }
@@ -33,7 +34,6 @@ public abstract class LevelFactory {
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
-        setDefaultLevel(DEFAULT_STARTING_LEVEL);
     }
 
     public boolean hasNextLevel() {
@@ -53,15 +53,10 @@ public abstract class LevelFactory {
         return getCurrentLevel();
     }
 
-    public boolean hasNextLevel(LevelProgression progression) {
+    public boolean hasNextLevel(LevelProgress progression) {
         return hasNextLevel() && currentLevelId < progression.getHighestLevelReached();
     }
 
-    private void setDefaultLevel(int id) {
-        this.currentLevelId = id;
-        createCurrentLevel();
-    }
-    
     public int getDefaultOpenLevels(){
         return this.defaultOpenLevels;
     }
@@ -70,7 +65,7 @@ public abstract class LevelFactory {
         return this.totalLevels;
     }
 
-    public void setCurrentLevel(int id, LevelProgression levelProgression) {
+    public void setCurrentLevel(int id, LevelProgress levelProgression) {
         boolean levelExists = 1 <= id && id <= totalLevels;
         boolean levelIsOpenByDefault = id <= defaultOpenLevels;
         boolean levelExistsAndIsOpen = levelExists && levelIsOpenByDefault;

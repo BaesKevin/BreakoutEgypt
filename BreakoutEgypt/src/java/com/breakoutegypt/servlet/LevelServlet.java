@@ -13,7 +13,7 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;

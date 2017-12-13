@@ -5,15 +5,12 @@
  */
 package com.breakoutegypt.domain.shapes.bricks;
 
-import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.powers.PowerDown;
-import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
@@ -41,7 +38,7 @@ public class Brick extends RegularBody {
     private PowerUp powerup;
     private PowerDown powerdown;
 
-    private int points = 2000;
+//    private int points = 2000;
     
     public Brick(ShapeDimension s, Point position) {
         this(s, position, false, true);
@@ -51,11 +48,11 @@ public class Brick extends RegularBody {
         this(s, gridPosition, isTarget, isVisible, true);
     }
 
-    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable) {
-        this(s, gridPosition, isTarget, isVisible, isBreakable, 2000);
-    }
+//    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable) {
+//        this(s, gridPosition, isTarget, isVisible, isBreakable, 2000);
+//    }
     
-    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable, int points) {
+    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable/*, int points*/) {
         super(s);
         this.gridPosition = gridPosition;
         this.isVisibible = isVisible;
@@ -68,7 +65,7 @@ public class Brick extends RegularBody {
         if (isVisible && isBreakable) {
             effects.add(new ExplosiveEffect(this, 0));
         }
-        this.points = points;
+//        this.points = points;
     }
         
 
@@ -195,14 +192,6 @@ public class Brick extends RegularBody {
 
     public PowerUp getPowerUp() {
         return powerup;
-    }
-    
-    public void setPoints(int points) {
-        this.points = points;
-    }
-
-    public int getPoints() {
-        return points;
     }
     
     public void setPowerdown(PowerDown powerdown) {

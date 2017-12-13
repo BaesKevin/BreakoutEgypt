@@ -7,12 +7,12 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import org.jbox2d.common.Vec2;
 import org.junit.Assert;
@@ -28,18 +28,21 @@ public class LevelTest {
     private Game game;
     private Level level;
     private Player player;
-    private final LevelProgression ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
     
     @Before
     public void setup() {
+        createGame(GameType.TEST, GameDifficulty.MEDIUM, 1);
+    }
+    
+    private void createGame(GameType type, GameDifficulty diff, int startingLevel){
         GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
+        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
-        
+        game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 
-        game.startLevel();
         level = game.getCurrentLevel();
-        
+
         for (int i = 0; i < 1000; i++) {
             ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
         }
@@ -47,7 +50,6 @@ public class LevelTest {
 
     @Test
     public void ballOutOfBoundsLosesLife() {
-        level.start();
         level.startBall();
 
         stepTimes(60);
@@ -56,7 +58,8 @@ public class LevelTest {
 
     @Test
     public void destroyAllTargetBricksEndsLevel() {
-        game.setCurrentLevel(2, ALL_LEVELS_UNLOCKED);
+        createGame(GameType.TEST, GameDifficulty.MEDIUM, 2);
+        
         level = game.getCurrentLevel();
         level.startBall();
         level.getLevelState().getBall().setLinearVelocity(0, -100);
@@ -67,7 +70,7 @@ public class LevelTest {
 
     @Test
     public void switchBrickTogglesCollision() {
-        game.setCurrentLevel(3, ALL_LEVELS_UNLOCKED);
+        createGame(GameType.TEST, GameDifficulty.MEDIUM, 3);
         level = game.getCurrentLevel();
         level.startBall();
         level.getLevelState().getBall().setLinearVelocity(0, -100);
@@ -80,9 +83,9 @@ public class LevelTest {
 
     @Test
     public void explosiveBickWithRadius1DestroysThreeBricks() {
-        game.setCurrentLevel(4, ALL_LEVELS_UNLOCKED);
+        createGame(GameType.TEST, GameDifficulty.MEDIUM, 4);
         level = game.getCurrentLevel();
-        level.startBall();
+        
         level.getLevelState().getBall().setLinearVelocity(0, -100);
 
         stepTimes(60);
@@ -92,7 +95,7 @@ public class LevelTest {
 
     @Test
     public void ballBouncesOfTopLeftRightWalls() {
-        game.setCurrentLevel(1, ALL_LEVELS_UNLOCKED);
+        createGame(GameType.TEST, GameDifficulty.MEDIUM, 1);
         level = game.getCurrentLevel();
         level.startBall();
 
@@ -115,16 +118,16 @@ public class LevelTest {
 
     @Test
     public void ballsDontCollide() {
-        game.setCurrentLevel(5, ALL_LEVELS_UNLOCKED);
+        createGame(GameType.TEST, GameDifficulty.MEDIUM, 5);
         level = game.getCurrentLevel();
         level.startBall();
         Ball topball = level.getLevelState().getBalls().get(0);
         Ball bottomball = level.getLevelState().getBalls().get(1);
         topball.setLinearVelocity(0, 100);
         bottomball.setLinearVelocity(0, -100);
-        
+
         stepTimes(60);
-        
+
         Assert.assertTrue(topball.getPosition().y > bottomball.getPosition().y);
     }
 

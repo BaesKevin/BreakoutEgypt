@@ -1,6 +1,6 @@
 let ArcadeWebSocket = (function () {
     let Socket = function () {
-        this.gameId = UtilModule.getParameterByName("gameId");
+        this.gameId = $("#gameId").val();
         this.wsUri = "ws://" + document.location.host + "/BreakoutEgypt/gameplay?gameId=" + this.gameId;
     };
 
@@ -125,7 +125,7 @@ let ArcadeWebSocket = (function () {
         level.levelComplete = true;
 
         let time = UtilModule.scoreTimerFormatter(json.scoreTimer);
-        ModalModule.modalLevelCompleted(level.level, time);
+        ModalModule.modalLevelCompleted(level.level, time, json.brickScore);
     }
 
     function handleLevelUpdateError(json) {

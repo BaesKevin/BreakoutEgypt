@@ -5,16 +5,24 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import java.util.List;
+
 /**
  *
  * @author BenDB
  */
 public class Repositories {
     
-    public static final HighscoreRepo highscoreRepository = new StaticDummyHighscoreRepo();
-
-    public static HighscoreRepo getHighscoreRepository() {
+    private static final HighscoreRepository highscoreRepository = new StaticDummyHighscoreRepo();
+    private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
+    
+    public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
+    }
+
+    public static DifficultyRepository getDifficultyRepository() {
+        return difficultyRepository;
     }
     
 }

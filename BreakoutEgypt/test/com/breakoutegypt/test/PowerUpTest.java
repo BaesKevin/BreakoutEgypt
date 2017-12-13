@@ -8,7 +8,7 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
@@ -19,7 +19,7 @@ import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.messages.Message;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
@@ -37,29 +37,35 @@ public class PowerUpTest {
     Level level;
     Game game;
     Player player;
-    private final LevelProgression ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
-    
-    @Before
-    public void init() {
-        GameManager gm = new GameManager();
-        int id = gm.createGame(1, 1, GameType.TEST, GameDifficulty.MEDIUM, LevelProgressionRepository.getDefault(GameType.ARCADE));
+    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
 
+    private void createGame(int startingLevel, boolean levelHasPaddle) {
+        GameManager gm = new GameManager();
+        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
+        game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
+
+        level = game.getCurrentLevel();
+
+        for (int i = 0; i < 1000; i++) {
+            ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
+        }
 
         player = new Player(new User("Kevin"));
 
         game.addConnectingPlayer(player);
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
-
-        game.assignPaddleToPlayer(player);
-
+        
+        if(levelHasPaddle){
+            game.assignPaddleToPlayer(player);
+        }
+        
     }
-
+    
     @Test
     public void testBrokenPaddle() {
-
-        game.setCurrentLevel(8,ALL_LEVELS_UNLOCKED);
+        createGame(8, true);
         level = game.getLevel();
 
         List<Ball> balls = level.getLevelState().getBalls();
@@ -78,7 +84,7 @@ public class PowerUpTest {
 
     @Test
     public void testBrokenPaddleMovement() {
-        game.setCurrentLevel(8,ALL_LEVELS_UNLOCKED);
+        createGame(8, true);
         level = game.getLevel();
         List<Paddle> paddles = level.getLevelState().getPaddles();
 
@@ -98,8 +104,8 @@ public class PowerUpTest {
 
     @Test
     public void activateFloorPowerUpTest() {
+        createGame(10, false);
 
-        game.setCurrentLevel(10,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         List<Ball> balls = level.getLevelState().getBalls();
         level.startBall();
@@ -117,8 +123,8 @@ public class PowerUpTest {
 
     @Test
     public void activatePowerUpWithExplosiveTest() {
+        createGame(11, false);
 
-        game.setCurrentLevel(11,ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
 
         level.startBall();
@@ -131,8 +137,8 @@ public class PowerUpTest {
 
     @Test
     public void activateBrokenPaddlePowerup() {
-
-        game.setCurrentLevel(12,ALL_LEVELS_UNLOCKED);
+        createGame(12, true);
+        
         level = game.getLevel();
 
         level.getLevelState().getBall().setLinearVelocity(0, 100);
@@ -157,7 +163,8 @@ public class PowerUpTest {
 
     @Test
     public void testDoubleAcidBallActivation() {
-        game.setCurrentLevel(14, ALL_LEVELS_UNLOCKED);
+        createGame(14, false);
+
         level = game.getCurrentLevel();
 
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
@@ -172,20 +179,21 @@ public class PowerUpTest {
         level.triggerPowerup(powerups.get(0).getName());
         stepTimes(level, 1);
         level.triggerPowerup(powerups.get(0).getName());
-        
+
         assertEquals(2, level.getLevelState().getBall().getAcidBall().getRange());
     }
-    
+
     @Test
     public void testDoubleFloorActivation() {
-        game.setCurrentLevel(15, ALL_LEVELS_UNLOCKED);
+        createGame(15, false);
+
         level = game.getCurrentLevel();
 
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
 
         level.startBall();
         stepTimes(level, 60);
-        
+
         List<PowerUp> powerups = bpuh.getPowerUps();
 
         level.triggerPowerup(powerups.get(0).getName());
@@ -194,24 +202,25 @@ public class PowerUpTest {
         
         assertEquals(initialTime*2, level.getLevelState().getFloor().getTimeVisible());
     }
-    
+
     @Test
     public void testDoubleBrokenPaddleActivation() {
-        game.setCurrentLevel(16, ALL_LEVELS_UNLOCKED);
+        createGame(16, true);
+
         level = game.getCurrentLevel();
 
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
 
         level.startBall();
         stepTimes(level, 60);
-        
+
         List<PowerUp> powerups = bpuh.getPowerUps();
 
         level.triggerPowerup(powerups.get(0).getName());
         int initialTime = level.getPoweruphandler().getPaddlePowerup().getTimeVisable();
         level.triggerPowerup(powerups.get(0).getName());
-        
-        assertEquals(initialTime*2, level.getPoweruphandler().getPaddlePowerup().getTimeVisable());
+
+        assertEquals(initialTime * 2, level.getPoweruphandler().getPaddlePowerup().getTimeVisable());
     }
     
     @Test

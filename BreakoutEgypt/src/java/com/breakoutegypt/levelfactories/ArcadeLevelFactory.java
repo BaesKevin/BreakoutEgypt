@@ -85,7 +85,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.add(new Brick(brickshape2, new Point(9, 9), true, false));
 
         LevelState initialState = new LevelState(balls, paddles, bricks);
-        Level level = new Level(1, game, initialState, 3);
+        Level level = new Level(1, game, initialState);
 
         return level;
     }
@@ -117,7 +117,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.add(brick);
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(1, game, initialState, 3, timeStep);
+        Level level = new Level(1, game, initialState);
 
         return level;
     }
@@ -169,7 +169,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(2).addEffect(new ExplosiveEffect(bricks.get(2), 1));
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(2, game, initialState, 3);
+        Level level = new Level(2, game, initialState);
 
         return level;
     }
@@ -190,7 +190,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         List<Paddle> paddles = new ArrayList<Paddle>();
         paddles.add(paddle);
         LevelState initialState = new LevelState(balls, paddles, bricks);
-        Level level = new Level(currentLevelId, game, initialState, 3);
+        Level level = new Level(currentLevelId, game, initialState);
 
         return level;
     }
@@ -283,7 +283,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         int noOfPowerdowns = 5;
 
         LevelState initialState = new LevelState(balls, paddles, bricks, noOfPowerups, noOfPowerdowns);
-        Level level = new Level(currentLevelId, game, initialState, 3);
+        Level level = new Level(currentLevelId, game, initialState);
 
         return level;
     }
@@ -344,7 +344,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(4).addEffect(new ToggleEffect(toggles));
 
         LevelState initialState = new LevelState(ball, paddle, bricks);
-        Level level = new Level(currentLevelId, game, initialState, 3);
+        Level level = new Level(currentLevelId, game, initialState);
 
         return level;
     }

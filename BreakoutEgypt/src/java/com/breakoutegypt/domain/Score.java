@@ -14,17 +14,19 @@ import javax.json.JsonObjectBuilder;
  * @author BenDB
  */
 public class Score implements Comparable<Score> {
-    
+
     private int level;
     private User user;
     private long score;
-    private String difficulty;    
-    
-    public Score (int level, User user, long score, String difficulty) {   
+    private String difficulty;
+    private int brickScore;
+
+    public Score(int level, User user, long score, String difficulty, int brickScore) {
         this.level = level;
         this.user = user;
         this.score = score;
         this.difficulty = difficulty;
+        this.brickScore = brickScore;
     }
 
     public String getUser() {
@@ -34,7 +36,7 @@ public class Score implements Comparable<Score> {
     public long getScore() {
         return score;
     }
-    
+
     public int getLevel() {
         return level;
     }
@@ -42,6 +44,8 @@ public class Score implements Comparable<Score> {
     public String getDifficulty() {
         return difficulty;
     }
+    
+    public int getBrickScore () { return brickScore; }
 
     @Override
     public int compareTo(Score other) {
@@ -55,10 +59,10 @@ public class Score implements Comparable<Score> {
     }
 
     @Override
-    public String toString() {        
+    public String toString() {
         return "Score{" + "level=" + level + ", user=" + user.getUsername() + ", score=" + score + "}\n";
     }
-    
+
     public JsonObject toJson() {
         JsonObjectBuilder scoreObjectBuilder = Json.createObjectBuilder();
         scoreObjectBuilder.add("username", this.getUser());
@@ -66,5 +70,5 @@ public class Score implements Comparable<Score> {
         scoreObjectBuilder.add("difficulty", this.getDifficulty());
         return scoreObjectBuilder.build();
     }
-    
+
 }

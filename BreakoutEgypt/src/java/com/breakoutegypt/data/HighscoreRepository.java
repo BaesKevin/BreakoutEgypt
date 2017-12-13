@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author BenDB
  */
-public interface HighscoreRepo {
+public interface HighscoreRepository {
     
     public List<Score> getScoresByLevel(int levelID, String diff);
     public void addScore(Score s);

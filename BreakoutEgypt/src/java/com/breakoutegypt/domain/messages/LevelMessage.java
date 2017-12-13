@@ -22,13 +22,15 @@ public class LevelMessage implements Message {
     private final String name;
     private final boolean isLastLevel;
     private final long score;
+    private int brickScore;
     private final LevelMessageType messageType;
 
-    public LevelMessage(String name, boolean isLastLevel, long score, LevelMessageType messageType) {
+    public LevelMessage(String name, boolean isLastLevel, long score, int brickScore, LevelMessageType messageType) {
         this.name = name;
         this.isLastLevel = isLastLevel;
         this.score = score;
         this.messageType = messageType;
+        this.brickScore = brickScore;
     }
     
     @Override
@@ -47,6 +49,7 @@ public class LevelMessage implements Message {
         job.add("name", getName());
         job.add("levelComplete", true);
         job.add("scoreTimer", score);
+        job.add("brickScore", brickScore);
         job.add("isLastLevel", isLastLevel);
         return job;
     }

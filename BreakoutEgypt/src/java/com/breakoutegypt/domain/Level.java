@@ -5,10 +5,10 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
-import com.breakoutegypt.data.StaticDummyHighscoreRepo;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
-import com.breakoutegypt.domain.messages.PowerDownMessage;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.messages.PowerDownMessageType;
 import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
@@ -24,6 +24,7 @@ import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
+import com.breakoutegypt.data.HighscoreRepository;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -52,16 +53,16 @@ public class Level implements BreakoutWorldEventListener {
 
     private BrickScoreCalculator brickScoreCalc;
 
+    private boolean invertedControls;
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
+    public Level(int id, Game game, LevelState initialObjects) {
+        this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
     
-    private boolean invertedControls;
     
-    public Level(int id, Game game, LevelState initialObjects, int lives) {
-        this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
-    }
+  }
 
-    public Level(int id, Game game, LevelState initialState, int lives, float worldTimeStepInMs) {
+    private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
         this.id = id;
         this.game = game;
         this.isLastLevel = isLastLevel;
@@ -69,9 +70,9 @@ public class Level implements BreakoutWorldEventListener {
         this.levelStarted = false;
 
         scoreTimer = new TimeScore();
-        this.brickScoreCalc = new BrickScoreCalculator();
+        this.brickScoreCalc = new BrickScoreCalculator(game.getDifficulty().getPointsPerBlock());
 
-        breakoutWorld = new BreakoutWorld(/*this,*/worldTimeStepInMs);
+        breakoutWorld = new BreakoutWorld(worldTimeStepInMs);
 
         levelState = initialState;
         List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
@@ -87,7 +88,7 @@ public class Level implements BreakoutWorldEventListener {
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
                 bpuh, bpdh);
 
-        this.lives = lives;
+        this.lives = game.getInitialLives();
         this.timer = new Timer();
         runLevelManually = false;
         
@@ -136,7 +137,7 @@ public class Level implements BreakoutWorldEventListener {
             scoreTimer.start();
             List<Ball> balls = levelState.getBalls();
             for (Ball b : balls) {
-                b.setLinearVelocity(0, 150);
+                b.setLinearVelocity(0, game.getDifficulty().getBallspeed());
             }
         }
     }
@@ -194,12 +195,21 @@ public class Level implements BreakoutWorldEventListener {
             setLevelStarted(false);
             levelState.removeBall(ball);
             levelState.resetBall(breakoutWorld);
-            lives--;
+
+            loseLifeBasedOnDifficulty();
         } else {
             levelState.removeBall(ball);
         }
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft();
+    }
+    
+    private void loseLifeBasedOnDifficulty(){
+        Difficulty diff = game.getDifficulty();
+       
+        if(diff.getLives() != Difficulty.INFINITE_LIVES){
+            lives--;
+        }
     }
 
     private int getTargetBricksLeft() {
@@ -258,17 +268,17 @@ public class Level implements BreakoutWorldEventListener {
     @Override
     public void removeBrick(Brick brick) {
         levelState.removeBrick(brick);
-        brickScoreCalc.addPointsToScore(brick);
+        brickScoreCalc.addPointsToScore();
 
         if (allTargetBricksDestroyed()) {
             getScoreTimer().stop();
 
-            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
+            HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), "hard");
-            dummyRepo.addScore(scoreOfPlayer);
-
-            dummyRepo.getScoresByLevel(getId(), "hard");
+            int brickScore = brickScoreCalc.getScore();
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore);
+            highScoreRepo.addScore(scoreOfPlayer);
+            
             initNextLevel();
         }
     }

@@ -13,7 +13,7 @@ let PowerUpModule = (function () {
     }
 
     function requestActivatePowerUp(name) {
-        var gameId = UtilModule.getParameterByName("gameId");
+        let gameId = $("#gameId").val();
         fetch("powerup?gameId=" + gameId + "&powerup=" + name, {method: "post", credentials: "same-origin",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -52,7 +52,7 @@ let PowerUpModule = (function () {
         powerups = powerups.filter(function (powerup) {
             let sameType = powerup.name.replace(/[0-9]/g, "") === name.replace(/[0-9]/g, "");
             let differentType = !sameType;
-            return differentType || ( !powerup.active && sameType );
+            return differentType || (!powerup.active && sameType);
         });
 
     }

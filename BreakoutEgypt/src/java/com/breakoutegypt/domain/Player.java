@@ -6,8 +6,8 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
-import com.breakoutegypt.domain.levelprogression.LevelProgressionManager;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
+import com.breakoutegypt.domain.levelprogression.LevelProgressManager;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,13 +25,13 @@ public class Player implements Serializable{
     private User user;
     private Paddle paddle;
     private PlayerConnection conn;
-    private LevelProgressionManager levelPackProgressions;
+    private LevelProgressManager levelPackProgressions;
     
 //    private Session session;
     
     public Player(User user) {
         this.user = user;
-        this.levelPackProgressions = new LevelProgressionManager();
+        this.levelPackProgressions = new LevelProgressManager();
     }
     
     public User getUser() {
@@ -58,7 +58,7 @@ public class Player implements Serializable{
         this.conn = conn;
     }
     
-    public LevelProgressionManager getProgressions(){
+    public LevelProgressManager getProgressions(){
         return levelPackProgressions;
     }
 

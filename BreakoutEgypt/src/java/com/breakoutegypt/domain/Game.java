@@ -6,49 +6,57 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
-import com.breakoutegypt.domain.levelprogression.LevelProgression;
+import com.breakoutegypt.data.Repositories;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
 
 /**
  *
  * @author kevin
  */
-// levels zullen altijd dezelfde initiele LevelState bevatten, 
-// voorstel: Game maakt een DiffucultyConfiguration obv Difficulty enum en geeft die door aan 
-// LevelFactory die hem dan weer doorgeeft aan Level. 
-// obv dat object kan dan bv. in Level startBall de snelheid van een bal worden uitgelezen, 
-// bij overgang van levels gekeken worden met hoeveel levens een level moet starten, etc...
 public class Game {
 
     private static int ID = 0;
     private int id;
     private Level currentLevel;
     private GameType gameType;
-    
+    private GameDifficulty difficultyType;
+    private Difficulty difficulty;
+
+    private int livesLeftInLastLevel;
+    private boolean isFirstLevel;
+
     private LevelFactory levelFactory;
 
     private SessionManager manager;
+
+    public Game(GameType gameType, GameDifficulty difficulty){
+        this(1, gameType, difficulty);
+    }
     
-    public Game(int numberOfPlayers, int startingLevel, GameType gameType, GameDifficulty difficulty, LevelProgression progression) {
+    public Game(int numberOfPlayers, GameType gameType, GameDifficulty difficultyType) {
         id = ID++;
         this.gameType = gameType;
+        this.difficultyType = difficultyType;
+        this.difficulty = Repositories.getDifficultyRepository().findByName(difficultyType); // TODO CLONE
+
         manager = new SessionManager(numberOfPlayers);
 
         levelFactory = createLevelFactoryForGameType(gameType, difficulty);
-        levelFactory.setCurrentLevel(startingLevel, progression);
-        currentLevel = levelFactory.getCurrentLevel();
-        
+        isFirstLevel = true;
     }
 
-    // hier zou je dan je DiffuciltyConfig aanmaken
-    private LevelFactory createLevelFactoryForGameType(GameType gameType, GameDifficulty difficulty) {
+    private LevelFactory createLevelFactoryForGameType(GameType gameType, Difficulty difficulty) {
         switch (gameType) {
             case ARCADE:
                 return new ArcadeLevelFactory(this);
@@ -65,8 +73,10 @@ public class Game {
     public int getId() {
         return id;
     }
-    
-    public GameType getGameType(){ return gameType; }
+
+    public GameType getGameType() {
+        return gameType;
+    }
 
     public Level getCurrentLevel() {
         return currentLevel;
@@ -82,9 +92,9 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-        player.getProgressions().addNewProgression(this.gameType);
+        player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
         manager.addConnectingPlayer(player);
-        
+
     }
 
     public boolean isPlayerInSessionManager(Player player) {
@@ -141,12 +151,23 @@ public class Game {
         currentLevel.togglePaused();
     }
 
-    // TODO check if last level was reached
+    public void initStartingLevel(int startingLevelId, LevelProgress progress) {
+        if (this.currentLevel == null) {
+            levelFactory.setCurrentLevel(startingLevelId, progress);
+            this.currentLevel = levelFactory.getCurrentLevel();
+        } else {
+            throw new BreakoutException("This game has been initialized. Use initNextLevel or create a new game to go to an arbitrary level.");
+        }
+    }
+
     public void initNextLevel() {
+        livesLeftInLastLevel = currentLevel.getLives();
+        isFirstLevel = false;
+
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {
-            manager.incrementLevelReachedForAllPlayers(gameType);
+            manager.incrementLevelReachedForAllPlayers(gameType, difficultyType);
             currentLevel = levelFactory.getNextLevel();
         }
 
@@ -160,18 +181,27 @@ public class Game {
         return manager.getPlayer(username);
     }
 
-    // TODO validate by keeping track of the player's max reached level
     public Level getLevel() {
         return levelFactory.getCurrentLevel();
     }
-
     
-    public void setCurrentLevel(int levelId, LevelProgression progression) {
-        levelFactory.setCurrentLevel(levelId, progression);
-        this.currentLevel = levelFactory.getCurrentLevel();
+    public int getInitialLives() {
+        if (isFirstLevel || difficulty.isLivesRegenBetweenLevels()) {
+            return difficulty.getLives();
+        } else {
+            return livesLeftInLastLevel;
+        }
     }
 
     public PowerUpMessage triggerPowerup(String powerup) {
         return getCurrentLevel().triggerPowerup(powerup);
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+    
+    public LevelFactory getLevelFactory(){
+        return this.levelFactory;
     }
 }

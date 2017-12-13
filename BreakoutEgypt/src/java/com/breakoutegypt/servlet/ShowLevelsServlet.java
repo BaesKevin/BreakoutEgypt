@@ -5,9 +5,11 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import java.io.IOException;
@@ -27,7 +29,17 @@ public class ShowLevelsServlet extends HttpServlet {
     public static final String TOTAL_LEVELS = "totalLevels";
     public static final String LEVEL_REACHED = "levelReached";
     public static final String GAMETYPE = "gameType";
+    public static final String DIFFICULTY = "difficulty";
 
+    public static final String EASY = "easy";
+    public static final String MEDIUM = "medium";
+    public static final String HARD = "hard";
+    public static final String BRUTAL = "brutal";
+    
+    public static String DIFFICULTIES = "difficulties";
+    
+    public static final GameDifficulty DEFAULT_DIFFICULTY = GameDifficulty.MEDIUM;
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -38,26 +50,26 @@ public class ShowLevelsServlet extends HttpServlet {
             request.getSession().setAttribute("player", player);
         }
 
-        GameType gameType;
         try {
-            gameType = getGameTypeFromRequestOrThrow(request);
+            GameType gameType = getGameTypeFromRequestOrThrow(request);
+            GameDifficulty difficulty = getDifficultyFromRequest(request);
+            
+            int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
+            int totalLevels = new ArcadeLevelFactory(null).getTotalLevels();
+            int defaultLevels = new ArcadeLevelFactory(null).getDefaultOpenLevels();
+
+            if (levelReached < defaultLevels) {
+                levelReached = defaultLevels;
+            }
+
+            request.setAttribute(TOTAL_LEVELS, totalLevels);
+            request.setAttribute(LEVEL_REACHED, levelReached);
+            request.setAttribute(DIFFICULTIES, Repositories.getDifficultyRepository().findAll());
+            
+            request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());
-            return;
         }
-
-        int levelReached = player.getProgressions().getHighestLevelReached(gameType);
-        int totalLevels = new ArcadeLevelFactory(null).getTotalLevels();
-        int defaultLevels = new ArcadeLevelFactory(null).getDefaultOpenLevels();
-
-        if (levelReached < defaultLevels) {
-            levelReached = defaultLevels;
-        }
-
-        request.setAttribute(TOTAL_LEVELS, totalLevels);
-        request.setAttribute(LEVEL_REACHED, levelReached);
-
-        request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
 
     }
 
@@ -67,12 +79,33 @@ public class ShowLevelsServlet extends HttpServlet {
         if (gameType == null) {
             throw new BreakoutException("Unknown gametype");
         }
-        
+
         switch (gameType) {
             case "arcade":
                 return GameType.ARCADE;
             default:
                 throw new BreakoutException("Unknown gametype");
+        }
+    }
+
+    private GameDifficulty getDifficultyFromRequest(HttpServletRequest request) {
+        String difficulty = request.getParameter(DIFFICULTY);
+
+        if (difficulty == null) {
+            return DEFAULT_DIFFICULTY;
+        }
+
+        switch (difficulty) {
+            case EASY:
+                return GameDifficulty.EASY;
+            case MEDIUM:
+                return GameDifficulty.MEDIUM;
+            case HARD:
+                return GameDifficulty.HARD;
+            case BRUTAL:
+                return GameDifficulty.BRUTAL;
+            default:
+                return DEFAULT_DIFFICULTY;
         }
     }
 

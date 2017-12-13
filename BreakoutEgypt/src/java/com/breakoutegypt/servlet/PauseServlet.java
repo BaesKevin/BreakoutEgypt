@@ -27,7 +27,7 @@ public class PauseServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             GameManager gm = new GameManager();
-
+            
             String gameId = request.getParameter("gameid");
             
             try {

@@ -18,11 +18,13 @@ public class BrickScoreCalculator {
     private int hitsWithoutHittingPaddle;
     private final int HITS_TO_INCREASE_MULTIPLIER = 2;
     private final int MAX_MULTIPLIER = 5;
-
-    public BrickScoreCalculator() {
+    private final int pointsPerBlock;
+    
+    public BrickScoreCalculator(int pointsPerBlock) {
         this.score = 0;
         this.multiplier = 1;
         this.hitsWithoutHittingPaddle = 0;
+        this.pointsPerBlock = pointsPerBlock;
     }
 
     public int getScore() {
@@ -62,8 +64,8 @@ public class BrickScoreCalculator {
         this.hitsWithoutHittingPaddle = 0;
     }
 
-    void addPointsToScore(Brick brick) {
-        score += (brick.getPoints() * this.multiplier);
+    void addPointsToScore() {
+        score += (pointsPerBlock * this.multiplier);
         incrHitsWithoutHittingPaddle();
     }
 

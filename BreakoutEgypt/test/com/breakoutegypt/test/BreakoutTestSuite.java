@@ -23,8 +23,9 @@ import org.junit.runners.Suite;
    PowerUpTest.class,
    LevelStateTest.class,
    ScoreTester.class,
-   LevelProgressionTest.class,
-   PowerDownTest.class
+   LevelPackProgressTest.class,
+   PowerDownTest.class,
+   LifeRegenerationTest.class
 })
 
 public class BreakoutTestSuite {
