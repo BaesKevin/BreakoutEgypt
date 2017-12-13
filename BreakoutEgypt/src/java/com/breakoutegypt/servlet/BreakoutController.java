@@ -5,7 +5,6 @@
  */
 package com.breakoutegypt.servlet;
 
-import com.breakoutegypt.data.HighscoreRepo;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -22,6 +21,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.breakoutegypt.data.HighscoreRepository;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 
 /**
  *
@@ -35,7 +36,10 @@ import javax.servlet.http.HttpServletResponse;
     "/register",
     "/highscores"})
 public class BreakoutController extends HttpServlet {
-
+    public static final String DIFFICULTY = "difficulty";
+    public static final String DIFFICULTIES = "difficulties";
+    public static final String LEVEL = "levelId";
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -105,7 +109,7 @@ public class BreakoutController extends HttpServlet {
     }
     
     private GameDifficulty getDifficultyFromRequest(HttpServletRequest request) throws BreakoutException {
-        com.breakoutegypt.domain.levelprogression.GameDifficulty gameDifficulty;
+        GameDifficulty gameDifficulty;
         switch (request.getParameter("difficulty")) {
             case ShowLevelsServlet.EASY:
                 gameDifficulty = GameDifficulty.EASY;
@@ -128,12 +132,22 @@ public class BreakoutController extends HttpServlet {
     private void handleHighscores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String levelId = request.getParameter("gameId");
-
+        String difficulty = request.getParameter(DIFFICULTY);
+        List<Difficulty> difficulties = Repositories.getDifficultyRepository().findAll();
+        
+        if(difficulty == null){
+            difficulty = "medium";
+        }
+        
+        request.setAttribute(DIFFICULTY, difficulty);
+        request.setAttribute(DIFFICULTIES, difficulties);
+        
         if (levelId == null) {
             levelId = "1";
         }
-        HighscoreRepo hr = Repositories.getHighscoreRepository();
-        List<Score> scores = hr.getScoresByLevel(Integer.parseInt(levelId), "hard");
+        
+        HighscoreRepository hr = Repositories.getHighscoreRepository();
+        List<Score> scores = hr.getScoresByLevel(Integer.parseInt(levelId), difficulty); // TODO from querystring
         request.getSession().setAttribute("gameIdentification", levelId);
         request.getSession().setAttribute("scores", scores);
         request.getRequestDispatcher("WEB-INF/pages/highscore.jsp").forward(request, response);

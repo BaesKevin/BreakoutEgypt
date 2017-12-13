@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.effects.FloorPowerUp;
 import com.breakoutegypt.data.StaticDummyHighscoreRepo;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
@@ -21,6 +22,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Timer;
+import com.breakoutegypt.data.HighscoreRepository;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -251,12 +253,12 @@ public class Level implements BreakoutWorldEventListener {
         if (allTargetBricksDestroyed()) {
             getScoreTimer().stop();
 
-            StaticDummyHighscoreRepo dummyRepo = new StaticDummyHighscoreRepo();
+            HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), "hard");
-            dummyRepo.addScore(scoreOfPlayer);
-
-            dummyRepo.getScoresByLevel(getId(), "hard");
+            int brickScore = brickScoreCalc.getScore();
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore);
+            highScoreRepo.addScore(scoreOfPlayer);
+            
             initNextLevel();
         }
     }

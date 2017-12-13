@@ -117,7 +117,7 @@ let ArcadeWebSocket = (function () {
         level.levelComplete = true;
 
         let time = UtilModule.scoreTimerFormatter(json.scoreTimer);
-        ModalModule.modalLevelCompleted(level.level, time);
+        ModalModule.modalLevelCompleted(level.level, time, json.brickScore);
     }
 
     function handleLevelUpdateError(json) {

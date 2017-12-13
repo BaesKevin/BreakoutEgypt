@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author BenDB
  */
-public class StaticDummyHighscoreRepo implements HighscoreRepo {
+public class StaticDummyHighscoreRepo implements HighscoreRepository {
     
     private final List<Score> scores;
     
@@ -23,21 +23,21 @@ public class StaticDummyHighscoreRepo implements HighscoreRepo {
         
         scores = new ArrayList();
         
-        User dummy = new User("Ben");
+//        User dummy = new User("Ben");
         
-        scores.add(new Score(1, dummy, 2500, "hard"));
-        scores.add(new Score(1, dummy, 4548, "hard"));
-        scores.add(new Score(1, dummy, 2580, "hard"));
-        scores.add(new Score(2, dummy, 48648, "hard"));
-        scores.add(new Score(1, dummy, 2500, "hard"));
-        scores.add(new Score(1, dummy, 25448, "hard"));
-        scores.add(new Score(2, dummy, 25486, "hard"));
-        scores.add(new Score(1, dummy, 12345, "hard"));
-        scores.add(new Score(1, dummy, 486, "hard"));
-        scores.add(new Score(2, dummy, 2560, "hard"));
-        scores.add(new Score(1, dummy, 46, "hard"));
-        scores.add(new Score(2, dummy, 8686, "hard"));
-        scores.add(new Score(2, dummy, 486, "hard"));
+//        scores.add(new Score(1, dummy, 2500, "hard"));
+//        scores.add(new Score(1, dummy, 4548, "hard"));
+//        scores.add(new Score(1, dummy, 2580, "hard"));
+//        scores.add(new Score(2, dummy, 48648, "hard"));
+//        scores.add(new Score(1, dummy, 2500, "hard"));
+//        scores.add(new Score(1, dummy, 25448, "hard"));
+//        scores.add(new Score(2, dummy, 25486, "hard"));
+//        scores.add(new Score(1, dummy, 12345, "hard"));
+//        scores.add(new Score(1, dummy, 486, "hard"));
+//        scores.add(new Score(2, dummy, 2560, "hard"));
+//        scores.add(new Score(1, dummy, 46, "hard"));
+//        scores.add(new Score(2, dummy, 8686, "hard"));
+//        scores.add(new Score(2, dummy, 486, "hard"));
     }
     
     @Override

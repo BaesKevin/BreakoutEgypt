@@ -27,13 +27,37 @@
         <main>
             <form action="highscores" method="POST">
                 
+                <label>Difficulty</label>
+                <select name="difficulty">
+                    <c:forEach items="${difficulties}" var="difficultyFromRepo">
+                        <c:choose>
+                            <c:when test="${difficultyFromRepo.getName().equals(difficulty)}">
+                                <option selected="true" value="${difficultyFromRepo.name}">${difficultyFromRepo.name}</option>
+                            </c:when>
+                            <c:otherwise>
+                                <option value="${difficultyFromRepo.name}">${difficultyFromRepo.name}</option>
+                            </c:otherwise>
+                        </c:choose>
+                        
+                    </c:forEach>
+                </select>
+                
                 <label for="gameId">level:</label> <input type="number" value="<c:out value="${gameIdentification}"/>" min="1" max="100" name="gameId" id="gameId"/>
                 <input type="submit" value="show">
             </form>
             <div id="highscoreTablePlaceholder">
-            <table><tr><th>Username</th><th>Score</th></tr>
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Timescore</th>
+                    <th>Brickscore</th>
+                </tr>
                 <c:forEach var="score" items="${scores}">
-                    <tr><td><c:out value="${score.getUser()}"/></td><td><c:out value="${score.getScore()}"/></td></tr>
+                    <tr>
+                        <td><c:out value="${score.getUser()}"/></td>
+                        <td><c:out value="${score.getScore()}"/></td>
+                        <td><c:out value="${score.brickScore}"/></td>
+                    </tr>+
                 </c:forEach>
             </table>
             </div>

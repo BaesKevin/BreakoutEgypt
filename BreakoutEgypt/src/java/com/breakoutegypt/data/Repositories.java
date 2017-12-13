@@ -14,10 +14,10 @@ import java.util.List;
  */
 public class Repositories {
     
-    public static final HighscoreRepo highscoreRepository = new StaticDummyHighscoreRepo();
+    private static final HighscoreRepository highscoreRepository = new StaticDummyHighscoreRepo();
     private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
     
-    public static HighscoreRepo getHighscoreRepository() {
+    public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
     }
 
