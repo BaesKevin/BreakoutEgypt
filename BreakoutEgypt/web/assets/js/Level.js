@@ -156,7 +156,6 @@ const Level = (function () {
             if (brickToShow) {
                 brickToShow.show = true;
             }
-            console.log("show brick");
         }
 
         function updateBalldata(json, self) {

@@ -60,27 +60,31 @@ let ArcadeWebSocket = (function () {
                 if (json.lifeaction) {
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();
-                    } else if (json.lifeaction === 'playing') {
+                    }
+                    if (json.lifeaction === 'playing') {
                         handleLivesLeft(json);
                     }
-                } else if (json.ballaction) {
+                }
+                if (json.ballaction) {
                     if (json.ballaction === 'remove') {
                         level.removeBall(json);
-                    } else if (json.ballaction === 'add') {
+                    }
+                    if (json.ballaction === 'add') {
                         level.addBall(json);
                     }
-                } else if (json.levelComplete) {
+                }
+                if (json.levelComplete) {
                     handleLevelComplete(json);
                 } else {
-                    if (json.leveldata.length > 1) {
-                        console.log(json)
+                    if (json.leveldata) {
+                        if (json.leveldata.powerupactions) {
+                            PowerUpModule.handlePowerUpMessage(json.leveldata.powerupactions)
+                        }
+                        if (json.leveldata.powerdownactions) {
+                            PowerDownModule.handlePowerDown(json.leveldata.powerdownactions);
+                        }
+                        level.updateLevelData(json);
                     }
-                    if (json.leveldata.powerupactions) {
-                        PowerUpModule.handlePowerUpMessage(json.leveldata.powerupactions)
-                    } else if (json.leveldata.powerdownactions) {
-                        PowerDownModule.handlePowerDown(json.leveldata.powerdownactions);
-                    }
-                    level.updateLevelData(json);
                 }
             } else {
                 handleLevelUpdateError(json);
@@ -125,7 +129,6 @@ let ArcadeWebSocket = (function () {
     }
 
     function handleLevelUpdateError(json) {
-        console.log(json);
         if (json.error) {
             console.log("%c" + json.error, "background-color: red; color: white;padding:5px;");
             ModalModule.modalErrorMessage(json.error);

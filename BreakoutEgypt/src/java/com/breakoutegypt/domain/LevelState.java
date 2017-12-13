@@ -88,12 +88,6 @@ public class LevelState {
         if (noOfPowerups > 0 || noOfPowerdowns > 0) {
             generatePowerUpsAndDowns(bricks, paddles, noOfPowerups, noOfPowerdowns);
         }
-        
-        for (Brick b : bricks) {
-            if (b.hasPowerDown()) {
-                System.out.println(b.toJson().build());
-            }
-        }
     }
 
     public void addPaddle(Paddle p) {

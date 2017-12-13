@@ -17,7 +17,6 @@ const PowerDownModule = (function () {
     }
     
     function handlePowerdownMessage(json) {
-        console.log(json)
         switch (json.powerdownaction) {
             case powerdownnames.FLOOD:
                 addBalls(json.powerdown.decoyballs);

@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     level.xscaling = brickCanvas.width / 300;
     level.yscaling = brickCanvas.height / 300;
-    console.log("xscaling: " + level.xscaling + " yscaling: " + level.yscaling);
 
     mouse = {
         x: 0,
