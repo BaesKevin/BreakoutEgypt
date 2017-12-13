@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.messages.PowerDownMessage;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.messages.PowerDownMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -22,21 +23,21 @@ import java.util.Random;
  */
 public class BreakoutPowerDownHandler implements PowerDownHandler {
 
-    private final List<PowerDown> powerdowns;
+    private InvertedControlsPowerDown invertedControls;
     private LevelState levelState;
     private BreakoutWorld breakoutWorld;
     private Level level;
-    
+
     public BreakoutPowerDownHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
         this.level = level;
         this.levelState = levelState;
         this.breakoutWorld = breakoutWorld;
-        this.powerdowns = new ArrayList();
+        this.invertedControls = null;
     }
-    
+
     @Override
     public void addPowerDown(PowerDown down) {
-        powerdowns.add(down);
+//        powerdowns.add(down);
     }
 
     @Override
@@ -59,5 +60,37 @@ public class BreakoutPowerDownHandler implements PowerDownHandler {
         projectile.startProjectile(target.getPosition().x, target.getPosition().y, target.getShape().getWidth());
         return new PowerDownMessage("TODO", projectile, PowerDownMessageType.PROJECTILE);
     }
-    
+
+    @Override
+    public PowerDownMessage handle(InvertedControlsPowerDown invertedControl) {
+        if (this.invertedControls == null) {
+            this.invertedControls = invertedControl;
+            level.invertControls();
+            return new PowerDownMessage(invertedControl.getName(), invertedControl, PowerDownMessageType.INVERTEDCONTROLS);
+        } else {
+            this.invertedControls.increaseTimeActive(invertedControl.getTimeActive());
+        }
+        return new PowerDownMessage(invertedControl.getName(), invertedControl, PowerDownMessageType.NULLMESSAGE);
+    }
+
+    @Override
+    public void handle(PowerDown pd) {
+        Message m = pd.accept(this);
+        breakoutWorld.getMessageRepo().addPowerdownMessages(m);
+    }
+
+    @Override
+    public void removeInvertedControlIfTimedOut() {
+        if (invertedControls != null) {
+            if (invertedControls.isActive()) {
+                invertedControls.decreaseTimeActive();
+            } else {
+                level.invertControls();
+                breakoutWorld.getMessageRepo()
+                        .addPowerdownMessages(new PowerDownMessage(invertedControls.getName(), invertedControls, PowerDownMessageType.REMOVEINVERTEDCONTROLS));
+                invertedControls = null;
+            }
+        }
+    }
+
 }

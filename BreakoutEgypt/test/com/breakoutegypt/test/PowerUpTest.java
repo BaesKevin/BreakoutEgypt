@@ -189,10 +189,10 @@ public class PowerUpTest {
         List<PowerUp> powerups = bpuh.getPowerUps();
 
         level.triggerPowerup(powerups.get(0).getName());
-        int initialTime = level.getLevelState().getFloor().getTimeVisable();
+        int initialTime = level.getLevelState().getFloor().getTimeVisible();
         level.triggerPowerup(powerups.get(0).getName());
         
-        assertEquals(initialTime*2, level.getLevelState().getFloor().getTimeVisable());
+        assertEquals(initialTime*2, level.getLevelState().getFloor().getTimeVisible());
     }
     
     @Test

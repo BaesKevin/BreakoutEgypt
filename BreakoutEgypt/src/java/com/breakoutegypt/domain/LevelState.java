@@ -13,6 +13,7 @@ import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
+import com.breakoutegypt.domain.powers.InvertedControlsPowerDown;
 import com.breakoutegypt.domain.powers.PowerDownType;
 import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.powers.ProjectilePowerDown;
@@ -86,7 +87,7 @@ public class LevelState {
         }
 
         if (noOfPowerups > 0 || noOfPowerdowns > 0) {
-            generatePowerUpsAndDowns(bricks, paddles, noOfPowerups, noOfPowerdowns);
+            generatePowerUpsAndDowns(bricks, paddles, 5, 3);
         }
     }
 
@@ -288,14 +289,14 @@ public class LevelState {
                 regularBricks.add(b);
             }
         }
-
+        
         boolean reduceDowns = true;
-        while ((noOfPowerups + noOfPowerdowns) > regularBricks.size()) {
+        while ((noOfPowerups + noOfPowerdowns) > regularBricks.size()-1) {
             if (reduceDowns) {
-                noOfPowerdowns--;
+                if (noOfPowerdowns > 0) noOfPowerdowns--;
                 reduceDowns = false;
             } else {
-                noOfPowerups--;
+                if (noOfPowerups > 0) noOfPowerups--;
                 reduceDowns = true;
             }
         }
@@ -343,12 +344,13 @@ public class LevelState {
 
         switch (powerupNr) {
             case 1:
-                b.setPowerdown(new FloodPowerDown(startingBall, 3));
+                b.setPowerdown(new FloodPowerDown(startingBall, 3, identifier));
                 break;
             case 2:
                 b.setPowerdown(createProjectilePowerDown(b, identifier));
                 break;
-            default:
+            case 3:
+                b.setPowerdown(new InvertedControlsPowerDown(6000));
                 break;
         }
     }
@@ -368,8 +370,6 @@ public class LevelState {
                 break;
             case 3:
                 b.setPowerUp(new AcidBallPowerUp("acidball" + identifier));
-                break;
-            default:
                 break;
         }
     }

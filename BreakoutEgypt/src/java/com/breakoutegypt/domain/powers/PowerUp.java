@@ -22,4 +22,6 @@ public interface PowerUp {
     public String getName();
     
     public PowerUpMessageType getType();
+    
+    
 }

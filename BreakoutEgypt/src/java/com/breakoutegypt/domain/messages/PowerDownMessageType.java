@@ -10,5 +10,6 @@ package com.breakoutegypt.domain.messages;
  * @author BenDB
  */
 public enum PowerDownMessageType implements MessageType {
-    FLOOD, PROJECTILE, PROJECTILEPOSITION, REMOVEPROJECTILE
+    FLOOD, PROJECTILE, PROJECTILEPOSITION, REMOVEPROJECTILE, 
+    INVERTEDCONTROLS, REMOVEINVERTEDCONTROLS, NULLMESSAGE
 }

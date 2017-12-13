@@ -28,8 +28,10 @@ public class FloodPowerDown implements PowerDown {
     private final List<Ball> balls;
     private final Ball originalBall;
     private final int decoyBallSpeed = 150;
+    private final String name;
 
-    public FloodPowerDown(Ball originalBall, int noOfBalls) {
+    public FloodPowerDown(Ball originalBall, int noOfBalls, int identifier) {
+        this.name = "flood" + identifier;
         this.noOfBalls = noOfBalls;
         this.balls = new ArrayList();
         this.originalBall = originalBall;
@@ -40,7 +42,7 @@ public class FloodPowerDown implements PowerDown {
         float y = originalBall.getPosition().y;
         int width = originalBall.getShape().getWidth();
         for (int i = 0; i < noOfBalls; i++) {
-            ShapeDimension s = new ShapeDimension("decoy" + Math.ceil(x+i*x*x/y), x, y, width, width);
+            ShapeDimension s = new ShapeDimension(getName() + i, x, y, width, width);
             Ball b = new Ball(s, true);
             balls.add(b);
         }
@@ -70,7 +72,7 @@ public class FloodPowerDown implements PowerDown {
 
     @Override
     public String getName() {
-        return "TODO";
+        return name ;
     }
 
     @Override

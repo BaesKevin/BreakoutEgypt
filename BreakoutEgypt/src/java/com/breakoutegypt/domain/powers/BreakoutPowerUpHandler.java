@@ -72,16 +72,16 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
 
         if (floorInLevel == null) {
             this.floorPowerup = floorPowerup;
-            floorPowerup.setIsVisable(true);
+            floorPowerup.setIsVisible(true);
 
             levelState.addFloor(floorPowerup);
             breakoutWorld.spawn(floorPowerup);
             return new PowerUpMessage("name", floorPowerup, PowerUpMessageType.ACTIVATEFLOOR);
         } else {
-            floorInLevel.addTime(floorPowerup.getTimeVisable());
+            floorInLevel.addTime(floorPowerup.getTimeVisible());
         }
         powerups.remove(floorPowerup);
-        return new PowerUpMessage("brokenPaddle", floorPowerup, PowerUpMessageType.LEVELEDUP);
+        return new PowerUpMessage("brokenPaddle", floorPowerup, PowerUpMessageType.NULLMESSAGE);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         } else {
             this.paddlePowerup.addTime(bppu.getTimeVisable());
         }
-        return new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.LEVELEDUP);
+        return new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.NULLMESSAGE);
     }
 
     @Override
@@ -120,9 +120,9 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     }
 
     private void removeFloorIfTimedOut(ServerClientMessageRepository repo) {
-        int timeLeft = floorPowerup.getTimeVisable();
+        int timeLeft = floorPowerup.getTimeVisible();
         if (timeLeft > 0) {
-            floorPowerup.setTimeVisable(timeLeft - 1);
+            floorPowerup.setTimeVisible(timeLeft - 1);
         } else {
             breakoutWorld.deSpawn(floorPowerup.getBody());
             repo.addPowerupMessages(new PowerUpMessage(floorPowerup.getName(), floorPowerup, PowerUpMessageType.REMOVEFLOOR));
@@ -158,7 +158,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         PowerUpMessage msg = new PowerUpMessage(abpu.getName(), b.getAcidBall(), PowerUpMessageType.ADDACIDBALL);
         if (b.getAcidBall() != null) {
             b.getAcidBall().addRange(abpu.getRange());
-            msg = new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.LEVELEDUP);
+            msg = new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.NULLMESSAGE);
         } else {
             b.setAcidballPowerup(abpu);
         }

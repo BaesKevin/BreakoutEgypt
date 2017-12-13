@@ -1,8 +1,15 @@
 .container-fluid {
+    height: 100vh;
+    display: flex;
+    align-items: center;
     background-image: url("../media/sun_god_ra_l.png"), url("../media/sun_god_ra_r.png");
     background-repeat: no-repeat;
     background-position: top left, top right;
     background-size: contain;
+}
+
+.row {
+    width: 100%;
 }
 
 #level, #pause, .quit {

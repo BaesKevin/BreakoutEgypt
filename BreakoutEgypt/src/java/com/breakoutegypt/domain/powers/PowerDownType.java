@@ -5,10 +5,12 @@
  */
 package com.breakoutegypt.domain.powers;
 
+import com.breakoutegypt.domain.messages.PowerDownMessageType;
+
 /**
  *
  * @author BenDB
  */
 public enum PowerDownType {
-    FLOOD, PROJECTILE
+    FLOOD, PROJECTILE, INVERTEDCONTROLS
 }

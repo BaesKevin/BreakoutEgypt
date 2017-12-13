@@ -73,7 +73,7 @@ let ArcadeWebSocket = (function () {
                         level.addBall(json);
                     }
                 }
-                if (json.levelComplete) {
+                if (json.levelComplete && !level.levelComplete) {
                     handleLevelComplete(json);
                 } else {
                     if (json.leveldata) {

@@ -86,6 +86,7 @@ public class BreakoutWorld implements ContactHandler {
         contacts = new ArrayList();
 
         powerupHandler.removePowerupsIfTimedOut();
+        powerdownHandler.removeInvertedControlIfTimedOut();
     }
 
     public void initContactListener(EffectHandler eventHandler, PowerUpHandler powerupHandler, PowerDownHandler powerdownHandler) {
@@ -171,10 +172,10 @@ public class BreakoutWorld implements ContactHandler {
             if (brick.hasPowerUp()) {
                 PowerUp pu = brick.getPowerUp();
                 powerupHandler.addPowerUp(pu);
-            } else if (brick.hasPowerDown()) {
+            } 
+            if (brick.hasPowerDown()) {
                 PowerDown pd = brick.getPowerDown();
-                PowerDownMessage msg = pd.accept(powerdownHandler);
-                messageRepo.addPowerdownMessages(msg);
+                powerdownHandler.handle(pd);
             }
 
             worldEventListener.removeBrick(brick);

@@ -67,7 +67,7 @@ public class BodyConfigurationFactory {
     public BodyConfiguration createDomePaddleConfig(ShapeDimension s) {
         long radius = s.getWidth() / 2;
 
-        BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY() + s.getHeight()));
+        BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY()));
 
         // Circles are drawn from the center of the shape
         CircleShape newDomePaddle = new CircleShape();

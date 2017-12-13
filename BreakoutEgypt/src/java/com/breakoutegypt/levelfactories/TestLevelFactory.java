@@ -186,7 +186,7 @@ public class TestLevelFactory extends LevelFactory {
         balls.add(b);
 
         Brick powerdownBrick = new Brick(brickshape1, new Point());
-        powerdownBrick.setPowerdown(new FloodPowerDown(b, 5));
+        powerdownBrick.setPowerdown(new FloodPowerDown(b, 5, 15));
 
         bricks.add(powerdownBrick);
         bricks.add(new Brick(brickshape2, new Point(9, 9), true, false));

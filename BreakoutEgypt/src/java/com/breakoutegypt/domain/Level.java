@@ -54,7 +54,9 @@ public class Level implements BreakoutWorldEventListener {
 
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
-
+    
+    private boolean invertedControls;
+    
     public Level(int id, Game game, LevelState initialObjects, int lives) {
         this(id, game, initialObjects, lives, BreakoutWorld.TIMESTEP_DEFAULT);
     }
@@ -88,6 +90,17 @@ public class Level implements BreakoutWorldEventListener {
         this.lives = lives;
         this.timer = new Timer();
         runLevelManually = false;
+        
+        // TODO set to false when done with implementing invertedControls
+        this.invertedControls = false;
+    }
+
+    public boolean isInvertedControls() {
+        return invertedControls;
+    }
+
+    public void invertControls() {
+        this.invertedControls = !this.invertedControls;
     }
 
     public TimeScore getScoreTimer() {
@@ -130,7 +143,7 @@ public class Level implements BreakoutWorldEventListener {
 
     // x coordinate is the center of the most left paddle
     public void movePaddle(Paddle paddle, int firstPaddleCenter, int y) {
-
+        
         List<Paddle> paddles = levelState.getPaddles();
         int totalWidth = levelState.calculatePaddleWidthWithGaps();
         int paddleWidth = paddles.get(0).getShape().getWidth();
@@ -138,6 +151,10 @@ public class Level implements BreakoutWorldEventListener {
         int min = paddleWidth / 2;
         int max = 300 - totalWidth + (paddleWidth / 2);
 
+        if (invertedControls) {
+            firstPaddleCenter = 300 - firstPaddleCenter;
+        }
+        
         float paddleCenter = firstPaddleCenter;
         if (paddleCenter < min) {
             paddleCenter = min;

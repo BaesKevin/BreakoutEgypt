@@ -15,4 +15,7 @@ public interface PowerDownHandler {
     void addPowerDown(PowerDown down);
     PowerDownMessage handle(FloodPowerDown flood);
     PowerDownMessage handle(ProjectilePowerDown projectile);
+    PowerDownMessage handle(InvertedControlsPowerDown invertedControl);
+    void handle(PowerDown pd);
+    void removeInvertedControlIfTimedOut();
 }

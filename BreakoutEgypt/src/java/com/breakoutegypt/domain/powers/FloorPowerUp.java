@@ -21,37 +21,37 @@ import javax.json.JsonObjectBuilder;
  */
 public class FloorPowerUp extends RegularBody implements PowerUp {
 
-    private boolean isVisable;
-    private int timeVisable = 1800; //TODO variable time in seconds (not steps)
+    private boolean isVisible;
+    private int timeVisible = 1800; //TODO variable time in seconds (not steps)
     private int startTime;
     private String name;
 
     public FloorPowerUp(ShapeDimension s) {
         super(s);
-        isVisable = false;
-        startTime = timeVisable;
+        isVisible = false;
+        startTime = timeVisible;
         BodyConfiguration floorConfig = new BodyConfigurationFactory().createWallConfig(s, false);
         this.setBox2dConfig(floorConfig);
     }
 
     public boolean isVisable() {
-        return isVisable;
+        return isVisible;
     }
 
-    public void setIsVisable(boolean isVisable) {
-        this.isVisable = isVisable;
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
-    public void setTimeVisable(int time) {
-        this.timeVisable = time;
+    public void setTimeVisible(int time) {
+        this.timeVisible = time;
     }
 
-    public int getTimeVisable() {
-        return timeVisable;
+    public int getTimeVisible() {
+        return timeVisible;
     }
     
     public void resetTime() {
-        timeVisable = startTime;
+        timeVisible = startTime;
     }
 
     @Override
@@ -82,6 +82,6 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     }
 
     void addTime(int othersTimeVisable) {
-        this.timeVisable += othersTimeVisable;
+        this.timeVisible += othersTimeVisable;
     }
 }

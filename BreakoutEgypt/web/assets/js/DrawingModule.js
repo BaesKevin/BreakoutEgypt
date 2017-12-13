@@ -145,6 +145,10 @@ let DrawingModule = (function () {
         let xOfFirstPaddle = mouse.x - widthOfPaddlesWithGaps / 2;
         let canvasWidth = movingPartsCanvas.width;
         let maxPaddleX = canvasWidth - widthOfPaddlesWithGaps;
+        
+        if (level.invertedcontrols) {
+            xOfFirstPaddle = canvasWidth - xOfFirstPaddle - widthOfPaddlesWithGaps;
+        }
 
         if (xOfFirstPaddle <= 0) {
             xOfFirstPaddle = 0;
@@ -204,10 +208,7 @@ let DrawingModule = (function () {
             height: brickCanvas.height
         };
     }
-
-
-
-
+    
     function resizeCanvasses(width, height) {
         brickCanvas.width = width;
         brickCanvas.height = height;

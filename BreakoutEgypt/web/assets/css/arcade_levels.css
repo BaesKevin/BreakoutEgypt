@@ -51,15 +51,23 @@ ul#levels {
 }
 
 ul#levels li {
+    list-style-type: none;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+ul#levels li a{
+    display: block;
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4f0000;
     line-height: 80px;
     text-align: center;
-    list-style-type: none;
     width: 150px;
     overflow: hidden;
     height: 80px;
     border: 1px solid #4f0000;
-
-    margin-right: 20px;
     padding: 0px 10px;
     background-color: #fffbbf;
     border-radius: 5px 0px;
@@ -69,12 +77,5 @@ ul#levels li {
 ul#levels li.locked{
     background-color: #824700;
     color: white;
-}
-
-ul#levels li a{
-    text-decoration: none;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #4f0000;
 }
 

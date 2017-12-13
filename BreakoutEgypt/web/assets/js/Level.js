@@ -14,6 +14,7 @@ const Level = (function () {
         this.powerups = [];
         this.gap = 0;
         this.projectiles = [];
+        this.invertedcontrols = false;
     };
 
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
@@ -68,11 +69,16 @@ const Level = (function () {
 
     Level.prototype.sendClientLevelState = function () {
         if (!this.levelComplete && !this.gameOver) {
-
-            ArcadeWebSocket.sendOverSocket(JSON.stringify({
+            
+            let positionToSend = {
                 x: ScalingModule.scaleXForServer(this.mypaddle[0].x) + ScalingModule.scaleXForServer(this.mypaddle[0].width) / 2,
                 y: ScalingModule.scaleYForServer(this.mypaddle[0].y)
-            }));
+            }
+            
+            if (level.invertedcontrols) {
+                positionToSend.x = 300 - positionToSend.x;
+            }
+            ArcadeWebSocket.sendOverSocket(JSON.stringify(positionToSend));
 
         }
     };
@@ -96,7 +102,6 @@ const Level = (function () {
         if (json.leveldata.ballpositions) {
             UpdateLevelDataHelper.updateBalldata(json.leveldata.ballpositions, self);
         }
-
 
         if (json.leveldata.brickactions) {
 
@@ -173,7 +178,7 @@ const Level = (function () {
 
         function addBall(json, self) {
             self.balls.push(ScalingModule.scaleObject({name: json.name, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2},
-                            ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
+                    ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
         }
 
 
