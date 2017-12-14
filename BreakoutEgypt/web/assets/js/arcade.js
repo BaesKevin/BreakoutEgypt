@@ -22,11 +22,14 @@ var quitGame = function () {
 
 var pauseGame = function () {
     var gameId = $("#gameId").val();
-    $.ajax({
-        url: "pause?gameid=" + gameId
-    }).fail(function (err) {
-        console.log(err);
-    })
+    fetch("pause?gameid=" + gameId)
+            .then(function (response) {
+                if (!response.ok)
+                    console.log(err);
+            })
+            .catch(function () {
+                console.log(err);
+            })
 };
 
 var redirectToMainMenu = function (e) {
@@ -37,7 +40,7 @@ var redirectToMainMenu = function (e) {
 
 
 $(document).ready(function () {
-    
+
     $(".quit").on("click", ModalModule.modalQuit);
     $("#modalPlaceholder").on("click", "#quit", quitGame);
     $("#pause").on("click", pauseGame);

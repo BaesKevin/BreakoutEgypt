@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
@@ -13,6 +14,8 @@ import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.effects.ToggleEffect;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
@@ -36,6 +39,7 @@ public class TestLevelFactory extends LevelFactory {
 
     public static final int DEFAULT_OPEN_LEVELS = 500;
     public final int totalLevels = 1000;
+    private Difficulty difficulty = Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY);
 
     public TestLevelFactory(Game game) {
         super(game, 1000, DEFAULT_OPEN_LEVELS);
@@ -100,8 +104,6 @@ public class TestLevelFactory extends LevelFactory {
             case 17:
                 currentLevel = getOneTargetBrickTest();
                 break;
-//                currentLevel = getLevelWithPowerDownAndExplosive();
-//                break;
             case 18:
                 currentLevel = getLevelWithFloodPowerDown();
                 break;
@@ -225,9 +227,9 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(new Brick(brickshape3, new Point(1, 0)));
         bricks.add(new Brick(brickshape4, new Point(9, 9), true, false));
 
-        bricks.get(0).setPowerUp(new BrokenPaddlePowerUp(paddle, 1));
+        bricks.get(0).setPowerUp(new BrokenPaddlePowerUp(paddle, 1, difficulty.getPowerupTime()));
         bricks.get(1).addEffect(new ExplosiveEffect(bricks.get(1), 1));
-        bricks.get(2).setPowerUp(new BrokenPaddlePowerUp(paddle, 2));
+        bricks.get(2).setPowerUp(new BrokenPaddlePowerUp(paddle, 2, difficulty.getPowerupTime()));
 
         LevelState initialState = new LevelState(balls, paddles, bricks);
         Level level = new Level(1, game, initialState);
@@ -254,9 +256,9 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(new Brick(brickshape3, new Point(1, 0)));
         bricks.add(new Brick(brickshape4, new Point(9, 9), true, false));
 
-        bricks.get(0).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 1, 0, 290, 300, 3)));
+        bricks.get(0).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 1, 0, 290, 300, 3), difficulty.getPowerupTime()));
         bricks.get(1).addEffect(new ExplosiveEffect(bricks.get(1), 1));
-        bricks.get(2).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 2, 0, 290, 300, 3)));
+        bricks.get(2).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 2, 0, 290, 300, 3), difficulty.getPowerupTime()));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
         Level level = new Level(2, game, initialState);
@@ -471,7 +473,7 @@ public class TestLevelFactory extends LevelFactory {
         ShapeDimension basePaddleShape = new ShapeDimension("paddle", 70, 250, 100, 4);
         Paddle basePaddle = new Paddle(basePaddleShape);
 
-        BrokenPaddlePowerUp bp = new BrokenPaddlePowerUp(basePaddle, 0);
+        BrokenPaddlePowerUp bp = new BrokenPaddlePowerUp(basePaddle, 0, difficulty.getPowerupTime());
         List<Paddle> brokenPaddle = bp.getBrokenPaddle();
 
         ShapeDimension ballShape = new ShapeDimension("ball", brokenPaddle.get(0).getShape().getPosX(), 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
@@ -512,7 +514,7 @@ public class TestLevelFactory extends LevelFactory {
         List<Brick> bricks = new ArrayList();
         bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 100, 20, 10), new Point(0, 1), false, true));
         bricks.add(new Brick(new ShapeDimension("targetbrick", 150, 100, 20, 10), new Point(0, 1), true, true));
-        bricks.get(0).setPowerUp(new FloorPowerUp(floorShape));
+        bricks.get(0).setPowerUp(new FloorPowerUp(floorShape, difficulty.getPowerupTime()));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
 
@@ -531,7 +533,7 @@ public class TestLevelFactory extends LevelFactory {
         List<Brick> bricks = new ArrayList();
         bricks.add(new Brick(new ShapeDimension("regularbrick", 100, 100, 20, 10), new Point(0, 1)));
         bricks.add(new Brick(new ShapeDimension("explosivebrick", 70, 100, 20, 10), new Point(1, 1)));
-        bricks.get(0).setPowerUp(new FloorPowerUp(floorShape));
+        bricks.get(0).setPowerUp(new FloorPowerUp(floorShape, difficulty.getPowerupTime()));
         bricks.get(1).addEffect(new ExplosiveEffect(bricks.get(1), 1));
         bricks.get(1).setType(BrickType.EXPLOSIVE);
 
@@ -557,7 +559,7 @@ public class TestLevelFactory extends LevelFactory {
         List<Brick> bricks = new ArrayList();
         bricks.add(new Brick(new ShapeDimension("regularbrick", 70, 150, 20, 10), new Point(0, 1)));
         bricks.add(new Brick(new ShapeDimension("regularbrick2", 1, 1, 1, 1), new Point(1, 1), true, true));
-        bricks.get(0).setPowerUp(new BrokenPaddlePowerUp(basePaddle, 1));
+        bricks.get(0).setPowerUp(new BrokenPaddlePowerUp(basePaddle, 1, difficulty.getPowerupTime()));
         bricks.get(1).setTarget(true);
 
         List<Paddle> paddles = new ArrayList();

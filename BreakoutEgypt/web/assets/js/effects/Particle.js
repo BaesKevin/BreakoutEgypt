@@ -8,7 +8,7 @@ let Particle = function (x, y, speed, angle) {
     this.velocity.setAngle(angle);
     this.position = vector.create(x, y);
     this.opacity = 1;
-    this.isVisable = true;
+    this.isVisible = true;
 };
 
 Particle.prototype.update = function () {

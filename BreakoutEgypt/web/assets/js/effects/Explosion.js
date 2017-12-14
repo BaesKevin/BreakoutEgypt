@@ -17,7 +17,7 @@ let Explosion = (function () {
     Explosion.prototype.explode = function () {
         let noOfParticlesLeft = 0;
         for (let i = 0; i < this.noOfParticles; i++) {
-            if (this.particles[i].isVisable) {
+            if (this.particles[i].isVisible) {
                 this.particles[i].update();
                 this.context.beginPath();
                 this.context.fillStyle = "rgba(240, " + this.green + ",14, " + this.particles[i].opacity + ")";
@@ -25,7 +25,7 @@ let Explosion = (function () {
                 this.context.fill();
                 this.particles[i].setOpacity(this.particles[i].opacity - opacityStep);
                 if (this.particles[i].opacity <= 0) {
-                    this.particles[i].isVisable = false;
+                    this.particles[i].isVisible = false;
                 }
                 noOfParticlesLeft++;
             }

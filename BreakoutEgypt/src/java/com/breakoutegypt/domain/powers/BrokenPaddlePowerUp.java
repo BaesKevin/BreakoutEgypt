@@ -22,8 +22,8 @@ import javax.json.JsonObjectBuilder;
  */
 public class BrokenPaddlePowerUp implements PowerUp {
     
-    private boolean isVisable;
-    private int timeVisable = 1800; //TODO variable time in seconds (not steps)
+    private boolean isVisible;
+    private int timeVisible; //TODO variable time in seconds (not steps)
     private int startTime;
 
     private Paddle base;
@@ -32,12 +32,13 @@ public class BrokenPaddlePowerUp implements PowerUp {
     
     private String name;
 
-    public BrokenPaddlePowerUp(Paddle p,  int i) {
+    public BrokenPaddlePowerUp(Paddle p,  int i, int timeVisible) {
         this.name = "brokenpaddle" + i;
+        this.timeVisible = timeVisible;
         base = p;
         brokenPaddle = new ArrayList();
         breakPaddle();
-        startTime = timeVisable;
+        startTime = timeVisible;
     }
 
     public List<Paddle> getBrokenPaddle() {
@@ -65,24 +66,24 @@ public class BrokenPaddlePowerUp implements PowerUp {
         brokenPaddle.add(new Paddle(rightPaddleShape));
     }
     
-    public boolean isVisable() {
-        return isVisable;
+    public boolean isVisible() {
+        return isVisible;
     }
 
-    public void setIsVisable(boolean isVisable) {
-        this.isVisable = isVisable;
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
-    public void setTimeVisable(int time) {
-        this.timeVisable = time;
+    public void setTimeVisible(int time) {
+        this.timeVisible = time;
     }
 
-    public int getTimeVisable() {
-        return timeVisable;
+    public int getTimeVisible() {
+        return timeVisible;
     }
     
     public void resetTime() {
-        timeVisable = startTime;
+        timeVisible = startTime;
     }
 
     private int[] calculateNewX(int baseX, int newWidth, int gap) {
@@ -137,7 +138,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
     }
 
     void addTime(int othersTime) {
-        this.timeVisable += othersTime;
+        this.timeVisible += othersTime;
     }
 
 }

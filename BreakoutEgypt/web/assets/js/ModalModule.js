@@ -1,4 +1,4 @@
-const ModalModule = (function(){
+const ModalModule = (function () {
 
     let shareButton = "<button id='share' class='btn'>Share</button>";
     let mainMenuButton = "<button id='mainMenuModalButton' class='btn'>Main Menu</button>";
@@ -10,21 +10,21 @@ const ModalModule = (function(){
         printModal("Level " + levelId + " completed", "Congratz! Your time is: " + time + ". Brickscore is " + brickScore, buttons);
     }
 
-    function modalChooseDifficulty(){        
+    function modalChooseDifficulty() {
         let buttons = "";
         buttons += "<form action='showLevels' method='post'>";
         buttons += "<input name='difficulty' type='hidden' value='easy' />";
         buttons += "<input type='submit' class='btn' value='Easy'/>";
-        buttons += "</form>"; 
+        buttons += "</form>";
         buttons += "<form action='showLevels' method='post'>";
         buttons += "<input name='difficulty' type='hidden' value='medium' />";
         buttons += "<input type='submit' class='btn' value='Medium'/>";
-        buttons += "</form>"; 
+        buttons += "</form>";
         buttons += "<form action='showLevels' method='post'>";
         buttons += "<input name='difficulty' type='hidden' value='hard' />";
         buttons += "<input type='submit' class='btn' value='Hard'/>";
-        buttons += "</form>"; 
-        printModal("Choose difficulty","Choose a difficulty please:",buttons);
+        buttons += "</form>";
+        printModal("Choose difficulty", "Choose a difficulty please:", buttons);
     }
 
     function modalAllLevelsCompleted(levelId) {
@@ -42,10 +42,10 @@ const ModalModule = (function(){
         printModal("Game Over", "GAME OVER", buttons);
     }
 
-    function modalLogout(){
-        let buttons="<form action='logout' method='¨POST'><input type='submit' class='btn' value='Logout'/></form>";
+    function modalLogout() {
+        let buttons = "<form action='logout' method='¨POST'><input type='submit' class='btn' value='Logout'/></form>";
         let title = "Logout";
-        printModal(title,"Are you sure?",buttons);
+        printModal(title, "Are you sure?", buttons);
     }
 
     function modalErrorMessage(reason) {
@@ -59,10 +59,10 @@ const ModalModule = (function(){
         printModal(title, message, buttons);
     }
 
-    function modalQuit(){
-        let buttons= "<button class='btn' data-dismiss='modal' id='cancelQuit'>Cancel</button>";
+    function modalQuit() {
+        let buttons = "<button class='btn' data-dismiss='modal' id='cancelQuit'>Cancel</button>";
         buttons += "<button id='quit' class='btn' data-dismiss='modal'>Quit</button>";
-        printModal("Quit","Are you sure?",buttons);
+        printModal("Quit", "Are you sure?", buttons);
     }
 
     function printModal(title, content, buttons) {
@@ -105,17 +105,25 @@ const ModalModule = (function(){
         location.replace('highscores');
     }
 
-    function doDocumentLoaded(){
-        //$("#arcade").on("click", redirectToArcade);
+    function restartLevel() {
+
+        if (level) {
+            let difficulty = UtilModule.getParameterByName("difficulty");
+            let levelid = $("#levelid").val();
+            document.location = "arcade?startLevel=" + levelid + "&difficulty=" + difficulty;
+        }
+
+    }
+
+    function doDocumentLoaded() {
         $("#logout").on("click", logout);
         $("#returnToMain").on("click", redirectToMainMenu);
         $("#toMultiplayer").on("click", redirectToMultiplayer);
         $("#toHighscores").on("click", redirectToHighscore);
-        
-//    $("#modalPlaceholder").on("click", "#retry", restartLevel); //TODO
         $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
         $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
         $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);
+        $("#modalPlaceholder").on("click", "#retry", restartLevel);
     }
 
     return {

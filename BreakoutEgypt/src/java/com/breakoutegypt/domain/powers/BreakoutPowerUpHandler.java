@@ -100,7 +100,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
             powerups.remove(bppu);
             return new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.ACTIVATEBROKENPADDLE);
         } else {
-            this.paddlePowerup.addTime(bppu.getTimeVisable());
+            this.paddlePowerup.addTime(bppu.getTimeVisible());
         }
         return new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.NULLMESSAGE);
     }
@@ -131,9 +131,9 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     }
 
     private void removeBrokenPaddleIfTimedOut(ServerClientMessageRepository repo) {
-        int timeLeft = paddlePowerup.getTimeVisable();
+        int timeLeft = paddlePowerup.getTimeVisible();
         if (timeLeft > 0) {
-            paddlePowerup.setTimeVisable(timeLeft - 1);
+            paddlePowerup.setTimeVisible(timeLeft - 1);
         } else {
             handleRemoveBrokenPaddle(paddlePowerup);
             repo.addPowerupMessages(new PowerUpMessage("name", paddlePowerup, PowerUpMessageType.REMOVEBROKENPADDLE));

@@ -91,8 +91,6 @@ public class Level implements BreakoutWorldEventListener {
         this.lives = game.getInitialLives();
         this.timer = new Timer();
         runLevelManually = false;
-        
-        // TODO set to false when done with implementing invertedControls
         this.invertedControls = false;
     }
 
@@ -276,7 +274,7 @@ public class Level implements BreakoutWorldEventListener {
             HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
             int brickScore = brickScoreCalc.getScore();
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore);
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int)getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
             
             initNextLevel();

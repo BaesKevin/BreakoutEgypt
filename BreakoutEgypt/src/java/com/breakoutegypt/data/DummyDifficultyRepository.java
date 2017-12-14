@@ -16,23 +16,23 @@ import java.util.Map;
  *
  * @author kevin
  */
-public class DummyDifficultyRepository  implements DifficultyRepository{
+public class DummyDifficultyRepository implements DifficultyRepository {
 
     private Map<GameDifficulty, Difficulty> difficulties;
-    
-    public DummyDifficultyRepository(){
+
+    public DummyDifficultyRepository() {
         difficulties = new HashMap();
-        difficulties.put(GameDifficulty.EASY, new Difficulty("easy", 120, Difficulty.INFINITE_LIVES, true, 8000));
-        difficulties.put(GameDifficulty.MEDIUM, new Difficulty("medium", 140, 3,true, 6000));
-        difficulties.put(GameDifficulty.HARD, new Difficulty("hard", 170, 3, false, 4000));
-        difficulties.put(GameDifficulty.BRUTAL, new Difficulty("brutal", 250, 1, false, 2000));
+        difficulties.put(GameDifficulty.EASY, new Difficulty("easy", 120, Difficulty.INFINITE_LIVES, true, 8000, 80, 15));
+        difficulties.put(GameDifficulty.MEDIUM, new Difficulty("medium", 140, 3, true, 6000, 50, 10));
+        difficulties.put(GameDifficulty.HARD, new Difficulty("hard", 170, 3, false, 4000, 30, 5));
+        difficulties.put(GameDifficulty.BRUTAL, new Difficulty("brutal", 250, 1, false, 2000, 0, 0));
     }
-    
+
     @Override
     public List<Difficulty> findAll() {
         List<Difficulty> all = new ArrayList();
         all.addAll(difficulties.values());
-        
+
         return all;
     }
 
@@ -40,6 +40,5 @@ public class DummyDifficultyRepository  implements DifficultyRepository{
     public Difficulty findByName(GameDifficulty diff) {
         return difficulties.get(diff);
     }
-    
-    
+
 }

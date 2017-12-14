@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
@@ -12,6 +13,8 @@ import com.breakoutegypt.domain.messages.BallMessage;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.powers.InvertedControlsPowerDown;
 import com.breakoutegypt.domain.powers.PowerDownType;
@@ -27,6 +30,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -45,6 +49,7 @@ public class LevelState {
     private List<Message> messages;
     private FloorPowerUp floor;
     private List<Projectile> projectiles;
+    private Difficulty difficulty;
 
     public List<Message> getMessages() {
         return messages;
@@ -53,27 +58,29 @@ public class LevelState {
     private BodyConfigurationFactory factory;
 
     public LevelState(Ball ball, Paddle paddle, List<Brick> bricks) {
-        this(ball, new ArrayList(), bricks);
-        addPaddle(paddle);
+        this(ball, Arrays.asList(new Paddle[]{paddle}), bricks);
     }
 
     public LevelState(Ball ball, List<Paddle> paddles, List<Brick> bricks) {
-        this(new ArrayList(), paddles, bricks);
-        addBall(ball);
+        this(Arrays.asList(new Ball[]{ball}), paddles, bricks);
     }
 
     public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks) {
-        this(balls, paddles, bricks, 0, 0);
+        this(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY));
     }
 
-    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, int noOfPowerups, int noOfPowerdowns) {
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty) {
+        this(balls, paddles, bricks, difficulty, false);
+    }
+    
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups) {
         this.bricks = Collections.synchronizedList(new ArrayList());
-        this.paddles = new ArrayList();
+        this.paddles = Collections.synchronizedList(new ArrayList());
         this.walls = new ArrayList();
         this.balls = Collections.synchronizedList(new ArrayList());
         this.messages = new ArrayList();
         this.projectiles = new ArrayList();
-
+        this.difficulty = difficulty;
         factory = new BodyConfigurationFactory();
 
         createBounds();
@@ -85,10 +92,7 @@ public class LevelState {
         for (Brick brick : bricks) {
             addBrick(brick);
         }
-
-        if (noOfPowerups > 0 || noOfPowerdowns > 0) {
-            generatePowerUpsAndDowns(bricks, paddles, 5, 3);
-        }
+        if (hasPowerups) generatePowerUpsAndDowns();
     }
 
     public void addPaddle(Paddle p) {
@@ -280,7 +284,7 @@ public class LevelState {
         return width;
     }
 
-    private void generatePowerUpsAndDowns(List<Brick> bricks, List<Paddle> paddles, int noOfPowerups, int noOfPowerdowns) {
+    private void generatePowerUpsAndDowns() {
 
         List<Brick> regularBricks = new ArrayList();
 
@@ -289,28 +293,27 @@ public class LevelState {
                 regularBricks.add(b);
             }
         }
-        
-        boolean reduceDowns = true;
-        while ((noOfPowerups + noOfPowerdowns) > regularBricks.size()-1) {
-            if (reduceDowns) {
-                if (noOfPowerdowns > 0) noOfPowerdowns--;
-                reduceDowns = false;
-            } else {
-                if (noOfPowerups > 0) noOfPowerups--;
-                reduceDowns = true;
-            }
-        }
 
-        List<Brick> bricksToAddPower = bricksToAddPowers(regularBricks, noOfPowerdowns + noOfPowerups);
-               
-        int identifier = 0;
-        for (int i = 0; i < noOfPowerdowns; i++) {
-            createPowerdown(bricksToAddPower.get(identifier), identifier);
-            identifier++;
-        }
-        for (int i = 0; i < noOfPowerups; i++) {
-            createPowerUp(bricksToAddPower.get(identifier), paddles.get(0), identifier);
-            identifier++;
+        int noOfPowers = Math.round(regularBricks.size() * 0.4f);
+
+        int noOfPowerups = (int) Math.ceil(noOfPowers * difficulty.getPercentageOfPowerups());
+        int noOfPowerdowns = (int) Math.floor(noOfPowers * difficulty.getPercentageOfPowerdowns());
+
+        if (noOfPowers > 0) {
+            List<Brick> bricksToAddPower = bricksToAddPowers(regularBricks, noOfPowerdowns + noOfPowerups);
+            int identifier = 0;
+            if (noOfPowerdowns > 0) {
+                for (int i = 0; i < noOfPowerdowns; i++) {
+                    createPowerdown(bricksToAddPower.get(identifier), identifier);
+                    identifier++;
+                }
+            }
+            if (noOfPowerups > 0) {
+                for (int i = 0; i < noOfPowerups; i++) {
+                    createPowerUp(bricksToAddPower.get(identifier), paddles.get(0), identifier);
+                    identifier++;
+                }
+            }
         }
     }
 
@@ -337,7 +340,7 @@ public class LevelState {
     }
 
     private void createPowerdown(Brick b, int identifier) {
-        
+
         int noOfPowerdownTypes = PowerDownType.values().length;
         Random r = new Random();
         int powerupNr = r.nextInt(noOfPowerdownTypes) + 1;
@@ -350,7 +353,7 @@ public class LevelState {
                 b.setPowerdown(createProjectilePowerDown(b, identifier));
                 break;
             case 3:
-                b.setPowerdown(new InvertedControlsPowerDown(6000));
+                b.setPowerdown(new InvertedControlsPowerDown(difficulty.getPowerdownTime()));
                 break;
         }
     }
@@ -376,11 +379,11 @@ public class LevelState {
 
     public FloorPowerUp createFloor(int x) {
         ShapeDimension floorShape = new ShapeDimension("floor" + x, 0, 290, 300, 3);
-        return new FloorPowerUp(floorShape);
+        return new FloorPowerUp(floorShape, difficulty.getPowerupTime());
     }
 
     public BrokenPaddlePowerUp createBrokenPaddle(Paddle p, int x) {
-        return new BrokenPaddlePowerUp(p, x);
+        return new BrokenPaddlePowerUp(p, x, difficulty.getPowerupTime());
     }
 
     public ProjectilePowerDown createProjectilePowerDown(Brick brick, int x) {

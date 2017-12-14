@@ -46,11 +46,9 @@ const Level = (function () {
     };
 
     Level.prototype.loadLevel = function () {
-
-        //let gameId = UtilModule.getParameterByName("gameId");
-        let gameId=$("#gameId").val();
+        let gameId = $("#gameId").val();
         let self = this;
-        
+
         fetch('level?gameId=' + gameId, {method: "GET", credentials: "same-origin",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -70,12 +68,12 @@ const Level = (function () {
 
     Level.prototype.sendClientLevelState = function () {
         if (!this.levelComplete && !this.gameOver) {
-            
+
             let positionToSend = {
                 x: ScalingModule.scaleXForServer(this.mypaddle[0].x) + ScalingModule.scaleXForServer(this.mypaddle[0].width) / 2,
                 y: ScalingModule.scaleYForServer(this.mypaddle[0].y)
             }
-            
+
             if (level.invertedcontrols) {
                 positionToSend.x = 300 - positionToSend.x;
             }

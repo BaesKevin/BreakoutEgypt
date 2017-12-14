@@ -55,8 +55,8 @@ public class ShowLevelsServlet extends HttpServlet {
             GameDifficulty difficulty = getDifficultyFromRequest(request);
             
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
-            int totalLevels = new ArcadeLevelFactory(null).getTotalLevels();
-            int defaultLevels = new ArcadeLevelFactory(null).getDefaultOpenLevels();
+            int totalLevels = new ArcadeLevelFactory(null, null).getTotalLevels();
+            int defaultLevels = new ArcadeLevelFactory(null, null).getDefaultOpenLevels();
 
             if (levelReached < defaultLevels) {
                 levelReached = defaultLevels;

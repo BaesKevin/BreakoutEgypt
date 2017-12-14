@@ -35,7 +35,7 @@
             int id=Integer.parseInt(request.getAttribute("gameId").toString());
             int levelId=Integer.parseInt(request.getAttribute("level").toString());
             out.println("<input type='hidden' value='"+id+"' id='gameId'/>");
-            out.println("<input type='hidden' value='"+levelId+"' id='level'/>");
+            out.println("<input type='hidden' value='"+levelId+"' id='levelid'/>");
         %>
         
         <div id="modalPlaceholder"></div>

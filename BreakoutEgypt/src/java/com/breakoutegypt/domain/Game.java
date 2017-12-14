@@ -59,7 +59,7 @@ public class Game {
     private LevelFactory createLevelFactoryForGameType(GameType gameType, Difficulty difficulty) {
         switch (gameType) {
             case ARCADE:
-                return new ArcadeLevelFactory(this);
+                return new ArcadeLevelFactory(this, difficulty);
             case MULTIPLAYER:
                 return new MultiplayerLevelFactory(this);
             case TEST:
