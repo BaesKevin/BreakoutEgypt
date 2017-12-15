@@ -9,6 +9,17 @@ package com.breakoutegypt.domain.shapes.bricks;
  *
  * @author kevin
  */
-public enum BrickType {
-    REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH, TARGET
+public class BrickType {
+    private String name;
+    public BrickType(String name){
+        this.setName(name);
+    }
+
+    public void setName(String name){
+        this.name=name;
+    }
+    public String getName(){
+        return this.name;
+    }
+    //REGULAR, UNBREAKABLE, EXPLOSIVE, SWITCH, TARGET
 }

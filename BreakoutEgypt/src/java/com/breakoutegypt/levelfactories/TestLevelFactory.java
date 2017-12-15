@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.BrickTypeRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
@@ -525,6 +526,7 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     private Level getLevelWithExplosiveAndPowerUpBrick() {
+        BrickTypeRepository bricktypeRepo=Repositories.getBrickTypeRepository();
         ShapeDimension ballShape = new ShapeDimension("ball", 70, 50, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
         List<Ball> balls = new ArrayList();
         balls.add(new Ball(ballShape));
@@ -535,7 +537,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(new Brick(new ShapeDimension("explosivebrick", 70, 100, 20, 10), new Point(1, 1)));
         bricks.get(0).setPowerUp(new FloorPowerUp(floorShape, difficulty.getPowerupTime()));
         bricks.get(1).addEffect(new ExplosiveEffect(bricks.get(1), 1));
-        bricks.get(1).setType(BrickType.EXPLOSIVE);
+        bricks.get(1).setType(bricktypeRepo.getBrickTypeByName("EXPLOSIVE"));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
 

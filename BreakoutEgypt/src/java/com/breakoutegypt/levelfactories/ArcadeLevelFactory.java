@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.BrickTypeRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
@@ -201,9 +203,10 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getPossibleRealLevel() {
+        BrickTypeRepository bricktypeRepo=Repositories.getBrickTypeRepository();
         ShapeDimension paddleShape = new ShapeDimension("paddle", 45, 275, 100, 4, Color.BLUE);
         ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-
+        
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
         ball.setStartingBall(true);
@@ -239,10 +242,10 @@ public class ArcadeLevelFactory extends LevelFactory {
 
                 if (unbreakables.contains(index)) {
                     brick = new Brick(brickShape, new Point(row, col), false, true, false);
-                    brick.setType(BrickType.UNBREAKABLE);
+                    brick.setType(bricktypeRepo.getBrickTypeByName("UNBREAKABLE"));
                 } else {
                     brick = new Brick(brickShape, new Point(row, col));
-                    brick.setType(BrickType.REGULAR);
+                    brick.setType(bricktypeRepo.getBrickTypeByName("REGULAR"));
                 }
 
                 bricks.add(brick);
@@ -254,19 +257,19 @@ public class ArcadeLevelFactory extends LevelFactory {
         }
 
         bricks.get(21).setTarget(true);
-        bricks.get(21).setType(BrickType.TARGET);
+        bricks.get(21).setType(bricktypeRepo.getBrickTypeByName("TARGET"));
 
         bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
-        bricks.get(4).setType(BrickType.EXPLOSIVE);
+        bricks.get(4).setType(bricktypeRepo.getBrickTypeByName("EXPLOSIVE"));
         bricks.get(23).addEffect(new ExplosiveEffect(bricks.get(23), 1));
-        bricks.get(23).setType(BrickType.EXPLOSIVE);
+        bricks.get(23).setType(bricktypeRepo.getBrickTypeByName("EXPLOSIVE"));
 
         List<Brick> bricksToToggle = new ArrayList();
         for (int i = 0; i < 11; i++) {
             bricksToToggle.add(bricks.get(i));
         }
         bricks.get(11).addEffect(new ToggleEffect(bricksToToggle));
-        bricks.get(11).setType(BrickType.SWITCH);
+        bricks.get(11).setType(bricktypeRepo.getBrickTypeByName("SWITCH"));
         bricks.get(11).setBreakable(false);
 
         bricksToToggle = new ArrayList();
@@ -277,7 +280,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricksToToggle.add(bricks.get(12));
         bricksToToggle.add(bricks.get(13));
         bricks.get(14).addEffect(new ToggleEffect(bricksToToggle));
-        bricks.get(14).setType(BrickType.SWITCH);
+        bricks.get(14).setType(bricktypeRepo.getBrickTypeByName("SWITCH"));
         bricks.get(14).setBreakable(false);
 
         List<Ball> balls = new ArrayList();

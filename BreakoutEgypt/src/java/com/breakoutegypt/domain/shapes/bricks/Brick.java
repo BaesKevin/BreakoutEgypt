@@ -57,7 +57,7 @@ public class Brick extends RegularBody {
         this.gridPosition = gridPosition;
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
-        this.brickTypeName = BrickType.REGULAR.name();
+        this.brickTypeName = new BrickType("REGULAR").getName();
         this.isTarget = isTarget;
 
         effects = new ArrayList();
@@ -169,7 +169,7 @@ public class Brick extends RegularBody {
     }
 
     public void setType(BrickType brickType) {
-        this.brickTypeName = brickType.name();
+        this.brickTypeName = brickType.getName();
     }
 
     public String getType() {

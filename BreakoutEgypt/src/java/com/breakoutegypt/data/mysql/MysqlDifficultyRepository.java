@@ -26,17 +26,11 @@ import java.util.logging.Logger;
  * @author Bjarne Deketelaere
  */
 public class MysqlDifficultyRepository implements DifficultyRepository{
-    private static final MysqlDifficultyRepository REPO=new MysqlDifficultyRepository();
+    
     private final String SELECT_ALL_DIFFICULTIES="select * from difficulties";
     private final String SELECT_DIFFICULTY_BYNAME="select * from difficulties where difficultyname = ?";
     private Map<GameDifficulty, Difficulty> difficulties;
-    
-    private MysqlDifficultyRepository(){
-    }
-    
-    public static MysqlDifficultyRepository getInstance(){
-        return REPO;
-    }
+
     private GameDifficulty selectGameDifficulty(String name){
         switch(name){
             case "EASY":

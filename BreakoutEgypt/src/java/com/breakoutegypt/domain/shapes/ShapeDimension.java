@@ -28,7 +28,11 @@ public class ShapeDimension {
     public ShapeDimension(String name, float x, float y, int width, int height) {
         this(name, x, y, width, height, Color.BLACK);
     }
-
+    
+    public ShapeDimension(float posX, float posY, int width, int height){
+        this("shape",posX,posY,width,height);
+    }
+    
     public ShapeDimension(String name, float posX, float posY, int width, int height, Color color) {
         this.name = name;
         this.posX = posX;

@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.test;
 
+import com.breakoutegypt.data.BrickTypeRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
@@ -92,6 +94,7 @@ public class LevelStateTest {
     }
     
     private List<Brick> getBricks() {
+        BrickTypeRepository bricktypeRepo=Repositories.getBrickTypeRepository();
         int row = 1;
         int col = 1;
         int rows = 3;
@@ -112,7 +115,7 @@ public class LevelStateTest {
                 brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
 
                 brick = new Brick(brickShape, new Point(row, col));
-                brick.setType(BrickType.REGULAR);
+                brick.setType(bricktypeRepo.getBrickTypeByName("REGULAR"));
 
                 bricks.add(brick);
                 col++;
