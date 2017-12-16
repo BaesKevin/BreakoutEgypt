@@ -48,31 +48,21 @@ public class WebsocketConnection implements PlayerConnection {
     }
 
     @Override
-    public void send(Map<String, List<Message>> msgs) {
+    public void send(Map<String, JsonArray> msgs) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         if (msgs.containsKey("ballpositions")) {
-            job.add("ballpositions", listToJsonArray(msgs.get("ballpositions")));
+            job.add("ballpositions", msgs.get("ballpositions"));
         }
         if (msgs.containsKey("brickactions")) {
-            job.add("brickactions", listToJsonArray(msgs.get("brickactions")));
+            job.add("brickactions", msgs.get("brickactions"));
         }
         if (msgs.containsKey("powerupactions")) {
-            job.add("powerupactions", listToJsonArray(msgs.get("powerupactions")));
+            job.add("powerupactions", msgs.get("powerupactions"));
         } 
         if (msgs.containsKey("powerdownactions")) {
-            job.add("powerdownactions", listToJsonArray(msgs.get("powerdownactions")));
+            job.add("powerdownactions", msgs.get("powerdownactions"));
         }
         job.add("leveldata", job.build());
         send(job.build());
-    }
-
-    private JsonArray listToJsonArray(List<Message> msgs) {
-        JsonArrayBuilder jab = Json.createArrayBuilder();
-
-        for (Message msg : msgs) {
-            jab.add(msg.toJson().build());
-        }
-
-        return jab.build();
     }
 }

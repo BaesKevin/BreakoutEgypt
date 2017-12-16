@@ -16,7 +16,6 @@ import com.breakoutegypt.domain.messages.LevelMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
-import com.breakoutegypt.domain.messages.PowerDownMessage;
 import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Projectile;
@@ -27,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.json.JsonArray;
 
 /**
  * Keeps track of connected players in a game
@@ -101,7 +101,7 @@ public class SessionManager {
         Player connectingPlayer = getPlayer(name, true);
 
         if (connectingPlayer != null) {
-            
+
             if (connectedPlayers.size() < maxPlayers) {
 
                 connectingPlayer.setConnection(conn);
@@ -138,28 +138,26 @@ public class SessionManager {
     public int getNextAvailablePaddleIndex() {
         return connectedPlayers.size() + connectingPlayers.size() - 1;
     }
-    
+
     public void incrementLevelReachedForAllPlayers(GameType gameType, GameDifficulty difficulty) {
-        for(Player p : getPlayers()){
+        for (Player p : getPlayers()) {
             p.getProgressions().incrementHighestLevel(gameType, difficulty);
         }
     }
-    
+
     public void notifyLevelComplete(Level currentLevel) {
         long timeScore = currentLevel.getScoreTimer().getDuration();
         int brickScore = currentLevel.getBrickScore() - (int) timeScore;
-        
+
         LevelMessage lm = new LevelMessage("jef", currentLevel.isLastLevel(), timeScore, brickScore, LevelMessageType.COMPLETE);
         sendJsonToPlayers(lm);
     }
 
     public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
-        Map<String, List<Message>> messages = createMessageMap(currentLevel, messageRepo);
+        Map<String, JsonArray> messages = createMessageMap(currentLevel, messageRepo);
 
         sendJsonToPlayers(messages);
-        messageRepo.clearBrickMessages();
-        messageRepo.clearPowerupMessages();
-        messageRepo.clearPowerdownMessages();
+        messageRepo.clearAllMessages();
         currentLevel.getLevelState().clearMessages();
     }
 
@@ -183,41 +181,33 @@ public class SessionManager {
         currentLevel.getLevelState().clearMessages();
     }
 
-    private Map<String, List<Message>> createMessageMap(Level currentLevel, ServerClientMessageRepository messageRepo) {
+    private Map<String, JsonArray> createMessageMap(Level currentLevel, ServerClientMessageRepository messageRepo) {
 
-        Map<String, List<Message>> messages = new HashMap<>();
+        Map<String, JsonArray> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
         List<Message> ballPositionMessages = new ArrayList();
-        List<Message> brickMessages = messageRepo.getBrickMessages();
-        List<Message> powerupMessages = messageRepo.getPowerupMessages();
-        List<Message> powerdownMessages = messageRepo.getPowerdownMessages();
         List<Projectile> projectiles = currentLevel.getLevelState().getProjectiles();
-        
+
         for (Projectile p : projectiles) {
             Message m = new ProjectilePositionMessage(p);
-            powerdownMessages.add(m);
+            messageRepo.addPowerdownMessages(m);
         }
 
         for (Ball b : balls) {
             BallPositionMessage bpm = new BallPositionMessage(b);
             ballPositionMessages.add(bpm);
         }
+        JsonArray powerupmessages = messageRepo.getPowerupMessages();
+        if (powerupmessages.size() > 0) messages.put("powerupactions", powerupmessages);
         
-        if (powerupMessages.size() > 0) {
-            messages.put("powerupactions", powerupMessages);
-        }
+        JsonArray powerdownmessages = messageRepo.getPowerdownMessages();
+        if (powerdownmessages.size() > 0) messages.put("powerdownactions", powerdownmessages);
         
-        if (powerdownMessages.size() > 0) {
-            messages.put("powerdownactions", powerdownMessages);
-        }
+        JsonArray brickmessages = messageRepo.getBrickMessages();
+        if (brickmessages.size() > 0) messages.put("brickactions", brickmessages);
         
-        if (ballPositionMessages.size() > 0) {
-            messages.put("ballpositions", ballPositionMessages);
-        }
-
-        if (brickMessages.size() > 0) {
-            messages.put("brickactions", brickMessages);
-        }
+        JsonArray ballpositions = messageRepo.listToJsonArray(ballPositionMessages);
+        if (ballpositions.size() > 0) messages.put("ballpositions", ballpositions);
 
         return messages;
     }
@@ -230,7 +220,7 @@ public class SessionManager {
         }
     }
 
-    private void sendJsonToPlayers(Map<String, List<Message>> messages) {
+    private void sendJsonToPlayers(Map<String, JsonArray> messages) {
         PlayerConnection conn;
         for (Player player : connectedPlayers) {
             conn = player.getConnection();

@@ -26,25 +26,25 @@ public class DummyConnection implements PlayerConnection {
     private List<JsonObject> jsonMessages = new ArrayList();
     private List<Message> ballMessages = new ArrayList();
     private List<Message> lifeMessages = new ArrayList();
-    private List<Message> ballPositionMessages = new ArrayList();
-    private List<Message> brickMessages = new ArrayList();
-    private List<Message> powerupMessages = new ArrayList();
-    private List<Message> powerdownMessages = new ArrayList();
+    private JsonArray ballPositionMessages = Json.createArrayBuilder().build();
+    private JsonArray brickMessages = Json.createArrayBuilder().build();
+    private JsonArray powerupMessages = Json.createArrayBuilder().build();
+    private JsonArray powerdownMessages = Json.createArrayBuilder().build();
 
-    public List<Message> getPowerdownMessages() {
-        return powerdownMessages;
-    }
-    
-    public List<Message> getPowerupMessages() {
-        return powerupMessages;
-    }
-
-    public List<Message> getBallPositionMessages() {
+    public JsonArray getBallPositionMessages() {
         return ballPositionMessages;
     }
 
-    public List<Message> getBrickMessages() {
+    public JsonArray getBrickMessages() {
         return brickMessages;
+    }
+
+    public JsonArray getPowerupMessages() {
+        return powerupMessages;
+    }
+
+    public JsonArray getPowerdownMessages() {
+        return powerdownMessages;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DummyConnection implements PlayerConnection {
     public List<Message> getBallMessages() {
         return ballMessages;
     }
-    
+
     public void clearBallMessages() {
         ballMessages.clear();
     }
@@ -70,7 +70,7 @@ public class DummyConnection implements PlayerConnection {
 
     @Override
     public void send(Message msg) {
-        if (msg.getMessageType().equals(BallMessageType.REMOVE) || msg.getMessageType().equals(BallMessageType.REMOVE)) {
+        if (msg.getMessageType().equals(BallMessageType.ADD) || msg.getMessageType().equals(BallMessageType.REMOVE)) {
             ballMessages.add(msg);
         } else if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
             lifeMessages.add(msg);
@@ -79,35 +79,35 @@ public class DummyConnection implements PlayerConnection {
     }
 
     @Override
-    public void send(Map<String, List<Message>> msgs) {
+    public void send(Map<String, JsonArray> msgs) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         if (msgs.containsKey("ballpositions")) {
-            ballPositionMessages = msgs.get("ballpositions");
-            job.add("ballpositions", listToJsonArray(ballPositionMessages));
+            ballPositionMessages = addAll(ballPositionMessages, msgs.get("ballpositions"));
+            job.add("ballpositions", msgs.get("ballpositions"));
         }
         if (msgs.containsKey("brickactions")) {
-            brickMessages.addAll(msgs.get("brickactions"));
-            job.add("brickactions", listToJsonArray(brickMessages));
+            brickMessages = addAll(brickMessages, msgs.get("brickactions"));
+            job.add("brickactions", msgs.get("brickactions"));
         }
         if (msgs.containsKey("powerupactions")) {
-            powerupMessages.addAll(msgs.get("powerupactions"));
-            job.add("powerupactions", listToJsonArray(powerupMessages));
+            powerupMessages = addAll(powerupMessages, msgs.get("powerupactions"));
+            job.add("powerupactions", msgs.get("powerupactions"));
         }
         if (msgs.containsKey("powerdownactions")) {
-            powerdownMessages.addAll(msgs.get("powerdownactions"));
-            job.add("powerdownactions", listToJsonArray(powerdownMessages));
+            powerdownMessages = addAll(powerdownMessages, msgs.get("powerdownactions"));
+            job.add("powerdownactions", msgs.get("powerdownactions"));
         }
         jsonMessages.add(job.build());
     }
 
-    private JsonArray listToJsonArray(List<Message> msgs) {
-        JsonArrayBuilder jab = Json.createArrayBuilder();
-
-        for (Message msg : msgs) {
-            jab.add(msg.toJson().build());
+    private JsonArray addAll(JsonArray original, JsonArray arrayToAdd) {
+        JsonArrayBuilder result = Json.createArrayBuilder();
+        for (int i = 0; i < original.size(); i++) {
+            result.add(original.get(i));
         }
-
-        return jab.build();
+        for (int i = 0; i < arrayToAdd.size(); i++) {
+            result.add(arrayToAdd.get(i));
+        }
+        return result.build();
     }
-
 }
