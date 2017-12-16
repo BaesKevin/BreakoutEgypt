@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.powers;
 
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -28,7 +29,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     private Paddle base;
     private List<Paddle> brokenPaddle;
-    public static final int GAP = 20;
+    public static final int GAP = 6;
     
     private String name;
 
@@ -96,8 +97,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
             leftX = newWidth / 2;
         }
         int rightX = leftX + newWidth + gap;
-        if (rightX + (newWidth / 2) > 300) {
-            rightX = 300 - (newWidth / 2);
+        if (rightX + (newWidth / 2) > BreakoutWorld.DIMENSION) {
+            rightX = BreakoutWorld.DIMENSION - (newWidth / 2);
             leftX = rightX - newWidth - gap;
         }
         

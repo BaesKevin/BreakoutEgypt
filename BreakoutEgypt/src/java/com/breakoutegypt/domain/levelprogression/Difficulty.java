@@ -23,7 +23,6 @@ public class Difficulty {
     public static final String MEDIUM = "medium";
     public static final String HARD = "hard";
     public static final String BRUTAL = "brutal";
-
     
     
     public Difficulty(String name, int ballspeed, int lives, boolean livesRegenBetweenLevels, int pointsPerBlock) {

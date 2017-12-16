@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.DefaultShapeRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
@@ -24,6 +26,7 @@ public abstract class LevelFactory {
     protected int defaultOpenLevels;
     protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
+    protected final static DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
     
     public LevelFactory(Game game, int totalLevels) {
         this(game, totalLevels, totalLevels);

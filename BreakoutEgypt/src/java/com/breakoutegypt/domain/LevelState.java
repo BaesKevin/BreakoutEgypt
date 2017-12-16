@@ -20,6 +20,7 @@ import com.breakoutegypt.domain.powers.ProjectilePowerDown;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
+import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.Projectile;
@@ -89,6 +90,8 @@ public class LevelState {
         if (noOfPowerups > 0 || noOfPowerdowns > 0) {
             generatePowerUpsAndDowns(bricks, paddles, 5, 3);
         }
+        
+//        bricks.get(5).setPowerUp(createBrokenPaddle(paddles.get(0), 0));
     }
 
     public void addPaddle(Paddle p) {
@@ -184,10 +187,10 @@ public class LevelState {
     }
 
     private void createBounds() {
-        ShapeDimension groundShape = new ShapeDimension("ground", 0, 300, 300, 1);
-        ShapeDimension leftWallDim = new ShapeDimension("leftwall", 0, 0, 1, 300);
-        ShapeDimension rightWallDim = new ShapeDimension("rightwall", 300, 0, 1, 300);
-        ShapeDimension topWallDim = new ShapeDimension("topwall", 0, 0, 300, 1);
+        ShapeDimension groundShape = new ShapeDimension("ground", -5 , BreakoutWorld.DIMENSION + 5, BreakoutWorld.DIMENSION + 10, 5);
+        ShapeDimension leftWallDim = new ShapeDimension("leftwall", -5, -5, 5, BreakoutWorld.DIMENSION + 10);
+        ShapeDimension rightWallDim = new ShapeDimension("rightwall", BreakoutWorld.DIMENSION + 5, -5, 5, BreakoutWorld.DIMENSION + 10);
+        ShapeDimension topWallDim = new ShapeDimension("topwall", -5, -5, BreakoutWorld.DIMENSION + 10, 5);
 
         RegularBody ground = new RegularBody(groundShape);
         RegularBody leftWall = new RegularBody(leftWallDim);
@@ -375,7 +378,7 @@ public class LevelState {
     }
 
     public FloorPowerUp createFloor(int x) {
-        ShapeDimension floorShape = new ShapeDimension("floor" + x, 0, 290, 300, 3);
+        ShapeDimension floorShape = new ShapeDimension("floor" + x, 0, BreakoutWorld.DIMENSION - 10, BreakoutWorld.DIMENSION, 3);
         return new FloorPowerUp(floorShape);
     }
 

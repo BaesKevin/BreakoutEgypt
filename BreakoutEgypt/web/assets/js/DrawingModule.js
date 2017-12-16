@@ -163,7 +163,7 @@ let DrawingModule = (function () {
 
         let godImg = ImageLoader.images["god"];
 
-        let godImgSize = {x: 0, y: 0, width: godImg.width, height: godImg.height};
+        let godImgSize = {x: 0, y: 0, width: godImg.width / 3, height: godImg.height / 3};
         godImgSize = ScalingModule.scaleObject(godImgSize, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
         let scale = 1;
         if (level.paddles.length > 1) {

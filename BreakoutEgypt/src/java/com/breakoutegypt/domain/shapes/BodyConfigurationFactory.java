@@ -17,7 +17,6 @@ import org.jbox2d.dynamics.BodyType;
  */
 public class BodyConfigurationFactory {
 
-    public static final int BALL_RADIUS = 8;
 
     //TESTING BITS FOR COLLISION
     private final int BOUNDS_CATEGORY = 0x0001;
@@ -52,7 +51,7 @@ public class BodyConfigurationFactory {
 
         return config;
     }
-
+    
     public BodyConfiguration createPaddleConfig(ShapeDimension s) {
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.KINEMATIC, new Vec2(s.getPosX(), s.getPosY()));
 
@@ -64,6 +63,7 @@ public class BodyConfigurationFactory {
         return new BodyConfiguration(bodyDefConfig, ps, fixtureConfig);
     }
 
+    // x and y position of the shapedimension are the middle of the circle
     public BodyConfiguration createDomePaddleConfig(ShapeDimension s) {
         long radius = s.getWidth() / 2;
 

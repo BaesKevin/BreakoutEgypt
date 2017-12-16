@@ -7,6 +7,7 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
@@ -64,42 +65,43 @@ public class PowerUpTest {
     }
     
     @Test
-    public void testBrokenPaddle() {
+    public void twoBallsBouncOnBrokenPaddle1GoesOutOfBounds() {
         createGame(8, true);
         level = game.getLevel();
 
-        List<Ball> balls = level.getLevelState().getBalls();
         level.startBall();
-        balls = level.getLevelState().getBalls();
+        List<Ball> balls = level.getLevelState().getBalls();
         for (Ball b : balls) {
             b.setLinearVelocity(0, 100);
         }
 
         stepTimes(level, 100);
-
-        // check if center ball falls between the gap and the other balls bounce back up
-        assertTrue(balls.get(0).getPosition().y < balls.get(1).getPosition().y && balls.get(1).getPosition().y > balls.get(2).getPosition().y);
+        
+        assertTrue(balls.size() == 2);
 
     }
 
     @Test
     public void testBrokenPaddleMovement() {
+        
         createGame(8, true);
         level = game.getLevel();
         List<Paddle> paddles = level.getLevelState().getPaddles();
+        
+        int paddleWidth = paddles.get(0).getShape().getWidth() ;
+        int minimum = paddleWidth / 2;
+        int maximum =  BreakoutWorld.DIMENSION - paddleWidth * 2 - BrokenPaddlePowerUp.GAP + paddleWidth / 2 ;
+        
+        float paddleY = paddles.get(0).getPosition().y;
 
-        // left paddle x can't be smaller than the half of its width
-        assertTrue(paddles.get(0).getPosition().x >= paddles.get(0).getShape().getWidth() / 2);
-
+        level.movePaddle(paddles.get(0), 0, 156);
+        assertTrue(paddles.get(0).getPosition().x == minimum);
+        
         level.movePaddle(paddles.get(0), 120, 156);
 
-        // left paddle x must be between half its width and (level width - the total width of the 2 paddles - half its width) 
-        assertTrue(paddles.get(0).getPosition().x > paddles.get(0).getShape().getWidth() / 2 && paddles.get(0).getPosition().x < 300 - paddles.get(0).getShape().getWidth() * 2 - paddles.get(0).getShape().getWidth() / 2);
-
-        level.movePaddle(paddles.get(0), 151, 156);
-
-        // left paddle x must be smaller than (level width - the total width of the 2 paddles - half its width)
-        assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() - BrokenPaddlePowerUp.GAP - paddles.get(0).getShape().getWidth() / 2);
+        float paddlePositionX = paddles.get(0).getPosition().x;
+        
+        assertTrue(paddlePositionX == maximum);
     }
 
     @Test
@@ -128,7 +130,7 @@ public class PowerUpTest {
         level = game.getLevel();
 
         level.startBall();
-        stepTimes(level, 60);
+        stepTimes(level, 30);
 
         DummyConnection conn = (DummyConnection) player.getConnection();
 

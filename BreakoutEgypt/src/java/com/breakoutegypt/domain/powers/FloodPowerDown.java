@@ -27,7 +27,7 @@ public class FloodPowerDown implements PowerDown {
     private final int noOfBalls;
     private final List<Ball> balls;
     private final Ball originalBall;
-    private final int decoyBallSpeed = 150;
+    private final int decoyBallSpeed = 50;
     private final String name;
 
     public FloodPowerDown(Ball originalBall, int noOfBalls, int identifier) {

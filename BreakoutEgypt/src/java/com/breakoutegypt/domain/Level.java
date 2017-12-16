@@ -150,10 +150,10 @@ public class Level implements BreakoutWorldEventListener {
         int paddleWidth = paddles.get(0).getShape().getWidth();
         // x is the center of the most left paddle
         int min = paddleWidth / 2;
-        int max = 300 - totalWidth + (paddleWidth / 2);
+        int max = BreakoutWorld.DIMENSION - totalWidth + (paddleWidth / 2);
 
         if (invertedControls) {
-            firstPaddleCenter = 300 - firstPaddleCenter;
+            firstPaddleCenter = BreakoutWorld.DIMENSION - firstPaddleCenter;
         }
         
         float paddleCenter = firstPaddleCenter;

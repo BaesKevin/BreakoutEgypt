@@ -22,10 +22,10 @@ public class DummyDifficultyRepository  implements DifficultyRepository{
     
     public DummyDifficultyRepository(){
         difficulties = new HashMap();
-        difficulties.put(GameDifficulty.EASY, new Difficulty("easy", 120, Difficulty.INFINITE_LIVES, true, 8000));
-        difficulties.put(GameDifficulty.MEDIUM, new Difficulty("medium", 140, 3,true, 6000));
-        difficulties.put(GameDifficulty.HARD, new Difficulty("hard", 170, 3, false, 4000));
-        difficulties.put(GameDifficulty.BRUTAL, new Difficulty("brutal", 250, 1, false, 2000));
+        difficulties.put(GameDifficulty.EASY, new Difficulty("easy", 60, Difficulty.INFINITE_LIVES, true, 8000));
+        difficulties.put(GameDifficulty.MEDIUM, new Difficulty("medium", 80, 3,true, 6000));
+        difficulties.put(GameDifficulty.HARD, new Difficulty("hard", 100, 3, false, 4000));
+        difficulties.put(GameDifficulty.BRUTAL, new Difficulty("brutal", 120, 1, false, 2000));
     }
     
     @Override

@@ -47,8 +47,8 @@ public class BreakoutWorld implements ContactHandler {
     private World world;
 
     // TODO use these!
-    public static final int WIDTH = 600;
-    public static final int HEIGHT = 600;
+    public static final int DIMENSION = 100;
+    
     public static final float TIMESTEP_DEFAULT = 1f / 60f;
     private float timestepSeconds;
     private final int velocityIterations = 8;

@@ -6,6 +6,7 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -139,6 +140,8 @@ public class LevelServlet extends HttpServlet {
         job.add("mypaddle", player.getPaddle().getName());
         job.add("level", level.getId());
         job.add("lives", level.getLives());
+        
+        job.add("levelDimension", BreakoutWorld.DIMENSION);
     }
 }
 
