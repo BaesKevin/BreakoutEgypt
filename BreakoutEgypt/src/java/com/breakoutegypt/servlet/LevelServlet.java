@@ -127,14 +127,14 @@ public class LevelServlet extends HttpServlet {
         List<Ball> balls = state.getBalls();
         JsonArrayBuilder ballBuilder = Json.createArrayBuilder();
         for(int i = 0; i < balls.size(); i++) {
-            ballBuilder.add( balls.get(i).getShape().toJson().build());
+            ballBuilder.add( balls.get(i).toJson().build());
         }
         job.add("balls", ballBuilder.build());
         
         JsonArrayBuilder paddleBuilder = Json.createArrayBuilder();
         List<Paddle> paddles = state.getPaddles();
         for(int i = 0; i < paddles.size(); i++){
-            paddleBuilder.add( paddles.get(i).getShape().toJson().build());
+            paddleBuilder.add( paddles.get(i).toJson().build());
         }
         job.add("paddles", paddleBuilder.build());
         job.add("mypaddle", player.getPaddle().getName());

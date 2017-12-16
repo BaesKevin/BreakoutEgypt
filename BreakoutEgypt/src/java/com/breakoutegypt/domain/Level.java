@@ -147,7 +147,7 @@ public class Level implements BreakoutWorldEventListener {
         
         List<Paddle> paddles = levelState.getPaddles();
         int totalWidth = levelState.calculatePaddleWidthWithGaps();
-        int paddleWidth = paddles.get(0).getShape().getWidth();
+        int paddleWidth = paddles.get(0).getWidth();
         // x is the center of the most left paddle
         int min = paddleWidth / 2;
         int max = BreakoutWorld.DIMENSION - totalWidth + (paddleWidth / 2);

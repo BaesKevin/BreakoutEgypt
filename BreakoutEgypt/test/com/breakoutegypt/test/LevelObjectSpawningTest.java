@@ -31,7 +31,7 @@ public class LevelObjectSpawningTest {
         List<Brick> bricks = new ArrayList();
         
         ShapeDimension shape = new ShapeDimension("triangle", 100,20, DimensionDefaults.BRICK_WIDTH,DimensionDefaults.BRICK_HEIGHT);
-        Brick brick = new Brick(shape, new Point(0,0));
+        Brick brick = new Brick(shape);
         bricks.add(brick);
         
         ShapeDimension paddleshape = new ShapeDimension("paddle", 100, 200, 100, 20);

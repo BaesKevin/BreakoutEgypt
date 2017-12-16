@@ -21,10 +21,13 @@ public class Ball extends RegularBody {
     public Ball(ShapeDimension s) {
         this(s, false);
     }
-    
+
     public Ball(ShapeDimension s, boolean decoy) {
         super(s);
         this.decoy = decoy;
+
+        BodyConfiguration ballBodyConfig = new BodyConfigurationFactory().createBallConfig(s);
+        setBox2dConfig(ballBodyConfig);
     }
 
     public boolean isStartingBall() {

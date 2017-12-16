@@ -13,6 +13,8 @@ public class Projectile extends RegularBody {
     
     public Projectile(ShapeDimension s) {
         super(s);
+        BodyConfiguration projectileBodyConfig = new BodyConfigurationFactory().createProjectileConfig(s);
+        setBox2dConfig(projectileBodyConfig);
     }
     
 }

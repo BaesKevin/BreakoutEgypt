@@ -88,18 +88,18 @@ public class PowerUpTest {
         level = game.getLevel();
         List<Paddle> paddles = level.getLevelState().getPaddles();
         
-        int paddleWidth = paddles.get(0).getShape().getWidth() ;
+        int paddleWidth = paddles.get(0).getWidth() ;
         int minimum = paddleWidth / 2;
         int maximum =  BreakoutWorld.DIMENSION - paddleWidth * 2 - BrokenPaddlePowerUp.GAP + paddleWidth / 2 ;
         
-        float paddleY = paddles.get(0).getPosition().y;
+        float paddleY = paddles.get(0).getY();
 
         level.movePaddle(paddles.get(0), 0, 156);
-        assertTrue(paddles.get(0).getPosition().x == minimum);
+        assertTrue(paddles.get(0).getX() == minimum);
         
         level.movePaddle(paddles.get(0), 120, 156);
 
-        float paddlePositionX = paddles.get(0).getPosition().x;
+        float paddlePositionX = paddles.get(0).getX();
         
         assertTrue(paddlePositionX == maximum);
     }
@@ -159,7 +159,7 @@ public class PowerUpTest {
 
         // ball 3 starts at x = 295, there will be no paddle so it should go out of bounds
         // ball 2 is directly above the left paddle and should bounce back up (no remove message)
-        assertTrue(balls.get(1).getPosition().y < paddles.get(0).getPosition().y);
+        assertTrue(balls.get(1).getY() < paddles.get(0).getY());
         assertTrue(conn.getPowerupMessages().size() > 0);
     }
 
@@ -214,7 +214,7 @@ public class PowerUpTest {
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
 
         level.startBall();
-        stepTimes(level, 60);
+        stepTimes(level, 100);
 
         List<PowerUp> powerups = bpuh.getPowerUps();
 

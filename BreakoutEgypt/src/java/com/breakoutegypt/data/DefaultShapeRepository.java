@@ -38,7 +38,7 @@ public class DefaultShapeRepository {
         return new ShapeDimension("floor", 0, BreakoutWorld.DIMENSION - 10, BreakoutWorld.DIMENSION, 3);
     }
     
-    public Brick getDefaultBrick(String name, float x, float y, Point gridPoint){
-        return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT), gridPoint);
+    public Brick getDefaultBrick(String name, float x, float y){
+        return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT));
     }
 }

@@ -72,8 +72,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(shapeRepo.getDefaultPaddle());
         Ball ball = new Ball(shapeRepo.getDefaultBall(50, 0));
         
-        Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 40, 20, new Point(0,0));
-        Brick target = new Brick(new ShapeDimension("brick2", 1, 1, 1, 1), new Point(9,9), true, false);
+        Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 40, 20);
+        Brick target = new Brick(new ShapeDimension("brick2", 1, 1, 1, 1), true, false);
         
         List<Paddle> paddles = new ArrayList();
         List<Ball> balls = new ArrayList();
@@ -114,7 +114,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         // TODO move to ShapeFactory which gets default bricks from staticbrickrepo
         brickShape = new ShapeDimension(name, x, y, width, height);
-        brick = new Brick(brickShape, new Point(gridX, gridY), true, true);
+        brick = new Brick(brickShape, true, true);
 
         bricks.add(brick);
 
@@ -153,7 +153,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
 //                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
-                brick = shapeRepo.getDefaultBrick(id, x, y, new Point(row, col));
+                brick = shapeRepo.getDefaultBrick(id, x, y);
                 
 //                brick = new Brick(brickShape, new Point(row, col));
                 bricks.add(brick);
@@ -165,7 +165,6 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         for (int i = 0; i < 1; i++) {
             bricks.get(i).setTarget(true);
-            bricks.get(i).getShape().setColor(Color.BLACK);
         }
 
         bricks.get(2).addEffect(new ExplosiveEffect(bricks.get(2), 1));
@@ -235,10 +234,10 @@ public class ArcadeLevelFactory extends LevelFactory {
                 brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
 
                 if (unbreakables.contains(index)) {
-                    brick = new Brick(brickShape, new Point(row, col), false, true, false);
+                    brick = new Brick(brickShape, false, true, false);
 //                    brick.setType(BrickType.UNBREAKABLE);
                 } else {
-                    brick = new Brick(brickShape, new Point(row, col));
+                    brick = new Brick(brickShape);
 //                    brick.setType(BrickType.REGULAR);
                 }
 
@@ -318,7 +317,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
                 brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
-                brick = new Brick(brickShape, new Point(row, col));
+                brick = new Brick(brickShape);
                 bricks.add(brick);
                 col++;
             }
@@ -328,16 +327,13 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         for (int i = 0; i < 1; i++) {
             bricks.get(i).setTarget(true);
-            bricks.get(i).getShape().setColor(Color.BLACK);
         }
 
         for (int i = 1; i <= 3; i++) {
-            bricks.get(i).getShape().setColor(Color.YELLOW);
             bricks.get(i).setVisible(false);
         }
 
         bricks.get(3).addEffect(new ExplosiveEffect(bricks.get(3), 1));
-        bricks.get(3).getShape().setColor(Color.RED);
 
         List<Brick> toggles = new ArrayList();
         toggles.add(bricks.get(1));

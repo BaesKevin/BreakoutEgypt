@@ -59,16 +59,15 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
         return puh.handleFloorPowerUp(this);
     }
 
-    @Override
-    public JsonObject toJson() {
+    public JsonObjectBuilder toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        ShapeDimension shape = this.getShape();
-        job.add("x", shape.getPosX());
-        job.add("y", shape.getPosY());
-        job.add("width", shape.getWidth());
-        job.add("height", shape.getHeight());
+//        ShapeDimension shape = this.getShape();
+        job.add("x", getX());
+        job.add("y", getY());
+        job.add("width", getWidth());
+        job.add("height", getHeight());
         job.add("powerupname", getName());
-        return job.build();
+        return job;
     }
 
     @Override

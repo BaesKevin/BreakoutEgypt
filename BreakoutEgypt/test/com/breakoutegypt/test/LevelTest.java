@@ -104,17 +104,17 @@ public class LevelTest {
         ball.getBody().setTransform(new Vec2(50, 20), 0);
         ball.setLinearVelocity(-100, 0);
         stepTimes(40);
-        Assert.assertTrue(0 <= ball.getPosition().x);
+        Assert.assertTrue(0 <= ball.getX());
 
         ball.getBody().setTransform(new Vec2(20, 20), 0);
         ball.setLinearVelocity(0, -100);
         stepTimes(40);
-        Assert.assertTrue(0 <= ball.getPosition().y);
+        Assert.assertTrue(0 <= ball.getX());
 
         ball.getBody().setTransform(new Vec2(280, 20), 0);
         ball.setLinearVelocity(100, 0);
         stepTimes(40);
-        Assert.assertTrue(ball.getPosition().y < BreakoutWorld.DIMENSION);
+        Assert.assertTrue(ball.getY() < BreakoutWorld.DIMENSION);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class LevelTest {
 
         stepTimes(60);
 
-        Assert.assertTrue(topball.getPosition().y > bottomball.getPosition().y);
+        Assert.assertTrue(topball.getY() > bottomball.getY());
     }
 
     private void stepTimes(int times) {

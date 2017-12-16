@@ -95,20 +95,20 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-        BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
-        p.setBox2dConfig(domePaddleConfig);
+//        BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
+//        p.setBox2dConfig(domePaddleConfig);
         paddles.add(p);
     }
 
     // TODO based on bricktype it might be necessary to do more here
     // e.g. all surrounding bricks an explosive brick
     public void addBrick(Brick brick) {
-        BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
-
-        if (!brick.isVisible()) {
-            brickBody.getFixtureConfig().setMaskBits(0);
-        }
-        brick.setBox2dConfig(brickBody);
+//        BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
+//
+//        if (!brick.isVisible()) {
+//            brickBody.getFixtureConfig().setMaskBits(0);
+//        }
+//        brick.setBox2dConfig(brickBody);
         bricks.add(brick);
     }
 
@@ -120,8 +120,8 @@ public class LevelState {
 
     public void addBalls(List<Ball> balls) {
         for (Ball b : balls) {
-            BodyConfiguration ballBodyConfig = factory.createBallConfig(b.getShape());
-            b.setBox2dConfig(ballBodyConfig);
+//            BodyConfiguration ballBodyConfig = factory.createBallConfig(b.getShape());
+//            b.setBox2dConfig(ballBodyConfig);
 
             if (b.isStartingBall()) {
                 this.startingBall = b;
@@ -169,7 +169,9 @@ public class LevelState {
 
     void resetBall(BreakoutWorld breakoutWorld) {
         startingBall.setDecoy(false);
-        BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
+        ShapeDimension originalDimension =
+                new ShapeDimension(startingBall.getName(), startingBall.getOriginalX(), startingBall.getOriginalY(), startingBall.getWidth(), startingBall.getHeight());
+        BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(originalDimension);
         startingBall.setBox2dConfig(ballBodyBodyConfig);
         messages.add(new BallMessage(startingBall, BallMessageType.ADD));
         balls.add(startingBall);
@@ -233,9 +235,17 @@ public class LevelState {
         } else {
             for (Brick brick : bricks) {
                 currentBrickPosition = brick.getGridPosition();
-                if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
-                    if (brick.isVisible() && !(brick.hasToggleEffect())) {
-                        ExplosiveEffect e = brick.getExplosiveEffect();
+//                boolean isBrickInRange =Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range;
+                int horizontalRange = range * DimensionDefaults.BRICK_WIDTH;
+                int verticalRange = range * DimensionDefaults.BRICK_HEIGHT;
+
+                boolean isBrickInHorizontalRange = Math.abs(centreBrick.getX() - brick.getX()) <= horizontalRange;
+                boolean isBrickInVerticalRange = Math.abs(centreBrick.getY() - brick.getY()) <= verticalRange;
+                boolean isNotSwitchBrick = !(brick.hasToggleEffect());
+                
+                if (brick.isVisible() && isBrickInHorizontalRange && isBrickInVerticalRange && isNotSwitchBrick) {
+                    
+                    ExplosiveEffect e = brick.getExplosiveEffect();
                         if (e != null && e.getRadius() > 0) {
                             if (!bricksToRemove.contains(brick)) {
                                 bricksToRemove.add(brick);
@@ -246,7 +256,7 @@ public class LevelState {
                                 bricksToRemove.add(brick);
                             }
                         }
-                    }
+                    
                 }
             }
         }
@@ -275,7 +285,7 @@ public class LevelState {
 
     public int calculatePaddleWidthWithGaps() {
         List<Paddle> paddles = getPaddles();
-        int paddlewidth = paddles.get(0).getShape().getWidth();
+        int paddlewidth = paddles.get(0).getWidth();
         int noOfPaddles = paddles.size();
         int noOfGaps = noOfPaddles - 1;
 
@@ -387,8 +397,8 @@ public class LevelState {
     }
 
     public ProjectilePowerDown createProjectilePowerDown(Brick brick, int x) {
-        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getShape().getPosX() + brick.getShape().getWidth() / 2,
-                brick.getShape().getPosY() + brick.getShape().getHeight(), 4, 4);
+        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getX() + brick.getWidth() / 2,
+                brick.getY() + brick.getHeight(), 4, 4);
         return new ProjectilePowerDown(new Projectile(s));
     }
 

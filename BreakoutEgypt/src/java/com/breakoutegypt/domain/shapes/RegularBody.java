@@ -5,6 +5,8 @@
  */
 package com.breakoutegypt.domain.shapes;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
@@ -14,25 +16,49 @@ import org.jbox2d.dynamics.Body;
  */
 public class RegularBody {
 
-    private ShapeDimension shape;
+    private String name;
+
+//    private ShapeDimension shape;
     private Body body;
-    private BodyConfiguration config;
-    
+    protected BodyConfiguration config;
+
+    private float x, y;
+    private float originalX, originalY;
+    private int width, height;
+    //Ball radius in pixels
+
     public RegularBody(ShapeDimension s) {
-        this.shape = s; // clone
+//        this.shape = s; // clone
+        this.x = s.getPosX();
+        this.y = s.getPosY();
+        this.originalX = x;
+        this.originalY = y;
+        this.width = s.getWidth();
+        this.height = s.getHeight();
+        this.name = s.getName();
     }
 
-    public String getName() {
-        return shape.getName();
+    public String getName() { return name;}
+
+    public float getX() {
+        if(this.body != null){
+            return body.getPosition().x;
+        }
+        return x; 
+    }
+    public float getY() { 
+        if(this.body != null){
+            return body.getPosition().y;
+        }
+        
+        return y; 
     }
 
-    public ShapeDimension getShape() {
-        return shape;
-    }
+    public int getWidth() {  return width; }
+    public int getHeight() { return height; }
 
-    public void setShape(ShapeDimension shape) {
-        this.shape = shape;
-    }
+    public float getOriginalX() { return originalX;  }
+    public float getOriginalY() { return originalY; }
 
     public Body getBody() {
         return body;
@@ -50,26 +76,22 @@ public class RegularBody {
         return body.getPosition();
     }
 
-    //    // uitleg visitor en double dispatch van Mattias De Wael
-////    static interface ShapeUser {
-////     void   doForBrick(Brick b);
-////      void doForPaddle(Paddle p);
-////     void  doForBall(Ball b);
-////     void doForRegular(RegularBody r);
-////   }
-////    // Visitor + double dispatch
-////    void accept(ShapeUser u);
-
-//    @Override
-//    public void accept(ShapeUser u) {
-//        u.doForRegular(this);
-//    }
-
     public BodyConfiguration getConfig() {
         return config;
     }
 
     public void setBox2dConfig(BodyConfiguration config) {
         this.config = config;
+    }
+    
+    public JsonObjectBuilder toJson() {
+        JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
+        brickkObjectBuilder.add("name", this.name);
+        brickkObjectBuilder.add("x", this.x);
+        brickkObjectBuilder.add("y", this.y);
+        brickkObjectBuilder.add("width", this.width);
+        brickkObjectBuilder.add("height", this.height);
+//        brickkObjectBuilder.add("color", String.format("rgb(%d,%d,%d)", this.color.getRed(), this.color.getGreen(), this.color.getBlue()));
+        return brickkObjectBuilder;
     }
 }

@@ -17,7 +17,7 @@ public class DimensionDefaults {
     
     public static final int PADDLE_DISTANCE_FROM_BOTTOM = 5;
     
-    public static final int BRICK_WIDTH = 8;
+    public static final int BRICK_WIDTH = 10;
     public static final int BRICK_HEIGHT =  10;
     
 }
