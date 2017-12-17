@@ -26,7 +26,6 @@ import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -95,20 +94,10 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-//        BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
-//        p.setBox2dConfig(domePaddleConfig);
         paddles.add(p);
     }
-
-    // TODO based on bricktype it might be necessary to do more here
-    // e.g. all surrounding bricks an explosive brick
+    
     public void addBrick(Brick brick) {
-//        BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
-//
-//        if (!brick.isVisible()) {
-//            brickBody.getFixtureConfig().setMaskBits(0);
-//        }
-//        brick.setBox2dConfig(brickBody);
         bricks.add(brick);
     }
 
@@ -120,9 +109,6 @@ public class LevelState {
 
     public void addBalls(List<Ball> balls) {
         for (Ball b : balls) {
-//            BodyConfiguration ballBodyConfig = factory.createBallConfig(b.getShape());
-//            b.setBox2dConfig(ballBodyConfig);
-
             if (b.isStartingBall()) {
                 this.startingBall = b;
             }
@@ -224,18 +210,11 @@ public class LevelState {
         return bodies;
     }
 
-    // TODO calculate range without Points, test this monstrosity
     private List<Brick> getRangeOfBricksAroundBodyHelper(Brick centreBrick, int range, List<Brick> bricksToRemove) {
-        Point centre = centreBrick.getGridPosition();
-
-        Point currentBrickPosition;
-
         if (range == 0) {
             bricksToRemove.add(centreBrick);
         } else {
             for (Brick brick : bricks) {
-                currentBrickPosition = brick.getGridPosition();
-//                boolean isBrickInRange =Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range;
                 int horizontalRange = range * DimensionDefaults.BRICK_WIDTH;
                 int verticalRange = range * DimensionDefaults.BRICK_HEIGHT;
 

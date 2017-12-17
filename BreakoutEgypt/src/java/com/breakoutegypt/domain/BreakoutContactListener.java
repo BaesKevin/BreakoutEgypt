@@ -65,33 +65,10 @@ public class BreakoutContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-//        Fixture f1 = contact.getFixtureA();
-//        Fixture f2 = contact.getFixtureB();
-//
-//        RegularBody s1 = (RegularBody) f1.getBody().getUserData();
-//        RegularBody s2 = (RegularBody) f2.getBody().getUserData();
-//
-//        Brick brick = getBrickBallCollidedWith(f1, f2, s1, s2);
-//
-//        if (brick != null && !brick.isVisible()) {
-//            contact.setEnabled(false);
-//        }
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-    }
-
-    private Brick getBrickBallCollidedWith(Fixture f1, Fixture f2, RegularBody s1, RegularBody s2) {
-        Brick brick = null;
-
-        if (s1 != null && s1 instanceof Brick) {
-            brick = (Brick) s1;
-        } else if (s2 != null && s2 instanceof Brick) {
-            brick = (Brick) s2;
-        }
-
-        return brick;
     }
 
 }

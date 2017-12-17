@@ -27,7 +27,6 @@ import javax.json.JsonObjectBuilder;
 public class Brick extends RegularBody {
 
     private boolean isTarget;
-    private Point gridPosition;
 
     private boolean isVisibible;
     private boolean isBreakable;
@@ -53,10 +52,7 @@ public class Brick extends RegularBody {
         this(s, isTarget, isVisible, true);
     }
 
-//    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable) {
-//        this(s, gridPosition, isTarget, isVisible, isBreakable, 2000);
-//    }
-    public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable/*, int points*/) {
+    public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable) {
         super(s);
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
@@ -99,14 +95,6 @@ public class Brick extends RegularBody {
 
     public void setTarget(boolean isTarget) {
         this.isTarget = isTarget;
-    }
-
-    public Point getGridPosition() {
-        return gridPosition;
-    }
-
-    public void setGridPosition(Point position) {
-        this.gridPosition = position;
     }
 
     public boolean isBreakable() {

@@ -42,6 +42,7 @@ public class Level implements BreakoutWorldEventListener {
 
     private int lives;
 
+    // TODO use isLastLevel so frontend doesn't have to get 2 messagse, it can just know when loading the last level that it's the last level
     private boolean isLastLevel;
     private LevelState levelState;
 

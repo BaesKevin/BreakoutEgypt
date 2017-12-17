@@ -46,7 +46,6 @@ public class BreakoutWorld implements ContactHandler {
 
     private World world;
 
-    // TODO use these!
     public static final int DIMENSION = 100;
     
     public static final float TIMESTEP_DEFAULT = 1f / 60f;
@@ -61,7 +60,6 @@ public class BreakoutWorld implements ContactHandler {
     private PowerUpHandler powerupHandler;
     private PowerDownHandler powerdownHandler;
     private ServerClientMessageRepository messageRepo;
-    private boolean acidBall = false;
 
     public BreakoutWorld() {
         this(TIMESTEP_DEFAULT);
@@ -190,10 +188,6 @@ public class BreakoutWorld implements ContactHandler {
 
     public long getTimeStepAsMs() {
         return Math.round(Math.floor(timestepSeconds * 1000));
-    }
-
-    public void setAcidBall() {
-        acidBall = true;
     }
 
 }
