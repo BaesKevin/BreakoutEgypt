@@ -3,26 +3,36 @@
     Author     : BenDB
 */
 #highscoreTablePlaceholder {
-    width:80%;
-    padding:25px;
-    background-color:#fecc66;
-    margin-left:auto;
-    margin-right:auto;
+    width: 60%;
+    padding: 25px;
+    background-color: #fecc66;
+    margin-left: auto;
+    margin-right: auto;
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
     border-radius: 20px;
 }
 
+#highscoreTablePlaceholder button {
+    width: auto;
+    margin: 2% auto 0 auto;
+    display: block;
+}
+
 table {
-    width: 80%;
+    width: 95%;
+    margin-right: auto;
     margin-left: auto;
-    overflow:auto;
-    margin-top:20px;
+    overflow: auto;
+}
+
+table th {
+    /*text-align: center;*/
+    border-bottom: 1px black dashed;
 }
 
 form {
-    margin: auto;
-    width: 80%;
+    margin: 2% auto;
+    width: 60%;
     text-align: center;
-
 }

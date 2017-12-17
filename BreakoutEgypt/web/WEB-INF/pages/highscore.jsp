@@ -26,7 +26,7 @@
         </header>
         <main>
             <form action="highscores" method="POST">
-                
+
                 <label>Difficulty</label>
                 <select name="difficulty">
                     <c:forEach items="${difficulties}" var="difficultyFromRepo">
@@ -38,30 +38,30 @@
                                 <option value="${difficultyFromRepo.name}">${difficultyFromRepo.name}</option>
                             </c:otherwise>
                         </c:choose>
-                        
+
                     </c:forEach>
                 </select>
-                
+
                 <label for="gameId">level:</label> <input type="number" value="<c:out value="${gameIdentification}"/>" min="1" max="100" name="gameId" id="gameId"/>
                 <input type="submit" value="show">
             </form>
             <div id="highscoreTablePlaceholder">
-            <table>
-                <tr>
-                    <th>Username</th>
-                    <th>Timescore</th>
-                    <th>Brickscore</th>
-                </tr>
-                <c:forEach var="score" items="${scores}">
+                <table>
                     <tr>
-                        <td><c:out value="${score.getUser()}"/></td>
-                        <td><c:out value="${score.getScore()}"/></td>
-                        <td><c:out value="${score.brickScore}"/></td>
-                    </tr>+
-                </c:forEach>
-            </table>
+                        <th>Username</th>
+                        <th>Timescore</th>
+                        <th>Brickscore</th>
+                    </tr>
+                    <c:forEach var="score" items="${scores}">
+                        <tr>
+                            <td><c:out value="${score.getUser()}"/></td>
+                            <td><c:out value="${score.getScore()}"/></td>
+                            <td><c:out value="${score.brickScore}"/></td>
+                        </tr>
+                    </c:forEach>
+                </table>
+                <button type="button" id="returnToMain" class="btn">Main Menu</button>
             </div>
-            <button type="button" id="returnToMain" class="btn">Main Menu</button>
         </main>
         <footer class="row">
             <div class="col-lg-8 col-md-10 mx-auto text-center">
