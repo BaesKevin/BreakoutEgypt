@@ -7,17 +7,16 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.data.StaticUserRepository;
 import com.breakoutegypt.data.UserRepository;
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -54,7 +53,8 @@ public class LoginSystemServlet extends HttpServlet {
             if(login!=null){
                 User user=userRepo.getUser(email,password);
                 if(user!=null){
-                    session.setAttribute("user",user);
+                    Player player = new Player(user.getUsername(), user.getEmail(), user.getPassword());
+                    session.setAttribute("player",player);
                     request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 } else {
                     response.sendRedirect("WEB-INF/pages/login.jsp?error=could not find user");

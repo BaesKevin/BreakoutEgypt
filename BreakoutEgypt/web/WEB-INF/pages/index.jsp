@@ -4,6 +4,7 @@
     Author     : Bjarne Deketelaere
 --%>
 
+<%@page import="com.breakoutegypt.domain.Player"%>
 <%@page import="com.breakoutegypt.domain.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -27,12 +28,9 @@
     <main class="row">
         <div class="col-lg-12 text-center">
             <%
-            User user=(User)request.getSession().getAttribute("user");
+            Player user=(Player)request.getSession().getAttribute("player");
             //Development purpose
-            if(user==null){
-                user=new User("test","test@hotmail.com","test");
-                request.getSession().setAttribute("user",user);
-            }
+            
             out.println(user.getEmail());
         %>
             <div id="menu">

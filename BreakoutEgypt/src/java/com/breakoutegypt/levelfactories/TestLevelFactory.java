@@ -12,7 +12,6 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
-import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
@@ -113,11 +112,35 @@ public class TestLevelFactory extends LevelFactory {
             case 20:
                 currentLevel = getLevelWithPowerDownAndExplosive();
                 break;
+            case 21:
+                currentLevel = getLevelWith2Paddles();
+                break;
             default:
                 // if there is a last level in this factory the liferegeneration can't be tested
                 currentLevel = getOneTargetBrickTest();
         }
     }
+
+    public Level getLevelWith2Paddles() {
+
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+
+        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
+        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
+
+        paddle2.setPlayerIndex(2);
+        
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(paddle);
+        paddles.add(paddle2);
+
+        Ball ball = new Ball(ballShape);
+        ball.setStartingBall(true);
+        
+        LevelState initialState = new LevelState(ball, paddles, new ArrayList());
+        return new Level(currentLevelId, game, initialState);
+    }
+
     
     public Level getLevelWithPowerDownAndExplosive() {
         

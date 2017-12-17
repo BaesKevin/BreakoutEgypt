@@ -86,7 +86,7 @@ public class Game {
         Player peer = manager.getPlayer(username);
 
         if (peer != null) {
-            currentLevel.movePaddle(peer.getPaddle(), x, y);
+            currentLevel.movePaddle(peer.getIndex(), x, y);
         } else {
         }
     }
@@ -100,13 +100,13 @@ public class Game {
     public boolean isPlayerInSessionManager(Player player) {
         return manager.isPlayerInSessionManager(player);
     }
-
-    public void assignPaddleToPlayer(Player player) {
-        int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
-        //currentLevel is null
-        Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
-        player.setPaddle(paddleToAssign);
-    }
+    
+    // this method assigns a paddle to a player using the playerindex. 
+//    public void assignPaddleToPlayer(Player player) {
+//        Paddle paddleToAssignToAssignToPlayerWithPlayerIndexThatWeJustGotFromTheLevel = currentLevel.getPaddleWithPlayerIndex(player.getIndex());
+//        
+//        player.setPaddle(paddleToAssignToAssignToPlayerWithPlayerIndexThatWeJustGotFromTheLevel);
+//    }
 
     public void addConnectionForPlayer(String name, PlayerConnection conn) {
         if (manager.isConnecting(name)) {

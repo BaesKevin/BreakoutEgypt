@@ -40,13 +40,15 @@ public class MultiplayerLevelFactory extends LevelFactory {
         Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
         Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
 
+        paddle2.setPlayerIndex(2);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
         paddles.add(paddle2);
 
         Ball ball = new Ball(ballShape);
-
-        LevelState initialState = new LevelState(ball, paddle, new ArrayList());
+        ball.setStartingBall(true);
+        
+        LevelState initialState = new LevelState(ball, paddles, new ArrayList());
         return new Level(currentLevelId, game, initialState);
 
     }

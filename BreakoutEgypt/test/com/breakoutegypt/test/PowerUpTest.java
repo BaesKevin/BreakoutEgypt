@@ -51,14 +51,14 @@ public class PowerUpTest {
             ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
         }
 
-        player = new Player(new User("Kevin"));
+        player = new Player("Kevin");
 
         game.addConnectingPlayer(player);
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
         
         if(levelHasPaddle){
-            game.assignPaddleToPlayer(player);
+//            game.assignPaddleToPlayer(player);
         }
         
     }
@@ -91,12 +91,12 @@ public class PowerUpTest {
         // left paddle x can't be smaller than the half of its width
         assertTrue(paddles.get(0).getPosition().x >= paddles.get(0).getShape().getWidth() / 2);
 
-        level.movePaddle(paddles.get(0), 120, 156);
+        level.movePaddle(player.getIndex(), 120, 156);
 
         // left paddle x must be between half its width and (level width - the total width of the 2 paddles - half its width) 
         assertTrue(paddles.get(0).getPosition().x > paddles.get(0).getShape().getWidth() / 2 && paddles.get(0).getPosition().x < 300 - paddles.get(0).getShape().getWidth() * 2 - paddles.get(0).getShape().getWidth() / 2);
 
-        level.movePaddle(paddles.get(0), 151, 156);
+        level.movePaddle(player.getIndex(), 151, 156);
 
         // left paddle x must be smaller than (level width - the total width of the 2 paddles - half its width)
         assertTrue(paddles.get(0).getPosition().x <= 300 - paddles.get(0).getShape().getWidth() - BrokenPaddlePowerUp.GAP - paddles.get(0).getShape().getWidth() / 2);

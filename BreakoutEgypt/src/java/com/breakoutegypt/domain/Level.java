@@ -141,10 +141,12 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     // x coordinate is the center of the most left paddle
-    public void movePaddle(Paddle paddle, int firstPaddleCenter, int y) {
+    public void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
         
-        List<Paddle> paddles = levelState.getPaddles();
-        int totalWidth = levelState.calculatePaddleWidthWithGaps();
+//        List<Paddle> paddles = levelState.getPaddles();
+        List<Paddle> paddles = levelState.getPaddlesForPlayer(playerIndex);
+        
+        int totalWidth = levelState.calculatePaddleWidthWithGaps(paddles);
         int paddleWidth = paddles.get(0).getShape().getWidth();
         // x is the center of the most left paddle
         int min = paddleWidth / 2;
@@ -166,17 +168,17 @@ public class Level implements BreakoutWorldEventListener {
             paddleCenter += (paddleWidth + BrokenPaddlePowerUp.GAP);
         }
 
-        if (!levelStarted) {
-            float yPos = levelState.getBall().getPosition().y;
-            List<Ball> balls = levelState.getBalls();
-
-            float temp = firstPaddleCenter;
-            for (Ball ball : balls) {
-                ball.moveTo(temp, yPos);
-                temp += paddleWidth;
-            }
-
-        }
+//        if (!levelStarted) {
+//            float yPos = levelState.getBall().getPosition().y;
+//            List<Ball> balls = levelState.getBalls();
+//
+//            float temp = firstPaddleCenter;
+//            for (Ball ball : balls) {
+//                ball.moveTo(temp, yPos);
+//                temp += paddleWidth;
+//            }
+//
+//        }
 
     }
 

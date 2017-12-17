@@ -6,49 +6,46 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
-import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.levelprogression.LevelProgressManager;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author kevin
  */
+public class Player extends User implements Serializable {
 
-// voorstel: hier levelprogressie bijhouden, een map tussen GameType en ints lijkt me voldoende
-// de int houdt dan het hoogst bereikte level bij. Op deze manier kan in Game bij het stoppen van het
-// spelletje aan het level zijn id vragen en zo bijhouden in de map. In de LevelFactorys kunnen we 
-// een extra field defaultMaxLevel maken. als dit bv. 5 is dan zijn de eerste 5 levels altijd beschikbaar.
-public class Player implements Serializable{
-    private User user;
-    private Paddle paddle;
+//    private Paddle paddle;
+//    private List<Ball> balls;
     private PlayerConnection conn;
     private LevelProgressManager levelPackProgressions;
+    private int index;
     
-//    private Session session;
+    public Player(String username) {
+        this(username, "", "");
+    }
+
+    public Player(String email, String password) {
+        this("", email, password);
+    }
     
-    public Player(User user) {
-        this.user = user;
+    public Player(String username, String email, String password) {
+        super(username, email, password);
         this.levelPackProgressions = new LevelProgressManager();
+        this.index = 1;
     }
-    
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Paddle getPaddle() {
-        return paddle;
-    }
-
-    public void setPaddle(Paddle paddle) {
-        this.paddle = paddle;
-    }
+//
+//    public Paddle getPaddle() {
+//        return paddle;
+//    }
+//
+//    public void setPaddle(Paddle paddle) {
+//        this.paddle = paddle;
+//    }
 
     public PlayerConnection getConnection() {
         return conn;
@@ -57,36 +54,16 @@ public class Player implements Serializable{
     public void setConnection(PlayerConnection conn) {
         this.conn = conn;
     }
-    
-    public LevelProgressManager getProgressions(){
+
+    public LevelProgressManager getProgressions() {
         return levelPackProgressions;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + Objects.hashCode(this.user);
-        return hash;
+    public int getIndex() {
+        return index;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Player other = (Player) obj;
-        if (!user.getUsername().equals(other.getUser().getUsername())) {
-            return false;
-        }
-        return true;
+    
+    public void setIndex(int index){
+        this.index = index;
     }
-
-    
-    
 }

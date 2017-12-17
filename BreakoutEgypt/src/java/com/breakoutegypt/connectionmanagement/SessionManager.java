@@ -39,6 +39,8 @@ public class SessionManager {
     private Set<Player> connectedPlayers;
     private Set<Player> connectingPlayers;
 
+    private Map<Integer, Player> indexToPlayerMap;
+    
     public SessionManager() {
         this(1);
     }
@@ -47,6 +49,7 @@ public class SessionManager {
         this.maxPlayers = maxPlayers;
         connectedPlayers = Collections.synchronizedSet(new HashSet());
         connectingPlayers = Collections.synchronizedSet(new HashSet());
+        indexToPlayerMap = Collections.synchronizedMap(new HashMap());
     }
 
     public Player getPlayer(String name) {
@@ -75,7 +78,7 @@ public class SessionManager {
     private Player getPlayerInSet(String name, Set<Player> playerset) {
         Player toFind = null;
         for (Player player : playerset) {
-            if (player.getUser().getUsername().equals(name)) {
+            if (player.getUsername().equals(name)) {
                 toFind = player;
             }
         }
@@ -106,6 +109,13 @@ public class SessionManager {
 
                 connectingPlayer.setConnection(conn);
                 connectedPlayers.add(connectingPlayer);
+                
+                int highestIndex = indexToPlayerMap.size();
+                int playerIndex = highestIndex + 1;
+                
+                indexToPlayerMap.put(playerIndex, connectingPlayer);
+                connectingPlayer.setIndex(playerIndex);
+                System.out.printf("player %s index: %d\n", name, playerIndex);
             }
             connectingPlayers.remove(connectingPlayer);
         } else {

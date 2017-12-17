@@ -24,7 +24,7 @@ public class GameManager {
         return createGame(type, difficulty, 1);
     }
     
-    private int createGame(GameType type, GameDifficulty difficulty,int numberOfPlayers){
+    public int createGame(GameType type, GameDifficulty difficulty,int numberOfPlayers){
         Game game = new Game(numberOfPlayers, type, difficulty);
         
         games.put(game.getId(), game);
@@ -62,13 +62,13 @@ public class GameManager {
             game.addConnectionForPlayer(name, conn);
     }
     
-    public void assignPaddleToPlayer(int gameId, Player player) {
-        Game game = games.get(gameId);
-                
-        if(game!=null)
-            game.assignPaddleToPlayer(player);
-        
-    }
+//    public void assignPaddleToPlayer(int gameId, Player player) {
+//        Game game = games.get(gameId);
+//                
+//        if(game!=null)
+//            game.assignPaddleToPlayer(player);
+//        
+//    }
 
     public void removePlayer(int gameId, String name) {
         if(games != null){

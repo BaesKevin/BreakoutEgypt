@@ -28,6 +28,7 @@ import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
+import com.breakoutegypt.exceptions.BreakoutException;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -274,8 +275,8 @@ public class LevelState {
         messages.clear();
     }
 
-    public int calculatePaddleWidthWithGaps() {
-        List<Paddle> paddles = getPaddles();
+    public int calculatePaddleWidthWithGaps(List<Paddle> paddles) {
+        
         int paddlewidth = paddles.get(0).getShape().getWidth();
         int noOfPaddles = paddles.size();
         int noOfGaps = noOfPaddles - 1;
@@ -402,5 +403,27 @@ public class LevelState {
 
     public List<Projectile> getProjectiles() {
         return projectiles;
+    }
+
+//    public Paddle getPaddleWithPlayerIndex(int index) {
+//        for(Paddle paddle : paddles){
+//            if(paddle.getPlayerIndex() == index){
+//                return paddle;
+//            }
+//        }
+//        
+//        throw new BreakoutException("No paddle for this playerindex exists!");
+//    }
+
+    public List<Paddle> getPaddlesForPlayer(int playerIndex) {
+        List<Paddle> paddlesOfPlayer = new ArrayList();
+        
+        for (Paddle paddle : paddles) {
+            if (paddle.getPlayerIndex() == playerIndex) {
+                paddlesOfPlayer.add(paddle);
+            }
+        }
+        
+        return paddlesOfPlayer;
     }
 }

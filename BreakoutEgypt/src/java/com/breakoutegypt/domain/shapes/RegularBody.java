@@ -17,9 +17,11 @@ public class RegularBody {
     private ShapeDimension shape;
     private Body body;
     private BodyConfiguration config;
+    private int playerIndex;
     
     public RegularBody(ShapeDimension s) {
         this.shape = s; // clone
+        playerIndex = 1;
     }
 
     public String getName() {
@@ -42,13 +44,22 @@ public class RegularBody {
         this.body = body;
     }
 
-    public void moveTo(float x, float y) {
+    public synchronized void moveTo(float x, float y) {
         body.setTransform(new Vec2(x, y), 0);
     }
 
     public Vec2 getPosition() {
         return body.getPosition();
     }
+
+    public int getPlayerIndex() {
+        return playerIndex;
+    }
+
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }    
+    
 
     //    // uitleg visitor en double dispatch van Mattias De Wael
 ////    static interface ShapeUser {
