@@ -7,8 +7,7 @@ package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.messages.Message;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.json.Json;
@@ -48,7 +47,7 @@ public class WebsocketConnection implements PlayerConnection {
     }
 
     @Override
-    public void send(Map<String, List<Message>> msgs) {
+    public void send(Map<String, Collection<Message>> msgs) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         if (msgs.containsKey("ballpositions")) {
             job.add("ballpositions", listToJsonArray(msgs.get("ballpositions")));
@@ -66,7 +65,7 @@ public class WebsocketConnection implements PlayerConnection {
         send(job.build());
     }
 
-    private JsonArray listToJsonArray(List<Message> msgs) {
+    private JsonArray listToJsonArray(Collection<Message> msgs) {
         JsonArrayBuilder jab = Json.createArrayBuilder();
 
         for (Message msg : msgs) {

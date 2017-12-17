@@ -16,7 +16,7 @@ import org.jbox2d.dynamics.BodyType;
  * @author kevin
  */
 public class BodyConfigurationFactory {
-
+    private static BodyConfigurationFactory INSTANCE;
 
     //TESTING BITS FOR COLLISION
     private final int BOUNDS_CATEGORY = 0x0001;
@@ -30,6 +30,18 @@ public class BodyConfigurationFactory {
     private final int BALL_MASK = BOUNDS_CATEGORY | BRICK_CATEGORY | PADDLE_CATEGORY;
     private final int BOUNDS_MASK = -1;
 
+    private BodyConfigurationFactory(){
+        
+    }
+    
+    public static BodyConfigurationFactory getInstance(){
+        if(INSTANCE ==  null){
+            INSTANCE = new BodyConfigurationFactory();
+        }
+        
+        return INSTANCE;
+    }
+    
     public BodyConfiguration createTriangleConfig(ShapeDimension shape) {
 
         BodyDefConfig bodyDef = new BodyDefConfig(BodyType.STATIC, new Vec2(shape.getPosX(), shape.getPosY()));

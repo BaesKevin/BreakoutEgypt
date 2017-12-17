@@ -21,20 +21,10 @@ public class RegularBody {
 //    private ShapeDimension shape;
     private Body body;
     protected BodyConfiguration config;
-
-    private float x, y;
-    private float originalX, originalY;
-    private int width, height;
-    //Ball radius in pixels
+    protected ShapeDimension dimension;
 
     public RegularBody(ShapeDimension s) {
-//        this.shape = s; // clone
-        this.x = s.getPosX();
-        this.y = s.getPosY();
-        this.originalX = x;
-        this.originalY = y;
-        this.width = s.getWidth();
-        this.height = s.getHeight();
+        this.dimension = s;
         this.name = s.getName();
     }
 
@@ -44,21 +34,21 @@ public class RegularBody {
         if(this.body != null){
             return body.getPosition().x;
         }
-        return x; 
+        return dimension.getPosX(); 
     }
     public float getY() { 
         if(this.body != null){
             return body.getPosition().y;
         }
         
-        return y; 
+        return dimension.getPosY(); 
     }
 
-    public int getWidth() {  return width; }
-    public int getHeight() { return height; }
+    public int getWidth() {  return dimension.getWidth(); }
+    public int getHeight() { return dimension.getHeight(); }
 
-    public float getOriginalX() { return originalX;  }
-    public float getOriginalY() { return originalY; }
+    public float getOriginalX() { return dimension.getPosX();  }
+    public float getOriginalY() { return dimension.getPosY(); }
 
     public Body getBody() {
         return body;
@@ -87,10 +77,10 @@ public class RegularBody {
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
         brickkObjectBuilder.add("name", this.name);
-        brickkObjectBuilder.add("x", this.x);
-        brickkObjectBuilder.add("y", this.y);
-        brickkObjectBuilder.add("width", this.width);
-        brickkObjectBuilder.add("height", this.height);
+        brickkObjectBuilder.add("x", dimension.getPosX());
+        brickkObjectBuilder.add("y", dimension.getPosY());
+        brickkObjectBuilder.add("width", dimension.getWidth());
+        brickkObjectBuilder.add("height", dimension.getHeight());
 //        brickkObjectBuilder.add("color", String.format("rgb(%d,%d,%d)", this.color.getRed(), this.color.getGreen(), this.color.getBlue()));
         return brickkObjectBuilder;
     }

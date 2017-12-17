@@ -16,7 +16,7 @@ public class Repositories {
     
     private static final HighscoreRepository highscoreRepository = new StaticDummyHighscoreRepo();
     private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
-    private static final DefaultShapeRepository defaultShapeRepository = new DefaultShapeRepository();
+    private static final DefaultShapeRepository defaultShapeRepository = DefaultShapeRepository.getInstance();
     
     public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;

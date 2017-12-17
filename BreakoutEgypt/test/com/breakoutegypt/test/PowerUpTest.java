@@ -111,7 +111,6 @@ public class PowerUpTest {
         level = game.getLevel();
         List<Ball> balls = level.getLevelState().getBalls();
         level.startBall();
-        balls.get(0).setLinearVelocity(0, -200);
         stepTimes(level, 40);
 
         game.triggerPowerup("floor");
@@ -171,8 +170,8 @@ public class PowerUpTest {
 
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
 
-        level.startBall();
-        stepTimes(level, 60);
+        level.getLevelState().getBalls().get(0).setLinearVelocity(0, -100);
+        stepTimes(level, 10);
 
         DummyConnection conn = (DummyConnection) player.getConnection();
 
@@ -214,7 +213,7 @@ public class PowerUpTest {
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
 
         level.startBall();
-        stepTimes(level, 100);
+        stepTimes(level, 10);
 
         List<PowerUp> powerups = bpuh.getPowerUps();
 

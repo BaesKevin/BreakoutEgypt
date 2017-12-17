@@ -75,7 +75,7 @@ public class LevelState {
         this.messages = new ArrayList();
         this.projectiles = new ArrayList();
 
-        factory = new BodyConfigurationFactory();
+        factory = BodyConfigurationFactory.getInstance();
 
         createBounds();
         addBalls(balls);
@@ -171,7 +171,7 @@ public class LevelState {
         startingBall.setDecoy(false);
         ShapeDimension originalDimension =
                 new ShapeDimension(startingBall.getName(), startingBall.getOriginalX(), startingBall.getOriginalY(), startingBall.getWidth(), startingBall.getHeight());
-        BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(originalDimension);
+        BodyConfiguration ballBodyBodyConfig = factory.createBallConfig(originalDimension);
         startingBall.setBox2dConfig(ballBodyBodyConfig);
         messages.add(new BallMessage(startingBall, BallMessageType.ADD));
         balls.add(startingBall);

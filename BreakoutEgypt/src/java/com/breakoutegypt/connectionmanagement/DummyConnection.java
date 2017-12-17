@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.json.Json;
@@ -79,10 +80,10 @@ public class DummyConnection implements PlayerConnection {
     }
 
     @Override
-    public void send(Map<String, List<Message>> msgs) {
+    public void send(Map<String, Collection<Message>> msgs) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         if (msgs.containsKey("ballpositions")) {
-            ballPositionMessages = msgs.get("ballpositions");
+            ballPositionMessages = (List<Message>) msgs.get("ballpositions");
             job.add("ballpositions", listToJsonArray(ballPositionMessages));
         }
         if (msgs.containsKey("brickactions")) {
@@ -100,7 +101,7 @@ public class DummyConnection implements PlayerConnection {
         jsonMessages.add(job.build());
     }
 
-    private JsonArray listToJsonArray(List<Message> msgs) {
+    private JsonArray listToJsonArray(Collection<Message> msgs) {
         JsonArrayBuilder jab = Json.createArrayBuilder();
 
         for (Message msg : msgs) {

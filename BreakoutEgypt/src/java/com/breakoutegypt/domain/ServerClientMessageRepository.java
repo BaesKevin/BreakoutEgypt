@@ -7,7 +7,9 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -15,12 +17,12 @@ import java.util.List;
  */
 public class ServerClientMessageRepository {
 
-    private List<Message> brickMessages;
+    private Set<Message> brickMessages;
     private List<Message> powerupMessages;
     private List<Message> powerdownMessages;
 
     public ServerClientMessageRepository() {
-        this.brickMessages = new ArrayList();
+        this.brickMessages = new HashSet();
         this.powerupMessages = new ArrayList();
         this.powerdownMessages = new ArrayList();
     }
@@ -29,7 +31,7 @@ public class ServerClientMessageRepository {
         brickMessages.add(m);
     }
 
-    public List<Message> getBrickMessages() {
+    public Set<Message> getBrickMessages() {
         return brickMessages;
     }
 

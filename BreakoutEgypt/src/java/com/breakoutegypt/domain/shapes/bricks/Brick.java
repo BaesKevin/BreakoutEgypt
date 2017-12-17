@@ -41,9 +41,12 @@ public class Brick extends RegularBody {
     private PowerDown powerdown;
 
 //    private int points = 2000;
-    
     public Brick(ShapeDimension s) {
-        this(s, false, true);
+        this(s, false);
+    }
+    
+    public Brick(ShapeDimension s, boolean isTarget){
+        this(s, isTarget, true);
     }
 
     public Brick(ShapeDimension s, boolean isTarget, boolean isVisible) {
@@ -53,7 +56,6 @@ public class Brick extends RegularBody {
 //    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable) {
 //        this(s, gridPosition, isTarget, isVisible, isBreakable, 2000);
 //    }
-    
     public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable/*, int points*/) {
         super(s);
         this.isVisibible = isVisible;
@@ -68,14 +70,6 @@ public class Brick extends RegularBody {
         }
 //        this.points = points;
 
-        BodyConfigurationFactory factory = new BodyConfigurationFactory();
-        BodyConfiguration brickBody = factory.createTriangleConfig(s);
-
-//        if (isVisible) {
-//            brickBody.getFixtureConfig().setMaskBits(0);
-//        }
-//        setBox2dConfig(brickBody);
-        this.config = brickBody;
     }
 
     public void setBreakable(boolean b) {
@@ -88,16 +82,11 @@ public class Brick extends RegularBody {
             this.getBody().getFixtureList().m_filter.maskBits = 0;
         } else {
             this.getBody().getFixtureList().m_filter.maskBits = 0x0010;
-        } 
+        }
     }
 
     public void setVisible(boolean b) {
         isVisibible = b;
-        if (!isVisibible) {
-            this.getBody().getFixtureList().m_filter.maskBits = 0;
-        } else {
-            this.getBody().getFixtureList().m_filter.maskBits = 0x0010;
-        } 
     }
 
     public boolean isVisible() {
@@ -131,7 +120,6 @@ public class Brick extends RegularBody {
 //    protected String getBrickTypeName() {
 //        return brickTypeName;
 //    }
-
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder builder = super.toJson();
 
@@ -207,7 +195,7 @@ public class Brick extends RegularBody {
     public PowerUp getPowerUp() {
         return powerup;
     }
-    
+
     public void setPowerdown(PowerDown powerdown) {
         this.powerdown = powerdown;
     }
@@ -231,5 +219,19 @@ public class Brick extends RegularBody {
             }
         }
         return false;
+    }
+
+    @Override
+    public BodyConfiguration getConfig() {
+        BodyConfigurationFactory factory = BodyConfigurationFactory.getInstance();
+        BodyConfiguration brickBody = factory.createTriangleConfig(this.dimension);
+
+        if (!this.isVisibible) {
+            brickBody.getFixtureConfig().setMaskBits(0);
+        }
+
+        this.config = brickBody;
+        
+        return config;
     }
 }

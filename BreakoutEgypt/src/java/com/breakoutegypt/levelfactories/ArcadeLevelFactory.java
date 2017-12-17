@@ -69,8 +69,8 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithFloodPowerDown() {
-        Paddle paddle = new Paddle(shapeRepo.getDefaultPaddle());
-        Ball ball = new Ball(shapeRepo.getDefaultBall(50, 0));
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+        Ball ball = shapeRepo.getDefaultBall(50, 0);
         
         Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 40, 20);
         Brick target = new Brick(new ShapeDimension("brick2", 1, 1, 1, 1), true, false);
@@ -96,8 +96,8 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getSimpleTestLevel(float timeStep) {
-        Paddle paddle = new Paddle(shapeRepo.getDefaultPaddle());
-        Ball ball = new Ball(shapeRepo.getDefaultBall());
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+        Ball ball = shapeRepo.getDefaultBall();
 
         List<Brick> bricks = new ArrayList();
         ball.setStartingBall(true);
@@ -109,8 +109,6 @@ public class ArcadeLevelFactory extends LevelFactory {
         int y = 5;
         int width = 10;
         int height = 10;
-        int gridX = 1;
-        int gridY = 1;
 
         // TODO move to ShapeFactory which gets default bricks from staticbrickrepo
         brickShape = new ShapeDimension(name, x, y, width, height);
@@ -129,8 +127,8 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithUnbreakableAndExplosive(float timeStep) {
-        Paddle paddle = new Paddle(shapeRepo.getDefaultPaddle());
-        Ball ball = new Ball(shapeRepo.getDefaultBall());
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+        Ball ball = shapeRepo.getDefaultBall();
 
         List<Brick> bricks = new ArrayList();
         ball.setStartingBall(true);
@@ -145,17 +143,15 @@ public class ArcadeLevelFactory extends LevelFactory {
         Brick brick;
 
         String id;
-        for (int x = 10; x < 10 + ((width + 1) * cols); x += width + 1) {
-            for (int y = 10; y < 10 + ((height + 1) * rows); y += height + 1) {
+        for (int x = 10; x < 10 + ((width) * cols); x += width) {
+            for (int y = 10; y < 10 + ((height ) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
 
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
-//                brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
                 brick = shapeRepo.getDefaultBrick(id, x, y);
                 
-//                brick = new Brick(brickShape, new Point(row, col));
                 bricks.add(brick);
                 col++;
             }
@@ -176,9 +172,7 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithMultipleBalls() {
-        ShapeDimension paddleShape = shapeRepo.getDefaultPaddle();
-
-        Paddle paddle = new Paddle(paddleShape);
+        Paddle paddle = shapeRepo.getDefaultPaddle();
         List<Brick> bricks = new ArrayList();
 
         ShapeDimension shape;
@@ -197,12 +191,10 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getPossibleRealLevel() {
-        ShapeDimension paddleShape = shapeRepo.getDefaultPaddle();
-        ShapeDimension ballShape = shapeRepo.getDefaultBall();
-
-        Paddle paddle = new Paddle(paddleShape);
-        Ball ball = new Ball(ballShape);
+        Ball ball = shapeRepo.getDefaultBall();
+        Paddle paddle = shapeRepo.getDefaultPaddle();
         ball.setStartingBall(true);
+        
         int row = 1;
         int col = 1;
         int rows = 3;
@@ -224,8 +216,8 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         String id;
         int index = 0;
-        for (int x = 10; x < 10 + ((width + 1) * cols); x += width + 1) {
-            for (int y = 5; y < 5 + ((height + 1) * rows); y += height + 1) {
+        for (int x = 10; x < 10 + ((width) * cols); x += width) {
+            for (int y = 5; y < 5 + ((height) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
 
@@ -235,10 +227,8 @@ public class ArcadeLevelFactory extends LevelFactory {
 
                 if (unbreakables.contains(index)) {
                     brick = new Brick(brickShape, false, true, false);
-//                    brick.setType(BrickType.UNBREAKABLE);
                 } else {
                     brick = new Brick(brickShape);
-//                    brick.setType(BrickType.REGULAR);
                 }
 
                 bricks.add(brick);
@@ -250,19 +240,15 @@ public class ArcadeLevelFactory extends LevelFactory {
         }
 
         bricks.get(21).setTarget(true);
-//        bricks.get(21).setType(BrickType.TARGET);
 
         bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
-//        bricks.get(4).setType(BrickType.EXPLOSIVE);
         bricks.get(23).addEffect(new ExplosiveEffect(bricks.get(23), 1));
-//        bricks.get(23).setType(BrickType.EXPLOSIVE);
-
+        
         List<Brick> bricksToToggle = new ArrayList();
         for (int i = 0; i < 11; i++) {
             bricksToToggle.add(bricks.get(i));
         }
         bricks.get(11).addEffect(new ToggleEffect(bricksToToggle));
-//        bricks.get(11).setType(BrickType.SWITCH);
         bricks.get(11).setBreakable(false);
 
         bricksToToggle = new ArrayList();
@@ -273,7 +259,6 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricksToToggle.add(bricks.get(12));
         bricksToToggle.add(bricks.get(13));
         bricks.get(14).addEffect(new ToggleEffect(bricksToToggle));
-//        bricks.get(14).setType(BrickType.SWITCH);
         bricks.get(14).setBreakable(false);
 
         List<Ball> balls = new ArrayList();
@@ -290,12 +275,9 @@ public class ArcadeLevelFactory extends LevelFactory {
     }
 
     public Level getLevelWithSwitch() {
-        ShapeDimension paddleShape = shapeRepo.getDefaultPaddle();
-        ShapeDimension ballShape = shapeRepo.getDefaultBall();
+        Ball ball = shapeRepo.getDefaultBall();
+        Paddle paddle = shapeRepo.getDefaultPaddle();
 
-        Paddle paddle = new Paddle(paddleShape);
-
-        Ball ball = new Ball(ballShape);
         List<Brick> bricks = new ArrayList();
         ball.setStartingBall(true);
         int row = 1;
@@ -309,8 +291,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         Brick brick;
 
         String id;
-        for (int x = 10; x < 10 + ((width + 1) * cols); x += width + 1) {
-            for (int y = 10; y < 10 + ((height + 1) * rows); y += height + 1) {
+        for (int x = 10; x < 10 + ((width) * cols); x += width) {
+            for (int y = 10; y < 10 + ((height) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
 

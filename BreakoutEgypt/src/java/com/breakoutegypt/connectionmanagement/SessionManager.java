@@ -16,11 +16,11 @@ import com.breakoutegypt.domain.messages.LevelMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
-import com.breakoutegypt.domain.messages.PowerDownMessage;
 import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Projectile;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -153,7 +153,7 @@ public class SessionManager {
     }
 
     public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
-        Map<String, List<Message>> messages = createMessageMap(currentLevel, messageRepo);
+        Map<String, Collection<Message>> messages = createMessageMap(currentLevel, messageRepo);
 
         sendJsonToPlayers(messages);
         messageRepo.clearBrickMessages();
@@ -182,12 +182,12 @@ public class SessionManager {
         currentLevel.getLevelState().clearMessages();
     }
 
-    private Map<String, List<Message>> createMessageMap(Level currentLevel, ServerClientMessageRepository messageRepo) {
+    private Map<String, Collection<Message>> createMessageMap(Level currentLevel, ServerClientMessageRepository messageRepo) {
 
-        Map<String, List<Message>> messages = new HashMap<>();
+        Map<String, Collection<Message>> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
         List<Message> ballPositionMessages = new ArrayList();
-        List<Message> brickMessages = messageRepo.getBrickMessages();
+        Set<Message> brickMessages = messageRepo.getBrickMessages();
         List<Message> powerupMessages = messageRepo.getPowerupMessages();
         List<Message> powerdownMessages = messageRepo.getPowerdownMessages();
         List<Projectile> projectiles = currentLevel.getLevelState().getProjectiles();
@@ -229,7 +229,7 @@ public class SessionManager {
         }
     }
 
-    private void sendJsonToPlayers(Map<String, List<Message>> messages) {
+    private void sendJsonToPlayers(Map<String, Collection<Message>> messages) {
         PlayerConnection conn;
         for (Player player : connectedPlayers) {
             conn = player.getConnection();

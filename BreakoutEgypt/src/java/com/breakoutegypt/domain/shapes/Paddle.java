@@ -12,11 +12,20 @@ package com.breakoutegypt.domain.shapes;
 public class Paddle extends RegularBody{
    
     public Paddle(ShapeDimension s){
-        super(s);
-        
-        BodyConfiguration domePaddleConfig = new BodyConfigurationFactory().createDomePaddleConfig(s);
-        setBox2dConfig(domePaddleConfig);
+        super(s);  
     }
+
+    @Override
+    public BodyConfiguration getConfig() {
+        
+        BodyConfiguration domePaddleConfig = BodyConfigurationFactory.getInstance().createDomePaddleConfig(this.dimension);
+        setBox2dConfig(domePaddleConfig);
+        
+        return config;
+    }
+    
+    
+    
     
 }
 
