@@ -15,7 +15,6 @@ import java.util.List;
 public interface UserRepository {
     public List<User> getUsers();
     public void addUser(User user);
-    public boolean inList(User user);
     public boolean alreadyExists(User user);
     public User getUser(String email,String password);
 }

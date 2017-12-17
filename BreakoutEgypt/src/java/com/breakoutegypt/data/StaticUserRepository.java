@@ -41,17 +41,6 @@ public class StaticUserRepository implements UserRepository{
         }
         return null;
     }
-    @Override
-    public boolean inList(User user) {
-        boolean found=false;
-        for(int i=0;i<this.users.size();i++){
-            User selectedUser=this.users.get(i);
-            if(selectedUser.getEmail().equals(user.getEmail()) && selectedUser.getPassword().equals(user.getPassword())){
-                found=true;
-            }   
-        }
-        return found;
-    }
 
     @Override
     public boolean alreadyExists(User user) {

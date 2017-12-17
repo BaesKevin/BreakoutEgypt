@@ -8,6 +8,8 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.data.mysql.MysqlBrickTypeRepository;
 import com.breakoutegypt.data.mysql.MysqlDifficultyRepository;
 import com.breakoutegypt.data.mysql.MysqlPaddleRepository;
+import com.breakoutegypt.data.mysql.MysqlUserRepository;
+import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.shapes.Paddle;

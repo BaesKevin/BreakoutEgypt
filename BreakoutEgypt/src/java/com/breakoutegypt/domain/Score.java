@@ -32,7 +32,11 @@ public class Score implements Comparable<Score> {
     public String getUser() {
         return user.getUsername();
     }
-
+    
+    public int getUserId(){
+        return user.getUserId();
+    }
+    
     public long getScore() {
         return score;
     }
