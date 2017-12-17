@@ -26,7 +26,8 @@ public class MysqlShapeDimensionRepository implements ShapeDimensionRepository{
     
     private final String SELECT_ALL_SHAPEDIMENSIONS = "select * from shapedimensions";
     private final String SELECT_SHAPEDIMENSION_BYID = "select * from shapedimensions where idshapedimension = ?";
-    
+    private final String INSERT_SHAPEDIMENSION = "insert into shapedimensions(x,y,width,height) values(?, ?, ?, ?)";
+    private final String DELETE_SHAPEDIMENSION = "delete from shapedimensions where idshapedimension = ?";
     private List<ShapeDimension> shapedimensions;
 
     @Override
@@ -38,8 +39,8 @@ public class MysqlShapeDimensionRepository implements ShapeDimensionRepository{
                 ResultSet rs=prep.executeQuery();
                 ){
             while(rs.next()){
-                int xPos=rs.getInt("x");
-                int yPos=rs.getInt("y");
+                float xPos=rs.getFloat("x");
+                float yPos=rs.getFloat("y");
                 int width=rs.getInt("width");
                 int height=rs.getInt("height");
                 ShapeDimension dimension=new ShapeDimension(xPos, yPos, width, height);
@@ -63,8 +64,8 @@ public class MysqlShapeDimensionRepository implements ShapeDimensionRepository{
                     ){
                 ShapeDimension dimension=null;
                 while(rs.next()){
-                    int xPos=rs.getInt("x");
-                    int yPos=rs.getInt("y");
+                    float xPos=rs.getFloat("x");
+                    float yPos=rs.getFloat("y");
                     int width=rs.getInt("width");
                     int height=rs.getInt("height");
                     dimension=new ShapeDimension(yPos, yPos, width, height);
@@ -74,6 +75,45 @@ public class MysqlShapeDimensionRepository implements ShapeDimensionRepository{
             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load shapedimension",ex);
+        }
+    }
+
+    @Override
+    public void addShapeDimension(ShapeDimension shapedimension) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(INSERT_SHAPEDIMENSION,PreparedStatement.RETURN_GENERATED_KEYS);
+                ){
+            prep.setFloat(1, shapedimension.getPosX());
+            prep.setFloat(2, shapedimension.getPosY());
+            prep.setInt(3, shapedimension.getWidth());
+            prep.setInt(4, shapedimension.getHeight());
+            prep.executeUpdate();
+            try(ResultSet rs=prep.getGeneratedKeys()){
+                int shapeId = -1;
+                if(rs.next()){
+                    shapeId=rs.getInt(1);
+                }
+                if(shapeId<0){
+                    throw new BreakoutException("Unable to add shapedimension");
+                }
+                shapedimension.setShapeId(shapeId);               
+            }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Unable to add shapedimension",ex);
+        }
+    }
+
+    @Override
+    public void removeShapeDimension(ShapeDimension shapedimension) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(DELETE_SHAPEDIMENSION);
+                ){
+            prep.setInt(1, shapedimension.getShapeId());
+            prep.executeUpdate();
+        } catch (SQLException ex) {
+            throw new BreakoutException("Unable to remove shapedimension",ex);
         }
     }
     

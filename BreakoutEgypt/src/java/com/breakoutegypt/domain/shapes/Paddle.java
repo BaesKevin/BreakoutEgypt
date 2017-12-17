@@ -10,10 +10,18 @@ package com.breakoutegypt.domain.shapes;
  * @author kevin
  */
 public class Paddle extends RegularBody{
-   
+    private int paddleId=0;
+            
     public Paddle(ShapeDimension s){
         super(s);
     }
+
+    public void setPaddleId(int paddleId) {
+        this.paddleId=paddleId;
+    }    
     
+    public int getPaddleId(){
+        return this.paddleId;
+    }
 }
 

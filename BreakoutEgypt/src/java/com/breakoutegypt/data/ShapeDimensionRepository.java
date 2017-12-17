@@ -15,4 +15,6 @@ import java.util.List;
 public interface ShapeDimensionRepository {
     public List<ShapeDimension> getShapeDimensions();
     public ShapeDimension getShapeDimensionById(int id);
+    public void addShapeDimension(ShapeDimension shapedimension);
+    public void removeShapeDimension(ShapeDimension shapedimension);
 }
