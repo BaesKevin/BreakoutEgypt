@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import java.awt.Color;
@@ -57,7 +58,11 @@ public class DefaultShapeRepository {
     }
     
     public ShapeDimension getDefaultFloor(){
-        return new ShapeDimension("floor", 0, BreakoutWorld.DIMENSION - 10, BreakoutWorld.DIMENSION, 3);
+        return getDefaultFloor("floor");
+    }
+   
+    public ShapeDimension getDefaultFloor(String name){
+        return new ShapeDimension(name, 0, BreakoutWorld.DIMENSION - 1, BreakoutWorld.DIMENSION, 1);
     }
     
     public Brick getDefaultBrick(String name, float x, float y){
@@ -67,10 +72,17 @@ public class DefaultShapeRepository {
         return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT), isTarget);
     }
     public Brick getDefaultBrick(String name, float x, float y, boolean isTarget, boolean isVisible){
-//        return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT), isTarget, isVisible);
         return getDefaultBrick(name, x, y, isTarget, isVisible, true);
     }
     public Brick getDefaultBrick(String name, float x, float y, boolean isTarget, boolean isVisible, boolean isBreakable){
         return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT), isTarget, isVisible, isBreakable);
+    }
+    
+    public Projectile getProjectile(float x, float y){
+        return getProjectile("projectile", x, y);
+    }
+    
+    public Projectile getProjectile(String name, float x, float y){
+        return new Projectile(new ShapeDimension(name, x, y, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS));
     }
 }

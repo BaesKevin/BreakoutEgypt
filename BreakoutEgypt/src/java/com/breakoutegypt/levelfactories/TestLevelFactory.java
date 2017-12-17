@@ -134,7 +134,7 @@ public class TestLevelFactory extends LevelFactory {
         b.setStartingBall(true);
         balls.add(b);
 
-        powerdownBrick.setPowerdown(new ProjectilePowerDown(new Projectile(new ShapeDimension("projectile", 40, 20, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS))));
+        powerdownBrick.setPowerdown(new ProjectilePowerDown(shapeRepo.getProjectile(40, 20)));
         explosiveBrick.addEffect(new ExplosiveEffect(explosiveBrick, 1));
 
         bricks.add(powerdownBrick);
@@ -164,8 +164,7 @@ public class TestLevelFactory extends LevelFactory {
         b.setStartingBall(true);
         balls.add(b);
 
-//        Brick powerdownBrick = new Brick(brickshape1);
-        powerdownBrick.setPowerdown(new ProjectilePowerDown(new Projectile(new ShapeDimension("projectile", 50, 20, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS))));
+        powerdownBrick.setPowerdown(new ProjectilePowerDown(shapeRepo.getProjectile(50, 20)));
 
         bricks.add(powerdownBrick);
         bricks.add(targetBrick);
@@ -254,9 +253,9 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(brick3);
         bricks.add(brick4);
 
-        bricks.get(0).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 1, 0, 290, BreakoutWorld.DIMENSION, 3)));
+        bricks.get(0).setPowerUp(new FloorPowerUp(shapeRepo.getDefaultFloor("floor1")));
         bricks.get(1).addEffect(new ExplosiveEffect(bricks.get(1), 1));
-        bricks.get(2).setPowerUp(new FloorPowerUp(new ShapeDimension("floor" + 2, 0, 290, BreakoutWorld.DIMENSION, 3)));
+        bricks.get(2).setPowerUp(new FloorPowerUp(shapeRepo.getDefaultFloor("floor2")));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
         Level level = new Level(2, game, initialState);
@@ -457,14 +456,9 @@ public class TestLevelFactory extends LevelFactory {
         
         List<Paddle> brokenPaddle = bp.getBrokenPaddle();
         
-//        ShapeDimension ballShape = new ShapeDimension("ball1", brokenPaddle.get(0).getX(), 60, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
-//        ShapeDimension ballShape2 = new ShapeDimension("ball2", brokenPaddle.get(0).getX() + brokenPaddle.get(0).getWidth(), 60, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
-//        ShapeDimension ballShape3 = new ShapeDimension("ball3", brokenPaddle.get(1).getX(), 60, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
         Ball ball1 = shapeRepo.getDefaultBall("ball1", brokenPaddle.get(0).getX(), 60);
         Ball ball2 = shapeRepo.getDefaultBall("ball2", brokenPaddle.get(0).getX() + brokenPaddle.get(0).getWidth(), 60);
         Ball ball3 = shapeRepo.getDefaultBall("ball3", brokenPaddle.get(1).getX(), 60);
-//        ShapeDimension ballShape2 = new ShapeDimension("ball2", brokenPaddle.get(0).getX() + brokenPaddle.get(0).getWidth(), 60, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
-//        ShapeDimension ballShape3 = new ShapeDimension("ball3", brokenPaddle.get(1).getX(), 60, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
 
         List<Ball> balls = new ArrayList();
         balls.add(ball1);
@@ -495,13 +489,13 @@ public class TestLevelFactory extends LevelFactory {
         Ball ball = shapeRepo.getDefaultBall(50, 10);
         List<Ball> balls = new ArrayList();
         balls.add(ball);
-        ShapeDimension floorShape = new ShapeDimension("floor", 0, BreakoutWorld.DIMENSION - 10, BreakoutWorld.DIMENSION, 3);
+
         balls.get(0).setStartingBall(true);
         List<Brick> bricks = new ArrayList();
         bricks.add(shapeRepo.getDefaultBrick("regularbrick", 50, 20));
         bricks.add(shapeRepo.getDefaultBrick("targetbrick", 80, 20, true));
         
-        bricks.get(0).setPowerUp(new FloorPowerUp(floorShape));
+        bricks.get(0).setPowerUp(new FloorPowerUp(shapeRepo.getDefaultFloor()));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
 

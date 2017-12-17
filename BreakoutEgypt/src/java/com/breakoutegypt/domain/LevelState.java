@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.data.DefaultShapeRepository;
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
@@ -367,7 +368,7 @@ public class LevelState {
     }
 
     public FloorPowerUp createFloor(int x) {
-        ShapeDimension floorShape = new ShapeDimension("floor" + x, 0, BreakoutWorld.DIMENSION - 10, BreakoutWorld.DIMENSION, 3);
+        ShapeDimension floorShape = DefaultShapeRepository.getInstance().getDefaultFloor("floor" + x);
         return new FloorPowerUp(floorShape);
     }
 
@@ -376,9 +377,13 @@ public class LevelState {
     }
 
     public ProjectilePowerDown createProjectilePowerDown(Brick brick, int x) {
-        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getX() + brick.getWidth() / 2,
-                brick.getY() + brick.getHeight(), 4, 4);
-        return new ProjectilePowerDown(new Projectile(s));
+//        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getX() + brick.getWidth() / 2,
+//                brick.getY() + brick.getHeight(), 4, 4);
+        float projectileX = brick.getX() + brick.getWidth() / 2;
+        float projectileY =  brick.getY() + brick.getHeight();
+        
+        Projectile projectile = DefaultShapeRepository.getInstance().getProjectile("projectile"+x, projectileX, projectileY);
+        return new ProjectilePowerDown(projectile);
     }
 
     public void addProjectile(Projectile projectile) {

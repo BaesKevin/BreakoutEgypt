@@ -83,7 +83,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         paddles.add(paddle);
         balls.get(0).setStartingBall(true);
         
-        powerdownBrick.setPowerdown(new FloodPowerDown(ball, 100, 15));
+        powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50, 15));
 
         bricks.add(powerdownBrick);
         bricks.add(target);
