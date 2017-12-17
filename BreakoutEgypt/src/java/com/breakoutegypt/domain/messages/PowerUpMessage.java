@@ -6,7 +6,6 @@
 package com.breakoutegypt.domain.messages;
 
 import com.breakoutegypt.domain.powers.PowerUp;
-import java.math.BigDecimal;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
@@ -39,8 +38,9 @@ public class PowerUpMessage implements Message {
     @Override
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        if (powerup != null) 
+        if (powerup != null) {
             job.add("powerup", powerup.toJson());
+        }
         job.add("powerupaction", getMessageType().toString());
         
         return job;

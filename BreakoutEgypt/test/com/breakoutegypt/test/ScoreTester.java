@@ -78,6 +78,7 @@ public class ScoreTester {
         // save the ball's position and speed after hitting the brick
         Ball ball = level.getLevelState().getBall();
         Vec2 afterHittingBrick = new Vec2(ball.getPosition());
+        
         Vec2 speedAfterHittingBrick = new Vec2(ball.getLinearVelocity());
         
         // place the ball above the paddle and make it hit the paddle

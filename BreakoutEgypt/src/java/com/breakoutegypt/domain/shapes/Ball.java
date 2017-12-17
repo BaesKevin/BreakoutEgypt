@@ -21,7 +21,7 @@ public class Ball extends RegularBody {
     public Ball(ShapeDimension s) {
         this(s, false);
     }
-    
+
     public Ball(ShapeDimension s, boolean decoy) {
         super(s);
         this.decoy = decoy;
@@ -58,4 +58,14 @@ public class Ball extends RegularBody {
     public Vec2 getLinearVelocity() {
         return this.getBody().getLinearVelocity();
     }
+
+    @Override
+    public BodyConfiguration getConfig() {
+        BodyConfiguration ballBodyConfig = BodyConfigurationFactory.getInstance().createBallConfig(dimension);
+        setBox2dConfig(ballBodyConfig);
+        
+        return config;
+    }
+    
+    
 }

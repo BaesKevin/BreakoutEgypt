@@ -9,6 +9,7 @@ import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.json.Json;

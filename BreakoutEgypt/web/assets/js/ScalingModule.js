@@ -1,9 +1,14 @@
 const ScalingModule = (function(){
     let xscaling = 1;
     let yscaling = 1;
-    let defaultCanvasWidth = 300;
-    let defaultCanvasHeight = 300;
+    let defaultCanvasWidth = 100;
+    let defaultCanvasHeight = 100;
 
+    function updateCanvasDimension(dimension){
+        defaultCanvasHeight = dimension;
+        defaultCanvasWidth = dimension;
+    }
+    
     function updateScalingFactors(newWidth, newHeight){
         xscaling = newWidth / defaultCanvasWidth;
         yscaling = newHeight / defaultCanvasHeight;
@@ -113,6 +118,7 @@ const ScalingModule = (function(){
     }
 
     return {
+        updateCanvasDimension,
         updateScalingFactors: updateScalingFactors,
         scaleLevel: scaleLevel,
         scaleLevelToDefault: scaleLevelToDefault,

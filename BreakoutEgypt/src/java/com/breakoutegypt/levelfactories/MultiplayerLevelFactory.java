@@ -11,6 +11,7 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
@@ -35,7 +36,7 @@ public class MultiplayerLevelFactory extends LevelFactory {
     
     public Level makePong() {
 
-        ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
         Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));

@@ -47,10 +47,10 @@ public class BallMessage implements Message {
         actionObjectBuilder.add("ballaction", getMessageType().name().toLowerCase());
         if (ball != null) {
             actionObjectBuilder.add("name", getName());
-            actionObjectBuilder.add("x", ball.getShape().getPosX());
-            actionObjectBuilder.add("y", ball.getShape().getPosY());
-            actionObjectBuilder.add("width", ball.getShape().getWidth());
-            actionObjectBuilder.add("height", ball.getShape().getHeight());
+            actionObjectBuilder.add("x", ball.getX());
+            actionObjectBuilder.add("y", ball.getY());
+            actionObjectBuilder.add("width", ball.getWidth());
+            actionObjectBuilder.add("height", ball.getHeight());
         } else {
             actionObjectBuilder.add("ball", getName());
         }
