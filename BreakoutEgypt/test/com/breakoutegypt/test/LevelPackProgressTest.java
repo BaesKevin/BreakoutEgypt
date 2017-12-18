@@ -141,7 +141,7 @@ public class LevelPackProgressTest {
         Ball ball = level.getLevelState().getBall();
         ball.setLinearVelocity(0, -100);
 
-        stepTimes(120);
+        stepTimes(60);
 
         int levelReached = player.getProgressions().getHighestLevelReached(GameType.TEST, GameDifficulty.BRUTAL);
 

@@ -20,6 +20,7 @@ import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Projectile;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -197,9 +198,7 @@ public class SessionManager {
 
     public void notifyPlayersOfBallAction(Level currentLevel) {
         List<Message> ballMessages = currentLevel.getLevelState().getMessages();
-        for (Message msg : ballMessages) {
-            sendJsonToPlayers(msg);
-        }
+        sendJsonToPlayers(ballMessages);
         currentLevel.getLevelState().clearMessages();
     }
 
@@ -256,6 +255,14 @@ public class SessionManager {
         for (Player player : connectedPlayers) {
             conn = player.getConnection();
             conn.send(messages);
+        }
+    }
+
+    private void sendJsonToPlayers(List<Message> ballMessages) {
+        PlayerConnection conn;
+        for (Player player : connectedPlayers) {
+            conn = player.getConnection();
+            conn.send(ballMessages);
         }
     }
 }

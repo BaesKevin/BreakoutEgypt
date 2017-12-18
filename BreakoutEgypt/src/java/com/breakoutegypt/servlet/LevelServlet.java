@@ -6,6 +6,7 @@
  */
 package com.breakoutegypt.servlet;
 
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -123,14 +124,14 @@ public class LevelServlet extends HttpServlet {
         List<Ball> balls = state.getBalls();
         JsonArrayBuilder ballBuilder = Json.createArrayBuilder();
         for(int i = 0; i < balls.size(); i++) {
-            ballBuilder.add( balls.get(i).getShape().toJson().build());
+            ballBuilder.add( balls.get(i).toJson().build());
         }
         job.add("balls", ballBuilder.build());
         
         JsonArrayBuilder paddleBuilder = Json.createArrayBuilder();
         List<Paddle> paddles = state.getPaddles();
         for(int i = 0; i < paddles.size(); i++){
-            paddleBuilder.add( paddles.get(i).getShape().toJson().build());
+            paddleBuilder.add( paddles.get(i).toJson().build());
         }
         
         Paddle myPaddle = null;
@@ -144,6 +145,8 @@ public class LevelServlet extends HttpServlet {
         job.add("playerIndex", player.getIndex());
         job.add("level", level.getId());
         job.add("lives", player.getLives());
+        
+        job.add("levelDimension", BreakoutWorld.DIMENSION);
     }
 }
 

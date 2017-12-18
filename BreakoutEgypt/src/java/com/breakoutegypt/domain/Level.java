@@ -24,7 +24,6 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
-import org.jbox2d.common.Vec2;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -153,12 +152,12 @@ public class Level implements BreakoutWorldEventListener {
         List<Paddle> paddles = levelState.getPaddlesForPlayer(playerIndex);
         
         int totalWidth = levelState.calculatePaddleWidthWithGaps(paddles);
-        int paddleWidth = paddles.get(0).getShape().getWidth();
+        int paddleWidth = paddles.get(0).getWidth();
         int min = paddleWidth / 2;
-        int max = 300 - totalWidth + (paddleWidth / 2);
+        int max = BreakoutWorld.DIMENSION - totalWidth + (paddleWidth / 2);
 
         if (invertedControls) {
-            firstPaddleCenter = 300 - firstPaddleCenter;
+            firstPaddleCenter = BreakoutWorld.DIMENSION - firstPaddleCenter;
         }
         
         float paddleCenter = firstPaddleCenter;
@@ -269,6 +268,7 @@ public class Level implements BreakoutWorldEventListener {
             HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
             int brickScore = brickScoreCalc.getScore();
+            //TODO user with playerindex x
             Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int)getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
             

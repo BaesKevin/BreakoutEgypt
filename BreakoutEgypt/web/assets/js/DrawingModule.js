@@ -28,9 +28,9 @@ let DrawingModule = (function () {
 
         resizeCanvasses(getBrickCanvasDimensions().width, getBrickCanvasDimensions().height);
     }
-    
+
     function drawProjectile() {
-        movingPartsCtx.fillStyle = "red";
+        movingPartsCtx.fillStyle = ImageLoader.patterns["projectile"];
         // box2d draws circle from center
         level.projectiles.forEach(function (ball) {
             movingPartsCtx.beginPath();
@@ -51,7 +51,8 @@ let DrawingModule = (function () {
         movingPartsCtx.shadowOffsetY = 1;
 
         drawBall();
-        if (level.projectiles.length > 0) drawProjectile();
+        if (level.projectiles.length > 0)
+            drawProjectile();
         setPaddleX();
         level.sendClientLevelState();
 
@@ -83,7 +84,11 @@ let DrawingModule = (function () {
         level.paddles.forEach(function (paddle) {
             movingPartsCtx.strokeStyle = paddle.color;
             movingPartsCtx.beginPath();
-            movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
+            if (paddle.y < ScalingModule.scaleXForClient(level.levelDimension) / 2) {
+                movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI, true);
+            } else {
+                movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
+            }
             movingPartsCtx.stroke();
         });
     }
@@ -97,12 +102,12 @@ let DrawingModule = (function () {
     }
 
     function updatePowerups() {
-        let imgObj = {x: 1, y: 270, width: 20, height: 30};
+        let imgObj = {x: 1, y: level.levelDimension - 10, width: 7, height: 10};
         imgObj = ScalingModule.scaleObject(imgObj, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
         let allPowerups = [];
         let padding = 0;
         let index = 1;
-        let pixels = ScalingModule.scaleYForClient(8);
+        let pixels = ScalingModule.scaleYForClient(3);
         level.powerups.forEach(function (powerup) {
             if (powerup.active) {
                 brickCtx.fillStyle = "lightgreen";
@@ -111,7 +116,7 @@ let DrawingModule = (function () {
             }
             let powerupname = powerup.name.replace(/[0-9]/g, "");
             let width = imgObj.width * 0.7;
-            let height = (imgObj.height*0.66);
+            let height = (imgObj.height * 0.66);
             let x = ((imgObj.width - width) / 2) + padding;
             let y = imgObj.y;
             brickCtx.fillRect(imgObj.x, imgObj.y, imgObj.width, imgObj.height);
@@ -119,9 +124,9 @@ let DrawingModule = (function () {
             brickCtx.font = Math.ceil(pixels) + "px Arial";
             brickCtx.textAlign = "start";
             brickCtx.fillStyle = "black";
-            brickCtx.fillText("" + index, Math.ceil(width) + padding, Math.ceil(imgObj.y + height + pixels));
-            padding += ScalingModule.scaleXForClient(20);
-            imgObj.x += ScalingModule.scaleXForClient(20);
+            brickCtx.fillText("" + index, Math.ceil(width) + padding, Math.ceil(imgObj.y + height + pixels / 2));
+            padding += ScalingModule.scaleXForClient(7);
+            imgObj.x += ScalingModule.scaleXForClient(7);
             index++;
         });
     }
@@ -134,9 +139,10 @@ let DrawingModule = (function () {
     }
 
     function drawFloor() {
-        if (level.floor)
+        if (level.floor) {
             brickCtx.fillStyle = "gray";
-        brickCtx.fillRect(level.floor.x, level.floor.y, level.floor.width, level.floor.height);
+            brickCtx.fillRect(level.floor.x, level.floor.y - 2, level.floor.width, level.floor.height + 2);
+        }
     }
 
     // the paddle's X position is the left border of the shape, not the center 
@@ -145,7 +151,7 @@ let DrawingModule = (function () {
         let xOfFirstPaddle = mouse.x - widthOfPaddlesWithGaps / 2;
         let canvasWidth = movingPartsCanvas.width;
         let maxPaddleX = canvasWidth - widthOfPaddlesWithGaps;
-        
+
         if (level.invertedcontrols) {
             xOfFirstPaddle = canvasWidth - xOfFirstPaddle - widthOfPaddlesWithGaps;
         }
@@ -163,7 +169,7 @@ let DrawingModule = (function () {
 
         let godImg = ImageLoader.images["god"];
 
-        let godImgSize = {x: 0, y: 0, width: godImg.width, height: godImg.height};
+        let godImgSize = {x: 0, y: 0, width: godImg.width / 3, height: godImg.height / 3};
         godImgSize = ScalingModule.scaleObject(godImgSize, ScalingModule.scaleXForClient, ScalingModule.scaleYForClient);
         let scale = 1;
         if (level.paddles.length > 1) {
@@ -208,7 +214,7 @@ let DrawingModule = (function () {
             height: brickCanvas.height
         };
     }
-    
+
     function resizeCanvasses(width, height) {
         brickCanvas.width = width;
         brickCanvas.height = height;

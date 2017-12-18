@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain.powers;
 
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -28,7 +29,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     private Paddle base;
     private List<Paddle> brokenPaddle;
-    public static final int GAP = 20;
+    public static final int GAP = 6;
     
     private String name;
 
@@ -51,9 +52,9 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     private void breakPaddle() {
 
-        int basePaddleWidth = base.getShape().getWidth();
-        int baseX = (int) base.getShape().getPosX();
-        int baseY = (int) base.getShape().getPosY();
+        int basePaddleWidth = base.getWidth();
+        int baseX = (int) base.getX();
+        int baseY = (int) base.getY();
 
         int newWidth = (int) Math.round(basePaddleWidth * 0.6);
         
@@ -103,8 +104,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
             leftX = newWidth / 2;
         }
         int rightX = leftX + newWidth + gap;
-        if (rightX + (newWidth / 2) > 300) {
-            rightX = 300 - (newWidth / 2);
+        if (rightX + (newWidth / 2) > BreakoutWorld.DIMENSION) {
+            rightX = BreakoutWorld.DIMENSION - (newWidth / 2);
             leftX = rightX - newWidth - gap;
         }
         
@@ -120,17 +121,17 @@ public class BrokenPaddlePowerUp implements PowerUp {
     }
 
     @Override
-    public JsonObject toJson() {
+    public JsonObjectBuilder toJson() {
         JsonArrayBuilder jab = Json.createArrayBuilder();
         JsonObjectBuilder job = Json.createObjectBuilder();
-        jab.add(brokenPaddle.get(0).getShape().toJson().build());
-        jab.add(brokenPaddle.get(1).getShape().toJson().build());
-        job.add("base", base.getShape().toJson().build());
+        jab.add(brokenPaddle.get(0).toJson().build());
+        jab.add(brokenPaddle.get(1).toJson().build());
+        job.add("base", base.toJson().build());
         job.add("brokenpaddle", jab.build());
         job.add("powerupname", getName());
         job.add("gap", GAP);
         
-        return job.build();
+        return job;
     }
 
     @Override

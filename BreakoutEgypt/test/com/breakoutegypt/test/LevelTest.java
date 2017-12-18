@@ -7,6 +7,7 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
@@ -80,9 +81,9 @@ public class LevelTest {
         level = game.getCurrentLevel();
         level.startBall();
         level.getLevelState().getBall().setLinearVelocity(0, -100);
-        stepTimes(60);
+        stepTimes(10);
         level.getLevelState().getBall().getBody().setTransform(new Vec2(50, 100), 0);
-        stepTimes(60);
+        stepTimes(10);
 
         Assert.assertEquals(3, level.getLevelState().getBricks().size());
     }
@@ -93,9 +94,9 @@ public class LevelTest {
         level = game.getCurrentLevel();
         
         level.getLevelState().getBall().setLinearVelocity(0, -100);
-
-        stepTimes(60);
-
+        
+        stepTimes(10);
+        
         Assert.assertEquals(1, level.getLevelState().getBricks().size());
     }
 
@@ -109,17 +110,17 @@ public class LevelTest {
         ball.getBody().setTransform(new Vec2(50, 20), 0);
         ball.setLinearVelocity(-100, 0);
         stepTimes(40);
-        Assert.assertTrue(0 <= ball.getPosition().x);
+        Assert.assertTrue(0 <= ball.getX());
 
         ball.getBody().setTransform(new Vec2(20, 20), 0);
         ball.setLinearVelocity(0, -100);
         stepTimes(40);
-        Assert.assertTrue(0 <= ball.getPosition().y);
+        Assert.assertTrue(0 <= ball.getX());
 
         ball.getBody().setTransform(new Vec2(280, 20), 0);
         ball.setLinearVelocity(100, 0);
         stepTimes(40);
-        Assert.assertTrue(ball.getPosition().y < 300);
+        Assert.assertTrue(ball.getY() < BreakoutWorld.DIMENSION);
     }
 
     @Test
@@ -134,7 +135,7 @@ public class LevelTest {
 
         stepTimes(60);
 
-        Assert.assertTrue(topball.getPosition().y > bottomball.getPosition().y);
+        Assert.assertTrue(topball.getY() > bottomball.getY());
     }
 
     private void stepTimes(int times) {

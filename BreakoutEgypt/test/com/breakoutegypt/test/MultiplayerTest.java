@@ -83,8 +83,8 @@ public class MultiplayerTest {
 //        game.assignPaddleToPlayer(player1);
 //        game.assignPaddleToPlayer(player2);
 //        
-        int paddle1x = 93;
-        int paddle2x = 201;
+        int paddle1x = 12;
+        int paddle2x = 89;
 
         game.movePaddle(player1.getUsername(), paddle1x, 0);
         game.movePaddle(player2.getUsername(), paddle2x, 0);
@@ -161,7 +161,7 @@ public class MultiplayerTest {
         Vec2 player1BallPosition = level.getLevelState().getBalls().get(0).getPosition();
         Vec2 originalPosition = new Vec2(player1BallPosition);
         
-        stepTimes(200);
+        stepTimes(100);
 
         Assert.assertEquals(2, player2.getLives());
         Assert.assertEquals(3, player1.getLives());
@@ -182,11 +182,14 @@ public class MultiplayerTest {
         level.startBall(player1.getIndex());
         level.startBall(player2.getIndex());
         
+        float ball1 = level.getLevelState().getBalls().get(0).getY();
+        float ball2 = level.getLevelState().getBalls().get(1).getY();
+        
         stepTimes(10);
         
         List<Ball> balls = level.getLevelState().getBalls();
-        Assert.assertEquals(220, balls.get(0).getPosition().y, 0.001);
-        Assert.assertEquals(160, balls.get(1).getPosition().y, 0.001);
+        Assert.assertEquals(ball1 + 10, balls.get(0).getPosition().y, 1);
+        Assert.assertEquals(ball2 + 10, balls.get(1).getPosition().y, 1);
     }
     
     @Test

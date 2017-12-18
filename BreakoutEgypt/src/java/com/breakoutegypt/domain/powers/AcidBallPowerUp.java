@@ -39,12 +39,12 @@ public class AcidBallPowerUp implements PowerUp {
     }
 
     @Override
-    public JsonObject toJson() {
+    public JsonObjectBuilder toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("powerupaction", "ACIDBALL");
         job.add("powerupname", getName());
         job.add("range", getRange());
-        return job.build();
+        return job;
     }
 
     @Override

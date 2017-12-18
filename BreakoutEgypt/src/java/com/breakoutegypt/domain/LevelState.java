@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.domain;
 
+import com.breakoutegypt.data.DefaultShapeRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
@@ -23,13 +24,12 @@ import com.breakoutegypt.domain.powers.ProjectilePowerDown;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
+import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.Projectile;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
-import com.breakoutegypt.exceptions.BreakoutException;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,7 +88,7 @@ public class LevelState {
         this.projectiles = new ArrayList();
         this.difficulty = difficulty;
         this.startingBalls = new ArrayList();
-        factory = new BodyConfigurationFactory();
+        factory = BodyConfigurationFactory.getInstance();
 
         createBounds(hasTwoOutOfBounds);
         addBalls(balls);
@@ -103,20 +103,10 @@ public class LevelState {
     }
 
     public void addPaddle(Paddle p) {
-        BodyConfiguration domePaddleConfig = factory.createDomePaddleConfig(p.getShape());
-        p.setBox2dConfig(domePaddleConfig);
         paddles.add(p);
     }
-
-    // TODO based on bricktype it might be necessary to do more here
-    // e.g. all surrounding bricks an explosive brick
+    
     public void addBrick(Brick brick) {
-        BodyConfiguration brickBody = factory.createTriangleConfig(brick.getShape());
-
-        if (!brick.isVisible()) {
-            brickBody.getFixtureConfig().setMaskBits(0);
-        }
-        brick.setBox2dConfig(brickBody);
         bricks.add(brick);
     }
 
@@ -128,9 +118,6 @@ public class LevelState {
 
     public void addBalls(List<Ball> balls) {
         for (Ball b : balls) {
-            BodyConfiguration ballBodyConfig = factory.createBallConfig(b.getShape());
-            b.setBox2dConfig(ballBodyConfig);
-
             if (b.isStartingBall()) {
                 this.startingBalls.add(b);
 //                this.startingBall = b;
@@ -148,7 +135,6 @@ public class LevelState {
     }
 
     public void removeFloor() {
-        //TODO remove floor
         this.floor = null;
     }
 
@@ -175,6 +161,20 @@ public class LevelState {
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
+    
+    private void removeDecoys(int playerIndex) {
+        List<Ball> ballsWithoutDecoys = new ArrayList();
+        Ball startingBallForPlayer = getStartingBallForPlayer(playerIndex);
+        
+        for (Ball b : balls) {
+            if (!b.isDecoy() || b.equals(startingBallForPlayer)) {
+                ballsWithoutDecoys.add(b);
+            } else {
+                messages.add(new BallMessage(b, BallMessageType.REMOVE));
+            }
+        }
+        this.balls = ballsWithoutDecoys;
+    }
 
     void resetBall(BreakoutWorld breakoutWorld, int playerIndex) {
         Ball startingBall = null;
@@ -183,7 +183,9 @@ public class LevelState {
         }
         
         startingBall.setDecoy(false);
-        BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
+        ShapeDimension originalDimension =
+                new ShapeDimension(startingBall.getName(), startingBall.getOriginalX(), startingBall.getOriginalY(), startingBall.getWidth(), startingBall.getHeight());
+        BodyConfiguration ballBodyBodyConfig = factory.createBallConfig(originalDimension);
         startingBall.setBox2dConfig(ballBodyBodyConfig);
         messages.add(new BallMessage(startingBall, BallMessageType.ADD));
         balls.add(startingBall);
@@ -201,12 +203,12 @@ public class LevelState {
     }
 
     private void createBounds(boolean hasTwoOutOfBounds) {
-        ShapeDimension groundShape = new ShapeDimension("ground", 0, 300, 300, 1);
-        ShapeDimension leftWallDim = new ShapeDimension("leftwall", 0, 0, 1, 300);
-        ShapeDimension rightWallDim = new ShapeDimension("rightwall", 300, 0, 1, 300);
-         ShapeDimension topWallDim = new ShapeDimension("topwall", 0, 0, 300, 1);
+        ShapeDimension groundShape = new ShapeDimension("ground", -5 , BreakoutWorld.DIMENSION + 5, BreakoutWorld.DIMENSION + 10, 5);
+        ShapeDimension leftWallDim = new ShapeDimension("leftwall", -5, -5, 5, BreakoutWorld.DIMENSION + 10);
+        ShapeDimension rightWallDim = new ShapeDimension("rightwall", BreakoutWorld.DIMENSION + 5, -5, 5, BreakoutWorld.DIMENSION + 10);
+        ShapeDimension topWallDim = new ShapeDimension("topwall", -5, -5, BreakoutWorld.DIMENSION + 10, 5);
          
-         ShapeDimension middleWallDim = new ShapeDimension("middlewall", 0, 170, 300, 1);
+         ShapeDimension middleWallDim = new ShapeDimension("middlewall", 0, BreakoutWorld.DIMENSION / 2, BreakoutWorld.DIMENSION, 1);
          
         if(hasTwoOutOfBounds){
             topWallDim.setName("ground");
@@ -248,20 +250,21 @@ public class LevelState {
         return bodies;
     }
 
-    // TODO calculate range without Points, test this monstrosity
     private List<Brick> getRangeOfBricksAroundBodyHelper(Brick centreBrick, int range, List<Brick> bricksToRemove) {
-        Point centre = centreBrick.getGridPosition();
-
-        Point currentBrickPosition;
-
         if (range == 0) {
             bricksToRemove.add(centreBrick);
         } else {
             for (Brick brick : bricks) {
-                currentBrickPosition = brick.getGridPosition();
-                if (Math.abs(centre.x - currentBrickPosition.x) <= range && Math.abs(centre.y - currentBrickPosition.y) <= range) {
-                    if (brick.isVisible() && !(brick.hasToggleEffect())) {
-                        ExplosiveEffect e = brick.getExplosiveEffect();
+                int horizontalRange = range * DimensionDefaults.BRICK_WIDTH;
+                int verticalRange = range * DimensionDefaults.BRICK_HEIGHT;
+
+                boolean isBrickInHorizontalRange = Math.round(Math.abs(centreBrick.getX() - brick.getX())) <= horizontalRange;
+                boolean isBrickInVerticalRange = Math.abs(centreBrick.getY() - brick.getY()) <= verticalRange;
+                boolean isNotSwitchBrick = !(brick.hasToggleEffect());
+                
+                if (brick.isVisible() && isBrickInHorizontalRange && isBrickInVerticalRange && isNotSwitchBrick) {
+                    
+                    ExplosiveEffect e = brick.getExplosiveEffect();
                         if (e != null && e.getRadius() > 0) {
                             if (!bricksToRemove.contains(brick)) {
                                 bricksToRemove.add(brick);
@@ -272,7 +275,7 @@ public class LevelState {
                                 bricksToRemove.add(brick);
                             }
                         }
-                    }
+                    
                 }
             }
         }
@@ -286,6 +289,9 @@ public class LevelState {
     }
 
     public void removeBall(Ball ball) {
+        if (!ball.isDecoy()) {
+            removeDecoys(ball.getPlayerIndex());
+        }
         for (Ball b : balls) {
             if (b.getName().equals(ball.getName())) {
                 balls.remove(b);
@@ -301,7 +307,7 @@ public class LevelState {
 
     public int calculatePaddleWidthWithGaps(List<Paddle> paddles) {
         
-        int paddlewidth = paddles.get(0).getShape().getWidth();
+        int paddlewidth = paddles.get(0).getWidth();
         int noOfPaddles = paddles.size();
         int noOfGaps = noOfPaddles - 1;
 
@@ -403,7 +409,7 @@ public class LevelState {
     }
 
     public FloorPowerUp createFloor(int x) {
-        ShapeDimension floorShape = new ShapeDimension("floor" + x, 0, 290, 300, 3);
+        ShapeDimension floorShape = DefaultShapeRepository.getInstance().getDefaultFloor("floor" + x);
         return new FloorPowerUp(floorShape, difficulty.getPowerupTime());
     }
 
@@ -412,9 +418,13 @@ public class LevelState {
     }
 
     public ProjectilePowerDown createProjectilePowerDown(Brick brick, int x) {
-        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getShape().getPosX() + brick.getShape().getWidth() / 2,
-                brick.getShape().getPosY() + brick.getShape().getHeight(), 4, 4);
-        return new ProjectilePowerDown(new Projectile(s));
+//        ShapeDimension s = new ShapeDimension("projectile" + x, brick.getX() + brick.getWidth() / 2,
+//                brick.getY() + brick.getHeight(), 4, 4);
+        float projectileX = brick.getX() + brick.getWidth() / 2;
+        float projectileY =  brick.getY() + brick.getHeight();
+        
+        Projectile projectile = DefaultShapeRepository.getInstance().getProjectile("projectile"+x, projectileX, projectileY);
+        return new ProjectilePowerDown(projectile);
     }
 
     public void addProjectile(Projectile projectile) {
@@ -462,5 +472,15 @@ public class LevelState {
         }
         
         return noMoreBalls;
+    }
+    
+    private Ball getStartingBallForPlayer(int playerIndex){
+        for(Ball ball : startingBalls){
+            if(ball.getPlayerIndex() == playerIndex){
+                return ball;
+            }
+        }
+        
+        return null;
     }
 }

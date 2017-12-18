@@ -1,10 +1,3 @@
-<%--
-    Document   : index
-    Created on : 23-nov-2017, 14:51:32
-    Author     : Bjarne Deketelaere
---%>
-
-<%@page import="com.breakoutegypt.domain.Player"%>
 <%@page import="com.breakoutegypt.domain.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -27,12 +20,6 @@
     </header>
     <main class="row">
         <div class="col-lg-12 text-center">
-            <%
-            Player user=(Player)request.getSession().getAttribute("player");
-            //Development purpose
-            
-            out.println(user.getEmail());
-        %>
             <div id="menu">
                 <ul class="list-group">
                     <li class="list-group-item">

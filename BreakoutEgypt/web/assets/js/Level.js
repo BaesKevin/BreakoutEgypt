@@ -15,6 +15,7 @@ const Level = (function () {
         this.gap = 0;
         this.projectiles = [];
         this.invertedcontrols = false;
+        this.levelDimension = 100;
     };
 
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
@@ -75,7 +76,7 @@ const Level = (function () {
             }
 
             if (level.invertedcontrols) {
-                positionToSend.x = 300 - positionToSend.x;
+                positionToSend.x = this.levelDimension - positionToSend.x;
             }
             ArcadeWebSocket.sendOverSocket(JSON.stringify(positionToSend));
 
@@ -171,7 +172,7 @@ const Level = (function () {
 
         function removeBall(json, self) {
             self.balls = self.balls.filter(function (ball) {
-                return ball.name !== json.ball;
+                return ball.name !== json.name;
             });
         }
 
@@ -216,6 +217,9 @@ const Level = (function () {
                     self.playerIndex = response.playerIndex;
                     console.log("%cMy paddle : " + response.mypaddle, "font-size: 2em;");
                     console.log(response.lives);
+                    self.levelDimension = response.levelDimension;
+                    
+                    ScalingModule.updateCanvasDimension(self.levelDimension);
                     DrawingModule.updateStaticContent();
                     ScalingModule.scaleLevel(self);
 

@@ -8,9 +8,11 @@ package com.breakoutegypt.connectionmanagement;
 import com.breakoutegypt.domain.messages.Message;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.websocket.EncodeException;
@@ -60,6 +62,17 @@ public class WebsocketConnection implements PlayerConnection, Serializable{
             job.add("powerdownactions", msgs.get("powerdownactions"));
         }
         job.add("leveldata", job.build());
+        send(job.build());
+    }
+
+    @Override
+    public void send(List<Message> msgs) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        for (Message m : msgs) {
+            jab.add(m.toJson().build());
+        }
+        job.add("ballaction", jab.build());
         send(job.build());
     }
 }

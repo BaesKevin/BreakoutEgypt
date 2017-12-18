@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.breakoutegypt.data.HighscoreRepository;
+import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 
@@ -41,7 +42,7 @@ public class BreakoutController extends HttpServlet {
     public static final String DIFFICULTY = "difficulty";
     public static final String DIFFICULTIES = "difficulties";
     public static final String LEVEL = "levelId";
-
+    public static final String LEVELDIMENSION = "levelDimension";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -104,7 +105,8 @@ public class BreakoutController extends HttpServlet {
 
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);
-
+            request.setAttribute(LEVELDIMENSION, BreakoutWorld.DIMENSION);
+            
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());
         }

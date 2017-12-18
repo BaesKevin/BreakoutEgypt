@@ -27,7 +27,7 @@ public class FloodPowerDown implements PowerDown {
     private final int noOfBalls;
     private final List<Ball> balls;
     private final Ball originalBall;
-    private final int decoyBallSpeed = 150;
+    private final int decoyBallSpeed = 50;
     private final String name;
 
     public FloodPowerDown(Ball originalBall, int noOfBalls, int identifier) {
@@ -40,7 +40,7 @@ public class FloodPowerDown implements PowerDown {
     public void initBalls() {
         float x = originalBall.getPosition().x;
         float y = originalBall.getPosition().y;
-        int width = originalBall.getShape().getWidth();
+        int width = originalBall.getWidth();
         for (int i = 0; i < noOfBalls; i++) {
             ShapeDimension s = new ShapeDimension(getName() + i, x, y, width, width);
             Ball b = new Ball(s, true);
@@ -62,7 +62,7 @@ public class FloodPowerDown implements PowerDown {
         JsonArrayBuilder jab = Json.createArrayBuilder();
         JsonObjectBuilder job = Json.createObjectBuilder();
         for (Ball b : balls) {
-            jab.add(b.getShape().toJson());
+            jab.add(b.toJson());
         }
         job.add("decoyballs", jab.build());
         job.add("powerdownname", getName());

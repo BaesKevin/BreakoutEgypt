@@ -11,6 +11,8 @@ import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.powers.PowerDown;
+import com.breakoutegypt.domain.shapes.BodyConfiguration;
+import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Point;
@@ -25,7 +27,6 @@ import javax.json.JsonObjectBuilder;
 public class Brick extends RegularBody {
 
     private boolean isTarget;
-    private Point gridPosition;
 
     private boolean isVisibible;
     private boolean isBreakable;
@@ -37,37 +38,40 @@ public class Brick extends RegularBody {
     private PowerUpType poweruptype;
     private PowerUp powerup;
     private PowerDown powerdown;
+    private boolean isInverted;
 
 //    private int points = 2000;
+    public Brick(ShapeDimension s) {
+        this(s, false);
+    }
     
-    public Brick(ShapeDimension s, Point position) {
-        this(s, position, false, true);
+    public Brick(ShapeDimension s, boolean isTarget){
+        this(s, isTarget, true);
     }
 
-    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible) {
-        this(s, gridPosition, isTarget, isVisible, true);
+    public Brick(ShapeDimension s, boolean isTarget, boolean isVisible) {
+        this(s, isTarget, isVisible, true);
+    }
+    
+    public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable) {
+        this(s, isTarget, isVisible, isBreakable, false);
     }
 
-//    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable) {
-//        this(s, gridPosition, isTarget, isVisible, isBreakable, 2000);
-//    }
-    
-    public Brick(ShapeDimension s, Point gridPosition, boolean isTarget, boolean isVisible, boolean isBreakable/*, int points*/) {
+    public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable, boolean isInverted) {
         super(s);
-        this.gridPosition = gridPosition;
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
         this.brickTypeName = BrickType.REGULAR.name();
         this.isTarget = isTarget;
+        this.isInverted = isInverted;
 
         effects = new ArrayList();
 
         if (isVisible && isBreakable) {
             effects.add(new ExplosiveEffect(this, 0));
         }
-//        this.points = points;
+
     }
-        
 
     public void setBreakable(boolean b) {
         isBreakable = b;
@@ -79,7 +83,7 @@ public class Brick extends RegularBody {
             this.getBody().getFixtureList().m_filter.maskBits = 0;
         } else {
             this.getBody().getFixtureList().m_filter.maskBits = 0x0010;
-        } 
+        }
     }
 
     public void setVisible(boolean b) {
@@ -98,31 +102,14 @@ public class Brick extends RegularBody {
         this.isTarget = isTarget;
     }
 
-    public Point getGridPosition() {
-        return gridPosition;
-    }
-
-    public void setGridPosition(Point position) {
-        this.gridPosition = position;
-    }
-
     public boolean isBreakable() {
         return isBreakable;
     }
 
-    protected void setBrickTypeName(String name) {
-        this.brickTypeName = name;
-    }
-
-    protected String getBrickTypeName() {
-        return brickTypeName;
-    }
-
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder builder = getShape().toJson();
+        JsonObjectBuilder builder = super.toJson();
 
         builder.add("show", isVisibible);
-        builder.add("type", getBrickTypeName());
         builder.add("isTarget", isTarget());
         if (hasToggleEffect()) {
             builder.add("effect", "toggle");
@@ -132,6 +119,7 @@ public class Brick extends RegularBody {
             builder.add("effect", "");
         }
         builder.add("isBreakable", isBreakable);
+        builder.add("isInverted", isInverted);
         return builder;
     }
 
@@ -193,7 +181,7 @@ public class Brick extends RegularBody {
     public PowerUp getPowerUp() {
         return powerup;
     }
-    
+
     public void setPowerdown(PowerDown powerdown) {
         this.powerdown = powerdown;
     }
@@ -217,5 +205,19 @@ public class Brick extends RegularBody {
             }
         }
         return false;
+    }
+
+    @Override
+    public BodyConfiguration getConfig() {
+        BodyConfigurationFactory factory = BodyConfigurationFactory.getInstance();
+        BodyConfiguration brickBody = factory.createTriangleConfig(this.dimension, isInverted);
+
+        if (!this.isVisibible) {
+            brickBody.getFixtureConfig().setMaskBits(0);
+        }
+
+        this.config = brickBody;
+        
+        return config;
     }
 }

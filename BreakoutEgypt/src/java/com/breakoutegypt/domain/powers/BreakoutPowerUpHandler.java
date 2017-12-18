@@ -79,6 +79,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
             return new PowerUpMessage("name", floorPowerup, PowerUpMessageType.ACTIVATEFLOOR);
         } else {
             floorInLevel.addTime(floorPowerup.getTimeVisible());
+            floorPowerup.setIsVisible(true);
         }
         powerups.remove(floorPowerup);
         return new PowerUpMessage("brokenPaddle", floorPowerup, PowerUpMessageType.NULLMESSAGE);
@@ -126,6 +127,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         } else {
             breakoutWorld.deSpawn(floorPowerup.getBody());
             repo.addPowerupMessages(new PowerUpMessage(floorPowerup.getName(), floorPowerup, PowerUpMessageType.REMOVEFLOOR));
+            this.levelState.removeFloor();
             floorPowerup = null;
         }
     }

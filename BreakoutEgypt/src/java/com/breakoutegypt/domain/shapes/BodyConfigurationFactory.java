@@ -17,7 +17,7 @@ import org.jbox2d.dynamics.BodyType;
  */
 public class BodyConfigurationFactory {
 
-    public static final int BALL_RADIUS = 8;
+    private static BodyConfigurationFactory INSTANCE;
 
     //TESTING BITS FOR COLLISION
     private final int BOUNDS_CATEGORY = 0x0001;
@@ -25,13 +25,27 @@ public class BodyConfigurationFactory {
     private final int BRICK_CATEGORY = 0x0004;
     private final int PADDLE_CATEGORY = 0x0008;
     private final int BALL_CATEGORY = 0X0010;
+    private final int FLOOR_CATEGORY = 0x0024;
     private final int PROJECTILE_MASK = BOUNDS_CATEGORY | PADDLE_CATEGORY;
     private final int BRICK_MASK = BALL_CATEGORY;
     private final int PADDLE_MASK = BALL_CATEGORY | PROJECTILE_CATEGORY;
-    private final int BALL_MASK = BOUNDS_CATEGORY | BRICK_CATEGORY | PADDLE_CATEGORY;
+    private final int BALL_MASK = BOUNDS_CATEGORY | BRICK_CATEGORY | PADDLE_CATEGORY | FLOOR_CATEGORY;
+    private final int FLOOR_MASK = BALL_CATEGORY;
     private final int BOUNDS_MASK = -1;
 
-    public BodyConfiguration createTriangleConfig(ShapeDimension shape) {
+    private BodyConfigurationFactory() {
+
+    }
+
+    public static BodyConfigurationFactory getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new BodyConfigurationFactory();
+        }
+
+        return INSTANCE;
+    }
+
+    public BodyConfiguration createTriangleConfig(ShapeDimension shape, boolean isInverted) {
 
         BodyDefConfig bodyDef = new BodyDefConfig(BodyType.STATIC, new Vec2(shape.getPosX(), shape.getPosY()));
 
@@ -41,9 +55,16 @@ public class BodyConfigurationFactory {
         // ex. a triangle at [50,50] with width 10 will create a triangle with points [ 55, 50], [50, 60], [60,60]
         // vertices must be given counterclockwise
         Vec2[] vertices = new Vec2[3];
-        vertices[0] = new Vec2(shape.getWidth() / 2, 0);
-        vertices[1] = new Vec2(0, shape.getHeight());
-        vertices[2] = new Vec2(shape.getWidth(), shape.getHeight());
+        if (isInverted) {
+            vertices[0] = new Vec2(0, 0);
+            vertices[1] = new Vec2(shape.getWidth()/2, shape.getHeight());
+            vertices[2] = new Vec2(shape.getWidth(), 0);
+        } else {
+            vertices[0] = new Vec2(shape.getWidth() / 2, 0);
+            vertices[1] = new Vec2(0, shape.getHeight());
+            vertices[2] = new Vec2(shape.getWidth(), shape.getHeight());
+        }
+
         ps.set(vertices, 3);
 
         FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, BRICK_CATEGORY, BRICK_MASK);
@@ -64,6 +85,7 @@ public class BodyConfigurationFactory {
         return new BodyConfiguration(bodyDefConfig, ps, fixtureConfig);
     }
 
+    // x and y position of the shapedimension are the middle of the circle
     public BodyConfiguration createDomePaddleConfig(ShapeDimension s) {
         long radius = s.getWidth() / 2;
 
@@ -85,7 +107,7 @@ public class BodyConfigurationFactory {
         cs.m_radius = s.getWidth() / 2;
 
         FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, PROJECTILE_CATEGORY, PROJECTILE_MASK);
-        
+
         return new BodyConfiguration(bodyDefConfig, cs, fixtureConfig);
     }
 
@@ -109,6 +131,16 @@ public class BodyConfigurationFactory {
 
         BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.STATIC, new Vec2(s.getPosX(), s.getPosY()));
 
+        return new BodyConfiguration(bodyDefConfig, ps, fixtureConfig);
+    }
+    
+    public BodyConfiguration createFloorConfig(ShapeDimension s) {
+        PolygonShape ps = new PolygonShape();
+        ps.setAsBox(s.getWidth(), s.getHeight());
+        
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, FLOOR_CATEGORY, FLOOR_MASK);
+        BodyDefConfig bodyDefConfig = new BodyDefConfig(BodyType.STATIC, new Vec2(s.getPosX(), s.getPosY()));
+        
         return new BodyConfiguration(bodyDefConfig, ps, fixtureConfig);
     }
 }

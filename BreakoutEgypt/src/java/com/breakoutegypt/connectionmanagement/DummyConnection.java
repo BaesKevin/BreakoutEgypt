@@ -10,6 +10,7 @@ import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.json.Json;
@@ -71,9 +72,7 @@ public class DummyConnection implements PlayerConnection,Serializable {
 
     @Override
     public void send(Message msg) {
-        if (msg.getMessageType().equals(BallMessageType.ADD) || msg.getMessageType().equals(BallMessageType.REMOVE)) {
-            ballMessages.add(msg);
-        } else if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
+        if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
             lifeMessages.add(msg);
         }
         this.send(msg.toJson().build());
@@ -110,5 +109,10 @@ public class DummyConnection implements PlayerConnection,Serializable {
             result.add(arrayToAdd.get(i));
         }
         return result.build();
+    }
+
+    @Override
+    public void send(List<Message> msgs) {
+        ballMessages.addAll(msgs);
     }
 }

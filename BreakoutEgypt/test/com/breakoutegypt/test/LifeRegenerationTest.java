@@ -90,7 +90,7 @@ public class LifeRegenerationTest {
         goOutOfBoundsNumberOfTimes(1);
 
         level.getLevelState().getBall().setLinearVelocity(0, -100);
-        stepTimes(60);
+        stepTimes(20);
 
         level = game.getCurrentLevel();
     }
