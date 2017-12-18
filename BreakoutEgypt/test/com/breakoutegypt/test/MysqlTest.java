@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.test;
 
+import com.breakoutegypt.data.mysql.MysqlBallRepository;
 import com.breakoutegypt.data.mysql.MysqlBrickRepository;
 import com.breakoutegypt.data.mysql.MysqlBrickTypeRepository;
 import com.breakoutegypt.data.mysql.MysqlDifficultyRepository;
@@ -13,6 +14,7 @@ import com.breakoutegypt.data.mysql.MysqlUserRepository;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -74,5 +76,17 @@ public class MysqlTest {
         repository.removeBrick(brick);
         bricks=repository.getBricks();
         assertEquals(bricks.size(), 0);
+    }
+    @Test
+    public void getBalls(){
+        MysqlBallRepository repository=new MysqlBallRepository();
+        Ball ball=new Ball(new ShapeDimension(45,275,100,4),10,10);
+        repository.addBall(ball);
+        List<Ball> balls=repository.getBalls();
+        assertEquals(balls.size(), 1);
+        repository.removeBall(ball);
+        balls=repository.getBalls();
+        assertEquals(balls.size(), 0);
+        
     }
 }

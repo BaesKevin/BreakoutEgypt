@@ -14,20 +14,43 @@ import org.jbox2d.common.Vec2;
  * @author kevin
  */
 public class Ball extends RegularBody {
-
+    
+    private int ballId=0;
     private AcidBallPowerUp acidBall;
     private boolean decoy;
     private boolean startingBall;
     private static AtomicInteger ballIdentifier = new AtomicInteger(1);
-
+    
+    private float xSpeed=0;
+    private float ySpeed=0;
     public Ball(ShapeDimension s) {
         this(s, false);
     }
-
+    public Ball(ShapeDimension s, float xSpeed, float ySpeed){
+        this(s,false);
+        this.xSpeed=xSpeed;
+        this.ySpeed=ySpeed;
+    }
+    
     public Ball(ShapeDimension s, boolean decoy) {
         super(s);
         s.setName("Ball"+ballIdentifier.getAndIncrement());
         this.decoy = decoy;
+    }
+    public void setBallId(int id){
+        this.ballId=id;
+    }
+    
+    public int getBallId(){
+        return this.ballId;
+    }
+    
+    public float getXspeed(){
+        return this.xSpeed;
+    }
+    
+    public float getYspeed(){
+        return this.ySpeed;
     }
 
     public boolean isStartingBall() {
