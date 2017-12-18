@@ -25,6 +25,7 @@
             </header>
             <main class="row">
                 <div class="col-lg-12 text-center">
+                    <p class="back"><a href="index.jsp">Back</a></p>
                     <div id="menu">
                         <ul class="list-group">
                             <li class="list-group-item">

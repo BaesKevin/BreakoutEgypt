@@ -30,7 +30,7 @@ let DrawingModule = (function () {
     }
     
     function drawProjectile() {
-        movingPartsCtx.fillStyle = "red";
+        movingPartsCtx.fillStyle = ImageLoader.patterns["projectile"];
         // box2d draws circle from center
         level.projectiles.forEach(function (ball) {
             movingPartsCtx.beginPath();

@@ -1,12 +1,12 @@
-<%-- 
+<%--
     Document   : highscore
     Created on : 23-nov-2017, 15:52:56
     Author     : Bjarne Deketelaere
 --%>
 
-<%@page import="com.breakoutegypt.domain.Score"%>
-<%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="com.breakoutegypt.domain.Score" %>
+<%@page import="java.util.List" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -17,6 +17,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="assets/css/screen.css"/>
         <link href="assets/css/highscore.css" rel="stylesheet" type="text/css"/>
+        <title>Highscores</title>
     </head>
     <body>
         <header class="row">
@@ -25,33 +26,47 @@
             </div>
         </header>
         <main>
+            <p class="back"><a href="index.jsp">Back</a></p>
             <form action="highscores" method="POST">
-
                 <label>Difficulty</label>
-                <select name="difficulty">
+                <div id='difficulties'>
                     <c:forEach items="${difficulties}" var="difficultyFromRepo">
                         <c:choose>
                             <c:when test="${difficultyFromRepo.getName().equals(difficulty)}">
-                                <option selected="true" value="${difficultyFromRepo.name}">${difficultyFromRepo.name}</option>
+                                    <label class="radioButtonContainer" for="radio${difficultyFromRepo.name}">${difficultyFromRepo.name}
+                                    <input checked="checked" type="radio" name="difficulty" value="${difficultyFromRepo.name}"
+                                       id="radio${difficultyFromRepo.name}">
+                                    <span class="checkmark"></span>
+                                    </label>
                             </c:when>
                             <c:otherwise>
-                                <option value="${difficultyFromRepo.name}">${difficultyFromRepo.name}</option>
+                                    <label class="radioButtonContainer" for="radio${difficultyFromRepo.name}">${difficultyFromRepo.name}
+                                    <input type="radio" name="difficulty" value="${difficultyFromRepo.name}"
+                                       id="radio${difficultyFromRepo.name}">
+                                    <span class="checkmark"></span>
+                                    </label>
                             </c:otherwise>
                         </c:choose>
-
                     </c:forEach>
-                </select>
-
-                <label for="gameId">level:</label> <input type="number" value="<c:out value="${gameIdentification}"/>" min="1" max="100" name="gameId" id="gameId"/>
-                <input type="submit" value="show">
+                </div>
+                
+                <label for="gameId">Level:</label><input type="number" value="<c:out value="${gameIdentification}"/>" min="1"
+                                                         max="50" name="gameId" id="gameId"/>
             </form>
             <div id="highscoreTablePlaceholder">
                 <table>
                     <tr>
                         <th>Username</th>
-                        <th>Timescore</th>
-                        <th>Brickscore</th>
+                        <th>Timescore <i class="fa fa-sort-asc" aria-hidden="true"></i></th>
+                        <th>Brickscore <i class="fa fa-sort" aria-hidden="true"></i></th>
                     </tr>
+                    <c:if test="${empty scores}">
+                        <tr>
+                            <td>No scores for this combination yet!</td>
+                            <td>You can be the first!</td>
+                            <td>Go do your best!</td>
+                        </tr>
+                    </c:if>
                     <c:forEach var="score" items="${scores}">
                         <tr>
                             <td><c:out value="${score.getUser()}"/></td>
