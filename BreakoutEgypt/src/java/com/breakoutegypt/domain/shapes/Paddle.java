@@ -5,15 +5,18 @@
  */
 package com.breakoutegypt.domain.shapes;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  *
  * @author kevin
  */
 public class Paddle extends RegularBody{
     private int paddleId=0;
-            
+    private static AtomicInteger paddleIdentifier = new AtomicInteger(1);
     public Paddle(ShapeDimension s){
-        super(s);  
+        super(s);
+        s.setName("Paddle"+paddleIdentifier.getAndIncrement());
     }
 
     public void setPaddleId(int paddleId) {

@@ -16,4 +16,5 @@ public interface BrickTypeRepository {
     public List<BrickType> getBrickTypes();
     public BrickType getBrickTypeById(int id);
     public BrickType getBrickTypeByName(String name);
+    public void addBrickType(BrickType bricktype);
 }

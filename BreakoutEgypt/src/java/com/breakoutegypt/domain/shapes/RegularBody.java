@@ -16,8 +16,6 @@ import org.jbox2d.dynamics.Body;
  */
 public class RegularBody {
 
-    private String name;
-
 //    private ShapeDimension shape;
     private Body body;
     protected BodyConfiguration config;
@@ -25,10 +23,16 @@ public class RegularBody {
 
     public RegularBody(ShapeDimension s) {
         this.dimension = s;
-        this.name = s.getName();
+    }
+    
+    /**
+     * This method is only used inside the MysqlRepositories
+     */
+    public ShapeDimension getShape(){
+        return dimension;
     }
 
-    public String getName() { return name;}
+    public String getName() { return dimension.getName();}
 
     public float getX() {
         if(this.body != null){
@@ -76,7 +80,7 @@ public class RegularBody {
     
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
-        brickkObjectBuilder.add("name", this.name);
+        brickkObjectBuilder.add("name", this.dimension.getName());
         brickkObjectBuilder.add("x", dimension.getPosX());
         brickkObjectBuilder.add("y", dimension.getPosY());
         brickkObjectBuilder.add("width", dimension.getWidth());

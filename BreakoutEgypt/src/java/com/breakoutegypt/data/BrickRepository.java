@@ -16,4 +16,6 @@ public interface BrickRepository {
     public List<Brick> getBricks();
     public Brick getBrickById(int id);
     public List<Brick> getBricksByLevel(int id);
+    public void addBrick(Brick brick);
+    public void removeBrick(Brick brick);
 }
