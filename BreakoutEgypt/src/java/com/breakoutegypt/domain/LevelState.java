@@ -265,7 +265,7 @@ public class LevelState {
         for (Ball b : balls) {
             if (b.getName().equals(ball.getName())) {
                 balls.remove(b);
-                messages.add(new BallMessage(ball.getName(), BallMessageType.REMOVE));
+                messages.add(new BallMessage(ball, BallMessageType.REMOVE));
                 break;
             }
         }

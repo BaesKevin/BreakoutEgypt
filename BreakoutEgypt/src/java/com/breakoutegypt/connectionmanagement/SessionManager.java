@@ -165,6 +165,7 @@ public class SessionManager {
     }
 
     public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
+
         Map<String, JsonArray> messages = createMessageMap(currentLevel, messageRepo);
 
         sendJsonToPlayers(messages);
@@ -232,6 +233,7 @@ public class SessionManager {
     }
 
     private void sendJsonToPlayers(Message msg) {
+
         PlayerConnection conn;
         for (Player player : connectedPlayers) {
             conn = player.getConnection();

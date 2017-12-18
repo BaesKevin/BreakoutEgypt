@@ -10,5 +10,5 @@ package com.breakoutegypt.domain.messages;
  * @author BenDB
  */
 public interface MessageType {
-    
+    String name();
 }

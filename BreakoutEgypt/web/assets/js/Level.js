@@ -213,6 +213,7 @@ const Level = (function () {
                     console.log("Load level: got data for level " + response.level);
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
+                    self.playerIndex = response.playerIndex;
                     console.log("%cMy paddle : " + response.mypaddle, "font-size: 2em;");
                     DrawingModule.updateStaticContent();
                     ScalingModule.scaleLevel(self);

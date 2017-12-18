@@ -14,31 +14,18 @@ import javax.json.JsonObjectBuilder;
  * @author BenDB
  */
 
-public class PowerDownMessage implements Message {
+public class PowerDownMessage extends GenericMessage {
 
-    private String name;
     private PowerDown powerdown;
-    private PowerDownMessageType messageType;
     
     public PowerDownMessage(String name, PowerDown powerdown, PowerDownMessageType pdmt) {
-        this.name = name;
+        super(0, name, pdmt);
         this.powerdown = powerdown;
-        this.messageType = pdmt;
-    }
-    
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public MessageType getMessageType() {
-        return messageType;
     }
 
     @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job = super.toJson();
         if (powerdown != null) 
             job.add("powerdown", powerdown.toJson());
         job.add("powerdownaction", getMessageType().toString());

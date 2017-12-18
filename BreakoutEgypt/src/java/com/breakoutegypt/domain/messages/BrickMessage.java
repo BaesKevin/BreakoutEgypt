@@ -13,29 +13,14 @@ import javax.json.JsonObjectBuilder;
  *
  * @author kevin
  */
-public class BrickMessage implements Message {
-
-    private String name;
-    private BrickMessageType messageType;
-
+public class BrickMessage extends GenericMessage {
     public BrickMessage(String name, BrickMessageType messageType) {
-        this.name = name;
-        this.messageType = messageType;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public BrickMessageType getMessageType() {
-        return messageType;
+        super(0, name, messageType);
     }
 
     @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
+        JsonObjectBuilder actionObjectBuilder = super.toJson();
         actionObjectBuilder.add("brickaction", getMessageType().name().toLowerCase());
         actionObjectBuilder.add("name", getName());
         return actionObjectBuilder;
@@ -59,10 +44,10 @@ public class BrickMessage implements Message {
             return false;
         }
         final BrickMessage other = (BrickMessage) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (this.messageType != other.messageType) {
+        if (getMessageType() != other.getMessageType()) {
             return false;
         }
         return true;
@@ -70,6 +55,6 @@ public class BrickMessage implements Message {
 
     @Override
     public String toString() {
-        return "BrickMessage{" + "name=" + name + ", messageType=" + messageType + '}';
+        return "BrickMessage{" + "name=" + getName() + ", messageType=" + getMessageType() + '}';
     }
 }

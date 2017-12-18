@@ -148,6 +148,7 @@ public class LevelServlet extends HttpServlet {
         
         job.add("paddles", paddleBuilder.build());
         job.add("mypaddle", myPaddle.getName());
+        job.add("playerIndex", player.getIndex());
         job.add("level", level.getId());
         job.add("lives", level.getLives());
     }
