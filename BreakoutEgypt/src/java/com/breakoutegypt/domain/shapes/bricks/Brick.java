@@ -15,9 +15,9 @@ import com.breakoutegypt.domain.shapes.BodyConfiguration;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.RegularBody;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.json.JsonObjectBuilder;
 
 /**
@@ -25,6 +25,8 @@ import javax.json.JsonObjectBuilder;
  * @author kevin
  */
 public class Brick extends RegularBody {
+    
+    private static AtomicInteger brickIdentifier = new AtomicInteger(1);
 
     private boolean isTarget;
 
@@ -54,6 +56,7 @@ public class Brick extends RegularBody {
 
     public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable) {
         super(s);
+        s.setName("Brick"+brickIdentifier.getAndIncrement());
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
         this.brickTypeName = new BrickType("REGULAR").getName();

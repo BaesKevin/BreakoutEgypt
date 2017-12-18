@@ -6,6 +6,7 @@
 package com.breakoutegypt.domain.shapes;
 
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.jbox2d.common.Vec2;
 
 /**
@@ -17,6 +18,7 @@ public class Ball extends RegularBody {
     private AcidBallPowerUp acidBall;
     private boolean decoy;
     private boolean startingBall;
+    private static AtomicInteger ballIdentifier = new AtomicInteger(1);
 
     public Ball(ShapeDimension s) {
         this(s, false);
@@ -24,6 +26,7 @@ public class Ball extends RegularBody {
 
     public Ball(ShapeDimension s, boolean decoy) {
         super(s);
+        s.setName("Ball"+ballIdentifier.getAndIncrement());
         this.decoy = decoy;
     }
 
