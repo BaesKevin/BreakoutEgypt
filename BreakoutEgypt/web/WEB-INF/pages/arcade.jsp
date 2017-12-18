@@ -22,9 +22,9 @@
         <div class="container-fluid">
             <main class="row">
                 <div id="gameMain" class="clearfix">
-                    <canvas id="stationaryParts" height="300" width="300"></canvas>
-                    <canvas id="effectCanvas" height="300" width="300"></canvas>
-                    <canvas id="movingParts" height="300" width="300"></canvas>
+                    <canvas id="stationaryParts" height="${levelDimension}" width="${levelDimension}"></canvas>
+                    <canvas id="effectCanvas" height="${levelDimension}" width="${levelDimension}"></canvas>
+                    <canvas id="movingParts" height="${levelDimension}" width="${levelDimension}"></canvas>
                     <p id="level"></p>
                     <p id="pause"><a>Pause (P)</a></p>
                     <p class="quit"><a>Quit (Q)</a></p>

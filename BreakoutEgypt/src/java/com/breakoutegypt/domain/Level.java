@@ -42,6 +42,7 @@ public class Level implements BreakoutWorldEventListener {
 
     private int lives;
 
+    // TODO use isLastLevel so frontend doesn't have to get 2 messagse, it can just know when loading the last level that it's the last level
     private boolean isLastLevel;
     private LevelState levelState;
 
@@ -145,13 +146,13 @@ public class Level implements BreakoutWorldEventListener {
         
         List<Paddle> paddles = levelState.getPaddles();
         int totalWidth = levelState.calculatePaddleWidthWithGaps();
-        int paddleWidth = paddles.get(0).getShape().getWidth();
+        int paddleWidth = paddles.get(0).getWidth();
         // x is the center of the most left paddle
         int min = paddleWidth / 2;
-        int max = 300 - totalWidth + (paddleWidth / 2);
+        int max = BreakoutWorld.DIMENSION - totalWidth + (paddleWidth / 2);
 
         if (invertedControls) {
-            firstPaddleCenter = 300 - firstPaddleCenter;
+            firstPaddleCenter = BreakoutWorld.DIMENSION - firstPaddleCenter;
         }
         
         float paddleCenter = firstPaddleCenter;

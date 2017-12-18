@@ -54,7 +54,7 @@ public class PowerDownTest {
         List<Ball> balls;
         level.startBall();
         balls = level.getLevelState().getBalls();
-        stepTimes(level, 60);
+        stepTimes(level, 30);
         balls = level.getLevelState().getBalls();
         assertTrue(balls.size() == 6);
     }

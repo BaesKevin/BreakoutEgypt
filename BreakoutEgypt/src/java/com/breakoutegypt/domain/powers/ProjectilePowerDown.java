@@ -27,8 +27,10 @@ public class ProjectilePowerDown implements PowerDown {
     public ProjectilePowerDown(Projectile projectile) {
         this.name = projectile.getName();
         this.projectile = projectile;
-        BodyConfiguration projectileBodyConfig = new BodyConfigurationFactory().createProjectileConfig(this.projectile.getShape());
-        this.projectile.setBox2dConfig(projectileBodyConfig);
+//        BodyConfiguration projectileBodyConfig = new BodyConfigurationFactory().createProjectileConfig(this.projectile.getShape());
+//        this.projectile.setBox2dConfig(projectileBodyConfig);
+        
+        
     }
     
     public void startProjectile(float endX, float endY, int width) {
@@ -48,7 +50,7 @@ public class ProjectilePowerDown implements PowerDown {
     public JsonObject toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("powerdownname", getName());
-        job.add("powerdown", this.projectile.getShape().toJson().build());
+        job.add("powerdown", this.projectile.toJson().build());
         job.add("powerdowntype", getType().name());
 
         return job.build();

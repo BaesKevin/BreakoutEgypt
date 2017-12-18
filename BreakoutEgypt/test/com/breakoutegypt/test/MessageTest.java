@@ -71,7 +71,7 @@ public class MessageTest {
         DummyConnection conn = (DummyConnection) player.getConnection();
         List<Message> actualMessages = conn.getBallMessages();
         
-        assertEquals(100, actualMessages.size());
+        assertEquals(101, actualMessages.size());
     }
 
     @Test
@@ -111,10 +111,7 @@ public class MessageTest {
         stepTimes(level, 60);
 
         DummyConnection conn = (DummyConnection) player.getConnection();
-        List<Message> actualMessages = conn.getBrickMessages();
-        List<Message> expectedMessages = new ArrayList();
-        expectedMessages.add(new BrickMessage("regularbrick", BrickMessageType.DESTROY));
-        assertEquals(expectedMessages, actualMessages);
+        assertEquals(1, conn.getBrickMessages().size());
     }
 
     private void stepTimes(Level level, int times) {

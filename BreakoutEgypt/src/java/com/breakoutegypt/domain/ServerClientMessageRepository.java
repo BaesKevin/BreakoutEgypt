@@ -1,39 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 
-/**
- *
- * @author kevin
- */
 public class ServerClientMessageRepository {
 
-    private List<Message> brickMessages;
+    private Set<Message> brickMessages;
     private List<Message> powerupMessages;
     private List<Message> powerdownMessages;
 
     public ServerClientMessageRepository() {
-        this.brickMessages = new ArrayList();
+        this.brickMessages = new HashSet();
         this.powerupMessages = new ArrayList();
         this.powerdownMessages = new ArrayList();
     }
-    
+
     public void addBrickMessage(Message m) {
         brickMessages.add(m);
     }
 
-    public List<Message> getBrickMessages() {
-        return brickMessages;
+    public JsonArray getBrickMessages() {
+        return listToJsonArray(brickMessages);
     }
 
-    public void clearBrickMessages() {
+    private void clearBrickMessages() {
         brickMessages.clear();
     }
 
@@ -41,23 +39,40 @@ public class ServerClientMessageRepository {
         powerupMessages.add(m);
     }
 
-    public void clearPowerupMessages() {
+    private void clearPowerupMessages() {
         powerupMessages.clear();
     }
 
-    public List<Message> getPowerupMessages() {
-        return powerupMessages;
+    public JsonArray getPowerupMessages() {
+        return listToJsonArray(powerupMessages);
     }
-    
+
     public void addPowerdownMessages(Message m) {
         powerdownMessages.add(m);
     }
 
-    public void clearPowerdownMessages() {
+    private void clearPowerdownMessages() {
         powerdownMessages.clear();
     }
 
-    public List<Message> getPowerdownMessages() {
-        return powerdownMessages;
+    public JsonArray getPowerdownMessages() {
+        return listToJsonArray(powerdownMessages);
     }
+    
+    public void clearAllMessages() {
+        clearBrickMessages();
+        clearPowerupMessages();
+        clearPowerdownMessages();
+    }
+    
+    public JsonArray listToJsonArray(Collection<Message> msgs) {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+
+        for (Message msg : msgs) {
+            jab.add(msg.toJson().build());
+        }
+
+        return jab.build();
+    }    
+    
 }
