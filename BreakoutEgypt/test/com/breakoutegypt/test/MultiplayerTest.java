@@ -124,7 +124,7 @@ public class MultiplayerTest {
         
         Ball ball = level.getLevelState().getBall();
         ball.setPlayerIndex(2);
-        ball.setLinearVelocity(0, -100);
+        ball.setLinearVelocity(0, 100);
         
         stepTimes(200);
         
@@ -132,6 +132,7 @@ public class MultiplayerTest {
         Assert.assertEquals(3, player1.getLives());
     }
 
+    
     @Test(expected = BreakoutException.class)
     public void testConnectToMuchPlayers() {
         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
@@ -148,6 +149,8 @@ public class MultiplayerTest {
     public void testStartingPlayer2BallDoesntStartPlayer1Ball(){
         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
 
+        DummyConnection con = (DummyConnection) player1.getConnection();
+        
         level = game.getCurrentLevel();
 
         game.movePaddle(player1.getUsername(), 200, 0);
@@ -164,6 +167,30 @@ public class MultiplayerTest {
         Assert.assertEquals(3, player1.getLives());
         Assert.assertEquals(originalPosition, player1BallPosition);
     }
+    
+    @Test
+    public void testStarting2Balls(){
+         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+
+        DummyConnection con = (DummyConnection) player1.getConnection();
+        
+        level = game.getCurrentLevel();
+
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
+        
+        level.startBall(player2.getIndex());
+        
+        Vec2 player1BallPosition = level.getLevelState().getBalls().get(0).getPosition();
+        Vec2 originalPosition = new Vec2(player1BallPosition);
+        
+        stepTimes(200);
+
+        Assert.assertEquals(2, player2.getLives());
+        Assert.assertEquals(3, player1.getLives());
+        Assert.assertEquals(originalPosition, player1BallPosition);
+    }
+    
     
     private void stepTimes(int times) {
         for (int i = 1; i <= times; i++) {

@@ -206,8 +206,15 @@ public class LevelState {
         ShapeDimension rightWallDim = new ShapeDimension("rightwall", 300, 0, 1, 300);
          ShapeDimension topWallDim = new ShapeDimension("topwall", 0, 0, 300, 1);
          
+         ShapeDimension middleWallDim = new ShapeDimension("middlewall", 0, 170, 300, 1);
+         
         if(hasTwoOutOfBounds){
             topWallDim.setName("ground");
+            
+            RegularBody middleWall = new RegularBody(middleWallDim);
+            BodyConfiguration middleWallConfig = factory.createWallConfig(middleWallDim, false);
+            middleWall.setBox2dConfig(middleWallConfig);
+            walls.add(middleWall);
         }
        
 
