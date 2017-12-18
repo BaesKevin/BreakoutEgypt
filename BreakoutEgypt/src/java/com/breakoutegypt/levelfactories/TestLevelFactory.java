@@ -504,7 +504,7 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     private Level getLevelWithExplosiveAndPowerUpBrick() {
-        Ball ball = shapeRepo.getDefaultBall();
+        Ball ball = shapeRepo.getDefaultBall(49, 30);
         Paddle paddle = shapeRepo.getDefaultPaddle();;
 
         List<Ball> balls = new ArrayList();
@@ -516,7 +516,7 @@ public class TestLevelFactory extends LevelFactory {
         ShapeDimension floorShape = shapeRepo.getDefaultFloor();
         balls.get(0).setStartingBall(true);
         List<Brick> bricks = new ArrayList();
-
+        
         bricks.add(shapeRepo.getDefaultBrick("regularBrick", 35, 40));
         bricks.add(shapeRepo.getDefaultBrick("explosiveBrick", 45, 40));
 

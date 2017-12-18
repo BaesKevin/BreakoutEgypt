@@ -31,7 +31,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
         this.timeVisible = timeVisible;
         isVisible = false;
         startTime = timeVisible;
-        BodyConfiguration floorConfig = BodyConfigurationFactory.getInstance().createWallConfig(s, false);
+        BodyConfiguration floorConfig = BodyConfigurationFactory.getInstance().createFloorConfig(s);
         this.setBox2dConfig(floorConfig);
     }
 

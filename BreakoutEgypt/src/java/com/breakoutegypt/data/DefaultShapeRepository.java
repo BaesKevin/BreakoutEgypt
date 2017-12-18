@@ -77,6 +77,9 @@ public class DefaultShapeRepository {
     public Brick getDefaultBrick(String name, float x, float y, boolean isTarget, boolean isVisible, boolean isBreakable){
         return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT), isTarget, isVisible, isBreakable);
     }
+    public Brick getDefaultBrick(String name, float x, float y, boolean isTarget, boolean isVisible, boolean isBreakable, boolean isInverted){
+        return new Brick(new ShapeDimension(name, x, y, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT), isTarget, isVisible, isBreakable, isInverted);
+    }
     
     public Projectile getProjectile(float x, float y){
         return getProjectile("projectile", x, y);

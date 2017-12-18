@@ -15,6 +15,7 @@ const Level = (function () {
         this.gap = 0;
         this.projectiles = [];
         this.invertedcontrols = false;
+        this.levelDimension = 100;
     };
 
     Level.prototype.initLevelState = function (balls, bricks, paddles, myPaddleName) {
@@ -171,7 +172,7 @@ const Level = (function () {
 
         function removeBall(json, self) {
             self.balls = self.balls.filter(function (ball) {
-                return ball.name !== json.ball;
+                return ball.name !== json.name;
             });
         }
 

@@ -25,6 +25,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import java.util.ArrayList;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -190,11 +191,19 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     void resetBall(Ball ball) {
-        if (this.getLevelState().getBalls().size() == 1) {
+        List<Ball> allBalls = levelState.getBalls();
+        List<Ball> notDecoys = new ArrayList();
+        
+        for (Ball b : allBalls) {
+            if (!b.isDecoy()) {
+                notDecoys.add(b);
+            }
+        }
+        
+        if (!ball.isDecoy() && notDecoys.size() == 1) {
             setLevelStarted(false);
             levelState.removeBall(ball);
             levelState.resetBall(breakoutWorld);
-
             loseLifeBasedOnDifficulty();
         } else {
             levelState.removeBall(ball);
@@ -275,6 +284,7 @@ public class Level implements BreakoutWorldEventListener {
             HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
             int brickScore = brickScoreCalc.getScore();
+            //TODO user with playerindex x
             Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int)getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
             

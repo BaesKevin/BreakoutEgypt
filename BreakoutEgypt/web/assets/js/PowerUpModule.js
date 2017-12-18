@@ -34,6 +34,7 @@ let PowerUpModule = (function () {
     function activatePowerUp(json) {
         switch (json.powerupaction) {
             case "ACTIVATEFLOOR":
+                console.log(json)
                 let jsonpowerup = json.powerup;
                 if (!level.floor) {
                     level.floor = ScalingModule.scaleObject({x: jsonpowerup.x, y: jsonpowerup.y, width: jsonpowerup.width, height: jsonpowerup.height},

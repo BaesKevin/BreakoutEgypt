@@ -64,4 +64,15 @@ public class WebsocketConnection implements PlayerConnection {
         job.add("leveldata", job.build());
         send(job.build());
     }
+
+    @Override
+    public void send(List<Message> msgs) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        for (Message m : msgs) {
+            jab.add(m.toJson().build());
+        }
+        job.add("ballaction", jab.build());
+        send(job.build());
+    }
 }

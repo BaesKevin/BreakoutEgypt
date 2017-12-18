@@ -58,6 +58,7 @@ let ArcadeWebSocket = (function () {
 
             if (json && !json.error) {
                 if (json.lifeaction) {
+                    console.log(json)
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();
                     }
@@ -66,12 +67,14 @@ let ArcadeWebSocket = (function () {
                     }
                 }
                 if (json.ballaction) {
-                    if (json.ballaction === 'remove') {
-                        level.removeBall(json);
-                    }
-                    if (json.ballaction === 'add') {
-                        level.addBall(json);
-                    }
+                    json.ballaction.forEach(function (msg) {
+                        if (msg.ballaction === 'remove') {
+                            level.removeBall(msg);
+                        }
+                        if (msg.ballaction === 'add') {
+                            level.addBall(msg);
+                        }
+                    })
                 }
                 if (json.levelComplete && !level.levelComplete) {
                     handleLevelComplete(json);

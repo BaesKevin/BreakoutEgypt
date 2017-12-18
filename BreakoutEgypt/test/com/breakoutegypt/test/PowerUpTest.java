@@ -77,7 +77,7 @@ public class PowerUpTest {
 
         stepTimes(level, 100);
         
-        assertTrue(balls.size() == 2);
+        assertEquals(2, balls.size());
 
     }
 

@@ -71,9 +71,7 @@ public class DummyConnection implements PlayerConnection {
 
     @Override
     public void send(Message msg) {
-        if (msg.getMessageType().equals(BallMessageType.ADD) || msg.getMessageType().equals(BallMessageType.REMOVE)) {
-            ballMessages.add(msg);
-        } else if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
+        if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
             lifeMessages.add(msg);
         }
         this.send(msg.toJson().build());
@@ -110,5 +108,10 @@ public class DummyConnection implements PlayerConnection {
             result.add(arrayToAdd.get(i));
         }
         return result.build();
+    }
+
+    @Override
+    public void send(List<Message> msgs) {
+        ballMessages.addAll(msgs);
     }
 }

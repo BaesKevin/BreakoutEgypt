@@ -128,7 +128,6 @@ public class LevelState {
     }
 
     public void removeFloor() {
-        //TODO remove floor
         this.floor = null;
     }
 
@@ -155,8 +154,21 @@ public class LevelState {
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
+    
+    private void removeDecoys() {
+        List<Ball> ballsWithoutDecoys = new ArrayList();
+        
+        for (Ball b : balls) {
+            if (!b.isDecoy() || b.equals(startingBall)) {
+                ballsWithoutDecoys.add(b);
+            } else {
+                messages.add(new BallMessage(b, BallMessageType.REMOVE));
+            }
+        }
+        this.balls = ballsWithoutDecoys;
+    }
 
-    void resetBall(BreakoutWorld breakoutWorld) {
+    public void resetBall(BreakoutWorld breakoutWorld) {
         startingBall.setDecoy(false);
         ShapeDimension originalDimension =
                 new ShapeDimension(startingBall.getName(), startingBall.getOriginalX(), startingBall.getOriginalY(), startingBall.getWidth(), startingBall.getHeight());
@@ -221,7 +233,7 @@ public class LevelState {
                 int horizontalRange = range * DimensionDefaults.BRICK_WIDTH;
                 int verticalRange = range * DimensionDefaults.BRICK_HEIGHT;
 
-                boolean isBrickInHorizontalRange = Math.abs(centreBrick.getX() - brick.getX()) <= horizontalRange;
+                boolean isBrickInHorizontalRange = Math.round(Math.abs(centreBrick.getX() - brick.getX())) <= horizontalRange;
                 boolean isBrickInVerticalRange = Math.abs(centreBrick.getY() - brick.getY()) <= verticalRange;
                 boolean isNotSwitchBrick = !(brick.hasToggleEffect());
                 
@@ -252,6 +264,9 @@ public class LevelState {
     }
 
     public void removeBall(Ball ball) {
+        if (!ball.isDecoy()) {
+            removeDecoys();
+        }
         for (Ball b : balls) {
             if (b.getName().equals(ball.getName())) {
                 balls.remove(b);

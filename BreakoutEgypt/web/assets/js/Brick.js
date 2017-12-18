@@ -13,6 +13,7 @@ const Brick = (function () {
         this.isTarget = brickdata.isTarget;
         this.effect = brickdata.effect;
         this.isBreakable = brickdata.isBreakable;
+        this.isInverted = brickdata.isInverted;
     };
 
     Brick.prototype.draw = function (brickCtx) {
@@ -23,9 +24,15 @@ const Brick = (function () {
             brickCtx.shadowColor = "black";
 
             brickCtx.beginPath();
-            brickCtx.moveTo((this.x + this.width / 2), this.y);
-            brickCtx.lineTo(this.x, (this.y + this.height));
-            brickCtx.lineTo((this.x + this.width), (this.y + this.height));
+            if (this.isInverted) {
+                brickCtx.moveTo((this.x + this.width), this.y);
+                brickCtx.lineTo((this.x + this.width / 2), this.y + this.height);
+                brickCtx.lineTo(this.x, this.y);
+            } else {
+                brickCtx.moveTo((this.x + this.width / 2), this.y);
+                brickCtx.lineTo(this.x, (this.y + this.height));
+                brickCtx.lineTo((this.x + this.width), (this.y + this.height));
+            }
             brickCtx.fill();
 
             brickCtx.fillStyle = visual.pattern;
@@ -34,11 +41,11 @@ const Brick = (function () {
     };
 
     function getColor(brick) {
-        
+
         let color = {};
         color.color = "green";
         color.pattern = ImageLoader.patterns["brick"];
-        
+
         if (brick.effect === "toggle") {
             color.color = "blue";
         } else if (brick.effect === "explosive") {

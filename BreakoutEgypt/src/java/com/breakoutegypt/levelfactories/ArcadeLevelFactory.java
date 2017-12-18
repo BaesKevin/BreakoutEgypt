@@ -117,7 +117,10 @@ public class ArcadeLevelFactory extends LevelFactory {
         brickShape = new ShapeDimension(name, x, y, width, height);
         brick = new Brick(brickShape, true, true);
 
+        Brick invertedBrick = Repositories.getDefaultShapeRepository().getDefaultBrick("inverted", 50, 5, false, true, true, true);
+        
         bricks.add(brick);
+        bricks.add(invertedBrick);
         List<Ball> balls = new ArrayList();
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();
@@ -225,23 +228,27 @@ public class ArcadeLevelFactory extends LevelFactory {
             for (int y = 5; y < 5 + ((height) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
-
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
-
                 brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
-
                 if (unbreakables.contains(index)) {
                     brick = new Brick(brickShape, false, true, false);
                 } else {
                     brick = new Brick(brickShape);
                 }
-
                 bricks.add(brick);
                 col++;
                 index++;
             }
             row++;
             col = 1;
+        }
+        
+        for (int x = 0; x < 100 + width; x += width) {
+            Brick b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + x + x + x, x, 40, false, true, true, true);
+            if (x % 20 == 0) {
+                b.addEffect(new ExplosiveEffect(b, 1));
+            }
+            bricks.add(b);
         }
 
         bricks.get(21).setTarget(true);
@@ -257,7 +264,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(11).setBreakable(false);
 
         bricksToToggle = new ArrayList();
-        for (int i = 15; i < bricks.size(); i++) {
+        for (int i = 15; i < 27; i++) {
             bricksToToggle.add(bricks.get(i));
             bricks.get(i).setVisible(false);
         }

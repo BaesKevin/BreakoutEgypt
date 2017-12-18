@@ -52,7 +52,7 @@ public class BallMessage implements Message {
             actionObjectBuilder.add("width", ball.getWidth());
             actionObjectBuilder.add("height", ball.getHeight());
         } else {
-            actionObjectBuilder.add("ball", getName());
+            actionObjectBuilder.add("name", getName());
         }
 
         return actionObjectBuilder;

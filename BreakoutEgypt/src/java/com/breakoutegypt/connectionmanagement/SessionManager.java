@@ -176,9 +176,7 @@ public class SessionManager {
 
     public void notifyPlayersOfBallAction(Level currentLevel) {
         List<Message> ballMessages = currentLevel.getLevelState().getMessages();
-        for (Message msg : ballMessages) {
-            sendJsonToPlayers(msg);
-        }
+        sendJsonToPlayers(ballMessages);
         currentLevel.getLevelState().clearMessages();
     }
 
@@ -226,6 +224,14 @@ public class SessionManager {
         for (Player player : connectedPlayers) {
             conn = player.getConnection();
             conn.send(messages);
+        }
+    }
+
+    private void sendJsonToPlayers(List<Message> ballMessages) {
+        PlayerConnection conn;
+        for (Player player : connectedPlayers) {
+            conn = player.getConnection();
+            conn.send(ballMessages);
         }
     }
 }
