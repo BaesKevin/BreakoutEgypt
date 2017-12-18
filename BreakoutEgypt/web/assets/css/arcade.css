@@ -2,32 +2,32 @@
     height: 100vh;
     display: flex;
     align-items: center;
-    background-image: url("../media/sun_god_ra_l.png"), url("../media/sun_god_ra_r.png");
-    background-repeat: no-repeat;
-    background-position: top left, top right;
+    background: url("../media/sun_god_ra_l.png") no-repeat top left, url("../media/sun_god_ra_r.png") no-repeat top right;
     background-size: contain;
 }
 
 .row {
     width: 100%;
+    /*Overriding bootstrap that prevents canvasses to be fully centered*/
+    margin-right: 0;
+    margin-left: 0;
 }
 
-#level, #pause, .quit {
-    position: absolute;
-    right: 27%;
+aside {
     color: white;
+    position: absolute;
+    right: 28%;
+    padding-top: 1%;
 }
 
-#level {
-    top: 5px;
+aside p {
+    margin-bottom: 1px;
 }
 
-#pause {
-    top: 25px;
-}
-
-.quit {
-    top: 45px;
+@media (max-width: 520px) {
+    aside p {
+        font-size: 0.7em;
+    }
 }
 
 #movingParts, #effectCanvas {

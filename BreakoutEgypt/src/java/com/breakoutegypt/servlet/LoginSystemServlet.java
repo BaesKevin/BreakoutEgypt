@@ -8,8 +8,10 @@ package com.breakoutegypt.servlet;
 import com.breakoutegypt.data.StaticUserRepository;
 import com.breakoutegypt.data.UserRepository;
 import com.breakoutegypt.domain.User;
+import com.breakoutegypt.servlet.util.Validator;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -39,37 +40,48 @@ public class LoginSystemServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            HttpSession session=request.getSession();
-            UserRepository userRepo=StaticUserRepository.getInstance();
-            userRepo.addUser(new User("Bjarne","bjarne.deketelaere@student.howest.be","Bjarne"));
-            
+            HttpSession session = request.getSession();
+            UserRepository userRepo = StaticUserRepository.getInstance();
+            userRepo.addUser(new User("Bjarne", "bjarne.deketelaere@student.howest.be", "Bjarne"));
 
-            
-            String register=request.getParameter("register");
-            String login=request.getParameter("login");
-            
-            String email=request.getParameter("email");
-            
-            String password=request.getParameter("password");
-            if(login!=null){
-                User user=userRepo.getUser(email,password);
-                if(user!=null){
-                    session.setAttribute("user",user);
+            String register = request.getParameter("register");
+            String login = request.getParameter("login");
+
+            String email = request.getParameter("email");
+            String passphrase = request.getParameter("password");
+
+            if (login != null) {
+                User user = userRepo.getUser(email, passphrase);
+                if (user != null) {
+                    session.setAttribute("user", user);
                     request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 } else {
-                    response.sendRedirect("WEB-INF/pages/login.jsp?error=could not find user");
+                    request.setAttribute("error", "This combination does not exist!");
+                    request.getRequestDispatcher("WEB-INF/pages/login.jsp").forward(request, response);
                 }
-            } else if(register!=null){
-                String username=request.getParameter("username");
-                User registerUser=new User(username,email,password);
-                if(!userRepo.alreadyExists(registerUser)){
-                    userRepo.addUser(registerUser);
-                    response.sendRedirect("WEB-INF/pages/slogin.jsp?message=now you can login");
+            } else if (register != null) {
+                Validator v = new Validator();
+                String username = request.getParameter("username");
+                List<String> errors = v.isValidForm(username, passphrase, email);
+                if (errors.size() <= 0) {
+                    User registerUser = new User(username, email, passphrase);
+                    if (userRepo.alreadyExists(registerUser)) {
+                        request.setAttribute("email", email);
+                        request.setAttribute("username", username);
+                        request.setAttribute("errors", Arrays.asList(new String[]{"User already exists"}));
+                        request.getRequestDispatcher("WEB-INF/pages/registration.jsp").forward(request, response);
+                    } else {
+                        userRepo.addUser(registerUser);
+                        request.getRequestDispatcher("WEB-INF/pages/login.jsp?message=now you can login").forward(request, response);
+                    }
                 } else {
-                    response.sendRedirect("WEB-INF/pages/registration.jsp?error=user already exists");
+                    request.setAttribute("errors", errors);
+                    request.setAttribute("email", email);
+                    request.setAttribute("username", username);
+                    request.getRequestDispatcher("WEB-INF/pages/registration.jsp").forward(request, response);
                 }
             }
-            
+
         }
     }
 

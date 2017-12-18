@@ -23,21 +23,21 @@ public class StaticDummyHighscoreRepo implements HighscoreRepository {
         
         scores = new ArrayList();
         
-//        User dummy = new User("Ben");
+        User dummy = new User("Ben");
         
-//        scores.add(new Score(1, dummy, 2500, "hard"));
-//        scores.add(new Score(1, dummy, 4548, "hard"));
-//        scores.add(new Score(1, dummy, 2580, "hard"));
-//        scores.add(new Score(2, dummy, 48648, "hard"));
-//        scores.add(new Score(1, dummy, 2500, "hard"));
-//        scores.add(new Score(1, dummy, 25448, "hard"));
-//        scores.add(new Score(2, dummy, 25486, "hard"));
-//        scores.add(new Score(1, dummy, 12345, "hard"));
-//        scores.add(new Score(1, dummy, 486, "hard"));
-//        scores.add(new Score(2, dummy, 2560, "hard"));
-//        scores.add(new Score(1, dummy, 46, "hard"));
-//        scores.add(new Score(2, dummy, 8686, "hard"));
-//        scores.add(new Score(2, dummy, 486, "hard"));
+        scores.add(new Score(1, dummy, 2500, "hard", 16545));
+        scores.add(new Score(1, dummy, 4548, "hard", 24324));
+        scores.add(new Score(1, dummy, 2580, "hard", 24234));
+        scores.add(new Score(2, dummy, 48648, "hard", 46756));
+        scores.add(new Score(1, dummy, 2500, "hard", 63245));
+        scores.add(new Score(1, dummy, 25448, "hard", 2364754));
+        scores.add(new Score(2, dummy, 25486, "hard", 42357));
+        scores.add(new Score(1, dummy, 12345, "hard", 54767));
+        scores.add(new Score(1, dummy, 486, "hard", 54774));
+        scores.add(new Score(2, dummy, 2560, "hard", 74576));
+        scores.add(new Score(1, dummy, 46, "hard", 57472));
+        scores.add(new Score(2, dummy, 8686, "hard", 76543));
+        scores.add(new Score(2, dummy, 486, "hard", 56732));
     }
     
     @Override

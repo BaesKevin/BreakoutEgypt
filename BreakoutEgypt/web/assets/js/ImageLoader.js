@@ -7,7 +7,8 @@ const ImageLoader = (function(){
         "fire" : new Image(),
         "acidball" : new Image(),
         "brokenpaddle" : new Image(),
-        "floor" : new Image()
+        "floor" : new Image(),
+        "projectile": new Image()
     };
 
     let imageAssets = [
@@ -18,7 +19,8 @@ const ImageLoader = (function(){
         {image: images["fire"], src: "assets/media/blue-fire.jpg"},
         {image: images["brokenpaddle"], src: "assets/media/brokenpaddle.png"},
         {image: images["floor"], src: "assets/media/floor.png"},
-        {image: images["acidball"], src: "assets/media/acidball.png"}
+        {image: images["acidball"], src: "assets/media/acidball.png"},
+        {image: images["projectile"], src: "assets/media/flames.jpg"}
     ];
 
 
@@ -36,6 +38,7 @@ const ImageLoader = (function(){
             self.patterns["brick"] = DrawingModule.createPattern(images["brick"], "repeat");
             self.patterns["gold"] = DrawingModule.createPattern(images["gold"], "repeat");
             self.patterns["fire"] = DrawingModule.createPattern(images["fire"], "repeat");
+            self.patterns["projectile"] = DrawingModule.createPattern(images["projectile"], "repeat");
         }).catch(function (err) {
             console.log(err);
         });
