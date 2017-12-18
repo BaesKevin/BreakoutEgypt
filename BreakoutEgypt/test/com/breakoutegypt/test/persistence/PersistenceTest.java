@@ -51,6 +51,11 @@ public class PersistenceTest {
             Assert.fail();
         }
     }
+    
+    @Test
+    public void addingUser() {
+        UserRepository repo = 
+    }
 
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
