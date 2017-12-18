@@ -43,7 +43,6 @@ public class LevelServlet extends HttpServlet {
         HttpSession session = request.getSession();
 //        User user = (User)session.getAttribute("user");
         Player playerFromSession = (Player) session.getAttribute("player");
-        System.out.println("Player id from session: " +  playerFromSession.getIndex());
         int gameId = Integer.parseInt(request.getParameter("gameId"));
         
         GameManager manager = new GameManager();
@@ -61,18 +60,12 @@ public class LevelServlet extends HttpServlet {
             if(playerFromSession!=null){
                 String name = playerFromSession.getUsername();
                 Player connectingPlayer = game.getPlayer(name);
-            
                 System.out.printf("Game: %d Level: %d Player: %s", game.getId(), level.getId(), name);
-//                if(player == null){
-//                    player = new Player(new User(name));
-//                    manager.addConnectingPlayer(gameId, player);
-//                }
-//                manager.assignPaddleToPlayer(gameId, connectingPlayer);
             
                 job = Json.createObjectBuilder();
                 if (level != null) {
                     JsonArrayBuilder jab = Json.createArrayBuilder();
-                    levelToJson(level, jab, job, playerFromSession);
+                    levelToJson(level, jab, job, connectingPlayer);
 
                     manager.startGame(gameId);
                 } else {
@@ -112,12 +105,12 @@ public class LevelServlet extends HttpServlet {
         Level level = manager.getGame(gameId).getLevel();
         
         Player player = (Player) request.getSession().getAttribute("player");
+        player = manager.getGame(gameId).getPlayer(player.getUsername());
+        
+        System.out.println("Receive start from player " + player.getUsername() + " index " + player.getIndex());
         level.startBall(player.getIndex());
         response.setContentType("application/json");
 
-        try (PrintWriter out = response.getWriter()) {
-            out.print("level STARTED");
-        }
         
     }
 

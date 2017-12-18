@@ -21,7 +21,7 @@ public class Player extends User implements Serializable {
 
 //    private Paddle paddle;
 //    private List<Ball> balls;
-    private PlayerConnection conn;
+    private transient PlayerConnection conn;
     private LevelProgressManager levelPackProgressions;
     private int index;
     private int lives;

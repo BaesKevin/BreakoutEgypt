@@ -40,10 +40,10 @@ public class MultiplayerLevelFactory extends LevelFactory {
         ShapeDimension ballShape = new ShapeDimension("ball", 60, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
         ShapeDimension ballShape2 = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
         
-        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
-        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
+        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 280, 100, 4, Color.BLUE));
+        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 80, 100, 4, Color.BLUE));
 
-        paddle2.setPlayerIndex(2);
+        paddle.setPlayerIndex(2);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
         paddles.add(paddle2);
@@ -51,7 +51,9 @@ public class MultiplayerLevelFactory extends LevelFactory {
         List<Ball> balls = new ArrayList();
         Ball ball = new Ball(ballShape);
         Ball ball2 = new Ball(ballShape2);
-        ball2.setPlayerIndex(2);
+        ball.setPlayerIndex(2);
+        ball.setStartingBall(true);
+        ball2.setStartingBall(true);
         
 //        ball.setStartingBall(true);
         balls.add(ball);

@@ -7,12 +7,13 @@ package com.breakoutegypt.domain.levelprogression;
 
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.GameType;
+import java.io.Serializable;
 
 /**
  *
  * @author kevin
  */
-public class LevelPackProgress {
+public class LevelPackProgress implements Serializable {
     private GameType type;
     private GameDifficulty difficulty;
     private LevelProgress progress;

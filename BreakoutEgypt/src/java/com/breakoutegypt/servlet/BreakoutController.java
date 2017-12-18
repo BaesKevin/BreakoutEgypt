@@ -100,6 +100,7 @@ public class BreakoutController extends HttpServlet {
 
             gm.getGame(gameId).initStartingLevel(startingLevel, progress);
             gm.addConnectingPlayer(gameId, player);
+            request.getSession().setAttribute("player", player);
 
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);

@@ -45,7 +45,9 @@ public class RegularBody {
     }
 
     public synchronized void moveTo(float x, float y) {
-        body.setTransform(new Vec2(x, y), 0);
+        if(! body.getWorld().isLocked()){
+            body.setTransform(new Vec2(x, y), 0);
+        }
     }
 
     public Vec2 getPosition() {

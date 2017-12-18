@@ -7,13 +7,10 @@ package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.messages.Message;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.websocket.EncodeException;
@@ -23,9 +20,9 @@ import javax.websocket.Session;
  *
  * @author kevin
  */
-public class WebsocketConnection implements PlayerConnection {
+public class WebsocketConnection implements PlayerConnection, Serializable{
 
-    private final Session session;
+    private final transient Session session;
 
     public WebsocketConnection(Session session) {
         this.session = session;

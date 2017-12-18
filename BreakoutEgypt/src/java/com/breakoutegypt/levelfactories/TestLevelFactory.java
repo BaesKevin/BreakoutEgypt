@@ -139,6 +139,8 @@ public class TestLevelFactory extends LevelFactory {
         Ball ball = new Ball(ballShape);
         Ball ball2 = new Ball(ballShape2);
         ball2.setPlayerIndex(2);
+        ball.setStartingBall(true);
+        ball.setStartingBall(true);
         
 //        ball.setStartingBall(true);
         balls.add(ball);

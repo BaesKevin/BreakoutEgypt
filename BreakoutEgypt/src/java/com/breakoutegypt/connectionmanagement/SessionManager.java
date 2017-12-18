@@ -119,7 +119,6 @@ public class SessionManager {
 
     public void addConnectionForPlayer(String name, PlayerConnection conn) {
         Player connectingPlayer = getPlayer(name, true);
-
         if (connectingPlayer != null) {
 
             if (connectedPlayers.size() < maxPlayers) {

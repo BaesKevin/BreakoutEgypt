@@ -141,7 +141,7 @@ public class Level implements BreakoutWorldEventListener {
         List<Ball> balls = levelState.getBalls();
         
         for(Ball ball : balls){
-            if(ball.getPlayerIndex() == playerIndex && ball.getLinearVelocity().equals(new Vec2(0,0))){
+            if(ball.getPlayerIndex() == playerIndex){
                 scoreTimer.start();
                 ball.setLinearVelocity(0, game.getDifficulty().getBallspeed());
             }
@@ -149,7 +149,7 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     // x coordinate is the center of the most left paddle
-    public void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
+    public synchronized void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
         List<Paddle> paddles = levelState.getPaddlesForPlayer(playerIndex);
         
         int totalWidth = levelState.calculatePaddleWidthWithGaps(paddles);

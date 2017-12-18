@@ -8,6 +8,7 @@ package com.breakoutegypt.connectionmanagement;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import javax.json.JsonObjectBuilder;
  *
  * @author kevin
  */
-public class DummyConnection implements PlayerConnection {
+public class DummyConnection implements PlayerConnection,Serializable {
 
     private List<JsonObject> jsonMessages = new ArrayList();
     private List<Message> ballMessages = new ArrayList();

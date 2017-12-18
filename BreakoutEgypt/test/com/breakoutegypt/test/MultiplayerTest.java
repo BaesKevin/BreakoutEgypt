@@ -172,23 +172,21 @@ public class MultiplayerTest {
     public void testStarting2Balls(){
          game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
 
-        DummyConnection con = (DummyConnection) player1.getConnection();
+        DummyConnection con1 = (DummyConnection) player1.getConnection();
         
         level = game.getCurrentLevel();
 
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
         
+        level.startBall(player1.getIndex());
         level.startBall(player2.getIndex());
         
-        Vec2 player1BallPosition = level.getLevelState().getBalls().get(0).getPosition();
-        Vec2 originalPosition = new Vec2(player1BallPosition);
+        stepTimes(10);
         
-        stepTimes(200);
-
-        Assert.assertEquals(2, player2.getLives());
-        Assert.assertEquals(3, player1.getLives());
-        Assert.assertEquals(originalPosition, player1BallPosition);
+        List<Ball> balls = level.getLevelState().getBalls();
+        Assert.assertEquals(220, balls.get(0).getPosition().y, 0.001);
+        Assert.assertEquals(160, balls.get(1).getPosition().y, 0.001);
     }
     
     
