@@ -60,7 +60,7 @@ public class MultiplayerLevelFactory extends LevelFactory {
         List<Ball> balls = new ArrayList();
 //        Ball ball = new Ball(ballShape);
 //        Ball ball2 = new Ball(ballShape2);
-        ball.setPlayerIndex(2);
+        ball2.setPlayerIndex(2);
         ball.setStartingBall(true);
         ball2.setStartingBall(true);
         

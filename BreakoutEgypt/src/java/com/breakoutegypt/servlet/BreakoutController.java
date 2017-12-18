@@ -221,7 +221,7 @@ public class BreakoutController extends HttpServlet {
     private void createMultiplayerGame(HttpServletRequest request, HttpServletResponse response) 
     throws ServletException, IOException{
         System.out.println("creating multiplayer");
-        GameDifficulty gameDifficulty = GameDifficulty.EASY;
+        GameDifficulty gameDifficulty = GameDifficulty.MEDIUM;
 
         GameManager gm = new GameManager();
 

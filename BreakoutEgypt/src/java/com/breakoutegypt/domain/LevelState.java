@@ -182,7 +182,7 @@ public class LevelState {
             if(ball.getPlayerIndex() == playerIndex) startingBall = ball;
         }
         
-        startingBall.setDecoy(false);
+         startingBall.setDecoy(false);
         ShapeDimension originalDimension =
                 new ShapeDimension(startingBall.getName(), startingBall.getOriginalX(), startingBall.getOriginalY(), startingBall.getWidth(), startingBall.getHeight());
         BodyConfiguration ballBodyBodyConfig = factory.createBallConfig(originalDimension);

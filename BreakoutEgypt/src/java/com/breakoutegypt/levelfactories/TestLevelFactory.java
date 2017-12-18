@@ -124,7 +124,7 @@ public class TestLevelFactory extends LevelFactory {
 //        ShapeDimension ballShape = new ShapeDimension("ball", 60, 200, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
 //        ShapeDimension ballShape2 = new ShapeDimension("ball", 60, 150, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
         Ball ball = shapeRepo.getDefaultBall();
-        Ball ball2 = shapeRepo.getDefaultBall(50, 30);
+        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 30);
         
 //        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
 //        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));

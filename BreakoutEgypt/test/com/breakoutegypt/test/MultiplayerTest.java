@@ -79,7 +79,6 @@ public class MultiplayerTest {
 
         level = game.getCurrentLevel();
 
-
 //        game.assignPaddleToPlayer(player1);
 //        game.assignPaddleToPlayer(player2);
 //        
@@ -106,33 +105,13 @@ public class MultiplayerTest {
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
         level.startBall(player1.getIndex());
-        
+
         stepTimes(200);
-        
+
         Assert.assertEquals(2, player1.getLives());
         Assert.assertEquals(3, player2.getLives());
     }
-    
-        @Test
-    public void OutOfBoundsLosesLifeForPlayerTwo() {
-        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
 
-        level = game.getCurrentLevel();
-
-        game.movePaddle(player1.getUsername(), 200, 0);
-        game.movePaddle(player2.getUsername(), 200, 0);
-        
-        Ball ball = level.getLevelState().getBall();
-        ball.setPlayerIndex(2);
-        ball.setLinearVelocity(0, 100);
-        
-        stepTimes(200);
-        
-        Assert.assertEquals(2, player2.getLives());
-        Assert.assertEquals(3, player1.getLives());
-    }
-
-    
     @Test(expected = BreakoutException.class)
     public void testConnectToMuchPlayers() {
         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
@@ -146,72 +125,93 @@ public class MultiplayerTest {
     }
 
     @Test
-    public void testStartingPlayer2BallDoesntStartPlayer1Ball(){
+    public void testStartingPlayer2BallDoesntStartPlayer1Ball() {
         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
 
         DummyConnection con = (DummyConnection) player1.getConnection();
-        
+
         level = game.getCurrentLevel();
 
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
-        
+
         level.startBall(player2.getIndex());
-        
+
         Vec2 player1BallPosition = level.getLevelState().getBalls().get(0).getPosition();
         Vec2 originalPosition = new Vec2(player1BallPosition);
-        
+
         stepTimes(100);
 
         Assert.assertEquals(2, player2.getLives());
         Assert.assertEquals(3, player1.getLives());
         Assert.assertEquals(originalPosition, player1BallPosition);
     }
-    
+
     @Test
-    public void testStarting2Balls(){
-         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+    public void testStarting2Balls() {
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
 
         DummyConnection con1 = (DummyConnection) player1.getConnection();
-        
+
         level = game.getCurrentLevel();
 
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
-        
+
         level.startBall(player1.getIndex());
         level.startBall(player2.getIndex());
-        
+
         float ball1 = level.getLevelState().getBalls().get(0).getY();
         float ball2 = level.getLevelState().getBalls().get(1).getY();
-        
+
         stepTimes(10);
-        
+
         List<Ball> balls = level.getLevelState().getBalls();
         Assert.assertEquals(ball1 + 10, balls.get(0).getPosition().y, 1);
         Assert.assertEquals(ball2 + 10, balls.get(1).getPosition().y, 1);
     }
-    
+
     @Test
-    public void resetBall(){
+    public void resetBall() {
         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
 
         DummyConnection con1 = (DummyConnection) player1.getConnection();
-        
+
         level = game.getCurrentLevel();
 
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
-        
+
         level.startBall(player1.getIndex());
-        
+
         stepTimes(100);
-        
+
         List<Ball> balls = level.getLevelState().getBalls();
-        
+
         Assert.assertEquals(2, balls.size());
     }
-    
+
+    @Test
+    public void levelEndsWhenOnePlayerIsOutOfLives() {
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+
+        DummyConnection con1 = (DummyConnection) player2.getConnection();
+
+        level = game.getCurrentLevel();
+
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
+
+        for (int i = 0; i < 3; i++) {
+            level.startBall(player2.getIndex());
+            stepTimes(100);
+        }
+
+        Assert.assertEquals(3, player2.getLives());
+        Assert.assertEquals(3, player1.getLives());
+
+    }
+
     private void stepTimes(int times) {
         for (int i = 1; i <= times; i++) {
             level.step();
