@@ -18,4 +18,5 @@ public interface BallRepository {
     public void addBall(Ball ball);
     public void addBallsForLevel(int levelId, List<Ball> balls);
     public void removeBall(Ball ball);
+    public void removeLevelBalls(int levelId, List<Ball> balls);
 }

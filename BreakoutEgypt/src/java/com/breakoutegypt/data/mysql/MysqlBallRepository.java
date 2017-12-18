@@ -30,6 +30,7 @@ public class MysqlBallRepository implements BallRepository {
     private final String INSERT_BALL = "insert into balls(shapedimensionid,xspeed,yspeed) values(?, ?, ?)";
     private final String DELETE_BALL = "delete from balls where ballid = ?";
     private final String INSERT_LEVELBALLS = "insert into levelballs(levelid,idball) values(?, ?)";
+    private final String DELETE_LEVELBALLS = "delete from levelballs where levelid = ?";
     
     List<Ball> balls;
 
@@ -138,6 +139,22 @@ public class MysqlBallRepository implements BallRepository {
             prep.executeUpdate();
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add ball",ex);
+        }
+    }
+
+    @Override
+    public void removeLevelBalls(int levelId, List<Ball> balls) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(DELETE_LEVELBALLS);
+                ){
+            prep.setInt(1, levelId);
+            prep.executeUpdate();
+            for(Ball ball:balls){
+                this.removeBall(ball);
+            }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't remove balls",ex);
         }
     }
 }

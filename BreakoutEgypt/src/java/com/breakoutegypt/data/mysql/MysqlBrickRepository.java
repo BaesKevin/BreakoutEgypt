@@ -31,6 +31,7 @@ public class MysqlBrickRepository implements BrickRepository {
     private final String SELECT_ALL_LEVELBRICKS_BYLEVELID = "select bricks.* from bricks inner join levelbricks on levelbricks.brickid=bricks.brickid where levelbricks.levelid = ?";
     private final String INSERT_BRICK = "insert into bricks(shapedimensionid,typeid,isbreakable,isvisible,istarget) values(?, ?, ?, ?, ? )";
     private final String DELETE_BRICK = "delete from bricks where brickid = ?";
+    private final String DELETE_LEVELBRICKS = "delete from levelbricks where levelid = ?";
     private final String INSERT_LEVELBRICKS = "insert into levelbricks(levelid,brickid) values(?,?)";
     
     List<Brick> bricks;
@@ -155,4 +156,19 @@ public class MysqlBrickRepository implements BrickRepository {
         }
     }
 
+    @Override
+    public void removeLevelBricks(int levelId,List<Brick> bricks) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(DELETE_LEVELBRICKS);
+                ){
+            prep.setInt(1, levelId);
+            prep.executeUpdate();
+            for(Brick brick:bricks){
+                this.removeBrick(brick);
+            }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't remove bricks",ex);
+        }
+    }
 }

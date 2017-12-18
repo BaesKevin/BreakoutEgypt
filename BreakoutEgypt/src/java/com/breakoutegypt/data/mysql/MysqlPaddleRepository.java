@@ -31,6 +31,7 @@ public class MysqlPaddleRepository implements PaddleRepository{
     private final String INSERT_PADDLE = "Insert into paddles(shapedimensionid) values(?)";
     private final String DELETE_PADDLE = "Delete from paddles where paddleid = ?";
     private final String INSERT_LEVELPADDLES = "insert into levelpaddles(levelid, idpaddle) values(?, ?)";
+    private final String DELETE_LEVELPADDLES = "Delete from levelpaddles where levelid = ?";
     
     private List<Paddle> paddles;
     @Override
@@ -140,6 +141,22 @@ public class MysqlPaddleRepository implements PaddleRepository{
             prep.executeUpdate();
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add paddle",ex);
+        }
+    }
+
+    @Override
+    public void removeLevelPaddles(int levelId, List<Paddle> paddles) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(DELETE_LEVELPADDLES);
+                ){
+            prep.setInt(1, levelId);
+            prep.executeUpdate();
+            for(Paddle paddle:paddles){
+                this.removePaddle(paddle);
+            }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't remove paddles",ex);
         }
     }
 }

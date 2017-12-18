@@ -37,7 +37,7 @@ public class MysqlLevelRepository implements LevelRepository {
     private final String SELECT_ALL_LEVELS = "select * from level";
     private final String SELECT_LEVEL_BYID = "select * from level where levelid = ?";
     private final String INSERT_LEVEL = "insert into level(levelpackid,name,description) values(?,?,?)";
-    private final String DELETE_LEVEL = "";
+    private final String DELETE_LEVEL = "delete from level where levelid = ?";
 
     List<Level> levels;
 
@@ -126,6 +126,17 @@ public class MysqlLevelRepository implements LevelRepository {
 
     @Override
     public void removeLevel(Level level) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        brickRepo.removeLevelBricks(level.getId(), level.getLevelState().getBricks());
+        paddleRepo.removeLevelPaddles(level.getId(), level.getLevelState().getPaddles());
+        ballRepo.removeLevelBalls(level.getId(), level.getLevelState().getBalls());
+        try (
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(DELETE_LEVEL);
+                ){
+            prep.setInt(1, level.getId());
+            prep.executeUpdate();
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't remove level", ex);
+        }
     }
 }

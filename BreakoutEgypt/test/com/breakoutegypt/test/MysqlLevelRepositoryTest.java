@@ -21,6 +21,7 @@ import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import java.awt.Color;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -35,14 +36,20 @@ import static org.junit.Assert.*;
  * @author Bjarne Deketelaere
  */
 public class MysqlLevelRepositoryTest {
-    
+    private Level level;
     public MysqlLevelRepositoryTest() {
+        this.level=this.genSwitchLevel();
     }
     @Test
-    public void InsertLevel(){
-        MysqlLevelRepository repository=new MysqlLevelRepository();
-        Level level=this.genSwitchLevel();
-        repository.addLevel(level);
+    public void levelOperations(){
+        try{
+            MysqlLevelRepository repository=new MysqlLevelRepository();
+            repository.addLevel(level);
+            repository.removeLevel(level);
+        } catch(Exception ex){
+            fail("Should not throw an exception");
+        }
+        
     }
     private Level genSwitchLevel(){
         DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
