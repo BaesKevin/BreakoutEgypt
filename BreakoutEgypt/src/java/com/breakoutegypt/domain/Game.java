@@ -6,7 +6,6 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
 import com.breakoutegypt.data.Repositories;
@@ -30,7 +29,6 @@ public class Game {
     private int id;
     private Level currentLevel;
     private GameType gameType;
-    private GameDifficulty difficultyType;
     private Difficulty difficulty;
 
     private int livesLeftInLastLevel;
@@ -40,14 +38,13 @@ public class Game {
 
     private SessionManager manager;
 
-    public Game(GameType gameType, GameDifficulty difficulty){
+    public Game(GameType gameType, String difficulty){
         this(1, gameType, difficulty);
     }
     
-    public Game(int numberOfPlayers, GameType gameType, GameDifficulty difficultyType) {
+    public Game(int numberOfPlayers, GameType gameType, String difficultyType) {
         id = ID++;
         this.gameType = gameType;
-        this.difficultyType = difficultyType;
         this.difficulty = Repositories.getDifficultyRepository().findByName(difficultyType); // TODO CLONE
 
         manager = new SessionManager(numberOfPlayers);
@@ -92,7 +89,7 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-        player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
+        player.getProgressions().addNewProgression(this.gameType, this.difficulty.getName());
         manager.addConnectingPlayer(player);
 
     }
@@ -167,7 +164,7 @@ public class Game {
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {
-            manager.incrementLevelReachedForAllPlayers(gameType, difficultyType);
+            manager.incrementLevelReachedForAllPlayers(gameType, difficulty);
             currentLevel = levelFactory.getNextLevel();
         }
 

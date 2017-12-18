@@ -10,7 +10,6 @@ import com.breakoutegypt.data.DummyDifficultyRepository;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
@@ -35,7 +34,7 @@ public class ScoreTester {
     Player player;
     private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
 
-    private void createGame(int startingLevel, GameDifficulty diff) {
+    private void createGame(int startingLevel, String diff) {
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, diff);
         game = gm.getGame(id);
@@ -57,15 +56,15 @@ public class ScoreTester {
     // Level with 3 bricks, each 2-, 4-, 6 or 8000 points, multiplier goes up after 2 hits without hitting the paddle or losing a ball/life.
     @Test
     public void testScoreDestroy3BricksWithoutTouchingPaddle() {
-        testScoreForDifficulty(GameDifficulty.EASY, 8000);
-        testScoreForDifficulty(GameDifficulty.MEDIUM, 6000);
-        testScoreForDifficulty(GameDifficulty.HARD, 4000);
-        testScoreForDifficulty(GameDifficulty.BRUTAL, 2000);
+        testScoreForDifficulty("easy", 8000);
+        testScoreForDifficulty("medium", 6000);
+        testScoreForDifficulty("hard", 4000);
+        testScoreForDifficulty("brutal", 2000);
     }
     
     @Test
     public void testScoreDestroy3BricksTouchPaddleInBetweenResetsMultiplier(){
-        createGame(13, GameDifficulty.MEDIUM);
+        createGame(13, "medium");
         level = game.getLevel();
 
         level.getLevelState().getBalls().get(0).setLinearVelocity(0, 100);
@@ -100,11 +99,11 @@ public class ScoreTester {
             stepTimes(level, 1);
         }
         
-        int expectedScore = 3 * Repositories.getDifficultyRepository().findByName(GameDifficulty.MEDIUM).getPointsPerBlock();
+        int expectedScore = 3 * Repositories.getDifficultyRepository().findByName("medium").getPointsPerBlock();
         Assert.assertEquals(expectedScore, level.getBrickScore());
     }
     
-    private void testScoreForDifficulty(GameDifficulty diff, int blockScore){
+    private void testScoreForDifficulty(String diff, int blockScore){
         createGame(13, diff);
         level = game.getLevel();
 

@@ -11,7 +11,6 @@ import com.breakoutegypt.data.mysql.MysqlPaddleRepository;
 import com.breakoutegypt.data.mysql.MysqlUserRepository;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import com.breakoutegypt.domain.shapes.bricks.BrickType;
@@ -41,7 +40,7 @@ public class MysqlTest {
     @Test
     public void DifficultyRepoFindByNameTest(){
         MysqlDifficultyRepository repository=new MysqlDifficultyRepository();
-        Difficulty difficulty=repository.findByName(GameDifficulty.EASY);
+        Difficulty difficulty=repository.findByName("easy");
         assertNotNull(difficulty);
     }
     @Test

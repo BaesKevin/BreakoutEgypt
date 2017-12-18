@@ -9,7 +9,6 @@ import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class ShowLevelsServlet extends HttpServlet {
     
     public static String DIFFICULTIES = "difficulties";
     
-    public static final GameDifficulty DEFAULT_DIFFICULTY = GameDifficulty.MEDIUM;
+    public static final String DEFAULT_DIFFICULTY = "medium";
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,7 +51,7 @@ public class ShowLevelsServlet extends HttpServlet {
 
         try {
             GameType gameType = getGameTypeFromRequestOrThrow(request);
-            GameDifficulty difficulty = getDifficultyFromRequest(request);
+            String difficulty = request.getParameter("difficulty");
             
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
             int totalLevels = new ArcadeLevelFactory(null, null).getTotalLevels();
@@ -85,27 +84,6 @@ public class ShowLevelsServlet extends HttpServlet {
                 return GameType.ARCADE;
             default:
                 throw new BreakoutException("Unknown gametype");
-        }
-    }
-
-    private GameDifficulty getDifficultyFromRequest(HttpServletRequest request) {
-        String difficulty = request.getParameter(DIFFICULTY);
-
-        if (difficulty == null) {
-            return DEFAULT_DIFFICULTY;
-        }
-
-        switch (difficulty) {
-            case EASY:
-                return GameDifficulty.EASY;
-            case MEDIUM:
-                return GameDifficulty.MEDIUM;
-            case HARD:
-                return GameDifficulty.HARD;
-            case BRUTAL:
-                return GameDifficulty.BRUTAL;
-            default:
-                return DEFAULT_DIFFICULTY;
         }
     }
 

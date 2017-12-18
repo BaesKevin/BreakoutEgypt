@@ -15,7 +15,6 @@ import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.powers.InvertedControlsPowerDown;
 import com.breakoutegypt.domain.powers.PowerDownType;
@@ -67,7 +66,7 @@ public class LevelState {
     }
 
     public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks) {
-        this(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY));
+        this(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName("easy"));
     }
 
     public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty) {

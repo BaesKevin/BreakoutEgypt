@@ -6,7 +6,6 @@
 package com.breakoutegypt.data;
 
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import java.util.List;
 
 /**
@@ -15,5 +14,5 @@ import java.util.List;
  */
 public interface DifficultyRepository {
     List<Difficulty> findAll();
-    Difficulty findByName(GameDifficulty type);
+    Difficulty findByName(String difficulty);
 }

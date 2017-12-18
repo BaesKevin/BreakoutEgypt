@@ -8,7 +8,6 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
@@ -42,7 +41,7 @@ public class MessageTest {
 
     private void createGame(int startingLevel) {
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        int id = gm.createGame(GameType.TEST, "medium");
         game = gm.getGame(id);
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 

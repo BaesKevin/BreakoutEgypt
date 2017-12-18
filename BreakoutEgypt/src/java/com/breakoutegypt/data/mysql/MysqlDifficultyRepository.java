@@ -8,7 +8,6 @@ package com.breakoutegypt.data.mysql;
 import com.breakoutegypt.data.DifficultyRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,29 +28,19 @@ public class MysqlDifficultyRepository implements DifficultyRepository{
     
     private final String SELECT_ALL_DIFFICULTIES="select * from difficulties";
     private final String SELECT_DIFFICULTY_BYNAME="select * from difficulties where difficultyname = ?";
-    private Map<GameDifficulty, Difficulty> difficulties;
 
-    private GameDifficulty selectGameDifficulty(String name){
-        switch(name){
-            case "EASY":
-                return GameDifficulty.EASY;
-            case "MEDIUM":
-                return GameDifficulty.MEDIUM;
-            case "HARD":
-                return GameDifficulty.HARD;
-            case "BRUTAL":
-                return GameDifficulty.BRUTAL;
-        }
-        return null;
-    }
+   
     @Override
     public List<Difficulty> findAll() {
-        this.difficulties=new HashMap();
+        
+        
         try(
                 Connection conn=DbConnection.getConnection();
                 PreparedStatement prep=conn.prepareStatement(SELECT_ALL_DIFFICULTIES);
                 ResultSet rs=prep.executeQuery();
                 ){
+            List<Difficulty> difficultyList=new ArrayList<>();
+            
             while(rs.next()){
                 String difficultyname=rs.getString("difficultyname");
                 int ballspeed=rs.getInt("ball_speed");
@@ -62,11 +51,11 @@ public class MysqlDifficultyRepository implements DifficultyRepository{
                 int powerupDuration=rs.getInt("powerup_duration");
                 
                 Difficulty difficulty=new Difficulty(difficultyname,ballspeed,livesPerLevel,livesRegeneration,pointsPerBlock,powerupRatio,powerupDuration);
+                difficultyList.add(difficulty);
                 
-                difficulties.put(selectGameDifficulty(difficultyname.toUpperCase()), difficulty);
             }
-            List<Difficulty> difficultyList=new ArrayList<>();
-            difficultyList.addAll(difficulties.values());
+            
+            
             return difficultyList;
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load difficulties",ex);
@@ -74,13 +63,13 @@ public class MysqlDifficultyRepository implements DifficultyRepository{
     }
     
     @Override
-    public Difficulty findByName(GameDifficulty type) {
-        this.difficulties=new HashMap();
+    public Difficulty findByName(String type) {
+        
         try(
                 Connection conn=DbConnection.getConnection();
                 PreparedStatement prep=conn.prepareStatement(SELECT_DIFFICULTY_BYNAME);
                 ){
-            prep.setString(1, type.name());
+            prep.setString(1, type);
             try(
                     ResultSet rs=prep.executeQuery();
                     ){

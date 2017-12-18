@@ -8,7 +8,6 @@ package com.breakoutegypt.test;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
@@ -33,12 +32,12 @@ public class LevelTest {
     
     @Before
     public void setup() {
-        createGame(GameType.TEST, GameDifficulty.MEDIUM, 1);
+        createGame(GameType.TEST, "medium", 1);
     }
     
-    private void createGame(GameType type, GameDifficulty diff, int startingLevel){
+    private void createGame(GameType type, String diff, int startingLevel){
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        int id = gm.createGame(GameType.TEST, "medium");
         game = gm.getGame(id);
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 
@@ -59,7 +58,7 @@ public class LevelTest {
 
     @Test
     public void destroyAllTargetBricksEndsLevel() {
-        createGame(GameType.TEST, GameDifficulty.MEDIUM, 2);
+        createGame(GameType.TEST, "medium", 2);
         
         level = game.getCurrentLevel();
         level.startBall();
@@ -71,7 +70,7 @@ public class LevelTest {
 
     @Test
     public void switchBrickTogglesCollision() {
-        createGame(GameType.TEST, GameDifficulty.MEDIUM, 3);
+        createGame(GameType.TEST, "medium", 3);
         level = game.getCurrentLevel();
         level.startBall();
         level.getLevelState().getBall().setLinearVelocity(0, -100);
@@ -84,7 +83,7 @@ public class LevelTest {
 
     @Test
     public void explosiveBickWithRadius1DestroysThreeBricks() {
-        createGame(GameType.TEST, GameDifficulty.MEDIUM, 4);
+        createGame(GameType.TEST, "medium", 4);
         level = game.getCurrentLevel();
         
         level.getLevelState().getBall().setLinearVelocity(0, -100);
@@ -96,7 +95,7 @@ public class LevelTest {
 
     @Test
     public void ballBouncesOfTopLeftRightWalls() {
-        createGame(GameType.TEST, GameDifficulty.MEDIUM, 1);
+        createGame(GameType.TEST, "medium", 1);
         level = game.getCurrentLevel();
         level.startBall();
 
@@ -119,7 +118,7 @@ public class LevelTest {
 
     @Test
     public void ballsDontCollide() {
-        createGame(GameType.TEST, GameDifficulty.MEDIUM, 5);
+        createGame(GameType.TEST, "medium", 5);
         level = game.getCurrentLevel();
         level.startBall();
         Ball topball = level.getLevelState().getBalls().get(0);

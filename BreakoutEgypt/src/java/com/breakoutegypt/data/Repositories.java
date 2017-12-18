@@ -21,7 +21,9 @@ public class Repositories {
     private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
     private static final BrickTypeRepository bricktypeRepository = new MysqlBrickTypeRepository();
     private static final ShapeDimensionRepository shapedimensionRepository=new MysqlShapeDimensionRepository();
+    private static DefaultShapeRepository defaultShapeRepository = DefaultShapeRepository.getInstance();
     private static UserRepository userRepository = null;
+    
     public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
     }

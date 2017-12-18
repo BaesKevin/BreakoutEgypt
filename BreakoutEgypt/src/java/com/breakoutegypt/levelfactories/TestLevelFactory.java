@@ -14,7 +14,6 @@ import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
@@ -36,7 +35,7 @@ public class TestLevelFactory extends LevelFactory {
 
     public static final int DEFAULT_OPEN_LEVELS = 500;
     public final int totalLevels = 1000;
-    private Difficulty difficulty = Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY);
+    private Difficulty difficulty = Repositories.getDifficultyRepository().findByName("easy");
 
     public TestLevelFactory(Game game) {
         super(game, 1000, DEFAULT_OPEN_LEVELS);

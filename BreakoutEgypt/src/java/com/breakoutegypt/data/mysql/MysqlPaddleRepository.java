@@ -81,12 +81,12 @@ public class MysqlPaddleRepository implements PaddleRepository{
     @Override
     public void addPaddle(Paddle paddle) {
         ShapeDimensionRepository shapedimensionRepo=Repositories.getShapeDimensionRepository();
-        shapedimensionRepo.addShapeDimension(paddle.getShape());
+        shapedimensionRepo.addShapeDimension(paddle.getShapeDimension());
         try(
                 Connection conn=DbConnection.getConnection();
                 PreparedStatement prep=conn.prepareStatement(INSERT_PADDLE,PreparedStatement.RETURN_GENERATED_KEYS);
                 ){
-            prep.setInt(1, paddle.getShape().getShapeId());
+            prep.setInt(1, paddle.getShapeDimension().getShapeId());
             prep.executeUpdate();
             try(ResultSet rs=prep.getGeneratedKeys()){
                 int paddleId = -1;
@@ -113,7 +113,7 @@ public class MysqlPaddleRepository implements PaddleRepository{
                 ){
             prep.setInt(1, paddle.getPaddleId());
             prep.executeUpdate();
-            Repositories.getShapeDimensionRepository().removeShapeDimension(paddle.getShape());
+            Repositories.getShapeDimensionRepository().removeShapeDimension(paddle.getShapeDimension());
         } catch (SQLException ex) {
             throw new BreakoutException("Unable to remove paddle");
         }

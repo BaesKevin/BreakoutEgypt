@@ -14,11 +14,11 @@ import com.breakoutegypt.domain.GameType;
  */
 public class LevelPackProgress {
     private GameType type;
-    private GameDifficulty difficulty;
+    private String difficulty;
     private LevelProgress progress;
     // speler kent enkel zijn eigen voortgang dus hier geen player
 
-    public LevelPackProgress(GameType type, GameDifficulty difficulty) {
+    public LevelPackProgress(GameType type, String difficulty) {
         this.type = type;
         this.difficulty = difficulty;
         this.progress = LevelProgressionRepository.getDefault(type);

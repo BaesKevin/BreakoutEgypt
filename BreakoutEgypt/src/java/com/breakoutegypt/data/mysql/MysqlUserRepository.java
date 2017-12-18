@@ -27,9 +27,9 @@ import org.mindrot.jbcrypt.BCrypt;
 public class MysqlUserRepository implements UserRepository{
     private List<User> users;
     private final String SELECT_ALL_USERS = "select * from users";
-    private final String INSERT_USER = "insert into users(username,email,password,gold,diamonds) values(?, ?, ?, ?, ?)";
+    private final String INSERT_USER = "insert into users(username,email,`hash`,gold,diamonds) values(?, ?, ?, ?, ?)";
     private final String SELECT_USER_BYEMAIL_BYPASS = "select * from users where email = ?";
-    
+    private final String DELETE_USER_BYEMAIL = "delete from users where email = ?;";
     @Override
     public List<User> getUsers() {
         this.users=new ArrayList<>();
@@ -41,10 +41,10 @@ public class MysqlUserRepository implements UserRepository{
             while(rs.next()){
                 String username=rs.getString("username");
                 String email=rs.getString("email");
-                String password=rs.getString("password");
+                String hash=rs.getString("hash");
                 int gold=rs.getInt("gold");
                 int diamonds=rs.getInt("diamonds");
-                User user=new User(username,email,password,gold,diamonds);
+                User user=new User(username,email,hash,gold,diamonds);
                 this.users.add(user);
             }
             return this.users;
@@ -61,7 +61,7 @@ public class MysqlUserRepository implements UserRepository{
                 ){
             prep.setString(1, user.getUsername());
             prep.setString(2, user.getEmail());
-            prep.setString(3, user.getPassword());
+            prep.setString(3, user.getHash());
             prep.setInt(4, user.getGold());
             prep.setInt(5, user.getDiamonds());
             prep.executeUpdate();
@@ -110,13 +110,13 @@ public class MysqlUserRepository implements UserRepository{
                     ){
                 User user=null;
                 while(rs.next()){
-                    if(BCrypt.checkpw(password, rs.getString("password"))){
+                    if(BCrypt.checkpw(password, rs.getString("hash"))){
                         String username=rs.getString("username");
                         String curEmail=rs.getString("email");
-                        String curPassword=rs.getString("password");
+                        String curHash=rs.getString("hash");
                         int gold=rs.getInt("gold");
                         int diamonds=rs.getInt("diamonds");
-                        user=new User(username,curEmail,curPassword,gold,diamonds);
+                        user=new User(username,curEmail,curHash,gold,diamonds,true);
                     }   
                 }
                 return user;
@@ -125,5 +125,21 @@ public class MysqlUserRepository implements UserRepository{
             throw new BreakoutException("Couldn't find user",ex);
         }
     }
+
+    @Override
+    public void deleteUser(String email) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(DELETE_USER_BYEMAIL);
+                ){
+            prep.setString(1, email);
+            prep.execute();
+            
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't find user",ex);
+        }
+    }
+    
+    
     
 }

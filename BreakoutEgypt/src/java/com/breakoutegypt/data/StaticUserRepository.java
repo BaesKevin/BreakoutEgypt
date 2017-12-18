@@ -35,7 +35,7 @@ public class StaticUserRepository implements UserRepository{
     @Override
     public User getUser(String email,String password){
         for(User selectedUser:this.users){
-            if(selectedUser.getEmail().equals(email) && BCrypt.checkpw(password, selectedUser.getPassword())){
+            if(selectedUser.getEmail().equals(email) && BCrypt.checkpw(password, selectedUser.getHash())){
                 return selectedUser;
             }
         }
@@ -52,6 +52,11 @@ public class StaticUserRepository implements UserRepository{
             }   
         }
         return found;
+    }
+
+    @Override
+    public void deleteUser(String email) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

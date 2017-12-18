@@ -6,7 +6,6 @@
 package com.breakoutegypt.data;
 
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,27 +17,33 @@ import java.util.Map;
  */
 public class DummyDifficultyRepository implements DifficultyRepository {
 
-    private Map<GameDifficulty, Difficulty> difficulties;
+    private List<Difficulty> difficulties;
 
     public DummyDifficultyRepository() {
-        difficulties = new HashMap();
-        difficulties.put(GameDifficulty.EASY, new Difficulty("easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15));
-        difficulties.put(GameDifficulty.MEDIUM, new Difficulty("medium", 65, 3, true, 6000, 50, 10));
-        difficulties.put(GameDifficulty.HARD, new Difficulty("hard", 80, 3, false, 4000, 30, 5));
-        difficulties.put(GameDifficulty.BRUTAL, new Difficulty("brutal", 100, 1, false, 2000, 0, 0));
+        difficulties = new ArrayList<>();
+        difficulties.add(new Difficulty("easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15));
+        difficulties.add(new Difficulty("medium", 65, 3, true, 6000, 50, 10));
+        difficulties.add(new Difficulty("hard", 80, 3, false, 4000, 30, 5));
+        difficulties.add(new Difficulty("brutal", 100, 1, false, 2000, 0, 0));
     }
 
     @Override
     public List<Difficulty> findAll() {
-        List<Difficulty> all = new ArrayList();
-        all.addAll(difficulties.values());
-
-        return all;
+        return difficulties;
     }
 
     @Override
-    public Difficulty findByName(GameDifficulty diff) {
-        return difficulties.get(diff);
+    public Difficulty findByName(String name) {
+        Difficulty difficulty = null;
+        for (Difficulty d: difficulties) {
+            if (d.getName().equals(name)) {
+                difficulty = d;
+                break;
+            }
+        }
+        
+        return difficulty;
+        
     }
 
 }

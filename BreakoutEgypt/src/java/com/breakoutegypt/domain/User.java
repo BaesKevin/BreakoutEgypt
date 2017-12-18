@@ -17,14 +17,25 @@ public class User implements Serializable{
     private int userId=0;
     private String username;
     private String email;
-    private String password;
+    private String hash;
     private int gold,diamonds;
     public User(String username){
         this(username, "","");
     }
+    public User(String username, String email, String hashorpass, int gold, int diamonds, boolean isHash) {
+        if(isHash) {
+            this.setHash(hashorpass);
+        } else {            
+            this.setHashFromPassword(hashorpass);
+        }
+        this.setUsername(username);
+        this.setEmail(email);
+        this.setDiamonds(diamonds);
+        this.setGold(gold);     
+    }
     public User(String username,String email,String password,int gold,int diamonds){
         this.setEmail(email);
-        this.setPassword(password);
+        this.setHashFromPassword(password);
         this.setUsername(username);
         this.setDiamonds(diamonds);
         this.setGold(gold);
@@ -60,12 +71,16 @@ public class User implements Serializable{
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getHash() {
+        return hash;
+    }
+    
+    private void setHashFromPassword(String password) {
+        this.hash = BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    public void setPassword(String password) {
-        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    private void setHash(String hash) {
+        this.hash = hash;
     }
 
     public int getGold() {
@@ -83,14 +98,15 @@ public class User implements Serializable{
     public void setDiamonds(int diamonds) {
         this.diamonds = diamonds;
     }
-    
-    
+
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + Objects.hashCode(this.username);
-        hash = 23 * hash + Objects.hashCode(this.email);
-        hash = 23 * hash + Objects.hashCode(this.password);
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.username);
+        hash = 37 * hash + Objects.hashCode(this.email);
+        hash = 37 * hash + Objects.hashCode(this.hash);
+        hash = 37 * hash + this.gold;
+        hash = 37 * hash + this.diamonds;
         return hash;
     }
 
@@ -106,16 +122,25 @@ public class User implements Serializable{
             return false;
         }
         final User other = (User) obj;
+        if (this.gold != other.gold) {
+            return false;
+        }
+        if (this.diamonds != other.diamonds) {
+            return false;
+        }
         if (!Objects.equals(this.username, other.username)) {
             return false;
         }
         if (!Objects.equals(this.email, other.email)) {
             return false;
         }
-        if (!Objects.equals(this.password, other.password)) {
+        if (!Objects.equals(this.hash, other.hash)) {
             return false;
         }
         return true;
     }
+
     
+    
+       
 }

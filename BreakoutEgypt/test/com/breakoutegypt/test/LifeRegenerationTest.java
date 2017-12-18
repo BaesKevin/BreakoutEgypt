@@ -12,7 +12,6 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class LifeRegenerationTest {
     private Level level;
     private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
 
-    private void createGame(GameDifficulty diff, int startingLevel) {
+    private void createGame(String diff, int startingLevel) {
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, diff);
         game = gm.getGame(id);
@@ -42,7 +41,7 @@ public class LifeRegenerationTest {
 
     @Test
     public void noLivesLostOnEasy() {
-        createGame(GameDifficulty.EASY, 1);
+        createGame("easy", 1);
 
         goOutOfBoundsNumberOfTimes(100);
         Assert.assertEquals(Difficulty.INFINITE_LIVES, level.getLives());
@@ -50,34 +49,34 @@ public class LifeRegenerationTest {
 
     @Test
     public void LivesLostOnMediumHardBrutal() {
-        createGame(GameDifficulty.MEDIUM, 1);
+        createGame("medium", 1);
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(2, level.getLives());
 
-        createGame(GameDifficulty.HARD, 1);
+        createGame("hard", 1);
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(2, level.getLives());
 
-        createGame(GameDifficulty.BRUTAL, 1);
+        createGame("brutal", 1);
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(0, level.getLives());
     }
 
     @Test
     public void livesRegenerateAfterLevelCompleteOnMediumButNotOnHard() {
-        goToNextLevel(GameDifficulty.MEDIUM);
+        goToNextLevel("medium");
 
         Assert.assertEquals(3, level.getLives());
     }
 
     @Test
     public void livesDontRegenerateOnHard() {
-        goToNextLevel(GameDifficulty.HARD);
+        goToNextLevel("hard");
 
         Assert.assertEquals(2, level.getLives());
     }
 
-    private void goToNextLevel(GameDifficulty diff) {
+    private void goToNextLevel(String diff) {
         createGame(diff, 17);
 
         goOutOfBoundsNumberOfTimes(1);

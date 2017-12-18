@@ -13,7 +13,6 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import java.util.List;
@@ -35,7 +34,7 @@ public class PowerDownTest {
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        int id = gm.createGame(GameType.TEST, "medium");
         game = gm.getGame(id);
 
         player = new Player(new User("Kevin"));

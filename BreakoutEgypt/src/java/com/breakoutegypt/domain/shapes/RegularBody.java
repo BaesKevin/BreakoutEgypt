@@ -84,4 +84,8 @@ public class RegularBody {
 //        brickkObjectBuilder.add("color", String.format("rgb(%d,%d,%d)", this.color.getRed(), this.color.getGreen(), this.color.getBlue()));
         return brickkObjectBuilder;
     }
+    
+    public ShapeDimension getShapeDimension() {
+        return dimension;
+    }
 }

@@ -11,7 +11,6 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
 import com.breakoutegypt.domain.User;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.io.IOException;
@@ -85,7 +84,7 @@ public class BreakoutController extends HttpServlet {
         try {
             int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
             
-            GameDifficulty gameDifficulty = getDifficultyFromRequest(request);
+            String gameDifficulty = request.getParameter("difficulty");
 
             GameManager gm = new GameManager();
 
@@ -110,27 +109,7 @@ public class BreakoutController extends HttpServlet {
         }
     }
     
-    private GameDifficulty getDifficultyFromRequest(HttpServletRequest request) throws BreakoutException {
-        GameDifficulty gameDifficulty;
-        switch (request.getParameter("difficulty")) {
-            case ShowLevelsServlet.EASY:
-                gameDifficulty = GameDifficulty.EASY;
-                break;
-            case ShowLevelsServlet.MEDIUM:
-                gameDifficulty = GameDifficulty.MEDIUM;
-                break;
-            case ShowLevelsServlet.HARD:
-                gameDifficulty = GameDifficulty.HARD;
-                break;
-            case ShowLevelsServlet.BRUTAL:
-                gameDifficulty = GameDifficulty.BRUTAL;
-                break;
-            default:
-                throw new BreakoutException("unknown difficulty");
-        }
-        return gameDifficulty;
-    }
-
+    
     private void handleHighscores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String levelId = request.getParameter("gameId");

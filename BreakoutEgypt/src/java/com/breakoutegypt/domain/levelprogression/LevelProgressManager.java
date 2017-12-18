@@ -22,7 +22,7 @@ public class LevelProgressManager {
         packProgresses = new ArrayList();
     }
     
-    public LevelPackProgress getProgress(GameType type, GameDifficulty difficulty){
+    public LevelPackProgress getProgress(GameType type, String difficulty){
         LevelPackProgress toFind = new LevelPackProgress(type, difficulty);
         
          for (LevelPackProgress p : packProgresses) {
@@ -34,7 +34,7 @@ public class LevelProgressManager {
          return null;
     }
     
-    public LevelProgress getLevelProgressOrDefault(GameType type, GameDifficulty difficulty){
+    public LevelProgress getLevelProgressOrDefault(GameType type, String difficulty){
         LevelPackProgress packProgress = getProgress(type, difficulty);
         LevelProgress progress = LevelProgressionRepository.getDefault(type);
         
@@ -44,7 +44,7 @@ public class LevelProgressManager {
         return progress;
     }
 
-    public void addNewProgression(GameType type, GameDifficulty difficulty) {
+    public void addNewProgression(GameType type, String difficulty) {
         LevelPackProgress newProgress = new LevelPackProgress(type, difficulty);
 
         if (!levelPackProgressExists(newProgress)) {
@@ -62,11 +62,11 @@ public class LevelProgressManager {
         return false;
     }
 
-    public void incrementHighestLevel(GameType gameType, GameDifficulty difficulty) {
+    public void incrementHighestLevel(GameType gameType, String difficulty) {
         getProgress(gameType, difficulty).incrementLevel();
     }
     
-    public int getHighestLevelReached(GameType gameType, GameDifficulty difficulty){
+    public int getHighestLevelReached(GameType gameType, String difficulty){
         LevelPackProgress p = getProgress(gameType, difficulty);
         
         return p != null? p.getLevelProgress().getHighestLevelReached() : 1; 

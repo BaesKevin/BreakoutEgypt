@@ -32,5 +32,7 @@ public class Paddle extends RegularBody{
     public int getPaddleId(){
         return this.paddleId;
     }
+    
+   
 }
 
