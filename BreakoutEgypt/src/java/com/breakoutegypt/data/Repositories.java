@@ -7,6 +7,7 @@ package com.breakoutegypt.data;
 
 import com.breakoutegypt.data.mysql.MysqlBrickTypeRepository;
 import com.breakoutegypt.data.mysql.MysqlShapeDimensionRepository;
+import com.breakoutegypt.data.mysql.MysqlUserRepository;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class Repositories {
     private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
     private static final BrickTypeRepository bricktypeRepository = new MysqlBrickTypeRepository();
     private static final ShapeDimensionRepository shapedimensionRepository=new MysqlShapeDimensionRepository();
+    private static UserRepository userRepository = null;
     public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
     }
@@ -34,5 +36,14 @@ public class Repositories {
     
     public static ShapeDimensionRepository getShapeDimensionRepository(){
         return shapedimensionRepository;
+    }
+    
+    public static UserRepository getUserRepository() {
+        
+        //lazy loading
+        if (userRepository == null)
+            userRepository = new MysqlUserRepository();
+        
+        return userRepository;
     }
 }
