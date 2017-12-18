@@ -124,7 +124,8 @@ public class TestLevelFactory extends LevelFactory {
     public Level getLevelWith2Paddles() {
 
         ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
-
+        ShapeDimension ballShape2 = new ShapeDimension("ball", 60, 200, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        
         Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
         Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
 
@@ -135,9 +136,13 @@ public class TestLevelFactory extends LevelFactory {
         paddles.add(paddle2);
 
         Ball ball = new Ball(ballShape);
+        Ball ball2 = new Ball(ballShape2);
+        ball2.setPlayerIndex(2);
+        
         ball.setStartingBall(true);
         List<Ball> balls = new ArrayList();
         balls.add(ball);
+        balls.add(ball2);
         
         LevelState initialState = new LevelState(balls, paddles, new ArrayList(), Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY), false, true);
         return new Level(currentLevelId, game, initialState);

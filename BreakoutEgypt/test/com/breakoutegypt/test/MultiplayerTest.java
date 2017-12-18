@@ -18,6 +18,7 @@ import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.util.List;
+import org.jbox2d.common.Vec2;
 import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -104,7 +105,7 @@ public class MultiplayerTest {
 
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
-        level.startBall();
+        level.startBall(player1.getIndex());
         
         stepTimes(200);
         
@@ -143,6 +144,27 @@ public class MultiplayerTest {
         game.addConnectionForPlayer(player3.getUsername(), new DummyConnection());
     }
 
+    @Test
+    public void testStartingPlayer2BallDoesntStartPlayer1Ball(){
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+
+        level = game.getCurrentLevel();
+
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
+        
+        level.startBall(player2.getIndex());
+        
+        Vec2 player1BallPosition = level.getLevelState().getBalls().get(0).getPosition();
+        Vec2 originalPosition = new Vec2(player1BallPosition);
+        
+        stepTimes(200);
+
+        Assert.assertEquals(2, player2.getLives());
+        Assert.assertEquals(3, player1.getLives());
+        Assert.assertEquals(originalPosition, player1BallPosition);
+    }
+    
     private void stepTimes(int times) {
         for (int i = 1; i <= times; i++) {
             level.step();

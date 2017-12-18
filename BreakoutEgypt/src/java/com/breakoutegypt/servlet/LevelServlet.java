@@ -110,7 +110,9 @@ public class LevelServlet extends HttpServlet {
         JsonObjectBuilder job;       
         
         Level level = manager.getGame(gameId).getLevel();
-        level.startBall();
+        
+        Player player = (Player) request.getSession().getAttribute("player");
+        level.startBall(player.getIndex());
         response.setContentType("application/json");
 
         try (PrintWriter out = response.getWriter()) {

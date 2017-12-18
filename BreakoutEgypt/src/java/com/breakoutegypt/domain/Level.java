@@ -8,7 +8,6 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
-import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.messages.PowerDownMessageType;
 import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
@@ -25,6 +24,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import org.jbox2d.common.Vec2;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -136,6 +136,17 @@ public class Level implements BreakoutWorldEventListener {
             }
         }
     }
+    
+    public void startBall(int playerIndex){
+        List<Ball> balls = levelState.getBalls();
+        
+        for(Ball ball : balls){
+            if(ball.getPlayerIndex() == playerIndex && ball.getLinearVelocity().equals(new Vec2(0,0))){
+                scoreTimer.start();
+                ball.setLinearVelocity(0, game.getDifficulty().getBallspeed());
+            }
+        }
+    }
 
     // x coordinate is the center of the most left paddle
     public void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
@@ -186,12 +197,15 @@ public class Level implements BreakoutWorldEventListener {
 
     void resetBall(Ball ball) {
         int playerIndex = ball.getPlayerIndex();
-        game.loseLife(playerIndex);
+        
+        if(!ball.isDecoy()){
+            game.loseLife(playerIndex);
+        }
         
         if (this.getLevelState().getBalls().size() == 1) {
             setLevelStarted(false);
             levelState.removeBall(ball);
-            levelState.resetBall(breakoutWorld);
+            levelState.resetBall(breakoutWorld, ball.getPlayerIndex());
         } else {
             levelState.removeBall(ball);
         }

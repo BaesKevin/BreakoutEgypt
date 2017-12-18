@@ -45,7 +45,8 @@ public class LevelState {
     private List<Brick> bricks;
     private List<Paddle> paddles;
     private List<RegularBody> walls;
-    private Ball startingBall;
+//    private Ball startingBall;
+    private List<Ball> startingBalls;
     private List<Ball> balls;
     private List<Message> messages;
     private FloorPowerUp floor;
@@ -86,6 +87,7 @@ public class LevelState {
         this.messages = new ArrayList();
         this.projectiles = new ArrayList();
         this.difficulty = difficulty;
+        this.startingBalls = new ArrayList();
         factory = new BodyConfigurationFactory();
 
         createBounds(hasTwoOutOfBounds);
@@ -130,7 +132,8 @@ public class LevelState {
             b.setBox2dConfig(ballBodyConfig);
 
             if (b.isStartingBall()) {
-                this.startingBall = b;
+                this.startingBalls.add(b);
+//                this.startingBall = b;
             }
             this.balls.add(b);
         }
@@ -158,7 +161,7 @@ public class LevelState {
     }
 
     public Ball getBall() {
-        return startingBall;
+        return startingBalls.get(0);
     }
 
     public List<Ball> getBalls() {
@@ -173,7 +176,12 @@ public class LevelState {
         bricks.remove(brick);
     }
 
-    void resetBall(BreakoutWorld breakoutWorld) {
+    void resetBall(BreakoutWorld breakoutWorld, int playerIndex) {
+        Ball startingBall = null;
+        for(Ball ball : startingBalls){
+            if(ball.getPlayerIndex() == playerIndex) startingBall = ball;
+        }
+        
         startingBall.setDecoy(false);
         BodyConfiguration ballBodyBodyConfig = new BodyConfigurationFactory().createBallConfig(startingBall.getShape());
         startingBall.setBox2dConfig(ballBodyBodyConfig);
@@ -357,7 +365,7 @@ public class LevelState {
 
         switch (powerupNr) {
             case 1:
-                b.setPowerdown(new FloodPowerDown(startingBall, 3, identifier));
+                b.setPowerdown(new FloodPowerDown(startingBalls.get(0), 3, identifier));
                 break;
             case 2:
                 b.setPowerdown(createProjectilePowerDown(b, identifier));
