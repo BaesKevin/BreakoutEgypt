@@ -34,6 +34,8 @@ import com.breakoutegypt.data.HighscoreRepository;
 public class Level implements BreakoutWorldEventListener {
 
     private int id;
+    private String levelName="";
+    private String levelDescription="";
 
     private Timer timer;
     private Game game;
@@ -60,8 +62,13 @@ public class Level implements BreakoutWorldEventListener {
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
     
+    }
     
-  }
+    public Level(int id,String name,String description, Game game, LevelState initialObjects){
+        this(id, game, initialObjects);
+        this.levelName=name;
+        this.levelDescription=description;
+    }
 
     private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
         this.id = id;
@@ -94,6 +101,16 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
         this.invertedControls = false;
     }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public String getLevelDescription() {
+        return levelDescription;
+    }
+    
+    
 
     public boolean isInvertedControls() {
         return invertedControls;

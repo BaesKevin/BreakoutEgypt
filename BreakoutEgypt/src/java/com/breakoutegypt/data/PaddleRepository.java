@@ -16,6 +16,7 @@ public interface PaddleRepository {
     public List<Paddle> getPaddles();
     public List<Paddle> getPaddlesByLevelId(int id);
     public void addPaddle(Paddle paddle);
+    public void addPaddlesForLevel(int levelId,List<Paddle> paddles);
     public void removePaddle(Paddle paddle);
     
 }

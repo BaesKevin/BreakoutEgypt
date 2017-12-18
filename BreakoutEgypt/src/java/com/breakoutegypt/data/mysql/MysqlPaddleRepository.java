@@ -30,6 +30,8 @@ public class MysqlPaddleRepository implements PaddleRepository{
             + "join shapedimensions on shapedimensions.idshapedimension=paddles.shapedimensionid where levelpaddles.levelid = ?";
     private final String INSERT_PADDLE = "Insert into paddles(shapedimensionid) values(?)";
     private final String DELETE_PADDLE = "Delete from paddles where paddleid = ?";
+    private final String INSERT_LEVELPADDLES = "insert into levelpaddles(levelid, idpaddle) values(?, ?)";
+    
     private List<Paddle> paddles;
     @Override
     public List<Paddle> getPaddles() {
@@ -107,8 +109,7 @@ public class MysqlPaddleRepository implements PaddleRepository{
     }
 
     @Override
-    public void removePaddle(Paddle paddle) {
-        
+    public void removePaddle(Paddle paddle) {    
         try(
                 Connection conn=DbConnection.getConnection();
                 PreparedStatement prep=conn.prepareStatement(DELETE_PADDLE);
@@ -120,5 +121,25 @@ public class MysqlPaddleRepository implements PaddleRepository{
             throw new BreakoutException("Unable to remove paddle");
         }
     }
-    
+
+    @Override
+    public void addPaddlesForLevel(int levelId, List<Paddle> paddles) {
+        for(Paddle paddle:paddles){
+            this.addPaddle(paddle);
+            this.populateLevelPaddles(levelId, paddle);
+            
+        }
+    }
+    private void populateLevelPaddles(int levelId, Paddle paddle){
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(INSERT_LEVELPADDLES);
+                ){
+            prep.setInt(1, levelId);
+            prep.setInt(2, paddle.getPaddleId());
+            prep.executeUpdate();
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't add paddle",ex);
+        }
+    }
 }

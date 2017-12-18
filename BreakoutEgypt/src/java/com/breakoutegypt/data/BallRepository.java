@@ -16,5 +16,6 @@ public interface BallRepository {
     public List<Ball> getBalls();
     public List<Ball> getBallsByLevelId(int id);
     public void addBall(Ball ball);
+    public void addBallsForLevel(int levelId, List<Ball> balls);
     public void removeBall(Ball ball);
 }
