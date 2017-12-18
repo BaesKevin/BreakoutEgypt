@@ -40,8 +40,6 @@ public class Level implements BreakoutWorldEventListener {
 
     private BreakoutWorld breakoutWorld;
 
-    private int lives;
-
     private boolean isLastLevel;
     private LevelState levelState;
 
@@ -88,7 +86,6 @@ public class Level implements BreakoutWorldEventListener {
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
                 bpuh, bpdh);
 
-        this.lives = game.getInitialLives();
         this.timer = new Timer();
         runLevelManually = false;
         this.invertedControls = false;
@@ -142,13 +139,10 @@ public class Level implements BreakoutWorldEventListener {
 
     // x coordinate is the center of the most left paddle
     public void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
-        
-//        List<Paddle> paddles = levelState.getPaddles();
         List<Paddle> paddles = levelState.getPaddlesForPlayer(playerIndex);
         
         int totalWidth = levelState.calculatePaddleWidthWithGaps(paddles);
         int paddleWidth = paddles.get(0).getShape().getWidth();
-        // x is the center of the most left paddle
         int min = paddleWidth / 2;
         int max = 300 - totalWidth + (paddleWidth / 2);
 
@@ -191,25 +185,19 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     void resetBall(Ball ball) {
+        int playerIndex = ball.getPlayerIndex();
+        game.loseLife(playerIndex);
+        
         if (this.getLevelState().getBalls().size() == 1) {
             setLevelStarted(false);
             levelState.removeBall(ball);
             levelState.resetBall(breakoutWorld);
-
-            loseLifeBasedOnDifficulty();
         } else {
             levelState.removeBall(ball);
         }
+        
         game.notifyPlayersOfBallAction();
-        game.notifyPlayersOfLivesLeft();
-    }
-    
-    private void loseLifeBasedOnDifficulty(){
-        Difficulty diff = game.getDifficulty();
-       
-        if(diff.getLives() != Difficulty.INFINITE_LIVES){
-            lives--;
-        }
+        game.notifyPlayersOfLivesLeft(ball.getPlayerIndex());
     }
 
     private int getTargetBricksLeft() {
@@ -223,14 +211,6 @@ public class Level implements BreakoutWorldEventListener {
     public void step() {
         breakoutWorld.step();
         game.notifyPlayers(this, breakoutWorld.getMessageRepo());
-    }
-
-    public boolean noLivesLeft() {
-        return lives == 0;
-    }
-
-    public int getLives() {
-        return lives;
     }
 
     public void stop() {
@@ -320,8 +300,8 @@ public class Level implements BreakoutWorldEventListener {
         levelState.removeProjectile(projectile);
         breakoutWorld.deSpawn(projectile.getBody());
         if (lostLife) {
-            lives--;
-            game.notifyPlayersOfLivesLeft();
+            game.loseLife(projectile.getPlayerIndex());
+            game.notifyPlayersOfLivesLeft(projectile.getPlayerIndex());
         }
         return new ProjectilePositionMessage(projectile, PowerDownMessageType.REMOVEPROJECTILE);
     }

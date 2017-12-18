@@ -94,10 +94,6 @@ public class BreakoutController extends HttpServlet {
             GameManager gm = new GameManager();
 
             Player player = (Player) request.getSession().getAttribute("player");
-            if (player == null) {
-                player = new Player("player");
-                request.getSession().setAttribute("player", player);
-            }
 
             LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.ARCADE, gameDifficulty);
             int gameId = gm.createGame(GameType.ARCADE, gameDifficulty);

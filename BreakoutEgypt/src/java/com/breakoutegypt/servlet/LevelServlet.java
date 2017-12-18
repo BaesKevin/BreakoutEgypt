@@ -143,14 +143,12 @@ public class LevelServlet extends HttpServlet {
             if(p.getPlayerIndex() == player.getIndex())
                 myPaddle = p;
         }
-//        
-//        System.out.printf("Player %s got paddle %s", player.getUsername(), myPaddle.getName());
         
         job.add("paddles", paddleBuilder.build());
         job.add("mypaddle", myPaddle.getName());
         job.add("playerIndex", player.getIndex());
         job.add("level", level.getId());
-        job.add("lives", level.getLives());
+        job.add("lives", player.getLives());
     }
 }
 

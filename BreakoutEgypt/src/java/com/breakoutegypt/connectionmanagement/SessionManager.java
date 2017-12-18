@@ -74,6 +74,17 @@ public class SessionManager {
         Player player = getPlayerInSet(name, playerSetToSearch);
         return player;
     }
+    
+     public Player getPlayer(int playerIndex) {
+        Player toFind = null;
+        for (Player player : connectedPlayers) {
+            if (player.getIndex() == playerIndex) {
+                toFind = player;
+            }
+        }
+
+        return toFind;
+    }
 
     private Player getPlayerInSet(String name, Set<Player> playerset) {
         Player toFind = null;
@@ -94,7 +105,6 @@ public class SessionManager {
 
         indexToPlayerMap.put(playerIndex, player);
         player.setIndex(playerIndex);
-        System.out.printf("player %s index: %d\n", player.getUsername(), playerIndex);
     }
 
     public boolean isPlayerInSessionManager(Player player) {
@@ -173,14 +183,15 @@ public class SessionManager {
         currentLevel.getLevelState().clearMessages();
     }
 
-    public void notifyPlayersOfLivesLeft(Level currentLevel) {
-        boolean noLivesLeft = currentLevel.noLivesLeft();
+    public void notifyPlayersOfLivesLeft(Player player) {
+//        boolean noLivesLeft = currentLevel.noLivesLeft();
+        boolean noLivesLeft = player.noLivesLeft();
         //TODO User uit session halen en meegeven ipv 'jef'
         Message lifeMessage;
         if (noLivesLeft) {
-            lifeMessage = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
+            lifeMessage = new LifeMessage(player.getUsername(), 0, LifeMessageType.GAMEOVER, player.getIndex());
         } else {
-            lifeMessage = new LifeMessage("jef", currentLevel.getLives(), LifeMessageType.PLAYING);
+            lifeMessage = new LifeMessage(player.getUsername(), player.getLives(), LifeMessageType.PLAYING, player.getIndex());
         }
         sendJsonToPlayers(lifeMessage);
     }

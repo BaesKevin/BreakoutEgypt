@@ -75,6 +75,10 @@ public class LevelState {
     }
     
     public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups) {
+        this(balls, paddles, bricks, difficulty, hasPowerups, false);
+    }
+    
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups, boolean hasTwoOutOfBounds) {
         this.bricks = Collections.synchronizedList(new ArrayList());
         this.paddles = Collections.synchronizedList(new ArrayList());
         this.walls = new ArrayList();
@@ -84,7 +88,7 @@ public class LevelState {
         this.difficulty = difficulty;
         factory = new BodyConfigurationFactory();
 
-        createBounds();
+        createBounds(hasTwoOutOfBounds);
         addBalls(balls);
 
         for (Paddle paddle : paddles) {
@@ -188,11 +192,16 @@ public class LevelState {
         return targetsLeft;
     }
 
-    private void createBounds() {
+    private void createBounds(boolean hasTwoOutOfBounds) {
         ShapeDimension groundShape = new ShapeDimension("ground", 0, 300, 300, 1);
         ShapeDimension leftWallDim = new ShapeDimension("leftwall", 0, 0, 1, 300);
         ShapeDimension rightWallDim = new ShapeDimension("rightwall", 300, 0, 1, 300);
-        ShapeDimension topWallDim = new ShapeDimension("topwall", 0, 0, 300, 1);
+         ShapeDimension topWallDim = new ShapeDimension("topwall", 0, 0, 300, 1);
+         
+        if(hasTwoOutOfBounds){
+            topWallDim.setName("ground");
+        }
+       
 
         RegularBody ground = new RegularBody(groundShape);
         RegularBody leftWall = new RegularBody(leftWallDim);
@@ -202,7 +211,7 @@ public class LevelState {
         BodyConfiguration groundConfig = factory.createWallConfig(groundShape, true);
         BodyConfiguration leftWallConfig = factory.createWallConfig(leftWallDim, false);
         BodyConfiguration rightWallConfig = factory.createWallConfig(rightWallDim, false);
-        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, false);
+        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, hasTwoOutOfBounds);
 
         ground.setBox2dConfig(groundConfig);
         leftWall.setBox2dConfig(leftWallConfig);

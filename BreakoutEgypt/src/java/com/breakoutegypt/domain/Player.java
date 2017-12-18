@@ -24,6 +24,7 @@ public class Player extends User implements Serializable {
     private PlayerConnection conn;
     private LevelProgressManager levelPackProgressions;
     private int index;
+    private int lives;
     
     public Player(String username) {
         this(username, "", "");
@@ -65,5 +66,21 @@ public class Player extends User implements Serializable {
     
     public void setIndex(int index){
         this.index = index;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
+    void decreaseLives() {
+        this.lives--;
+    }
+
+    public boolean noLivesLeft() {
+        return lives == 0;
     }
 }

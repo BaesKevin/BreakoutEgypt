@@ -17,8 +17,8 @@ public class LifeMessage extends GenericMessage {
 
     private int livesLeft;
 
-    public LifeMessage(String playerName, int livesLeft, LifeMessageType gameOver) {
-        super(0, playerName, gameOver);
+    public LifeMessage(String playerName, int livesLeft, LifeMessageType gameOver, int playerIndex) {
+        super(playerIndex, playerName, gameOver);
         this.livesLeft = livesLeft;
     }
 

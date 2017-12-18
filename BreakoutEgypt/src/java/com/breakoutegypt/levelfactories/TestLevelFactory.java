@@ -136,8 +136,10 @@ public class TestLevelFactory extends LevelFactory {
 
         Ball ball = new Ball(ballShape);
         ball.setStartingBall(true);
+        List<Ball> balls = new ArrayList();
+        balls.add(ball);
         
-        LevelState initialState = new LevelState(ball, paddles, new ArrayList());
+        LevelState initialState = new LevelState(balls, paddles, new ArrayList(), Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY), false, true);
         return new Level(currentLevelId, game, initialState);
     }
 
@@ -379,7 +381,7 @@ public class TestLevelFactory extends LevelFactory {
 
     public Level getTargetBrickTest() {
         ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
-        ShapeDimension ballShape = new ShapeDimension("ball", 50, 100, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
+        ShapeDimension ballShape = new ShapeDimension("ball", 50, 60, BodyConfigurationFactory.BALL_RADIUS, BodyConfigurationFactory.BALL_RADIUS, Color.GREEN);
 
         Paddle paddle = new Paddle(paddleShape);
         Ball ball = new Ball(ballShape);
