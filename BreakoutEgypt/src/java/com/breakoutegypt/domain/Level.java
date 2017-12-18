@@ -202,12 +202,11 @@ public class Level implements BreakoutWorldEventListener {
             game.loseLife(playerIndex);
         }
         
-        if (this.getLevelState().getBalls().size() == 1) {
+        levelState.removeBall(ball);
+        if(levelState.noMoreBallsForPlayer(ball.getPlayerIndex())){
             setLevelStarted(false);
-            levelState.removeBall(ball);
+            
             levelState.resetBall(breakoutWorld, ball.getPlayerIndex());
-        } else {
-            levelState.removeBall(ball);
         }
         
         game.notifyPlayersOfBallAction();

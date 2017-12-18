@@ -189,6 +189,25 @@ public class MultiplayerTest {
         Assert.assertEquals(160, balls.get(1).getPosition().y, 0.001);
     }
     
+    @Test
+    public void resetBall(){
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+
+        DummyConnection con1 = (DummyConnection) player1.getConnection();
+        
+        level = game.getCurrentLevel();
+
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
+        
+        level.startBall(player1.getIndex());
+        
+        stepTimes(100);
+        
+        List<Ball> balls = level.getLevelState().getBalls();
+        
+        Assert.assertEquals(2, balls.size());
+    }
     
     private void stepTimes(int times) {
         for (int i = 1; i <= times; i++) {

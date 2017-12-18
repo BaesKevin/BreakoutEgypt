@@ -450,4 +450,17 @@ public class LevelState {
         
         return paddlesOfPlayer;
     }
+    
+    public boolean noMoreBallsForPlayer(int playerIndex){
+        boolean noMoreBalls = true;
+        
+        for(Ball ball : balls){
+            if(ball.getPlayerIndex() == playerIndex){
+                noMoreBalls = false;
+                break;
+            }
+        }
+        
+        return noMoreBalls;
+    }
 }
