@@ -44,7 +44,7 @@ public class MysqlTest {
     @Test
     public void DifficultyRepoFindByNameTest(){
         MysqlDifficultyRepository repository=new MysqlDifficultyRepository();
-        Difficulty difficulty=repository.findByName("easy");
+        Difficulty difficulty=repository.findByName("EASY");
         assertNotNull(difficulty);
     }
     @Test
