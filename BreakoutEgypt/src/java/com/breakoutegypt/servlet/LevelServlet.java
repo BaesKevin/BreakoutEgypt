@@ -43,7 +43,7 @@ public class LevelServlet extends HttpServlet {
         HttpSession session = request.getSession();
 //        User user = (User)session.getAttribute("user");
         Player playerFromSession = (Player) session.getAttribute("player");
-        
+        System.out.println("Player id from session: " +  playerFromSession.getIndex());
         int gameId = Integer.parseInt(request.getParameter("gameId"));
         
         GameManager manager = new GameManager();
@@ -143,6 +143,8 @@ public class LevelServlet extends HttpServlet {
             if(p.getPlayerIndex() == player.getIndex())
                 myPaddle = p;
         }
+//        
+//        System.out.printf("Player %s got paddle %s", player.getUsername(), myPaddle.getName());
         
         job.add("paddles", paddleBuilder.build());
         job.add("mypaddle", myPaddle.getName());

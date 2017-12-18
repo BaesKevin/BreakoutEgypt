@@ -40,7 +40,7 @@ public class SessionManager {
     private Set<Player> connectingPlayers;
 
     private Map<Integer, Player> indexToPlayerMap;
-    
+
     public SessionManager() {
         this(1);
     }
@@ -88,6 +88,13 @@ public class SessionManager {
 
     public void addConnectingPlayer(Player player) {
         connectingPlayers.add(player);
+
+        int highestIndex = indexToPlayerMap.size();
+        int playerIndex = highestIndex + 1;
+
+        indexToPlayerMap.put(playerIndex, player);
+        player.setIndex(playerIndex);
+        System.out.printf("player %s index: %d\n", player.getUsername(), playerIndex);
     }
 
     public boolean isPlayerInSessionManager(Player player) {
@@ -109,13 +116,7 @@ public class SessionManager {
 
                 connectingPlayer.setConnection(conn);
                 connectedPlayers.add(connectingPlayer);
-                
-                int highestIndex = indexToPlayerMap.size();
-                int playerIndex = highestIndex + 1;
-                
-                indexToPlayerMap.put(playerIndex, connectingPlayer);
-                connectingPlayer.setIndex(playerIndex);
-                System.out.printf("player %s index: %d\n", name, playerIndex);
+
             }
             connectingPlayers.remove(connectingPlayer);
         } else {
@@ -208,16 +209,24 @@ public class SessionManager {
             ballPositionMessages.add(bpm);
         }
         JsonArray powerupmessages = messageRepo.getPowerupMessages();
-        if (powerupmessages.size() > 0) messages.put("powerupactions", powerupmessages);
-        
+        if (powerupmessages.size() > 0) {
+            messages.put("powerupactions", powerupmessages);
+        }
+
         JsonArray powerdownmessages = messageRepo.getPowerdownMessages();
-        if (powerdownmessages.size() > 0) messages.put("powerdownactions", powerdownmessages);
-        
+        if (powerdownmessages.size() > 0) {
+            messages.put("powerdownactions", powerdownmessages);
+        }
+
         JsonArray brickmessages = messageRepo.getBrickMessages();
-        if (brickmessages.size() > 0) messages.put("brickactions", brickmessages);
-        
+        if (brickmessages.size() > 0) {
+            messages.put("brickactions", brickmessages);
+        }
+
         JsonArray ballpositions = messageRepo.listToJsonArray(ballPositionMessages);
-        if (ballpositions.size() > 0) messages.put("ballpositions", ballpositions);
+        if (ballpositions.size() > 0) {
+            messages.put("ballpositions", ballpositions);
+        }
 
         return messages;
     }
