@@ -9,6 +9,7 @@ import com.breakoutegypt.data.BrickTypeRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
+import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.bricks.BrickType;
@@ -99,14 +100,14 @@ public class LevelStateTest {
         int col = 1;
         int rows = 3;
         int cols = 3;
-        int width = 30;
-        int height = 30;
+        int width = DimensionDefaults.BRICK_WIDTH;
+        int height = DimensionDefaults.BRICK_HEIGHT;
         ShapeDimension brickShape;
         Brick brick;
         List<Brick> bricks = new ArrayList();
         String id;
-        for (int x = 10; x < 10 + ((width + 1) * cols); x += width + 1) {
-            for (int y = 5; y < 5 + ((height + 1) * rows); y += height + 1) {
+        for (int x = 10; x < 10 + (width * cols); x += width) {
+            for (int y = 5; y < 5 + (height * rows); y += height ) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
 
@@ -114,7 +115,7 @@ public class LevelStateTest {
 
                 brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
 
-                brick = new Brick(brickShape, new Point(row, col));
+                brick = new Brick(brickShape);
                 brick.setType(bricktypeRepo.getBrickTypeByName("REGULAR"));
 
                 bricks.add(brick);

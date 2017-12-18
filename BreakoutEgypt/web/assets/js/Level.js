@@ -75,7 +75,7 @@ const Level = (function () {
             }
 
             if (level.invertedcontrols) {
-                positionToSend.x = 300 - positionToSend.x;
+                positionToSend.x = this.levelDimension - positionToSend.x;
             }
             ArcadeWebSocket.sendOverSocket(JSON.stringify(positionToSend));
 
@@ -213,7 +213,9 @@ const Level = (function () {
                     console.log("Load level: got data for level " + response.level);
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
-
+                    self.levelDimension = response.levelDimension;
+                    
+                    ScalingModule.updateCanvasDimension(self.levelDimension);
                     DrawingModule.updateStaticContent();
                     ScalingModule.scaleLevel(self);
 

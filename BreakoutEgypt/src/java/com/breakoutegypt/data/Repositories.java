@@ -29,6 +29,10 @@ public class Repositories {
     public static DifficultyRepository getDifficultyRepository() {
         return difficultyRepository;
     }
+
+    public static DefaultShapeRepository getDefaultShapeRepository() {
+        return defaultShapeRepository;
+    }
     
     public static BrickTypeRepository getBrickTypeRepository() {
         return bricktypeRepository;

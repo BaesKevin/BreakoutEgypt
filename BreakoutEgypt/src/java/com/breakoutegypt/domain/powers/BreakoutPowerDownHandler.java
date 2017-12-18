@@ -57,7 +57,7 @@ public class BreakoutPowerDownHandler implements PowerDownHandler {
         levelState.addProjectile(projectile.getProjectile());
         breakoutWorld.spawn(projectile.getProjectile());
         Paddle target = levelState.getPaddles().get(0);
-        projectile.startProjectile(target.getPosition().x, target.getPosition().y, target.getShape().getWidth());
+        projectile.startProjectile(target.getPosition().x, target.getPosition().y, target.getWidth());
         return new PowerDownMessage("TODO", projectile, PowerDownMessageType.PROJECTILE);
     }
 
