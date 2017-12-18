@@ -7,7 +7,6 @@ package com.breakoutegypt.levelfactories;
 
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.BreakoutWorld;
-import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
@@ -15,17 +14,15 @@ import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
-import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
-import com.breakoutegypt.domain.shapes.bricks.BrickType;
 import java.awt.Color;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -55,7 +52,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                 currentLevel = getLevelWithUnbreakableAndExplosive();
                 break;
             case 3:
-                currentLevel = getSimpleTestLevel();
+                currentLevel = getLevelWithInvertedTriangles();
                 currentLevel.setLevelNumber(3);
                 break;
             case 4:
@@ -67,6 +64,47 @@ public class ArcadeLevelFactory extends LevelFactory {
         }
     }
 
+    public Level getLevelWithInvertedTriangles() {
+        List<Brick> bricks = new ArrayList();
+        int rows = 4;
+        int startY = 0;
+        int id = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int x = 0; x < 100; x += 10) {
+                Brick b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + id++, x, startY, false, true, true, true);
+                bricks.add(b);
+            }
+            startY++;
+            for (int x = -5; x < 100; x += 10) {
+                Brick b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + id++, x, startY, false, true, true, false);
+                bricks.add(b);
+            }
+            startY += 11;
+        }
+        
+        for (int i = 0; i<5; i++) {
+            int x = new Random().nextInt(bricks.size());
+            while (bricks.get(x).isTarget()) {
+                x = new Random().nextInt(bricks.size());
+            }
+            bricks.get(x).addEffect(new ExplosiveEffect(bricks.get(x), 1));
+        }
+
+        bricks.get(new Random().nextInt(bricks.size())).setTarget(true);
+
+        List<Ball> balls = new ArrayList();
+        Ball b = Repositories.getDefaultShapeRepository().getDefaultBall(50, 50);
+        b.setStartingBall(true);
+        balls.add(b);
+
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(Repositories.getDefaultShapeRepository().getDefaultPaddle());
+
+        LevelState state = new LevelState(balls, paddles, bricks, difficulty, true);
+        Level level = new Level(currentLevelId, game, state);
+        return level;
+    }
+
     public Level getSimpleTestLevel() {
         return getSimpleTestLevel(BreakoutWorld.TIMESTEP_DEFAULT);
     }
@@ -74,18 +112,18 @@ public class ArcadeLevelFactory extends LevelFactory {
     public Level getLevelWithFloodPowerDown() {
         Paddle paddle = shapeRepo.getDefaultPaddle();
         Ball ball = shapeRepo.getDefaultBall(50, 0);
-        
+
         Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 40, 20);
         Brick target = new Brick(new ShapeDimension("brick2", 1, 1, 1, 1), true, false);
-        
+
         List<Paddle> paddles = new ArrayList();
         List<Ball> balls = new ArrayList();
         List<Brick> bricks = new ArrayList();
-        
+
         balls.add(ball);
         paddles.add(paddle);
         balls.get(0).setStartingBall(true);
-        
+
         powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50, 15));
 
         bricks.add(powerdownBrick);
@@ -118,7 +156,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         brick = new Brick(brickShape, true, true);
 
         Brick invertedBrick = Repositories.getDefaultShapeRepository().getDefaultBrick("inverted", 50, 5, false, true, true, true);
-        
+
         bricks.add(brick);
         bricks.add(invertedBrick);
         List<Ball> balls = new ArrayList();
@@ -149,14 +187,14 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         String id;
         for (int x = 10; x < 10 + ((width) * cols); x += width) {
-            for (int y = 10; y < 10 + ((height ) * rows); y += height) {
+            for (int y = 10; y < 10 + ((height) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
 
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
                 brick = shapeRepo.getDefaultBrick(id, x, y);
-                
+
                 bricks.add(brick);
                 col++;
             }
@@ -202,7 +240,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         Ball ball = shapeRepo.getDefaultBall();
         Paddle paddle = shapeRepo.getDefaultPaddle();
         ball.setStartingBall(true);
-        
+
         int row = 1;
         int col = 1;
         int rows = 3;
@@ -242,20 +280,12 @@ public class ArcadeLevelFactory extends LevelFactory {
             row++;
             col = 1;
         }
-        
-        for (int x = 0; x < 100 + width; x += width) {
-            Brick b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + x + x + x, x, 40, false, true, true, true);
-            if (x % 20 == 0) {
-                b.addEffect(new ExplosiveEffect(b, 1));
-            }
-            bricks.add(b);
-        }
 
         bricks.get(21).setTarget(true);
 
         bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
         bricks.get(23).addEffect(new ExplosiveEffect(bricks.get(23), 1));
-        
+
         List<Brick> bricksToToggle = new ArrayList();
         for (int i = 0; i < 11; i++) {
             bricksToToggle.add(bricks.get(i));
