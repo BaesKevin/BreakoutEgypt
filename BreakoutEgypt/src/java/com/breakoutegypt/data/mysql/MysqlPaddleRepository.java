@@ -70,11 +70,13 @@ public class MysqlPaddleRepository implements PaddleRepository{
         }
     }
     private void initializePaddles(ResultSet rs) throws SQLException{
+        int paddleId=rs.getInt("paddleid");
         int xPos=rs.getInt("x");
         int yPos=rs.getInt("y");
         int width=rs.getInt("width");
         int height=rs.getInt("height");
         Paddle paddle=new Paddle(new ShapeDimension("paddle",xPos,yPos,width,height));
+        paddle.setPaddleId(paddleId);
         this.paddles.add(paddle);
     }
 

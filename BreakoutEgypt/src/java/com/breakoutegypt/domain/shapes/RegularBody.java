@@ -24,6 +24,13 @@ public class RegularBody {
     public RegularBody(ShapeDimension s) {
         this.dimension = s;
     }
+    
+    /**
+     * This method is only used inside the MysqlRepositories
+     */
+    public ShapeDimension getShape(){
+        return dimension;
+    }
 
     public String getName() { return dimension.getName();}
 

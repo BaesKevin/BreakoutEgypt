@@ -15,8 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,6 +25,7 @@ public class MysqlBrickTypeRepository implements BrickTypeRepository{
     private final String SELECT_ALL_BRICKTYPES = "select * from brick_types";
     private final String SELECT_BRICKTYPE_BYID = "select * from brick_types where id = ?";
     private final String SELECT_BRICKTYPE_BYNAME = "select * from brick_types where typename = ?";
+    private final String INSERT_BRICKTYPE = "insert into brick_types(typename) values(?)";
     
     private List<BrickType> bricktypes;
 
@@ -62,7 +61,8 @@ public class MysqlBrickTypeRepository implements BrickTypeRepository{
                 BrickType bricktype=null;
                 while(rs.next()){
                     String typeName=rs.getString("typename").toUpperCase();
-                    bricktype=new BrickType(typeName);
+                    int bricktypeId=rs.getInt("id");
+                    bricktype=new BrickType(bricktypeId,typeName);
                 }
                 return bricktype;
             }
@@ -84,12 +84,36 @@ public class MysqlBrickTypeRepository implements BrickTypeRepository{
                 BrickType bricktype=null;
                 while(rs.next()){
                     String typeName=rs.getString("typename").toUpperCase();
-                    bricktype=new BrickType(typeName);
+                    int bricktypeId=rs.getInt("id");
+                    bricktype=new BrickType(bricktypeId,typeName);        
                 }
                 return bricktype;
             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load bricktype",ex);
+        }
+    }
+
+    @Override
+    public void addBrickType(BrickType bricktype) {
+        try(
+                Connection conn=DbConnection.getConnection();
+                PreparedStatement prep=conn.prepareStatement(INSERT_BRICKTYPE,PreparedStatement.RETURN_GENERATED_KEYS);
+                ){
+            prep.setString(1, bricktype.getName());
+            prep.executeUpdate();
+            try(ResultSet rs=prep.getGeneratedKeys()){
+                int bricktypeId = -1;
+                if(rs.next()){
+                    bricktypeId=rs.getInt(1);
+                }
+                if(bricktypeId<0){
+                    throw new BreakoutException("Unable to add Bricktype");
+                }
+                bricktype.setBrickTypeId(bricktypeId);
+            }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't add Bricktype",ex);
         }
     }
     

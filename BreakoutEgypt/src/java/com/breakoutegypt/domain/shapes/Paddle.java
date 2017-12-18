@@ -18,12 +18,6 @@ public class Paddle extends RegularBody{
         super(s);
         s.setName("Paddle"+paddleIdentifier.getAndIncrement());
     }
-    /**
-     * This method is only used inside the MysqlRepositories
-     */
-    public ShapeDimension getShape(){
-        return dimension;
-    }
 
     public void setPaddleId(int paddleId) {
         this.paddleId=paddleId;

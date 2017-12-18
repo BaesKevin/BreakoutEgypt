@@ -27,7 +27,7 @@ import javax.json.JsonObjectBuilder;
 public class Brick extends RegularBody {
     
     private static AtomicInteger brickIdentifier = new AtomicInteger(1);
-
+    private int brickId=0;
     private boolean isTarget;
 
     private boolean isVisibible;
@@ -224,5 +224,13 @@ public class Brick extends RegularBody {
         this.config = brickBody;
         
         return config;
+    }
+
+    public int getBrickId() {
+        return this.brickId;
+    }
+    
+    public void setBrickId(int brickId){
+        this.brickId=brickId;
     }
 }
