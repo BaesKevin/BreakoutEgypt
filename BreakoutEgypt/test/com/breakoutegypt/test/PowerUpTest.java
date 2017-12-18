@@ -19,14 +19,12 @@ import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.PowerUp;
-import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -76,8 +74,8 @@ public class PowerUpTest {
         }
 
         stepTimes(level, 100);
-        
-        assertEquals(2, balls.size());
+        DummyConnection conn = (DummyConnection) player.getConnection();
+        assertEquals(1, conn.getBallMessages().size());
 
     }
 
