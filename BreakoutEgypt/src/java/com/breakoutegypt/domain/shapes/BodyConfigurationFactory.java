@@ -25,7 +25,7 @@ public class BodyConfigurationFactory {
     private final int BRICK_CATEGORY = 0x0004;
     private final int PADDLE_CATEGORY = 0x0008;
     private final int BALL_CATEGORY = 0X0010;
-    private final int FLOOR_CATEGORY = 0x0012;
+    private final int FLOOR_CATEGORY = 0x0024;
     private final int PROJECTILE_MASK = BOUNDS_CATEGORY | PADDLE_CATEGORY;
     private final int BRICK_MASK = BALL_CATEGORY;
     private final int PADDLE_MASK = BALL_CATEGORY | PROJECTILE_CATEGORY;

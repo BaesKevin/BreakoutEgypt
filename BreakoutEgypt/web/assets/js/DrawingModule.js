@@ -84,7 +84,11 @@ let DrawingModule = (function () {
         level.paddles.forEach(function (paddle) {
             movingPartsCtx.strokeStyle = paddle.color;
             movingPartsCtx.beginPath();
-            movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
+            if (paddle.y < ScalingModule.scaleXForClient(level.levelDimension) / 2) {
+                movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI, true);
+            } else {
+                movingPartsCtx.arc(paddle.x + paddle.width / 2, paddle.y, paddle.width / 2, 1 * Math.PI, 2 * Math.PI);
+            }
             movingPartsCtx.stroke();
         });
     }
@@ -137,7 +141,7 @@ let DrawingModule = (function () {
     function drawFloor() {
         if (level.floor) {
             brickCtx.fillStyle = "gray";
-            brickCtx.fillRect(level.floor.x, level.floor.y-2, level.floor.width, level.floor.height+2);
+            brickCtx.fillRect(level.floor.x, level.floor.y - 2, level.floor.width, level.floor.height + 2);
         }
     }
 
