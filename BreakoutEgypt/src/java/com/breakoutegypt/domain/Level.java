@@ -24,8 +24,8 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
-import com.breakoutegypt.domain.messages.PaddlePositionMessage;
-import com.breakoutegypt.domain.messages.PaddleMessageType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -55,7 +55,8 @@ public class Level implements BreakoutWorldEventListener {
     private boolean invertedControls;
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
-
+    private Map<Integer, Boolean> startedLevelMap;
+    
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
 
@@ -90,6 +91,7 @@ public class Level implements BreakoutWorldEventListener {
         this.timer = new Timer();
         runLevelManually = false;
         this.invertedControls = false;
+        startedLevelMap = new HashMap();
     }
 
     public boolean isInvertedControls() {
@@ -127,6 +129,7 @@ public class Level implements BreakoutWorldEventListener {
         }
     }
 
+    // should not be used by real classes, still here for tests
     public void startBall() {
         if (!levelStarted) {
             setLevelStarted(true);
@@ -139,8 +142,8 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     public void startBall(int playerIndex) {
-        if (!levelStarted) {
-            levelStarted = true;
+        if (startedLevelMap.get(playerIndex) == null || startedLevelMap.get(playerIndex) == false) {
+            startedLevelMap.put(playerIndex, true);
             List<Ball> balls = levelState.getBalls();
 
             for (Ball ball : balls) {
@@ -208,7 +211,7 @@ public class Level implements BreakoutWorldEventListener {
 
         levelState.removeBall(ball);
         if (levelState.noMoreBallsForPlayer(ball.getPlayerIndex())) {
-            setLevelStarted(false);
+            this.startedLevelMap.put(playerIndex, false);
 
             levelState.resetBall(breakoutWorld, ball.getPlayerIndex());
         }
