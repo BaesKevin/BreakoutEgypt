@@ -226,12 +226,12 @@ public class LevelState {
     }
 
     private List<Brick> getRangeOfBricksAroundBodyHelper(Brick centreBrick, int range, List<Brick> bricksToRemove) {
-        if (range == 0) {
+        if (range == 0 && !centreBrick.hasToggleEffect()) {
             bricksToRemove.add(centreBrick);
         } else {
             for (Brick brick : bricks) {
-                int horizontalRange = range * DimensionDefaults.BRICK_WIDTH;
-                int verticalRange = range * DimensionDefaults.BRICK_HEIGHT;
+                int horizontalRange = range * (DimensionDefaults.BRICK_WIDTH + 6);
+                int verticalRange = range * (DimensionDefaults.BRICK_HEIGHT + 6);
 
                 boolean isBrickInHorizontalRange = Math.round(Math.abs(centreBrick.getX() - brick.getX())) <= horizontalRange;
                 boolean isBrickInVerticalRange = Math.abs(centreBrick.getY() - brick.getY()) <= verticalRange;

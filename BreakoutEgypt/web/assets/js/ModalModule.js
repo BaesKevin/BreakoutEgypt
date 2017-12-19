@@ -6,6 +6,7 @@ const ModalModule = (function () {
     function modalLevelCompleted(levelId, time, brickScore) {
         let buttons = shareButton;
         buttons += mainMenuButton;
+        buttons += "<button id='retry' class='btn'>Retry</button>";
         buttons += "<button id='nextLevelButton' class='btn' data-dismiss='modal'>Next Level</button>";
         printModal("Level " + levelId + " completed", "Congratz! Your time is: " + time + ". Brickscore is " + brickScore, buttons);
     }

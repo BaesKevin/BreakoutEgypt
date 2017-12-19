@@ -21,6 +21,7 @@ import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -66,36 +67,39 @@ public class ArcadeLevelFactory extends LevelFactory {
 
     public Level getLevelWithInvertedTriangles() {
         List<Brick> bricks = new ArrayList();
-        int rows = 4;
+        int rows = 6;
+        int noOfBricks = 1;
+        int startX = (BreakoutWorld.DIMENSION / 2);
         int startY = 0;
         int id = 0;
+        Brick b;
         for (int row = 0; row < rows; row++) {
-            for (int x = 0; x < 100; x += 10) {
-                Brick b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + id++, x, startY, false, true, true, true);
+            boolean inverted = false;
+            int bricksToTheLeft = (int) Math.floor(noOfBricks / 2);
+            int x = startX - ((DimensionDefaults.BRICK_WIDTH / 2) * bricksToTheLeft) - (DimensionDefaults.BRICK_WIDTH / 2);
+            for (int i = 0; i < noOfBricks; i++) {
+                b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + id, x, startY, false, true, true, inverted);
                 bricks.add(b);
+                inverted = !inverted;
+                x += 5;
+                id++;
             }
-            startY++;
-            for (int x = -5; x < 100; x += 10) {
-                Brick b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + id++, x, startY, false, true, true, false);
-                bricks.add(b);
-            }
-            startY += 11;
+            noOfBricks += 2;
+            startY += 10;
         }
         
-        for (int i = 0; i<5; i++) {
-            int x = new Random().nextInt(bricks.size());
-            while (bricks.get(x).isTarget()) {
-                x = new Random().nextInt(bricks.size());
-            }
-            bricks.get(x).addEffect(new ExplosiveEffect(bricks.get(x), 1));
-        }
-
-        bricks.get(new Random().nextInt(bricks.size())).setTarget(true);
+        bricks.get(6).setTarget(true);
+        Brick[] brickToToggle = new Brick[]{bricks.get(6)};
+        bricks.get(30).setBreakable(false);
+        bricks.get(30).addEffect(new ToggleEffect(Arrays.asList(brickToToggle)));
+        
+        
+        System.out.println("Bricks in pyramid level: " + bricks.size());
 
         List<Ball> balls = new ArrayList();
-        Ball b = Repositories.getDefaultShapeRepository().getDefaultBall(50, 50);
-        b.setStartingBall(true);
-        balls.add(b);
+        Ball ball = Repositories.getDefaultShapeRepository().getDefaultBall(50, 80);
+        ball.setStartingBall(true);
+        balls.add(ball);
 
         List<Paddle> paddles = new ArrayList();
         paddles.add(Repositories.getDefaultShapeRepository().getDefaultPaddle());

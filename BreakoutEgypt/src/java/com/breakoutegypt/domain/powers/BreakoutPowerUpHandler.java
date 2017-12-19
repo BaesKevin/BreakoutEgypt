@@ -50,10 +50,12 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
 
     @Override
     public void addPowerUp(PowerUp up) {
-        breakoutWorld
-                .getMessageRepo()
-                .addPowerupMessages(new PowerUpMessage(up.getName(), up, up.getType()));
-        this.powerups.add(up); // TODO check if powerup is already in the list
+        if (powerups.size() < 3) {
+            breakoutWorld
+                    .getMessageRepo()
+                    .addPowerupMessages(new PowerUpMessage(up.getName(), up, up.getType()));
+            this.powerups.add(up); // TODO check if powerup is already in the list
+        }
     }
 
     @Override
