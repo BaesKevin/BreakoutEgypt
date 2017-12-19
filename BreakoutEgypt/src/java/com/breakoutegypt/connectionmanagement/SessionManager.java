@@ -16,11 +16,12 @@ import com.breakoutegypt.domain.messages.LevelMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
+import com.breakoutegypt.domain.messages.PaddlePositionMessage;
 import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.Projectile;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -206,7 +207,11 @@ public class SessionManager {
 
         Map<String, JsonArray> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
+        List<Paddle> paddles = currentLevel.getLevelState().getPaddles();
+        
         List<Message> ballPositionMessages = new ArrayList();
+        List<Message> paddlePositionMessages = new ArrayList();
+        
         List<Projectile> projectiles = currentLevel.getLevelState().getProjectiles();
 
         for (Projectile p : projectiles) {
@@ -218,6 +223,11 @@ public class SessionManager {
             BallPositionMessage bpm = new BallPositionMessage(b);
             ballPositionMessages.add(bpm);
         }
+        
+        for(Paddle p : paddles){
+            paddlePositionMessages.add(new PaddlePositionMessage(p));
+        }
+
         JsonArray powerupmessages = messageRepo.getPowerupMessages();
         if (powerupmessages.size() > 0) {
             messages.put("powerupactions", powerupmessages);
@@ -237,7 +247,13 @@ public class SessionManager {
         if (ballpositions.size() > 0) {
             messages.put("ballpositions", ballpositions);
         }
+        
+        JsonArray paddlepositions = messageRepo.listToJsonArray(paddlePositionMessages);
+        if (paddlepositions.size() > 0) {
+            messages.put("paddlepositions", paddlepositions);
+        }
 
+//        System.out.println(paddlePositionMessages.get(0).getName());
         return messages;
     }
 

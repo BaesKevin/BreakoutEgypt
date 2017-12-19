@@ -49,18 +49,14 @@ public class WebsocketConnection implements PlayerConnection, Serializable{
     @Override
     public void send(Map<String, JsonArray> msgs) {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        if (msgs.containsKey("ballpositions")) {
-            job.add("ballpositions", msgs.get("ballpositions"));
+        String[] keys = {"ballpositions", "brickactions", "powerupactions", "powerdownactions", "paddlepositions"};
+        
+        for(String key : keys){
+            if(msgs.containsKey(key)){
+                job.add(key, msgs.get(key));
+            }
         }
-        if (msgs.containsKey("brickactions")) {
-            job.add("brickactions", msgs.get("brickactions"));
-        }
-        if (msgs.containsKey("powerupactions")) {
-            job.add("powerupactions", msgs.get("powerupactions"));
-        } 
-        if (msgs.containsKey("powerdownactions")) {
-            job.add("powerdownactions", msgs.get("powerdownactions"));
-        }
+        
         job.add("leveldata", job.build());
         send(job.build());
     }

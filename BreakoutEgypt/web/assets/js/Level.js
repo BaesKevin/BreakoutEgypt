@@ -98,9 +98,13 @@ const Level = (function () {
     Level.prototype.updateLevelData = function (json) {
 
         let self = this;
-
+        
         if (json.leveldata.ballpositions) {
             UpdateLevelDataHelper.updateBalldata(json.leveldata.ballpositions, self);
+        }
+        
+        if(json.leveldata.paddlepositions){
+            UpdateLevelDataHelper.updatePaddledata(json.leveldata.paddlepositions, self);
         }
 
         if (json.leveldata.brickactions) {
@@ -169,6 +173,19 @@ const Level = (function () {
                 self.balls[i].y = ScalingModule.scaleYForClient(json[i].y);
             }
         }
+        
+        function updatePaddledata(json, self){
+            for (let i = 0; i < json.length; i++) {
+                self.paddles.forEach(function(paddle){
+                    console.log(json[i].name);
+                    if(paddle.name === json[i].name){
+                        debugger;
+                        paddle.x = ScalingModule.scaleXForClient(json[i].x)  - paddle.width / 2;
+                        paddle.y = ScalingModule.scaleYForClient(json[i].y);
+                    }
+                });
+            }
+        }
 
         function removeBall(json, self) {
             self.balls = self.balls.filter(function (ball) {
@@ -188,7 +205,8 @@ const Level = (function () {
             showBrick,
             updateBalldata,
             removeBall,
-            addBall
+            addBall,
+            updatePaddledata
         };
     })(  );
 

@@ -24,6 +24,8 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import com.breakoutegypt.domain.messages.PaddlePositionMessage;
+import com.breakoutegypt.domain.messages.PaddleMessageType;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
