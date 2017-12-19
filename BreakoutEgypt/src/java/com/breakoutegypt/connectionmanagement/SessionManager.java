@@ -167,11 +167,13 @@ public class SessionManager {
         }
     }
 
-    public void notifyLevelComplete(Level currentLevel) {
+    public void notifyLevelComplete(Level currentLevel, int winnerIndex) {
+        Player winner = getPlayer(winnerIndex);
+        
         long timeScore = currentLevel.getScoreTimer().getDuration();
         int brickScore = currentLevel.getBrickScore() - (int) timeScore;
 
-        LevelMessage lm = new LevelMessage("jef", currentLevel.isLastLevel(), timeScore, brickScore, LevelMessageType.COMPLETE);
+        LevelMessage lm = new LevelMessage(winner.getUsername(), currentLevel.isLastLevel(), timeScore, brickScore, LevelMessageType.COMPLETE);
         sendJsonToPlayers(lm);
     }
 

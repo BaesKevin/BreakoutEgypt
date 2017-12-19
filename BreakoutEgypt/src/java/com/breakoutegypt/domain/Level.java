@@ -244,9 +244,9 @@ public class Level implements BreakoutWorldEventListener {
         scoreTimer.pauseTimer();
     }
 
-    public void initNextLevel() {
+    public void initNextLevel(int winnerIndex) {
         stop();
-        game.initNextLevel();
+        game.initNextLevel(winnerIndex);
     }
 
     public boolean isLastLevel() {
@@ -265,6 +265,7 @@ public class Level implements BreakoutWorldEventListener {
         brickScoreCalc.addPointsToScore();
 
         if (allTargetBricksDestroyed()) {
+            int winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
             HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
@@ -274,7 +275,7 @@ public class Level implements BreakoutWorldEventListener {
             Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int)getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
             
-            initNextLevel();
+            initNextLevel(winnerIndex);
         }
     }
 

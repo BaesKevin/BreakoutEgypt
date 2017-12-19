@@ -155,15 +155,15 @@ public class Game {
         }
     }
 
-    public void initNextLevel() {
+    public void initNextLevel(int winnerIndex) {
         isFirstLevel = false;
-
+        
         Set<Player> players = manager.getPlayers();
         for (Player player : players) {
             player.setLives(getInitialLives(player));
         }
         
-        manager.notifyLevelComplete(currentLevel);
+        manager.notifyLevelComplete(currentLevel, winnerIndex);
 
         if (levelFactory.hasNextLevel()) {
             manager.incrementLevelReachedForAllPlayers(gameType, difficultyType);

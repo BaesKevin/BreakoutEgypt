@@ -240,7 +240,7 @@ public class BreakoutController extends HttpServlet {
         gm.addConnectingPlayer(gameId, player);
 
         request.setAttribute("gameId", gameId);
-        request.setAttribute("level", 1);
+        request.setAttribute("level", 2);
     }
 
     private void joinMultiplayer(HttpServletRequest request, HttpServletResponse response, int id) 
@@ -252,7 +252,7 @@ public class BreakoutController extends HttpServlet {
         gm.addConnectingPlayer(id, player);
         
         request.setAttribute("gameId", id);
-        request.setAttribute("level", 1);
+        request.setAttribute("level", 2);
     }
 
 }

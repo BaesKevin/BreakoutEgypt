@@ -3,11 +3,11 @@ const ModalModule = (function () {
     let shareButton = "<button id='share' class='btn'>Share</button>";
     let mainMenuButton = "<button id='mainMenuModalButton' class='btn'>Main Menu</button>";
 
-    function modalLevelCompleted(levelId, time, brickScore) {
+    function modalLevelCompleted(levelId, time, brickScore, winnerName) {
         let buttons = shareButton;
         buttons += mainMenuButton;
         buttons += "<button id='nextLevelButton' class='btn' data-dismiss='modal'>Next Level</button>";
-        printModal("Level " + levelId + " completed", "Congratz! Your time is: " + time + ". Brickscore is " + brickScore, buttons);
+        printModal("Level " + levelId + " completed", "Congratz " + winnerName + "! Your time is: " + time + ". Brickscore is " + brickScore, buttons);
     }
 
     function modalChooseDifficulty() {
