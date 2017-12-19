@@ -176,7 +176,7 @@ let DrawingModule = (function () {
             scale = 0.6;
         }
 
-        level.mypaddle.forEach(function (paddle) {
+        level.paddles.forEach(function (paddle) {
             let godImgPosition = {x: paddle.x + (paddle.width / 2) - ((godImgSize.width * scale) / 2),
                 y: paddle.y - (paddle.width * 0.4)};
 
@@ -195,9 +195,9 @@ let DrawingModule = (function () {
 
 
     function drawLives(lives) {
-        let height = (brickCanvas.height - level.mypaddle[0].y) * 0.7;
+        let height = brickCanvas.height * 0.05;
         let startX = brickCanvas.width - 5 - height;
-        let imgObj = {x: startX, y: level.mypaddle[0].y * 1.01, width: height, height: height};
+        let imgObj = {x: startX, y: brickCanvas.height - height - 5, width: height, height: height};
         for (let i = 0; i < lives; i++) {
             brickCtx.drawImage(ImageLoader.images["live"], imgObj.x, imgObj.y, imgObj.width, imgObj.height);
             imgObj.x -= (height * 0.6);

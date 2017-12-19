@@ -57,7 +57,7 @@ let ArcadeWebSocket = (function () {
             let json = JSON.parse(evt.data);
 
             if (json && !json.error) {
-                if (json.lifeaction) {
+                if (json.lifeaction && json.playerIndex === level.playerIndex) {
                     console.log(json)
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();

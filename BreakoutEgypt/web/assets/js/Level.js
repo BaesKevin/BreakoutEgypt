@@ -177,7 +177,6 @@ const Level = (function () {
         function updatePaddledata(json, self){
             for (let i = 0; i < json.length; i++) {
                 self.paddles.forEach(function(paddle){
-                    console.log(json[i].name);
                     if(paddle.name === json[i].name){
                         debugger;
                         paddle.x = ScalingModule.scaleXForClient(json[i].x)  - paddle.width / 2;
