@@ -38,7 +38,7 @@ public class PowerDownTest {
         int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
 
-        player = new Player(new User("Kevin"));
+        player = new Player("Kevin");
 
         game.addConnectingPlayer(player);
 

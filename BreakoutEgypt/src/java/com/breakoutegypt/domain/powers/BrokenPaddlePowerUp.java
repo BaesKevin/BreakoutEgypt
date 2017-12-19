@@ -63,8 +63,14 @@ public class BrokenPaddlePowerUp implements PowerUp {
         ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], baseY, newWidth, 4);
         ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], baseY, newWidth, 4);
         
-        brokenPaddle.add(new Paddle(leftPaddleShape));
-        brokenPaddle.add(new Paddle(rightPaddleShape));
+        Paddle leftPaddle = new Paddle(leftPaddleShape);
+        Paddle rightPaddle = new Paddle(rightPaddleShape);
+        
+        leftPaddle.setPlayerIndex(base.getPlayerIndex());
+        rightPaddle.setPlayerIndex(base.getPlayerIndex());
+        
+        brokenPaddle.add(leftPaddle);
+        brokenPaddle.add(rightPaddle);
     }
     
     public boolean isVisible() {

@@ -14,38 +14,19 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class BallMessage implements Message {
-
-    private String name;
-    private BallMessageType messageType;
+public class BallMessage extends GenericMessage {
     private Ball ball;
 
-    public BallMessage(String name, BallMessageType type) {
-        this.name = name;
-        this.messageType = type;
-    }
-
     public BallMessage(Ball b, BallMessageType type) {
-        this.name = b.getName();
-        this.messageType = type;
+        super(0, b.getName(), type);
         this.ball = b;
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public BallMessageType getMessageType() {
-        return messageType;
-    }
-
-    @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder actionObjectBuilder = Json.createObjectBuilder();
+        JsonObjectBuilder actionObjectBuilder = super.toJson();
         actionObjectBuilder.add("ballaction", getMessageType().name().toLowerCase());
-        if (ball != null) {
+        if (getMessageType() != BallMessageType.REMOVE) {
             actionObjectBuilder.add("name", getName());
             actionObjectBuilder.add("x", ball.getX());
             actionObjectBuilder.add("y", ball.getY());
@@ -60,7 +41,7 @@ public class BallMessage implements Message {
 
     @Override
     public String toString() {
-        return "BallMessage{" + "name=" + name + ", messageType=" + messageType + '}';
+        return "BallMessage{" + "name=" + ball.getName() + ", messageType=" + getMessageType() + '}';
     }
 
     @Override
@@ -81,10 +62,10 @@ public class BallMessage implements Message {
             return false;
         }
         final BallMessage other = (BallMessage) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(ball.getName(), ball.getName())) {
             return false;
         }
-        if (this.messageType != other.messageType) {
+        if (this.getMessageType() != other.getMessageType()) {
             return false;
         }
         return true;

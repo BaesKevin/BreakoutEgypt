@@ -5,10 +5,12 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
+import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
@@ -26,28 +28,96 @@ import java.util.List;
 public class MultiplayerLevelFactory extends LevelFactory {
 
     public MultiplayerLevelFactory(Game game) {
-        super(game, 1);
+        super(game, 2);
     }
 
 
     public void createCurrentLevel() {
-        currentLevel = makePong();
+        switch(this.currentLevelId){
+            case 1:
+                currentLevel = makePong();
+                break;
+            case 2:
+                currentLevel = levelWithTarget();
+                break;
+        }
+        
     }
     
     public Level makePong() {
 
-        ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
-
-        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
-        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
-
+                Ball ball = shapeRepo.getDefaultBall("ball", 50,70);
+        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 30);
+        
+        Paddle paddle = shapeRepo.getDefaultPaddle("paddle1", 50, 10);
+        Paddle paddle2 = shapeRepo.getDefaultPaddle("paddle2", 50, 90);
+        
+        Brick target = shapeRepo.getDefaultBrick("target", 45, 45, true);
+        
+        List<Brick> bricks = new ArrayList();
+        for (int i = 0; i < 3; i++) {
+            Brick brick = new Brick(
+                    new ShapeDimension("upperBrick"+i, 35 + i * DimensionDefaults.BRICK_WIDTH, 40,DimensionDefaults.BRICK_WIDTH,  DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER)
+                    , false, true, true ,false);
+            bricks.add(brick);
+        }
+        
+        for (int i = 0; i < 3; i++) {
+            Brick brick = new Brick(
+                    new ShapeDimension("lowerBrick"+i,  35 + i * DimensionDefaults.BRICK_WIDTH, 55, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER)
+                    , false, true, true ,true);
+            bricks.add(brick);
+        }
+        
+        
+        
+        paddle.setPlayerIndex(2);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
         paddles.add(paddle2);
 
-        Ball ball = new Ball(ballShape);
+        List<Ball> balls = new ArrayList();
+        
+        bricks.add(target);
+        
+        ball2.setPlayerIndex(2);
+        ball.setStartingBall(true);
+        ball2.setStartingBall(true);
+        
+        balls.add(ball);
+        balls.add(ball2);
+        
+        LevelState initialState = new LevelState(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY), false, true);
+        return new Level(currentLevelId, game, initialState);
 
-        LevelState initialState = new LevelState(ball, paddle, new ArrayList());
+    }
+    
+    public Level levelWithTarget(){
+        
+                Ball ball = shapeRepo.getDefaultBall("ball", 50,70);
+        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 30);
+        
+        Paddle paddle = shapeRepo.getDefaultPaddle("paddle1", 50, 10);
+        Paddle paddle2 = shapeRepo.getDefaultPaddle("paddle2", 50, 90);
+        
+        Brick target = shapeRepo.getDefaultBrick("target", 45, 45, true);
+        paddle.setPlayerIndex(2);
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(paddle);
+        paddles.add(paddle2);
+
+        List<Ball> balls = new ArrayList();
+        List<Brick> bricks = new ArrayList();
+        bricks.add(target);
+
+        ball2.setPlayerIndex(2);
+        ball.setStartingBall(true);
+        ball2.setStartingBall(true);
+        
+        balls.add(ball);
+        balls.add(ball2);
+        
+        LevelState initialState = new LevelState(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY), false, true);
         return new Level(currentLevelId, game, initialState);
 
     }

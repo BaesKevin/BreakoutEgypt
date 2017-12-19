@@ -7,7 +7,7 @@ package com.breakoutegypt.connectionmanagement;
 
 import com.breakoutegypt.domain.messages.Message;
 import java.io.IOException;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import javax.json.Json;
@@ -22,9 +22,9 @@ import javax.websocket.Session;
  *
  * @author kevin
  */
-public class WebsocketConnection implements PlayerConnection {
+public class WebsocketConnection implements PlayerConnection, Serializable{
 
-    private final Session session;
+    private final transient Session session;
 
     public WebsocketConnection(Session session) {
         this.session = session;
@@ -49,18 +49,14 @@ public class WebsocketConnection implements PlayerConnection {
     @Override
     public void send(Map<String, JsonArray> msgs) {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        if (msgs.containsKey("ballpositions")) {
-            job.add("ballpositions", msgs.get("ballpositions"));
+        String[] keys = {"ballpositions", "brickactions", "powerupactions", "powerdownactions", "paddlepositions"};
+        
+        for(String key : keys){
+            if(msgs.containsKey(key)){
+                job.add(key, msgs.get(key));
+            }
         }
-        if (msgs.containsKey("brickactions")) {
-            job.add("brickactions", msgs.get("brickactions"));
-        }
-        if (msgs.containsKey("powerupactions")) {
-            job.add("powerupactions", msgs.get("powerupactions"));
-        } 
-        if (msgs.containsKey("powerdownactions")) {
-            job.add("powerdownactions", msgs.get("powerdownactions"));
-        }
+        
         job.add("leveldata", job.build());
         send(job.build());
     }

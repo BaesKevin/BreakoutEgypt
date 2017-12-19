@@ -44,6 +44,10 @@ public class DefaultShapeRepository {
     public Paddle getDefaultPaddle(String name, float xPos) {
         return new Paddle( new ShapeDimension(name, xPos, BreakoutWorld.DIMENSION - DimensionDefaults.PADDLE_DISTANCE_FROM_BOTTOM, DimensionDefaults.PADDLE_WIDTH, DimensionDefaults.PADDLE_HEIGHT, Color.BLUE));
     }
+    
+    public Paddle getDefaultPaddle(String name, float x, float y) {
+        return new Paddle( new ShapeDimension(name, x,y, DimensionDefaults.PADDLE_WIDTH, DimensionDefaults.PADDLE_HEIGHT, Color.BLUE));
+    }
 
     public Ball getDefaultBall() {
         return getDefaultBall(50, 80);

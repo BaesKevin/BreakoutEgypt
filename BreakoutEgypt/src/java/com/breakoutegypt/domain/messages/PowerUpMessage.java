@@ -13,31 +13,18 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class PowerUpMessage implements Message {
+public class PowerUpMessage extends GenericMessage {
 
-    private String name;
     private PowerUp powerup;
-    private PowerUpMessageType messageType;
 
     public PowerUpMessage(String name, PowerUp powerup, PowerUpMessageType pumt) {
-        this.name = name;
+        super(0, name, pumt);
         this.powerup = powerup;
-        this.messageType = pumt;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public MessageType getMessageType() {
-        return messageType;
     }
 
     @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job = super.toJson();
         if (powerup != null) {
             job.add("powerup", powerup.toJson());
         }

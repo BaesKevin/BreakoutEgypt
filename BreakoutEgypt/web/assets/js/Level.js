@@ -99,9 +99,13 @@ const Level = (function () {
     Level.prototype.updateLevelData = function (json) {
 
         let self = this;
-
+        
         if (json.leveldata.ballpositions) {
             UpdateLevelDataHelper.updateBalldata(json.leveldata.ballpositions, self);
+        }
+        
+        if(json.leveldata.paddlepositions){
+            UpdateLevelDataHelper.updatePaddledata(json.leveldata.paddlepositions, self);
         }
 
         if (json.leveldata.brickactions) {
@@ -170,6 +174,17 @@ const Level = (function () {
                 self.balls[i].y = ScalingModule.scaleYForClient(json[i].y);
             }
         }
+        
+        function updatePaddledata(json, self){
+            for (let i = 0; i < json.length; i++) {
+                self.paddles.forEach(function(paddle){
+                    if(paddle.name === json[i].name){
+                        paddle.x = ScalingModule.scaleXForClient(json[i].x)  - paddle.width / 2;
+                        paddle.y = ScalingModule.scaleYForClient(json[i].y);
+                    }
+                });
+            }
+        }
 
         function removeBall(json, self) {
             self.balls = self.balls.filter(function (ball) {
@@ -189,7 +204,8 @@ const Level = (function () {
             showBrick,
             updateBalldata,
             removeBall,
-            addBall
+            addBall,
+            updatePaddledata
         };
     })(  );
 
@@ -215,6 +231,9 @@ const Level = (function () {
                     console.log("Load level: got data for level " + response.level);
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
+                    self.playerIndex = response.playerIndex;
+                    console.log("%cMy paddle : " + response.mypaddle, "font-size: 2em;");
+                    console.log(response.lives);
                     self.levelDimension = response.levelDimension;
                     
                     ScalingModule.updateCanvasDimension(self.levelDimension);

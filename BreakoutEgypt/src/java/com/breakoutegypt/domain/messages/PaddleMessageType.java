@@ -7,8 +7,8 @@ package com.breakoutegypt.domain.messages;
 
 /**
  *
- * @author BenDB
+ * @author kevin
  */
-public interface MessageType {
-    String name();
+public enum PaddleMessageType implements MessageType{
+    POSITION
 }

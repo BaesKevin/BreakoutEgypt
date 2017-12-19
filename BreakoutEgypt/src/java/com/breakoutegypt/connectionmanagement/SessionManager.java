@@ -16,11 +16,12 @@ import com.breakoutegypt.domain.messages.LevelMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
+import com.breakoutegypt.domain.messages.PaddlePositionMessage;
 import com.breakoutegypt.domain.messages.ProjectilePositionMessage;
 import com.breakoutegypt.domain.shapes.Ball;
+import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.Projectile;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,8 @@ public class SessionManager {
     private Set<Player> connectedPlayers;
     private Set<Player> connectingPlayers;
 
+    private Map<Integer, Player> indexToPlayerMap;
+
     public SessionManager() {
         this(1);
     }
@@ -48,6 +51,7 @@ public class SessionManager {
         this.maxPlayers = maxPlayers;
         connectedPlayers = Collections.synchronizedSet(new HashSet());
         connectingPlayers = Collections.synchronizedSet(new HashSet());
+        indexToPlayerMap = Collections.synchronizedMap(new HashMap());
     }
 
     public Player getPlayer(String name) {
@@ -72,11 +76,22 @@ public class SessionManager {
         Player player = getPlayerInSet(name, playerSetToSearch);
         return player;
     }
+    
+     public Player getPlayer(int playerIndex) {
+        Player toFind = null;
+        for (Player player : connectedPlayers) {
+            if (player.getIndex() == playerIndex) {
+                toFind = player;
+            }
+        }
+
+        return toFind;
+    }
 
     private Player getPlayerInSet(String name, Set<Player> playerset) {
         Player toFind = null;
         for (Player player : playerset) {
-            if (player.getUser().getUsername().equals(name)) {
+            if (player.getUsername().equals(name)) {
                 toFind = player;
             }
         }
@@ -86,6 +101,22 @@ public class SessionManager {
 
     public void addConnectingPlayer(Player player) {
         connectingPlayers.add(player);
+
+        int highestIndex = -1;
+        
+        Set<Integer> keysInMap = indexToPlayerMap.keySet();
+        
+        for (int index = 1; index <= maxPlayers; index++) {
+            if (!keysInMap.contains(index)) {
+                highestIndex = index;
+                break;
+            }
+        }
+        
+        int playerIndex = highestIndex;
+
+        indexToPlayerMap.put(playerIndex, player);
+        player.setIndex(playerIndex);
     }
 
     public boolean isPlayerInSessionManager(Player player) {
@@ -100,13 +131,13 @@ public class SessionManager {
 
     public void addConnectionForPlayer(String name, PlayerConnection conn) {
         Player connectingPlayer = getPlayer(name, true);
-
         if (connectingPlayer != null) {
 
             if (connectedPlayers.size() < maxPlayers) {
 
                 connectingPlayer.setConnection(conn);
                 connectedPlayers.add(connectingPlayer);
+
             }
             connectingPlayers.remove(connectingPlayer);
         } else {
@@ -118,6 +149,7 @@ public class SessionManager {
         Player player = getPlayer(username);
         connectedPlayers.remove(player);
         connectingPlayers.remove(player);
+        indexToPlayerMap.remove(player.getIndex(), player);
     }
 
     public boolean hasNoPlayers() {
@@ -146,15 +178,18 @@ public class SessionManager {
         }
     }
 
-    public void notifyLevelComplete(Level currentLevel) {
+    public void notifyLevelComplete(Level currentLevel, int winnerIndex) {
+        Player winner = getPlayer(winnerIndex);
+        
         long timeScore = currentLevel.getScoreTimer().getDuration();
         int brickScore = currentLevel.getBrickScore() - (int) timeScore;
 
-        LevelMessage lm = new LevelMessage("jef", currentLevel.isLastLevel(), timeScore, brickScore, LevelMessageType.COMPLETE);
+        LevelMessage lm = new LevelMessage(winner.getUsername(), currentLevel.isLastLevel(), timeScore, brickScore, LevelMessageType.COMPLETE);
         sendJsonToPlayers(lm);
     }
 
     public void notifyPlayers(Level currentLevel, ServerClientMessageRepository messageRepo) {
+
         Map<String, JsonArray> messages = createMessageMap(currentLevel, messageRepo);
 
         sendJsonToPlayers(messages);
@@ -162,14 +197,15 @@ public class SessionManager {
         currentLevel.getLevelState().clearMessages();
     }
 
-    public void notifyPlayersOfLivesLeft(Level currentLevel) {
-        boolean noLivesLeft = currentLevel.noLivesLeft();
+    public void notifyPlayersOfLivesLeft(Player player) {
+//        boolean noLivesLeft = currentLevel.noLivesLeft();
+        boolean noLivesLeft = player.noLivesLeft();
         //TODO User uit session halen en meegeven ipv 'jef'
         Message lifeMessage;
         if (noLivesLeft) {
-            lifeMessage = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
+            lifeMessage = new LifeMessage(player.getUsername(), 0, LifeMessageType.GAMEOVER, player.getIndex());
         } else {
-            lifeMessage = new LifeMessage("jef", currentLevel.getLives(), LifeMessageType.PLAYING);
+            lifeMessage = new LifeMessage(player.getUsername(), player.getLives(), LifeMessageType.PLAYING, player.getIndex());
         }
         sendJsonToPlayers(lifeMessage);
     }
@@ -184,7 +220,11 @@ public class SessionManager {
 
         Map<String, JsonArray> messages = new HashMap<>();
         List<Ball> balls = currentLevel.getLevelState().getBalls();
+        List<Paddle> paddles = currentLevel.getLevelState().getPaddles();
+        
         List<Message> ballPositionMessages = new ArrayList();
+        List<Message> paddlePositionMessages = new ArrayList();
+        
         List<Projectile> projectiles = currentLevel.getLevelState().getProjectiles();
 
         for (Projectile p : projectiles) {
@@ -196,22 +236,42 @@ public class SessionManager {
             BallPositionMessage bpm = new BallPositionMessage(b);
             ballPositionMessages.add(bpm);
         }
-        JsonArray powerupmessages = messageRepo.getPowerupMessages();
-        if (powerupmessages.size() > 0) messages.put("powerupactions", powerupmessages);
         
-        JsonArray powerdownmessages = messageRepo.getPowerdownMessages();
-        if (powerdownmessages.size() > 0) messages.put("powerdownactions", powerdownmessages);
-        
-        JsonArray brickmessages = messageRepo.getBrickMessages();
-        if (brickmessages.size() > 0) messages.put("brickactions", brickmessages);
-        
-        JsonArray ballpositions = messageRepo.listToJsonArray(ballPositionMessages);
-        if (ballpositions.size() > 0) messages.put("ballpositions", ballpositions);
+        for(Paddle p : paddles){
+            paddlePositionMessages.add(new PaddlePositionMessage(p));
+        }
 
+        JsonArray powerupmessages = messageRepo.getPowerupMessages();
+        if (powerupmessages.size() > 0) {
+            messages.put("powerupactions", powerupmessages);
+        }
+
+        JsonArray powerdownmessages = messageRepo.getPowerdownMessages();
+        if (powerdownmessages.size() > 0) {
+            messages.put("powerdownactions", powerdownmessages);
+        }
+
+        JsonArray brickmessages = messageRepo.getBrickMessages();
+        if (brickmessages.size() > 0) {
+            messages.put("brickactions", brickmessages);
+        }
+
+        JsonArray ballpositions = messageRepo.listToJsonArray(ballPositionMessages);
+        if (ballpositions.size() > 0) {
+            messages.put("ballpositions", ballpositions);
+        }
+        
+        JsonArray paddlepositions = messageRepo.listToJsonArray(paddlePositionMessages);
+        if (paddlepositions.size() > 0) {
+            messages.put("paddlepositions", paddlepositions);
+        }
+
+//        System.out.println(paddlePositionMessages.get(0).getName());
         return messages;
     }
 
     private void sendJsonToPlayers(Message msg) {
+
         PlayerConnection conn;
         for (Player player : connectedPlayers) {
             conn = player.getConnection();

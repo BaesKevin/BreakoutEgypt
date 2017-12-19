@@ -25,10 +25,10 @@ public class SessionManagerTest {
     @Before
     public void setup() {
         sm = new SessionManager(2);
-        player1 = new Player(new User("player1"));
-        player2 = new Player(new User("player2"));
+        player1 = new Player("player1");
+        player2 = new Player("player2");
     }
-
+    
     @Test
     public void testRemovePlayerRemovesFromConnectingAndConnected() {
 
@@ -78,8 +78,8 @@ public class SessionManagerTest {
     @Test
     public void removePlayerTest(){
         sm.addConnectingPlayer(player1);
-        sm.addConnectionForPlayer(player1.getUser().getUsername(), new DummyConnection());
-        sm.removePlayer(player1.getUser().getUsername());
+        sm.addConnectionForPlayer(player1.getUsername(), new DummyConnection());
+        sm.removePlayer(player1.getUsername());
         
         Assert.assertEquals(0, sm.getPlayers().size());
     }

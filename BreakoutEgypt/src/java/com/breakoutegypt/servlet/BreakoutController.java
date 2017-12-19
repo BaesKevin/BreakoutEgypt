@@ -10,7 +10,6 @@ import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
-import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.breakoutegypt.data.HighscoreRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
+import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 
 /**
@@ -32,11 +32,13 @@ import com.breakoutegypt.domain.levelprogression.Difficulty;
 @WebServlet(name = "BreakoutController", urlPatterns = {"/index.jsp",
     "/index",
     "/multiplayerMenu",
+    "/multiplayer",
     "/arcade",
     "/login",
     "/register",
     "/highscores"})
 public class BreakoutController extends HttpServlet {
+
     public static final String DIFFICULTY = "difficulty";
     public static final String DIFFICULTIES = "difficulties";
     public static final String LEVEL = "levelId";
@@ -76,6 +78,9 @@ public class BreakoutController extends HttpServlet {
             case "/arcade":
                 handleArcade(request, response);
                 break;
+            case "/multiplayer":
+                handleMultiplayer(request, response);
+                break;
             default:
         }
     }
@@ -84,32 +89,31 @@ public class BreakoutController extends HttpServlet {
             throws ServletException, IOException {
         try {
             int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
-            
+
             GameDifficulty gameDifficulty = getDifficultyFromRequest(request);
 
             GameManager gm = new GameManager();
 
             Player player = (Player) request.getSession().getAttribute("player");
-            if (player == null) {
-                player = new Player(new User("player"));
-                request.getSession().setAttribute("player", player);
-            }
-            
+
             LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.ARCADE, gameDifficulty);
             int gameId = gm.createGame(GameType.ARCADE, gameDifficulty);
+
             gm.getGame(gameId).initStartingLevel(startingLevel, progress);
             gm.addConnectingPlayer(gameId, player);
+            request.getSession().setAttribute("player", player);
 
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);
             request.setAttribute(LEVELDIMENSION, BreakoutWorld.DIMENSION);
             
-            request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());
         }
+
+        request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
     }
-    
+
     private GameDifficulty getDifficultyFromRequest(HttpServletRequest request) throws BreakoutException {
         GameDifficulty gameDifficulty;
         switch (request.getParameter("difficulty")) {
@@ -136,18 +140,18 @@ public class BreakoutController extends HttpServlet {
         String levelId = request.getParameter("gameId");
         String difficulty = request.getParameter(DIFFICULTY);
         List<Difficulty> difficulties = Repositories.getDifficultyRepository().findAll();
-        
-        if(difficulty == null){
+
+        if (difficulty == null) {
             difficulty = "medium";
         }
-        
+
         request.setAttribute(DIFFICULTY, difficulty);
         request.setAttribute(DIFFICULTIES, difficulties);
-        
+
         if (levelId == null) {
             levelId = "1";
         }
-        
+
         HighscoreRepository hr = Repositories.getHighscoreRepository();
         List<Score> scores = hr.getScoresByLevel(Integer.parseInt(levelId), difficulty); // TODO from querystring
         request.getSession().setAttribute("gameIdentification", levelId);
@@ -193,5 +197,63 @@ public class BreakoutController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void handleMultiplayer(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException{
+        try {
+//            int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
+            String gameId = request.getParameter("gameId");
+
+            if (gameId == null) {
+                createMultiplayerGame(request, response);
+            } else {
+                int id = Integer.parseInt(gameId);
+                joinMultiplayer(request, response, id);
+            }
+            request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+        } catch (BreakoutException boe) {
+            System.out.println(boe.getMessage());
+            request.setAttribute("error", boe.getMessage());
+            request.getRequestDispatcher("WEB-INF/pages/multiplayerMenu.jsp").forward(request, response);
+        }
+        
+    }
+
+    private void createMultiplayerGame(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException{
+        System.out.println("creating multiplayer");
+        GameDifficulty gameDifficulty = GameDifficulty.MEDIUM;
+
+        GameManager gm = new GameManager();
+
+        Player player = (Player) request.getSession().getAttribute("player");
+        if (player == null) {
+            player = new Player("player");
+            request.getSession().setAttribute("player", player);
+        }
+
+        LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.MULTIPLAYER, gameDifficulty);
+//            int gameId = gm.createGame(GameType.ARCADE, gameDifficulty);
+
+        int gameId = gm.createGame(GameType.MULTIPLAYER, gameDifficulty, 2);
+
+        gm.getGame(gameId).initStartingLevel(1, progress);
+        gm.addConnectingPlayer(gameId, player);
+
+        request.setAttribute("gameId", gameId);
+        request.setAttribute("level", 2);
+    }
+
+    private void joinMultiplayer(HttpServletRequest request, HttpServletResponse response, int id) 
+    throws ServletException, IOException{
+        System.out.println("joining multiplayer");
+        GameManager gm = new GameManager();
+        
+        Player player = (Player) request.getSession().getAttribute("player");
+        gm.addConnectingPlayer(id, player);
+        
+        request.setAttribute("gameId", id);
+        request.setAttribute("level", 2);
+    }
 
 }

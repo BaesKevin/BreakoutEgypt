@@ -42,7 +42,7 @@ public class LevelPackProgressTest {
 
     @Before
     public void before() {
-        player = new Player(new User("player"));
+        player = new Player("player");
         factory = new TestLevelFactory(null);
         gm = new GameManager();
     }
@@ -109,7 +109,7 @@ public class LevelPackProgressTest {
         final String playername = "kevin";
         Game game = new GameManager().getGame(id);
 
-        player = new Player(new User(playername));
+        player = new Player(playername);
         player.getProgressions().addNewProgression(GameType.TEST, GameDifficulty.MEDIUM);
 
         game.addConnectingPlayer(player);
@@ -126,7 +126,7 @@ public class LevelPackProgressTest {
         final String playername = "kevin";
         game = gm.getGame(id);
 
-        player = new Player(new User(playername));
+        player = new Player(playername);
         player.getProgressions().addNewProgression(GameType.TEST, GameDifficulty.BRUTAL);
 
         game.addConnectingPlayer(player);

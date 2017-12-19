@@ -7,6 +7,7 @@ package com.breakoutegypt.domain.levelprogression;
 
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.GameType;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author kevin
  */
-public class LevelProgressManager {
+public class LevelProgressManager implements Serializable{
 
     private List<LevelPackProgress> packProgresses;
 

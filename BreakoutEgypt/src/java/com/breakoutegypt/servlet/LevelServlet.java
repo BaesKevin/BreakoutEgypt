@@ -44,7 +44,6 @@ public class LevelServlet extends HttpServlet {
         HttpSession session = request.getSession();
 //        User user = (User)session.getAttribute("user");
         Player playerFromSession = (Player) session.getAttribute("player");
-        
         int gameId = Integer.parseInt(request.getParameter("gameId"));
         
         GameManager manager = new GameManager();
@@ -57,21 +56,17 @@ public class LevelServlet extends HttpServlet {
         if (hasNextLevel) {
             Level level = game.getLevel();
             
+            
             // already initialize player and give him a paddle
             if(playerFromSession!=null){
-                String name = playerFromSession.getUser().getUsername();
+                String name = playerFromSession.getUsername();
                 Player connectingPlayer = game.getPlayer(name);
-            
-//                if(player == null){
-//                    player = new Player(new User(name));
-//                    manager.addConnectingPlayer(gameId, player);
-//                }
-                manager.assignPaddleToPlayer(gameId, connectingPlayer);
+                System.out.printf("Game: %d Level: %d Player: %s", game.getId(), level.getId(), name);
             
                 job = Json.createObjectBuilder();
                 if (level != null) {
                     JsonArrayBuilder jab = Json.createArrayBuilder();
-                    levelToJson(level, jab, job, playerFromSession);
+                    levelToJson(level, jab, job, connectingPlayer);
 
                     manager.startGame(gameId);
                 } else {
@@ -109,12 +104,14 @@ public class LevelServlet extends HttpServlet {
         JsonObjectBuilder job;       
         
         Level level = manager.getGame(gameId).getLevel();
-        level.startBall();
+        
+        Player player = (Player) request.getSession().getAttribute("player");
+        player = manager.getGame(gameId).getPlayer(player.getUsername());
+        
+        System.out.println("Receive start from player " + player.getUsername() + " index " + player.getIndex());
+        level.startBall(player.getIndex());
         response.setContentType("application/json");
 
-        try (PrintWriter out = response.getWriter()) {
-            out.print("level STARTED");
-        }
         
     }
 
@@ -136,10 +133,18 @@ public class LevelServlet extends HttpServlet {
         for(int i = 0; i < paddles.size(); i++){
             paddleBuilder.add( paddles.get(i).toJson().build());
         }
+        
+        Paddle myPaddle = null;
+        for(Paddle p : paddles) {
+            if(p.getPlayerIndex() == player.getIndex())
+                myPaddle = p;
+        }
+        
         job.add("paddles", paddleBuilder.build());
-        job.add("mypaddle", player.getPaddle().getName());
+        job.add("mypaddle", myPaddle.getName()); //TODO when one player leaves and reconnects he doesn't get a paddle
+        job.add("playerIndex", player.getIndex());
         job.add("level", level.getId());
-        job.add("lives", level.getLives());
+        job.add("lives", player.getLives());
         
         job.add("levelDimension", BreakoutWorld.DIMENSION);
     }

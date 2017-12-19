@@ -57,7 +57,7 @@ let ArcadeWebSocket = (function () {
             let json = JSON.parse(evt.data);
 
             if (json && !json.error) {
-                if (json.lifeaction) {
+                if (json.lifeaction && json.playerIndex === level.playerIndex) {
                     console.log(json)
                     if (json.lifeaction === 'gameover') {
                         handleGameOver();
@@ -124,11 +124,11 @@ let ArcadeWebSocket = (function () {
     }
 
     function handleLevelComplete(json) {
-        console.log("You completed this level in " + UtilModule.scoreTimerFormatter(json.scoreTimer));
+        console.log(`Congratulations ${json.name}, you completed this level in ` + UtilModule.scoreTimerFormatter(json.scoreTimer));
         level.levelComplete = true;
 
         let time = UtilModule.scoreTimerFormatter(json.scoreTimer);
-        ModalModule.modalLevelCompleted(level.level, time, json.brickScore);
+        ModalModule.modalLevelCompleted(level.level, time, json.brickScore, json.name);
     }
 
     function handleLevelUpdateError(json) {

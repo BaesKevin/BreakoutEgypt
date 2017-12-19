@@ -13,20 +13,24 @@ import org.mindrot.jbcrypt.BCrypt;
  *
  * @author Bjarne Deketelaere
  */
-public class User implements Serializable{
+public class User implements Serializable {
+
     private String username;
     private String email;
     private String password;
-    public User(String username){
-        this(username, "","");
+
+    public User(String username) {
+        this(username, "", "");
     }
-    public User(String username,String email,String password){
+
+    public User(String username, String email, String password) {
         this.setEmail(email);
         this.setPassword(password);
         this.setUsername(username);
     }
-    public User(String email,String password){
-        this("",email,password);
+
+    public User(String email, String password) {
+        this("", email, password);
     }
 
     public String getUsername() {
@@ -85,5 +89,5 @@ public class User implements Serializable{
         }
         return true;
     }
-    
+
 }

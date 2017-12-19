@@ -50,14 +50,14 @@ public class PowerUpTest {
             ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
         }
 
-        player = new Player(new User("Kevin"));
+        player = new Player("Kevin");
 
         game.addConnectingPlayer(player);
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
         
         if(levelHasPaddle){
-            game.assignPaddleToPlayer(player);
+//            game.assignPaddleToPlayer(player);
         }
         
     }
@@ -92,10 +92,10 @@ public class PowerUpTest {
         
         float paddleY = paddles.get(0).getY();
 
-        level.movePaddle(paddles.get(0), 0, 156);
+        level.movePaddle(paddles.get(0).getPlayerIndex(), 0, 156);
         assertTrue(paddles.get(0).getX() == minimum);
         
-        level.movePaddle(paddles.get(0), 120, 156);
+        level.movePaddle(paddles.get(0).getPlayerIndex(), 120, 156);
 
         float paddlePositionX = paddles.get(0).getX();
         

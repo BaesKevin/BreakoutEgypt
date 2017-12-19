@@ -7,6 +7,7 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.data.StaticUserRepository;
 import com.breakoutegypt.data.UserRepository;
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.servlet.util.Validator;
 import java.io.IOException;
@@ -44,16 +45,18 @@ public class LoginSystemServlet extends HttpServlet {
             UserRepository userRepo = StaticUserRepository.getInstance();
             userRepo.addUser(new User("Bjarne", "bjarne.deketelaere@student.howest.be", "Bjarne"));
 
-            String register = request.getParameter("register");
-            String login = request.getParameter("login");
-
-            String email = request.getParameter("email");
-            String passphrase = request.getParameter("password");
-
-            if (login != null) {
-                User user = userRepo.getUser(email, passphrase);
-                if (user != null) {
-                    session.setAttribute("user", user);
+            
+            String register=request.getParameter("register");
+            String login=request.getParameter("login");
+            
+            String email=request.getParameter("email");
+            
+            String passphrase=request.getParameter("password");
+            if(login!=null){
+                User user=userRepo.getUser(email,passphrase);
+                if(user!=null){
+                    Player player = new Player(user.getUsername(), user.getEmail(), user.getPassword());
+                    session.setAttribute("player",player);
                     request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 } else {
                     request.setAttribute("error", "This combination does not exist!");

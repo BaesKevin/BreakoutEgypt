@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.filters;
 
-import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.Player;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Bjarne Deketelaere
  */
-@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/arcade.html", "/index.html"})
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/*", "/arcade.html", "/index.html"})
 public class AuthenticationFilter implements Filter {
     
     private static final boolean debug = true;
@@ -41,13 +41,15 @@ public class AuthenticationFilter implements Filter {
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
-//            log("AuthenticationFilter:DoBeforeProcessing");
-//            HttpServletRequest httpRequest = (HttpServletRequest) request;
-//            HttpServletResponse httpResponse = (HttpServletResponse) response;
-//            
-//            HttpSession session=httpRequest.getSession();
-//            User logedinUser=(User)session.getAttribute("user");
-//            if(logedinUser==null) httpResponse.sendRedirect("login.html");          
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
+            
+            HttpSession session=httpRequest.getSession();
+            Player logedinUser=(Player)session.getAttribute("player");    
+            
+            if(logedinUser == null){
+                session.setAttribute("player", new Player("ben", "ben@benbugs.org","bug.txt"));
+            }
         }
 
     }    

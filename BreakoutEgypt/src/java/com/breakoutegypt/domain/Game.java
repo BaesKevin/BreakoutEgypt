@@ -16,9 +16,9 @@ import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.levelfactories.MultiplayerLevelFactory;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
-import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
+import java.util.Set;
 
 /**
  *
@@ -33,17 +33,17 @@ public class Game {
     private GameDifficulty difficultyType;
     private Difficulty difficulty;
 
-    private int livesLeftInLastLevel;
+//    private int livesLeftInLastLevel;
     private boolean isFirstLevel;
 
     private LevelFactory levelFactory;
 
     private SessionManager manager;
 
-    public Game(GameType gameType, GameDifficulty difficulty){
+    public Game(GameType gameType, GameDifficulty difficulty) {
         this(1, gameType, difficulty);
     }
-    
+
     public Game(int numberOfPlayers, GameType gameType, GameDifficulty difficultyType) {
         id = ID++;
         this.gameType = gameType;
@@ -86,26 +86,23 @@ public class Game {
         Player peer = manager.getPlayer(username);
 
         if (peer != null) {
-            currentLevel.movePaddle(peer.getPaddle(), x, y);
+            currentLevel.movePaddle(peer.getIndex(), x, y);
         } else {
         }
     }
 
     public void addConnectingPlayer(Player player) {
-        player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
-        manager.addConnectingPlayer(player);
-
+        if (!manager.isFull()) {
+            player.setLives(getInitialLives(player));
+            player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
+            manager.addConnectingPlayer(player);
+        } else {
+            throw new BreakoutException("Party already full.");
+        }
     }
 
     public boolean isPlayerInSessionManager(Player player) {
         return manager.isPlayerInSessionManager(player);
-    }
-
-    public void assignPaddleToPlayer(Player player) {
-        int indexOfPaddleToAssign = manager.getNextAvailablePaddleIndex();
-        //currentLevel is null
-        Paddle paddleToAssign = currentLevel.getLevelState().getPaddles().get(indexOfPaddleToAssign);
-        player.setPaddle(paddleToAssign);
     }
 
     public void addConnectionForPlayer(String name, PlayerConnection conn) {
@@ -126,10 +123,11 @@ public class Game {
         manager.notifyPlayers(currentLevel, messageRepo);
     }
 
-    public void notifyPlayersOfLivesLeft() {
+    public void notifyPlayersOfLivesLeft(int playerIndex) {
+        Player player = manager.getPlayer(playerIndex);
 
-        manager.notifyPlayersOfLivesLeft(currentLevel);
-        if (currentLevel.noLivesLeft()) {
+        manager.notifyPlayersOfLivesLeft(player);
+        if (player.noLivesLeft()) {
             currentLevel.stop();
         }
 
@@ -160,11 +158,15 @@ public class Game {
         }
     }
 
-    public void initNextLevel() {
-        livesLeftInLastLevel = currentLevel.getLives();
+    public void initNextLevel(int winnerIndex) {
         isFirstLevel = false;
-
-        manager.notifyLevelComplete(currentLevel);
+        
+        Set<Player> players = manager.getPlayers();
+        for (Player player : players) {
+            player.setLives(getInitialLives(player));
+        }
+        
+        manager.notifyLevelComplete(currentLevel, winnerIndex);
 
         if (levelFactory.hasNextLevel()) {
             manager.incrementLevelReachedForAllPlayers(gameType, difficultyType);
@@ -184,12 +186,12 @@ public class Game {
     public Level getLevel() {
         return levelFactory.getCurrentLevel();
     }
-    
-    public int getInitialLives() {
+
+    public int getInitialLives(Player player) {
         if (isFirstLevel || difficulty.isLivesRegenBetweenLevels()) {
             return difficulty.getLives();
         } else {
-            return livesLeftInLastLevel;
+            return player.getLives();
         }
     }
 
@@ -200,8 +202,16 @@ public class Game {
     public Difficulty getDifficulty() {
         return difficulty;
     }
-    
-    public LevelFactory getLevelFactory(){
+
+    public LevelFactory getLevelFactory() {
         return this.levelFactory;
+    }
+
+    void loseLife(int playerIndex) {
+        Player player = manager.getPlayer(playerIndex);
+
+        if (this.difficulty.getLives() != Difficulty.INFINITE_LIVES) {
+            player.decreaseLives();
+        }
     }
 }

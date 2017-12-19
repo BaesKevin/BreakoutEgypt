@@ -18,17 +18,17 @@ public class RegularBody {
 
     private String name;
 
-//    private ShapeDimension shape;
+    protected ShapeDimension dimension;
     private Body body;
     protected BodyConfiguration config;
-    protected ShapeDimension dimension;
-
+    private int playerIndex;
+    
     public RegularBody(ShapeDimension s) {
-        this.dimension = s;
-        this.name = s.getName();
+        this.dimension = s; // clone
+        playerIndex = 1;
     }
 
-    public String getName() { return name;}
+    public String getName() { return dimension.getName();}
 
     public float getX() {
         if(this.body != null){
@@ -58,13 +58,39 @@ public class RegularBody {
         this.body = body;
     }
 
-    public void moveTo(float x, float y) {
-        body.setTransform(new Vec2(x, y), 0);
+    public synchronized void moveTo(float x, float y) {
+        if(! body.getWorld().isLocked()){
+            body.setTransform(new Vec2(x, y), 0);
+        }
     }
 
     public Vec2 getPosition() {
         return body.getPosition();
     }
+
+    public int getPlayerIndex() {
+        return playerIndex;
+    }
+
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }    
+    
+
+    //    // uitleg visitor en double dispatch van Mattias De Wael
+////    static interface ShapeUser {
+////     void   doForBrick(Brick b);
+////      void doForPaddle(Paddle p);
+////     void  doForBall(Ball b);
+////     void doForRegular(RegularBody r);
+////   }
+////    // Visitor + double dispatch
+////    void accept(ShapeUser u);
+
+//    @Override
+//    public void accept(ShapeUser u) {
+//        u.doForRegular(this);
+//    }
 
     public BodyConfiguration getConfig() {
         return config;
@@ -74,9 +100,13 @@ public class RegularBody {
         this.config = config;
     }
     
+    public ShapeDimension getInitialShape(){
+        return dimension;
+    }
+    
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder brickkObjectBuilder = Json.createObjectBuilder();
-        brickkObjectBuilder.add("name", this.name);
+        brickkObjectBuilder.add("name", getName());
         brickkObjectBuilder.add("x", dimension.getPosX());
         brickkObjectBuilder.add("y", dimension.getPosY());
         brickkObjectBuilder.add("width", dimension.getWidth());

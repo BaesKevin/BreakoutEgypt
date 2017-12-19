@@ -121,6 +121,8 @@ public class BreakoutWorld implements ContactHandler {
     public void handle(BallBrickContact bbc) {
         Brick b = bbc.getBrick();
         Ball ball = bbc.getBall();
+        b.setPlayerIndex(ball.getPlayerIndex());
+        
         AcidBallPowerUp abpu = ball.getAcidBall();
         if (!ball.isDecoy()) {
             if (abpu != null) {
