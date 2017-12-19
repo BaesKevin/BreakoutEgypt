@@ -54,13 +54,30 @@ public class MultiplayerLevelFactory extends LevelFactory {
         
         Brick target = shapeRepo.getDefaultBrick("target", 45, 45, true);
         
+        List<Brick> bricks = new ArrayList();
+        for (int i = 0; i < 3; i++) {
+            Brick brick = new Brick(
+                    new ShapeDimension("upperBrick"+i, 35 + i * DimensionDefaults.BRICK_WIDTH, 40,DimensionDefaults.BRICK_WIDTH,  DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER)
+                    , false, true, true ,false);
+            bricks.add(brick);
+        }
+        
+        for (int i = 0; i < 3; i++) {
+            Brick brick = new Brick(
+                    new ShapeDimension("lowerBrick"+i,  35 + i * DimensionDefaults.BRICK_WIDTH, 55, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER)
+                    , false, true, true ,true);
+            bricks.add(brick);
+        }
+        
+        
+        
         paddle.setPlayerIndex(2);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
         paddles.add(paddle2);
 
         List<Ball> balls = new ArrayList();
-        List<Brick> bricks = new ArrayList();
+        
         bricks.add(target);
         
         ball2.setPlayerIndex(2);
