@@ -55,11 +55,11 @@ public class Level implements BreakoutWorldEventListener {
     private boolean invertedControls;
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
+
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
-    
-    
-  }
+
+    }
 
     private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
         this.id = id;
@@ -137,22 +137,26 @@ public class Level implements BreakoutWorldEventListener {
             }
         }
     }
-    
-    public void startBall(int playerIndex){
-        List<Ball> balls = levelState.getBalls();
-        
-        for(Ball ball : balls){
-            if(ball.getPlayerIndex() == playerIndex){
-                scoreTimer.start();
-                ball.setLinearVelocity(0, game.getDifficulty().getBallspeed());
+
+    public void startBall(int playerIndex) {
+        if (!levelStarted) {
+            levelStarted = true;
+            List<Ball> balls = levelState.getBalls();
+
+            for (Ball ball : balls) {
+                if (ball.getPlayerIndex() == playerIndex) {
+                    scoreTimer.start();
+                    ball.setLinearVelocity(0, game.getDifficulty().getBallspeed());
+                }
             }
         }
+
     }
 
     // x coordinate is the center of the most left paddle
     public synchronized void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
         List<Paddle> paddles = levelState.getPaddlesForPlayer(playerIndex);
-        
+
         int totalWidth = levelState.calculatePaddleWidthWithGaps(paddles);
         int paddleWidth = paddles.get(0).getWidth();
         int min = paddleWidth / 2;
@@ -161,7 +165,7 @@ public class Level implements BreakoutWorldEventListener {
         if (invertedControls) {
             firstPaddleCenter = BreakoutWorld.DIMENSION - firstPaddleCenter;
         }
-        
+
         float paddleCenter = firstPaddleCenter;
         if (paddleCenter < min) {
             paddleCenter = min;
@@ -185,7 +189,6 @@ public class Level implements BreakoutWorldEventListener {
 //            }
 //
 //        }
-
     }
 
     public int getId() {
@@ -198,18 +201,18 @@ public class Level implements BreakoutWorldEventListener {
 
     void resetBall(Ball ball) {
         int playerIndex = ball.getPlayerIndex();
-        
-        if(!ball.isDecoy()){
+
+        if (!ball.isDecoy()) {
             game.loseLife(playerIndex);
         }
-        
+
         levelState.removeBall(ball);
-        if(levelState.noMoreBallsForPlayer(ball.getPlayerIndex())){
+        if (levelState.noMoreBallsForPlayer(ball.getPlayerIndex())) {
             setLevelStarted(false);
-            
+
             levelState.resetBall(breakoutWorld, ball.getPlayerIndex());
         }
-        
+
         game.notifyPlayersOfBallAction();
         game.notifyPlayersOfLivesLeft(ball.getPlayerIndex());
     }
@@ -272,9 +275,9 @@ public class Level implements BreakoutWorldEventListener {
 
             int brickScore = brickScoreCalc.getScore();
             //TODO user with playerindex x
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int)getScoreTimer().getDuration());
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
-            
+
             initNextLevel(winnerIndex);
         }
     }
