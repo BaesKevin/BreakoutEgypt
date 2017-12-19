@@ -92,10 +92,13 @@ public class Game {
     }
 
     public void addConnectingPlayer(Player player) {
-        player.setLives(getInitialLives(player));
-        player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
-        manager.addConnectingPlayer(player);
-
+        if (!manager.isFull()) {
+            player.setLives(getInitialLives(player));
+            player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
+            manager.addConnectingPlayer(player);
+        } else {
+            throw new BreakoutException("Party already full.");
+        }
     }
 
     public boolean isPlayerInSessionManager(Player player) {
@@ -122,7 +125,7 @@ public class Game {
 
     public void notifyPlayersOfLivesLeft(int playerIndex) {
         Player player = manager.getPlayer(playerIndex);
-        
+
         manager.notifyPlayersOfLivesLeft(player);
         if (player.noLivesLeft()) {
             currentLevel.stop();
@@ -162,7 +165,7 @@ public class Game {
         for (Player player : players) {
             player.setLives(getInitialLives(player));
         }
-        
+
         manager.notifyLevelComplete(currentLevel);
 
         if (levelFactory.hasNextLevel()) {

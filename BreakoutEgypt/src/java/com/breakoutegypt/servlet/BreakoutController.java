@@ -212,9 +212,10 @@ public class BreakoutController extends HttpServlet {
             }
             request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
         } catch (BreakoutException boe) {
+            System.out.println(boe.getMessage());
             request.setAttribute("error", boe.getMessage());
+            request.getRequestDispatcher("WEB-INF/pages/multiplayerMenu.jsp").forward(request, response);
         }
-
         
     }
 
