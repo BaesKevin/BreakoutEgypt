@@ -337,7 +337,7 @@ public class LevelState {
 
         switch (powerupNr) {
             case 1:
-                b.setPowerdown(new FloodPowerDown(startingBall, 3, identifier));
+                b.setPowerdown(new FloodPowerDown(startingBall, 3));
                 break;
             case 2:
                 b.setPowerdown(createProjectilePowerDown(b, identifier));

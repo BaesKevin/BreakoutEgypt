@@ -13,6 +13,7 @@ import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
@@ -23,18 +24,29 @@ import javax.json.JsonObjectBuilder;
  * @author BenDB
  */
 public class FloodPowerDown implements PowerDown {
-
+    private static AtomicInteger identifier = new AtomicInteger(1);
     private final int noOfBalls;
     private final List<Ball> balls;
-    private final Ball originalBall;
+    private Ball originalBall;
     private final int decoyBallSpeed = 50;
     private final String name;
 
-    public FloodPowerDown(Ball originalBall, int noOfBalls, int identifier) {
-        this.name = "flood" + identifier;
+    public FloodPowerDown(Ball originalBall, int noOfBalls) {
+        this.name = "flood" + this.identifier.getAndIncrement();
         this.noOfBalls = noOfBalls;
         this.balls = new ArrayList();
         this.originalBall = originalBall;
+    }
+    public FloodPowerDown(int noOfBalls){
+        this(null, noOfBalls);
+    }
+    
+    public void setOriginalBall(Ball originalBall){
+        this.originalBall=originalBall;
+    }
+    
+    public int getNoOfBalls(){
+        return this.noOfBalls;
     }
 
     public void initBalls() {

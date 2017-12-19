@@ -16,8 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -32,7 +30,7 @@ public class MysqlBallRepository implements BallRepository {
     private final String INSERT_LEVELBALLS = "insert into levelballs(levelid,idball) values(?, ?)";
     private final String DELETE_LEVELBALLS = "delete from levelballs where levelid = ?";
     
-    List<Ball> balls;
+    private List<Ball> balls;
 
     @Override
     public List<Ball> getBalls() {

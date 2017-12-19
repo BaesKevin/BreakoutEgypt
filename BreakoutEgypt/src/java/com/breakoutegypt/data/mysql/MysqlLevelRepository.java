@@ -12,6 +12,7 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -84,6 +85,7 @@ public class MysqlLevelRepository implements LevelRepository {
                     List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
                     List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
+                    this.addDefaultBallToPowerDown(levelBricks, levelBalls.get(0));
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
                     Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
                     level = new Level(levelid, game, levelstate);
@@ -93,6 +95,15 @@ public class MysqlLevelRepository implements LevelRepository {
 
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load level", ex);
+        }
+    }
+    private void addDefaultBallToPowerDown(List<Brick> levelBricks,Ball levelBall){
+        for(Brick brick:levelBricks){
+            if(brick.hasPowerDown()){
+                if(brick.getPowerDown() instanceof FloodPowerDown){
+                    ((FloodPowerDown)brick.getPowerDown()).setOriginalBall(levelBall);
+                }
+            }
         }
     }
 
@@ -123,7 +134,7 @@ public class MysqlLevelRepository implements LevelRepository {
             throw new BreakoutException("Couldn't add level", ex);
         }
     }
-
+    
     @Override
     public void removeLevel(Level level) {
         brickRepo.removeLevelBricks(level.getId(), level.getLevelState().getBricks());
