@@ -102,8 +102,18 @@ public class SessionManager {
     public void addConnectingPlayer(Player player) {
         connectingPlayers.add(player);
 
-        int highestIndex = indexToPlayerMap.size();
-        int playerIndex = highestIndex + 1;
+        int highestIndex = -1;
+        
+        Set<Integer> keysInMap = indexToPlayerMap.keySet();
+        
+        for (int index = 1; index <= maxPlayers; index++) {
+            if (!keysInMap.contains(index)) {
+                highestIndex = index;
+                break;
+            }
+        }
+        
+        int playerIndex = highestIndex;
 
         indexToPlayerMap.put(playerIndex, player);
         player.setIndex(playerIndex);
@@ -139,6 +149,7 @@ public class SessionManager {
         Player player = getPlayer(username);
         connectedPlayers.remove(player);
         connectingPlayers.remove(player);
+        indexToPlayerMap.remove(player.getIndex(), player);
     }
 
     public boolean hasNoPlayers() {

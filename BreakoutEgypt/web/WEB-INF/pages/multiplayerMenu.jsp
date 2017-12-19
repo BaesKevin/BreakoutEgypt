@@ -4,6 +4,7 @@
     Author     : Bjarne Deketelaere
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -26,6 +27,9 @@
             <main class="row">
                 <div class="col-lg-12 text-center">
                     <p class="back"><a href="index.jsp">Back</a></p>
+                    <c:if test="${error != null}" >
+                        <p class="error" ><c:out value="${error}"></c:out></p>
+                    </c:if>
                     <div id="menu">
                         <ul class="list-group">
                             <li class="list-group-item">

@@ -116,9 +116,7 @@ public class MultiplayerTest {
     public void testConnectToMuchPlayers() {
         game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
         game.addConnectionForPlayer(player1.getUsername(), new DummyConnection());
-
         game.addConnectionForPlayer(player2.getUsername(), new DummyConnection());
-
         Player player3 = new Player("player3");
         game.addConnectingPlayer(player3);
         game.addConnectionForPlayer(player3.getUsername(), new DummyConnection());
@@ -207,8 +205,27 @@ public class MultiplayerTest {
             stepTimes(100);
         }
 
-        Assert.assertEquals(3, player2.getLives());
+        Assert.assertEquals(0, player2.getLives());
         Assert.assertEquals(3, player1.getLives());
+
+    }
+
+    @Test
+    public void testRemovePlayer() {
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+
+        level = game.getCurrentLevel();
+        
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
+        
+        game.removePlayer(player1.getUsername());
+        
+        game.addConnectingPlayer(player1);
+        game.addConnectionForPlayer(player1.getUsername(), new DummyConnection());
+        
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
 
     }
 
