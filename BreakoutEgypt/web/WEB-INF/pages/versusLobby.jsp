@@ -1,16 +1,10 @@
-<%-- 
-    Document   : multiplayerMenu
-    Created on : 23-nov-2017, 15:49:05
-    Author     : Bjarne Deketelaere
---%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Multiplayer Menu</title>
+        <title>Versus lobby</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css"/>
@@ -26,26 +20,23 @@
             </header>
             <main class="row">
                 <div class="col-lg-12 text-center">
-                    <p class="back"><a href="index.jsp">Back</a></p>
-                    <c:if test="${error != null}" >
-                        <p class="error" ><c:out value="${error}"></c:out></p>
-                    </c:if>
+                    <p class="back"><a href="index.jsp">Back</a>
+
                     <div id="menu">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <button type="button" class="btn" id="versus">Versus</button>
-                            </li>
-                            <li class="list-group-item">
-                                <button type="button" class="btn">Cooperative</button>
-                            </li>
-                            <li class="list-group-item">
-                                <button type="button" id="returnToMain" class="btn">Main menu</button>
-                            </li>
-                        </ul>
+                        <h2>Versus lobby</h2>
+
+                        <p>Send the number below to a friend so he can join your game by entering it on the previous page.</p>
+                        <p><input type="text" value="${gameId}" onClick="this.select();"/></p>
+
+                        <input type="hidden" id="gameId" value="${gameId}" />
+                        <button  class="btn btn-primary" id="startVersus">Start game</button>
+                        <!--<a href="versus?gameId=${gameId}" class="btn">Go to game</a>-->
                     </div>
                 </div>
+
             </main>
         </div>
+    </main>
     <footer class="row">
         <div class="col-lg-8 col-md-10 mx-auto text-center">
             <p>Find us on:</p>
