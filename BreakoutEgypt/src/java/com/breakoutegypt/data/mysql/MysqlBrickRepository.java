@@ -7,6 +7,7 @@ package com.breakoutegypt.data.mysql;
 
 import com.breakoutegypt.data.BrickRepository;
 import com.breakoutegypt.data.BrickTypeRepository;
+import com.breakoutegypt.data.EffectRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.ShapeDimensionRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
@@ -85,6 +86,8 @@ public class MysqlBrickRepository implements BrickRepository {
         BrickType bricktype = Repositories.getBrickTypeRepository().getBrickTypeById(rs.getInt("typeid"));
         Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable);
         brick.setBrickId(brickId);
+        EffectRepository effectRepo=new MysqlEffectRepository();
+        effectRepo.giveEffectsToBrick(brick);
         this.bricks.add(brick);
     }
 
@@ -113,6 +116,7 @@ public class MysqlBrickRepository implements BrickRepository {
                     throw new BreakoutException("Unable to add brick");
                 }
                 brick.setBrickId(brickId);
+                new MysqlEffectRepository().insertEffectsToBrick(brickId, brick.getEffects());
             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add brick",ex);
@@ -121,6 +125,8 @@ public class MysqlBrickRepository implements BrickRepository {
 
     @Override
     public void removeBrick(Brick brick) {
+        EffectRepository effectRepo=new MysqlEffectRepository();
+        effectRepo.removeEffectsOfBrick(brick.getBrickId());
         try(
                 Connection conn=DbConnection.getConnection();
                 PreparedStatement prep=conn.prepareStatement(DELETE_BRICK);

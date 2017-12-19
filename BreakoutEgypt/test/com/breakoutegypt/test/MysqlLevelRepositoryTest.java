@@ -45,8 +45,11 @@ public class MysqlLevelRepositoryTest {
         try{
             MysqlLevelRepository repository=new MysqlLevelRepository();
             repository.addLevel(level);
+            System.out.println("ADDED LEVEL");
             repository.removeLevel(level);
+            System.out.println("REMOVED LEVEL");
         } catch(Exception ex){
+            System.out.println(ex);
             fail("Should not throw an exception");
         }
         
