@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.LevelRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
@@ -24,7 +25,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  *
@@ -43,37 +43,45 @@ public class ArcadeLevelFactory extends LevelFactory {
     public Level getCurrentLevel() {
         return currentLevel;
     }
-    
-     @Override
+
+    @Override
     protected void createCurrentLevel() {
-        
+
         LevelPack pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
-        if(pack == null){
-            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", 5,5));
+        if (pack == null) {
+            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", 5, 5));
+            pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
         }
-        
-        switch (currentLevelId) {
-            case 1:
-                currentLevel = getSimpleTestLevel();
-                break;
-            case 2:
-                currentLevel = getLevelWithUnbreakableAndExplosive();
-                break;
-            case 3:
-                currentLevel = getLevelWithInvertedTriangles();
-                currentLevel.setLevelNumber(3);
-                break;
-            case 4:
-                currentLevel = getPossibleRealLevel();
-                break;
-            case 5:
-                currentLevel = getLevelWithFloodPowerDown();
-                break;
+
+        LevelRepository levelRepo = Repositories.getLevelRepository();
+        Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId, game);
+
+        if (levelFromDatabase == null) {
+            switch (currentLevelId) {
+                case 1:
+                    currentLevel = getSimpleTestLevel();
+                    break;
+                case 2:
+                    currentLevel = getLevelWithUnbreakableAndExplosive();
+                    break;
+                case 3:
+                    currentLevel = getLevelWithInvertedTriangles();
+                    currentLevel.setLevelNumber(3);
+                    break;
+                case 4:
+                    currentLevel = getPossibleRealLevel();
+                    break;
+                case 5:
+                    currentLevel = getLevelWithFloodPowerDown();
+                    break;
+            }
+
+            currentLevel.setLevelPackId(pack.getId());
+            Repositories.getLevelRepository().addLevel(currentLevel);
+            currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
+        } else {
+            currentLevel = levelFromDatabase;
         }
-        
-        currentLevel.setLevelPackId(currentLevelId);
-        Repositories.getLevelRepository().addLevel(currentLevel);
-        currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
     }
 
     public Level getLevelWithInvertedTriangles() {
@@ -98,13 +106,12 @@ public class ArcadeLevelFactory extends LevelFactory {
             noOfBricks += 2;
             startY += 10;
         }
-        
+
         bricks.get(6).setTarget(true);
         Brick[] brickToToggle = new Brick[]{bricks.get(6)};
         bricks.get(30).setBreakable(false);
         bricks.get(30).addEffect(new ToggleEffect(Arrays.asList(brickToToggle)));
-        
-        
+
         System.out.println("Bricks in pyramid level: " + bricks.size());
 
         List<Ball> balls = new ArrayList();

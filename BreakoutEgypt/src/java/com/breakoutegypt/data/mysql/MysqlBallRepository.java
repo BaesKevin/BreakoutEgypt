@@ -66,12 +66,14 @@ public class MysqlBallRepository implements BallRepository {
             try (
                     ResultSet rs = prep.executeQuery();) {
                 while (rs.next()) {
+                    int ballId = rs.getInt("ballid");
                     int xSpeed = rs.getInt("xspeed");
                     int ySpeed = rs.getInt("yspeed");
                     int shapedimensionId = rs.getInt("shapedimensionid");
                     boolean isStartingBall = rs.getBoolean("isStartingBall");
                     ShapeDimension shapeDimension = new MysqlShapeDimensionRepository().getShapeDimensionById(shapedimensionId);
                     Ball ball = new Ball(shapeDimension, xSpeed, ySpeed);
+                    ball.setBallId(ballId);
                     ball.setStartingBall(isStartingBall);
                     this.balls.add(ball);
                 }
