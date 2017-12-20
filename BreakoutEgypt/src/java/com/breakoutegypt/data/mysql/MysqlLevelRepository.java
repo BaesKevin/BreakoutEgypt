@@ -85,7 +85,6 @@ public class MysqlLevelRepository implements LevelRepository {
                     List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
                     List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
-                    this.addDefaultBallToPowerDown(levelBricks, levelBalls.get(0));
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
                     Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
                     level = new Level(levelid, game, levelstate);
@@ -95,15 +94,6 @@ public class MysqlLevelRepository implements LevelRepository {
 
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load level", ex);
-        }
-    }
-    private void addDefaultBallToPowerDown(List<Brick> levelBricks,Ball levelBall){
-        for(Brick brick:levelBricks){
-            if(brick.hasPowerDown()){
-                if(brick.getPowerDown() instanceof FloodPowerDown){
-                    ((FloodPowerDown)brick.getPowerDown()).setOriginalBall(levelBall);
-                }
-            }
         }
     }
 
@@ -127,9 +117,9 @@ public class MysqlLevelRepository implements LevelRepository {
                 }
                 level.setLevelNumber(levelId); 
             }
+            ballRepo.addBallsForLevel(level.getId(), level.getLevelState().getBalls());
             brickRepo.addBricksForLevel(level.getId(), level.getLevelState().getBricks());
             paddleRepo.addPaddlesForLevel(level.getId(), level.getLevelState().getPaddles());
-            ballRepo.addBallsForLevel(level.getId(), level.getLevelState().getBalls());
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add level", ex);
         }

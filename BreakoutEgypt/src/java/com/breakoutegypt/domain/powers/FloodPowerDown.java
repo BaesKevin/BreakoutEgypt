@@ -45,6 +45,10 @@ public class FloodPowerDown implements PowerDown {
         this.originalBall=originalBall;
     }
     
+    public Ball getOriginalBall(){
+        return this.originalBall;
+    }
+    
     public int getNoOfBalls(){
         return this.noOfBalls;
     }

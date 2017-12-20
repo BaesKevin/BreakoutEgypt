@@ -9,6 +9,7 @@ import com.breakoutegypt.data.PowerDownRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.powers.PowerDown;
+import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.sql.Connection;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class MysqlPowerDownRepository implements PowerDownRepository {
 
-    private final String INSERT_FLOODPOWERDOWN_FORBRICK = "insert into spawnballeffect(brickid,amountofballs) values(?, ?)";
+    private final String INSERT_FLOODPOWERDOWN_FORBRICK = "insert into spawnballeffect(brickid,ballid,amountofballs) values(?, ?, ?)";
     private final String DELETE_FLOODPOWERDOWN_FORBRICK = "delete from spawnballeffect where brickid = ?";
     private final String SELECT_FLOODPOWERDOWN = "select * from spawnballeffect where brickid = ?";
 
@@ -40,8 +41,9 @@ public class MysqlPowerDownRepository implements PowerDownRepository {
             try (ResultSet rs = prep.executeQuery()) {
                 while (rs.next()) {
                     int amount = rs.getInt("amountofballs");
-                    //only the amount is known, levelpaddle will be added in levelRepo
-                    FloodPowerDown floodpowerdown = new FloodPowerDown(amount);
+                    int ballId = rs.getInt("ballid");
+                    Ball defaultBall=ballRepo.getBallById(ballId);
+                    FloodPowerDown floodpowerdown = new FloodPowerDown(defaultBall,amount);
                     brick.setPowerdown(floodpowerdown);
                 }
             }
@@ -63,7 +65,8 @@ public class MysqlPowerDownRepository implements PowerDownRepository {
                 Connection conn = DbConnection.getConnection();
                 PreparedStatement prep = conn.prepareStatement(INSERT_FLOODPOWERDOWN_FORBRICK);) {
             prep.setInt(1, brickId);
-            prep.setInt(2, floodPowerDown.getNoOfBalls());
+            prep.setInt(2, floodPowerDown.getOriginalBall().getBallId());
+            prep.setInt(3, floodPowerDown.getNoOfBalls());
             prep.executeUpdate();
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't insert powerdowns for brick");

@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface BallRepository {
     public List<Ball> getBalls();
+    public Ball getBallById(int id);
     public List<Ball> getBallsByLevelId(int id);
     public void addBall(Ball ball);
     public void addBallsForLevel(int levelId, List<Ball> balls);

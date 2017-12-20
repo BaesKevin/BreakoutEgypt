@@ -24,12 +24,13 @@ import java.util.List;
 public class MysqlBallRepository implements BallRepository {
 
     private final String SELECT_ALL_BALLS = "select * from balls";
+    private final String SELECT_BALLBYID = "select * from balls where ballid = ?";
     private final String SELECT_BALLS_BYLEVELID = "select * from balls join levelballs on levelballs.idball=balls.ballid where levelid = ?";
     private final String INSERT_BALL = "insert into balls(shapedimensionid,xspeed,yspeed) values(?, ?, ?)";
     private final String DELETE_BALL = "delete from balls where ballid = ?";
     private final String INSERT_LEVELBALLS = "insert into levelballs(levelid,idball) values(?, ?)";
     private final String DELETE_LEVELBALLS = "delete from levelballs where levelid = ?";
-    
+
     private List<Ball> balls;
 
     @Override
@@ -44,7 +45,7 @@ public class MysqlBallRepository implements BallRepository {
                 int ySpeed = rs.getInt("yspeed");
                 int shapedimensionId = rs.getInt("shapedimensionid");
                 ShapeDimension shapeDimension = new MysqlShapeDimensionRepository().getShapeDimensionById(shapedimensionId);
-                Ball ball = new Ball(shapeDimension,xSpeed,ySpeed);
+                Ball ball = new Ball(shapeDimension, xSpeed, ySpeed);
                 this.balls.add(ball);
             }
             return this.balls;
@@ -67,7 +68,7 @@ public class MysqlBallRepository implements BallRepository {
                     int ySpeed = rs.getInt("yspeed");
                     int shapedimensionId = rs.getInt("shapedimensionid");
                     ShapeDimension shapeDimension = new MysqlShapeDimensionRepository().getShapeDimensionById(shapedimensionId);
-                    Ball ball = new Ball(shapeDimension,xSpeed,ySpeed);
+                    Ball ball = new Ball(shapeDimension, xSpeed, ySpeed);
                     this.balls.add(ball);
                 }
                 return this.balls;
@@ -79,80 +80,99 @@ public class MysqlBallRepository implements BallRepository {
 
     @Override
     public void addBall(Ball ball) {
-        MysqlShapeDimensionRepository shapedimensionRepo=new MysqlShapeDimensionRepository();
+        MysqlShapeDimensionRepository shapedimensionRepo = new MysqlShapeDimensionRepository();
         shapedimensionRepo.addShapeDimension(ball.getShape());
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_BALL,PreparedStatement.RETURN_GENERATED_KEYS);
-                ){
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_BALL, PreparedStatement.RETURN_GENERATED_KEYS);) {
             prep.setInt(1, ball.getShape().getShapeId());
-            prep.setInt(2, (int)ball.getXspeed());
-            prep.setInt(3, (int)ball.getYspeed());
+            prep.setInt(2, (int) ball.getXspeed());
+            prep.setInt(3, (int) ball.getYspeed());
             prep.executeUpdate();
-            try(ResultSet rs=prep.getGeneratedKeys();){
+            try (ResultSet rs = prep.getGeneratedKeys();) {
                 int ballId = -1;
-                if(rs.next()){
-                    ballId=rs.getInt(1);
+                if (rs.next()) {
+                    ballId = rs.getInt(1);
                 }
-                if(ballId<0){
+                if (ballId < 0) {
                     throw new BreakoutException("Unable to add ball");
                 }
                 ball.setBallId(ballId);
             }
-            
+
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't add ball",ex);
+            throw new BreakoutException("Couldn't add ball", ex);
         }
     }
 
     @Override
     public void removeBall(Ball ball) {
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_BALL);
-                ){
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_BALL);) {
             prep.setInt(1, ball.getBallId());
             prep.executeUpdate();
-            MysqlShapeDimensionRepository shapedimensionRepo=new MysqlShapeDimensionRepository();
+            MysqlShapeDimensionRepository shapedimensionRepo = new MysqlShapeDimensionRepository();
             shapedimensionRepo.removeShapeDimension(ball.getShape());
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't remove ball",ex);
+            throw new BreakoutException("Couldn't remove ball", ex);
         }
     }
 
     @Override
     public void addBallsForLevel(int levelId, List<Ball> balls) {
-        for(Ball ball:balls){
+        for (Ball ball : balls) {
             this.addBall(ball);
             this.populateLevelBalls(levelId, ball);
         }
     }
-    private void populateLevelBalls(int levelId, Ball ball){
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_LEVELBALLS);
-                ){
+
+    private void populateLevelBalls(int levelId, Ball ball) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_LEVELBALLS);) {
             prep.setInt(1, levelId);
             prep.setInt(2, ball.getBallId());
             prep.executeUpdate();
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't add ball",ex);
+            throw new BreakoutException("Couldn't add ball", ex);
         }
     }
 
     @Override
     public void removeLevelBalls(int levelId, List<Ball> balls) {
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_LEVELBALLS);
-                ){
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_LEVELBALLS);) {
             prep.setInt(1, levelId);
             prep.executeUpdate();
-            for(Ball ball:balls){
+            for (Ball ball : balls) {
                 this.removeBall(ball);
             }
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't remove balls",ex);
+            throw new BreakoutException("Couldn't remove balls", ex);
+        }
+    }
+
+    @Override
+    public Ball getBallById(int id) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(SELECT_BALLBYID);) {
+            prep.setInt(1, id);
+            try (ResultSet rs = prep.executeQuery()) {
+                Ball ball = null;
+                while (rs.next()) {
+                    int xSpeed = rs.getInt("xspeed");
+                    int ySpeed = rs.getInt("yspeed");
+                    int shapedimensionId = rs.getInt("shapedimensionid");
+                    ShapeDimension shapeDimension = new MysqlShapeDimensionRepository().getShapeDimensionById(shapedimensionId);
+                    ball = new Ball(shapeDimension, xSpeed, ySpeed);
+                }
+                return ball;
+            }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't get ball", ex);
         }
     }
 }
