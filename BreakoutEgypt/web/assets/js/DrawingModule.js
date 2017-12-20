@@ -253,8 +253,11 @@ let DrawingModule = (function () {
         explosions.push(boom);
     }
 
-    function createPattern(image, mode) {
-        return brickCtx.createPattern(image, mode);
+    function createPattern(image, mode, ctx) {
+        if (ctx === undefined) {
+            ctx = brickCtx;
+        }
+        return ctx.createPattern(image, mode);
     }
 
     return {

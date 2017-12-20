@@ -119,7 +119,10 @@ const ModalModule = (function () {
             let levelid = $("#levelid").val();
             document.location = "arcade?startLevel=" + levelid + "&difficulty=" + difficulty;
         }
-
+    }
+    
+    function redirectToExplanation() {
+        document.location = "explanation";
     }
 
     function doDocumentLoaded() {
@@ -127,6 +130,7 @@ const ModalModule = (function () {
         $("#returnToMain").on("click", redirectToMainMenu);
         $("#toMultiplayer").on("click", redirectToMultiplayer);
         $("#toHighscores").on("click", redirectToHighscore);
+        $("#toExplanation").on("click", redirectToExplanation);
         $("#modalPlaceholder").on("click", "#mainMenuModalButton", redirectToMainMenu);
         $("#modalPlaceholder").on("click", "#highscoreModalButton", redirectToHighscore);
         $("#modalPlaceholder").on("click", "#returnToMain", redirectToMainMenu);

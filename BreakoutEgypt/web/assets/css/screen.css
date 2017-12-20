@@ -35,7 +35,7 @@ footer{
     padding:10px;
     margin-left:auto;
     margin-right:auto;
-    margin-top: 5%;
+    margin-top: 2%;
     width:40%;
     background-color:#fe9933;
     border: 1px solid black;
@@ -110,7 +110,7 @@ footer{
 .back {
     margin-top: 5px;
     margin-left: 5px;
-    margin-top: 5%;
+    margin-top: 2%;
     border-radius: 4px;
     background-color:#fe9933;
     position: absolute;
@@ -127,4 +127,9 @@ footer{
     color: white;
     background-color:#cb7a28;
     text-decoration: none;
+}
+
+.user {
+    margin-top: 0.5em;
+    font-size: 1.2em;
 }
