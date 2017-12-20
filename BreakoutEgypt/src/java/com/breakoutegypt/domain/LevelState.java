@@ -483,4 +483,14 @@ public class LevelState {
         
         return null;
     }
+    
+    public Paddle getPaddleWithPlayerIndex(int index) {
+        
+        for (Paddle p : paddles) {
+            if (p.getPlayerIndex() == index) {
+                return p;
+            }
+        }
+        return null;
+    }
 }

@@ -93,7 +93,6 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         FloorPowerUp floorInLevel = getActiveFloorForPlayer(floorPowerup.getPlayerId());
 
         PowerUpMessage m = new PowerUpMessage("floor", floorPowerup, PowerUpMessageType.NULLMESSAGE);
-        m.setRecipientIndex(floorPowerup.getPlayerId());
         if (floorInLevel == null) {
             this.activeFloorPowerUps.add(floorPowerup);
             floorPowerup.setIsVisible(true);
@@ -101,13 +100,11 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
             levelState.addFloor(floorPowerup);
             breakoutWorld.spawn(floorPowerup);
             m = new PowerUpMessage("floor", floorPowerup, PowerUpMessageType.ACTIVATEFLOOR);
-            m.setRecipientIndex(floorPowerup.getPlayerId());
         } else {
             floorInLevel.addTime(floorPowerup.getTimeVisible());
             floorPowerup.setIsVisible(true);
         }
-        //check remove??
-        playerToPowerUpMap.remove(floorPowerup.getPlayerId(), floorPowerup);
+        m.setRecipientIndex(floorPowerup.getPlayerId());
         removePowerUpFromMap(floorPowerup);
         return m;
     }
@@ -118,7 +115,6 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         BrokenPaddlePowerUp brokenPaddleInLevel = getActiveBrokenPaddleForPlayer(bppu.getPlayerId());
 
         PowerUpMessage m = new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.NULLMESSAGE);
-        m.setRecipientIndex(bppu.getPlayerId());
 
         if (brokenPaddleInLevel == null) {
             this.activeBrokenPaddlePowerUps.add(bppu);
@@ -131,12 +127,12 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
                 breakoutWorld.spawn(p);
             }
             m = new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.ACTIVATEBROKENPADDLE);
-            m.setRecipientIndex(bppu.getPlayerId());
         } else {
             brokenPaddleInLevel.addTime(bppu.getTimeVisible());
         }
+        m.setRecipientIndex(bppu.getPlayerId());
+
         removePowerUpFromMap(bppu);
-//        playerToPowerUpMap.remove(bppu.getPlayerId(), bppu);
         return m;
     }
 
@@ -146,18 +142,14 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         List<FloorPowerUp> floorsToRemove = new ArrayList();
         List<BrokenPaddlePowerUp> paddlesToRemove = new ArrayList();
         for (FloorPowerUp fpu : activeFloorPowerUps) {
-
             if (removeFloorIfTimedOut(fpu, repo)) {
                 floorsToRemove.add(fpu);
             }
-
         }
         for (BrokenPaddlePowerUp bppu : activeBrokenPaddlePowerUps) {
-
             if (removeBrokenPaddleIfTimedOut(bppu, repo)) {
                 paddlesToRemove.add(bppu);
             }
-
         }
         activeBrokenPaddlePowerUps.removeAll(paddlesToRemove);
         activeFloorPowerUps.removeAll(floorsToRemove);
@@ -209,8 +201,8 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         } else {
             b.setAcidballPowerup(abpu);
         }
-        removePowerUpFromMap(abpu);
-//        playerToPowerUpMap.remove(abpu.getPlayerId(), abpu);
+        playerToPowerUpMap.get(abpu.getPlayerId()).remove(abpu);
+        msg.setRecipientIndex(abpu.getPlayerId());
         return msg;
     }
 

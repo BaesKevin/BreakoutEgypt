@@ -177,6 +177,8 @@ public class PowerUpTest {
 
         level.triggerPowerup(powerups.get(0).getName(),1);
         stepTimes(level, 1);
+        
+        powerups = bpuh.getPowerUps();
         level.triggerPowerup(powerups.get(0).getName(),1);
 
         assertEquals(2, level.getLevelState().getBall().getAcidBall().getRange());
@@ -197,9 +199,10 @@ public class PowerUpTest {
 
         level.triggerPowerup(powerups.get(0).getName(),1);
         int initialTime = level.getLevelState().getFloor().getTimeVisible();
+        powerups = bpuh.getPowerUps();
         level.triggerPowerup(powerups.get(0).getName(),1);
         
-        assertEquals(initialTime*2, level.getLevelState().getFloor().getTimeVisible());
+        assertEquals(initialTime*2, level.getPoweruphandler().getActiveFloorForPlayer(1).getTimeVisible());
     }
 
     @Test
@@ -217,6 +220,7 @@ public class PowerUpTest {
 
         level.triggerPowerup(powerups.get(0).getName(),1);
         int initialTime = level.getPoweruphandler().getPaddlePowerup().get(0).getTimeVisible();
+        powerups = bpuh.getPowerUps();
         level.triggerPowerup(powerups.get(0).getName(),1);
 
         assertEquals(initialTime * 2, level.getPoweruphandler().getPaddlePowerup().get(0).getTimeVisible());

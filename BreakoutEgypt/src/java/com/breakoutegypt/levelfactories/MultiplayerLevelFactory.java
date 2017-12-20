@@ -87,7 +87,7 @@ public class MultiplayerLevelFactory extends LevelFactory {
         balls.add(ball);
         balls.add(ball2);
         
-        LevelState initialState = new LevelState(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY), false, true);
+        LevelState initialState = new LevelState(balls, paddles, bricks, Repositories.getDifficultyRepository().findByName(GameDifficulty.EASY), true, true);
         return new Level(currentLevelId, game, initialState);
 
     }

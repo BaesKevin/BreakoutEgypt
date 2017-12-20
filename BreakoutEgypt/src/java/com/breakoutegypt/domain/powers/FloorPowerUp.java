@@ -32,6 +32,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
         this.timeVisible = timeVisible;
         isVisible = false;
         startTime = timeVisible;
+        this.name = s.getName();
         BodyConfiguration floorConfig = BodyConfigurationFactory.getInstance().createFloorConfig(s);
         this.setBox2dConfig(floorConfig);
         this.playerId = 1;
@@ -75,7 +76,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
 
     @Override
     public String getName() {
-        return super.getName();
+        return this.name;
     }
 
     @Override
