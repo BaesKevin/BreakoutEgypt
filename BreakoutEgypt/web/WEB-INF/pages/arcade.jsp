@@ -1,21 +1,4 @@
-<%-- 
-    Document   : arcade
-    Created on : 23-nov-2017, 15:53:56
-    Author     : Bjarne Deketelaere
---%>
-
-<%@page import="com.breakoutegypt.domain.User"%>
-<%@page import="com.breakoutegypt.domain.User"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Breakout</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css"/>
-        <link rel="stylesheet" href="assets/css/screen.css"/>
+<%@include file="../jspf/_head.jspf" %>
         <link rel="stylesheet" href="assets/css/arcade.css"/>
     </head>
     <body>
@@ -41,9 +24,7 @@
         %>
 
         <div id="modalPlaceholder"></div>
-        <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="assets/js/popper.min.js"></script>
-        <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+        <%@include file="../jspf/_defaultJS.jspf" %>
         <script type="text/javascript" src="assets/js/effects/vector.js"></script>
         <script type="text/javascript" src="assets/js/effects/Particle.js"></script>
         <script type="text/javascript" src="assets/js/effects/Explosion.js"></script>

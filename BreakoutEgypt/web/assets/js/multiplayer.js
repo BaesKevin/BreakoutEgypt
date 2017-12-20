@@ -5,7 +5,7 @@ var redirectToMainMenu = function (e) {
 };
 
 function toVersus(e){
-    location.replace('versus.jsp');
+    location.replace('toVersus');
 }
 
 function joinVersusGame(e){

@@ -83,6 +83,7 @@ public class BreakoutController extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/pages/explanation.jsp").forward(request, response);
                 break;
             default:
+                break;
         }
     }
 

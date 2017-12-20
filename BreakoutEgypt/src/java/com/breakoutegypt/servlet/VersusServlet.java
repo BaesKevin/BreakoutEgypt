@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author kevin
  */
-@WebServlet(name = "VersusServlet", urlPatterns = {"/versus", "/versusLobby"})
+@WebServlet(name = "VersusServlet", urlPatterns = {"/versus", "/versusLobby", "/toVersus"})
 public class VersusServlet extends HttpServlet {
 
     /**
@@ -41,6 +41,9 @@ public class VersusServlet extends HttpServlet {
         String path = request.getServletPath();
         System.out.println("PATH: " + path);
         switch (path) {
+            case "/toVersus":
+                request.getRequestDispatcher("WEB-INF/versus.jsp").forward(request, response);
+                break;
             case "/versusLobby":
                 createVersusLobby(request, response);
                 break;
@@ -77,7 +80,7 @@ public class VersusServlet extends HttpServlet {
             System.out.println(boe.getMessage());
             request.setAttribute("error", boe.getMessage());
 //            response.sendRedirect("versusLobby.jsp");
-            request.getRequestDispatcher("versus.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/versus.jsp").forward(request, response);
         } 
 
     }

@@ -1,15 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Breakout</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css"/>
-        <link rel="stylesheet" href="assets/css/screen.css"/>
+<%@include file="jspf/_head.jspf" %>
         <link rel="stylesheet" href="assets/css/arcade_levels.css"/>
     </head>
     <body>
@@ -50,6 +39,7 @@
 
                 </ul>
             </form>
+            <%@include file="jspf/_footer.jspf" %>
         </div>
         <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery-3.2.1.min.js"></script>   
         <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/UtilModule.js"></script>

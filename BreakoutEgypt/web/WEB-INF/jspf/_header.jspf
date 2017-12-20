@@ -1,0 +1,10 @@
+</head>
+    <body>
+
+    <body>
+        <div class="container-fluid">
+            <header class="row">
+                <div class="col-lg-12 text-center text-capitalize">
+                    <h1>Breakout Egypt</h1>
+                </div>
+            </header>
