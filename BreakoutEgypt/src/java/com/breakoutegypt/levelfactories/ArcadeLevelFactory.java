@@ -35,7 +35,7 @@ public class ArcadeLevelFactory extends LevelFactory {
     private Difficulty difficulty;
 
     public ArcadeLevelFactory(Game game, Difficulty difficulty) {
-        super(game, 5, 5);
+        super(game, 5, 5, "arcade");
         this.difficulty = difficulty;
     }
 
@@ -46,6 +46,12 @@ public class ArcadeLevelFactory extends LevelFactory {
     
      @Override
     protected void createCurrentLevel() {
+        
+        LevelPack pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
+        if(pack == null){
+            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", 5,5));
+        }
+        
         switch (currentLevelId) {
             case 1:
                 currentLevel = getSimpleTestLevel();
@@ -64,6 +70,10 @@ public class ArcadeLevelFactory extends LevelFactory {
                 currentLevel = getLevelWithFloodPowerDown();
                 break;
         }
+        
+        currentLevel.setLevelPackId(currentLevelId);
+        Repositories.getLevelRepository().addLevel(currentLevel);
+        currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
     }
 
     public Level getLevelWithInvertedTriangles() {

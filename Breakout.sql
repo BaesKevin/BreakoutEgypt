@@ -89,6 +89,7 @@ create table bricks(
     isbreakable bool,
     isVisible bool,
     istarget bool,
+    isInverted bool,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension),
     foreign key(typeid) references brick_types(id)
 )engine=innodb;

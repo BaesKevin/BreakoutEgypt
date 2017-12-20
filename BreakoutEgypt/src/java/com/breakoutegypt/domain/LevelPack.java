@@ -15,20 +15,18 @@ public class LevelPack {
     private int id;
     private String name;
     private String description;
-    private List<Level> levels;
     private int defaultOpenLevels;
     private int totalLevels; // necessary for showLevelServlet
 
     
-    public LevelPack(String name, String description, List<Level> levels, int defaultOpenLevels, int totalLevels) {
-        this(0, name, description, levels, defaultOpenLevels, totalLevels);
+    public LevelPack(String name, String description, int defaultOpenLevels, int totalLevels) {
+        this(0, name, description, defaultOpenLevels, totalLevels);
     }
 
-    public LevelPack(int id, String name, String description, List<Level> levels,int defaultOpenLevels, int totalLevels) {
+    public LevelPack(int id, String name, String description,int defaultOpenLevels, int totalLevels) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.levels = levels;
         this.defaultOpenLevels = defaultOpenLevels;
         this.totalLevels = totalLevels;
     }
@@ -57,33 +55,12 @@ public class LevelPack {
         this.description = description;
     }
 
-    public List<Level> getLevels() {
-        return levels;
-    }
-
-    public void setLevels(List<Level> levels) {
-        this.levels = levels;
-    }
-
     public int getDefaultOpenLevels() {
         return defaultOpenLevels;
     }
 
     public void setDefaultOpenLevels(int defaultOpenLevels) {
         this.defaultOpenLevels = defaultOpenLevels;
-    }
-    
-    public Level getLevelByNumber(int number){
-        Level level = null;
-        
-        for(Level l : levels){
-            if(l.getLevelNumber() == number){
-                level = l;
-                break;
-            }
-        }
-        
-        return level;
     }
 
     public int getTotalLevels() {

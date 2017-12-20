@@ -38,7 +38,8 @@ public class Level implements BreakoutWorldEventListener {
     private int levelNumber;
     private String levelName="";
     private String levelDescription="";
-
+    private int levelPackId;
+    
     private Timer timer;
     private Game game;
 
@@ -101,6 +102,9 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
         this.invertedControls = false;
         startedLevelMap = new HashMap();
+        
+        this.levelName = "level" + id;
+        this.levelDescription = "description";
     }
 
     public void setId(int id){ this.id = id; }
@@ -138,6 +142,14 @@ public class Level implements BreakoutWorldEventListener {
 
     public boolean isLevelStarted() {
         return levelStarted;
+    }
+
+    public int getLevelPackId() {
+        return levelPackId;
+    }
+
+    public void setLevelPackId(int levelPackId) {
+        this.levelPackId = levelPackId;
     }
 
     

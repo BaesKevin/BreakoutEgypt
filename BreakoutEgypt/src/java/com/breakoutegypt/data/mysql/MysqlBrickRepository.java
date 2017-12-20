@@ -36,7 +36,7 @@ public class MysqlBrickRepository implements BrickRepository {
     private final String SELECT_ALL_BRICKS = "select * from bricks";
     private final String SELECT_ALL_LEVELBRICKS_BYLEVELID = "select bricks.* from bricks inner join levelbricks on levelbricks.brickid=bricks.brickid where levelbricks.levelid = ?";
     private final String SELECT_BRICK_BY_ID = "select * from bricks where brickId=?";
-    private final String INSERT_BRICK = "insert into bricks(shapedimensionid,typeid,isbreakable,isvisible,istarget) values(?, ?, ?, ?, ? )";
+    private final String INSERT_BRICK = "insert into bricks(shapedimensionid,typeid,isbreakable,isvisible,istarget, isInverted) values(?, ?, ?, ?, ?, ? )";
     private final String DELETE_BRICK = "delete from bricks where brickid = ?";
     private final String DELETE_LEVELBRICKS = "delete from levelbricks where levelid = ?";
     private final String INSERT_LEVELBRICKS = "insert into levelbricks(levelid,brickid) values(?,?)";
@@ -124,17 +124,18 @@ public class MysqlBrickRepository implements BrickRepository {
 
     public void initializeBricks(ResultSet rs) throws SQLException {
         int brickId = rs.getInt("brickid");
-        boolean isVisible = rs.getBoolean("isvisible");
+        boolean isVisible = rs.getBoolean("isVisible");
         boolean isBreakable = rs.getBoolean("isbreakable");
         boolean isTarget = rs.getBoolean("istarget");
+        boolean isInverted = rs.getBoolean("isInverted");
         ShapeDimension dimension = Repositories.getShapeDimensionRepository().getShapeDimensionById(rs.getInt("shapedimensionid"));
         BrickType bricktype = Repositories.getBrickTypeRepository().getBrickTypeById(rs.getInt("typeid"));
-        Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable);
+        Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable, isInverted);
         brick.setBrickId(brickId);
 //        EffectRepository effectRepo = new MysqlEffectRepository();
-        PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
+//        PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
 //        effectRepo.giveEffectsToBrick(brick);
-        powerdownRepo.givePowerDownToBrick(brick);
+//        powerdownRepo.givePowerDownToBrick(brick);
         this.bricks.add(brick);
     }
 
@@ -154,6 +155,7 @@ public class MysqlBrickRepository implements BrickRepository {
             prep.setBoolean(3, brick.isBreakable());
             prep.setBoolean(4, brick.isVisible());
             prep.setBoolean(5, brick.isTarget());
+            prep.setBoolean(6, brick.isInverted());
             prep.executeUpdate();
             try (ResultSet rs = prep.getGeneratedKeys()) {
                 int brickId = -1;

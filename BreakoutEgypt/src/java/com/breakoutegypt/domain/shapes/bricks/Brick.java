@@ -70,7 +70,7 @@ public class Brick extends RegularBody {
 
         effects = new ArrayList();
 
-        if (isVisible && isBreakable) {
+        if (isBreakable) {
             effects.add(new ExplosiveEffect(this, 0));
         }
 
@@ -230,5 +230,9 @@ public class Brick extends RegularBody {
     
     public void setBrickId(int brickId){
         this.brickId=brickId;
+    }
+    
+    public boolean isInverted(){
+        return isInverted;
     }
 }

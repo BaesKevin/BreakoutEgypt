@@ -52,10 +52,6 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
                 pack.setId(packId);
 //                level.setLevelNumber(levelId); 
             }
-            
-             for(Level level : pack.getLevels()){
-                 levelRepo.addLevel(level);
-             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add level", ex);
         }
@@ -64,7 +60,7 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
    
 
     @Override
-    public LevelPack getByName(String name, Game game) {
+    public LevelPack getByName(String name) {
         LevelPack pack = null;
         
         try (
@@ -79,10 +75,8 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
                     String packName = rs.getString("name");
                     String description = rs.getString("description");
                     int openLevels = rs.getInt("default_open_levels");
-                    
-                    List<Level> levels = levelRepo.getLevelsByPackId(packId, game);
-                    
-                    pack = new LevelPack(packId, name, description, levels, openLevels, levels.size());
+                    int totalLevels = rs.getInt("total_levels");
+                    pack = new LevelPack(packId, packName, description, openLevels, totalLevels);
                 }
                 
             }
@@ -94,34 +88,6 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
         
         return pack;
     }
-
-    @Override
-    public LevelPack getByNameWithoutLevels(String name) {
-        try (
-                Connection conn = DbConnection.getConnection();
-                PreparedStatement prep = conn.prepareStatement(SELECT_BY_NAME);) {
-            prep.setString(1, name);
-            try (
-                    ResultSet rs = prep.executeQuery();) {
-                LevelPack pack = null;
-                while (rs.next()) {
-                    int packId = rs.getInt("id");
-                    String packName = rs.getString("name");
-                    String description = rs.getString("description");
-                    int openLevels = rs.getInt("default_open_levels");                    
-                    int totalLevels = rs.getInt("total_levels");
-
-                    
-                    pack = new LevelPack(packId, name, description, new ArrayList(), openLevels, totalLevels);
-                }
-                return pack;
-            }
-
-        } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't load level", ex);
-        }
-    }
-    
     
     
 }

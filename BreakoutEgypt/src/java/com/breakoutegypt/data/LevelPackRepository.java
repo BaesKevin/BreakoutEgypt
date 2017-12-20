@@ -11,9 +11,9 @@ import com.breakoutegypt.domain.LevelPack;
 /**
  *
  * @author kevin
+ * levelpackrepositories  should not add levels to the pack, this is just to get information
  */
 public interface LevelPackRepository {
     void add(LevelPack pack);
-    LevelPack getByName(String name, Game game);
-    LevelPack getByNameWithoutLevels(String name);
+    LevelPack getByName(String name);
 }

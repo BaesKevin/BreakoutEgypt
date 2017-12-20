@@ -25,7 +25,7 @@ import java.util.List;
 public class MultiplayerLevelFactory extends LevelFactory {
 
     public MultiplayerLevelFactory(Game game) {
-        super(game, 2);
+        super(game, 2, 2, "multiplayer");
     }
 
     @Override

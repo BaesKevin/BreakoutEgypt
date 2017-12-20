@@ -35,10 +35,10 @@ public class TestLevelFactory extends LevelFactory {
 
     public static final int DEFAULT_OPEN_LEVELS = 500;
     public final int totalLevels = 1000;
-    private Difficulty difficulty = Repositories.getDifficultyRepository().findByName("easy");
+    private Difficulty difficulty = Repositories.getDifficultyRepository().findByName(Difficulty.EASY);
 
     public TestLevelFactory(Game game) {
-        super(game, 1000, DEFAULT_OPEN_LEVELS);
+        super(game, 1000, DEFAULT_OPEN_LEVELS, "test");
     }
 
     @Override
@@ -108,9 +108,8 @@ public class TestLevelFactory extends LevelFactory {
 //    }
     @Override
     protected void createCurrentLevel() {
-        Level level = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
+        
 
-        if (level == null) {
             switch (currentLevelId) {
                 case 1:
                     currentLevel = getOutOfBoundsTest();
@@ -179,10 +178,8 @@ public class TestLevelFactory extends LevelFactory {
                     // if there is a last level in this factory the liferegeneration can't be tested
                     currentLevel = getOneTargetBrickTest();
             }
-        }
         
-        Repositories.getLevelRepository().addLevel(level);
-        currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
+        
 
     }
 

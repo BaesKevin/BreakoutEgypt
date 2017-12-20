@@ -6,6 +6,7 @@
 package com.breakoutegypt.data.mysql;
 
 import com.breakoutegypt.data.LevelRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.mysql.util.DbConnection;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameType;
@@ -91,6 +92,9 @@ public class MysqlLevelRepository implements LevelRepository {
                     List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
                     List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
+                    
+                    Repositories.getPowerdownRepo().givePowerDownToBricks(levelBricks, levelBalls);
+                    
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
 //                    Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
                     level = new Level(levelid, game, levelstate);
@@ -181,7 +185,7 @@ public class MysqlLevelRepository implements LevelRepository {
                 Connection conn=DbConnection.getConnection();
                 PreparedStatement prep=conn.prepareStatement(INSERT_LEVEL,PreparedStatement.RETURN_GENERATED_KEYS);
                 ){
-            prep.setInt(1, 1);
+            prep.setInt(1, level.getLevelPackId());
             prep.setString(2, level.getLevelName());
             prep.setString(3, level.getLevelDescription());
             prep.setInt(4, level.getLevelNumber());
