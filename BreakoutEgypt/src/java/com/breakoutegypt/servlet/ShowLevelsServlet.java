@@ -35,11 +35,11 @@ public class ShowLevelsServlet extends HttpServlet {
     public static final String MEDIUM = "medium";
     public static final String HARD = "hard";
     public static final String BRUTAL = "brutal";
-    
+
     public static String DIFFICULTIES = "difficulties";
-    
+
     public static final String DEFAULT_DIFFICULTY = "medium";
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -53,11 +53,10 @@ public class ShowLevelsServlet extends HttpServlet {
         try {
             GameType gameType = getGameTypeFromRequestOrThrow(request);
             String difficulty = request.getParameter("difficulty");
-            
+
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
-            LevelPack pack = Repositories.getLevelPackRepository().getByNameWithoutLevels("arcade");
-            int totalLevels = pack.getTotalLevels();
-            int defaultLevels = pack.getDefaultOpenLevels();
+            int totalLevels = new ArcadeLevelFactory(null, null).getTotalLevels();
+            int defaultLevels = new ArcadeLevelFactory(null, null).getDefaultOpenLevels();
 
             if (levelReached < defaultLevels) {
                 levelReached = defaultLevels;
@@ -66,7 +65,7 @@ public class ShowLevelsServlet extends HttpServlet {
             request.setAttribute(TOTAL_LEVELS, totalLevels);
             request.setAttribute(LEVEL_REACHED, levelReached);
             request.setAttribute(DIFFICULTIES, Repositories.getDifficultyRepository().findAll());
-            
+
             request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());

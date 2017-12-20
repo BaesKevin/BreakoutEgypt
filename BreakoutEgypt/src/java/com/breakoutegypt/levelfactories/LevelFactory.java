@@ -30,8 +30,6 @@ public abstract class LevelFactory {
     protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
     protected final static DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
-    protected LevelPackRepository levelPackRepo = Repositories.getLevelPackRepository();
-    protected LevelPack pack;
     
     public LevelFactory(Game game, int totalLevels) {
         this(game, totalLevels, totalLevels);
@@ -54,12 +52,9 @@ public abstract class LevelFactory {
         return currentLevel;
     }
     
-    protected void createCurrentLevel(){
-        currentLevel = pack.getLevelByNumber(currentLevelId);
-    }
     
-    public abstract LevelPack createLevelPack();
-
+    protected abstract void createCurrentLevel();
+    
     public Level getNextLevel() {
         currentLevelId++;// TODO don't do this
         createCurrentLevel();

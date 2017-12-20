@@ -26,7 +26,6 @@ public class Repositories {
     private static DefaultShapeRepository defaultShapeRepository = DefaultShapeRepository.getInstance();
     private static UserRepository userRepository = null;
     private static LevelRepository levelRepo = new MysqlLevelRepository();
-    private static LevelPackRepository levelPackRepo = new MysqlLevelPackRepository();
     
     public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
@@ -59,10 +58,6 @@ public class Repositories {
 
     public static LevelRepository getLevelRepository() {
         return levelRepo;
-    }
-
-    public static LevelPackRepository getLevelPackRepository() {
-        return levelPackRepo;
     }
 
     public static EffectRepository getEffectRepository() {

@@ -49,8 +49,9 @@ public class Game {
 
         manager = new SessionManager(numberOfPlayers);
 
-        levelFactory = createLevelFactoryForGameType(gameType, difficulty);
+        
         isFirstLevel = true;
+        levelFactory = createLevelFactoryForGameType(gameType, difficulty);
     }
 
     private LevelFactory createLevelFactoryForGameType(GameType gameType, Difficulty difficulty) {

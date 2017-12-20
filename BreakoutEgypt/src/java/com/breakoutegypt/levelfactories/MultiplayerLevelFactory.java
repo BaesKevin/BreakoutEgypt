@@ -26,22 +26,6 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
     public MultiplayerLevelFactory(Game game) {
         super(game, 1);
-        
-        pack = Repositories.getLevelPackRepository().getByName("multiplayer", game);
-        
-        if (pack == null) {
-            pack = createLevelPack();
-            Repositories.getLevelPackRepository().add(pack);
-        }
-    }
-
-    @Override
-    public LevelPack createLevelPack() {
-        List<Level> levels = new ArrayList();
-
-        levels.add(makePong());
-
-        return new LevelPack("multiplayer", "versus levels", levels, 1, 1);
     }
 
     @Override

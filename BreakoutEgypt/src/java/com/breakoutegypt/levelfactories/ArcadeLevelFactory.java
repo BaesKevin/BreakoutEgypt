@@ -35,30 +35,46 @@ public class ArcadeLevelFactory extends LevelFactory {
     public ArcadeLevelFactory(Game game, Difficulty difficulty) {
         super(game, 5, 5);
         this.difficulty = difficulty;
-        pack = Repositories.getLevelPackRepository().getByName("test", game);
-
-        if (pack == null) {
-            pack = createLevelPack();
-            Repositories.getLevelPackRepository().add(pack);
-        }
     }
 
     @Override
     public Level getCurrentLevel() {
         return currentLevel;
     }
-
-    public LevelPack createLevelPack() {
-        List<Level> levels = new ArrayList();
-        levels.add(getSimpleTestLevel());
-        levels.add(getLevelWithUnbreakableAndExplosive());
-        levels.add(getSimpleTestLevel());
-        levels.get(2).setLevelNumber(3);
-        levels.add(getPossibleRealLevel());
-        levels.add(getLevelWithFloodPowerDown());
-
-        return new LevelPack("arcade", "Regular levels", levels, 5, levels.size());
+    
+     @Override
+    protected void createCurrentLevel() {
+        switch (currentLevelId) {
+            case 1:
+                currentLevel = getSimpleTestLevel();
+                break;
+            case 2:
+                currentLevel = getLevelWithUnbreakableAndExplosive();
+                break;
+            case 3:
+                currentLevel = getSimpleTestLevel();
+                currentLevel.setLevelNumber(3);
+                break;
+            case 4:
+                currentLevel = getPossibleRealLevel();
+                break;
+            case 5:
+                currentLevel = getLevelWithFloodPowerDown();
+                break;
+        }
     }
+
+//    public LevelPack createLevelPack() {
+//        List<Level> levels = new ArrayList();
+//        levels.add(getSimpleTestLevel());
+//        levels.add(getLevelWithUnbreakableAndExplosive());
+//        levels.add(getSimpleTestLevel());
+//        levels.get(2).setLevelNumber(3);
+//        levels.add(getPossibleRealLevel());
+//        levels.add(getLevelWithFloodPowerDown());
+//
+//        return new LevelPack("arcade", "Regular levels", levels, 5, levels.size());
+//    }
 
     public Level getSimpleTestLevel() {
         return getSimpleTestLevel(BreakoutWorld.TIMESTEP_DEFAULT);

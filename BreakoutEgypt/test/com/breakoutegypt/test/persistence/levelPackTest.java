@@ -38,7 +38,7 @@ public class levelPackTest {
         game.initStartingLevel(4, LevelProgressionRepository.getDefault(GameType.ARCADE));
         
         Level level4 = game.getCurrentLevel();
-        String expectedName = "unbreakable and explosive";
+        String expectedName = "Level by ben";
         Assert.assertEquals(4, level4.getLevelNumber());
         Assert.assertEquals(expectedName, level4.getLevelName());
         
