@@ -58,7 +58,7 @@ public abstract class LevelFactory {
         currentLevel = pack.getLevelByNumber(currentLevelId);
     }
     
-    protected abstract void initializeLevels();
+    public abstract LevelPack createLevelPack();
 
     public Level getNextLevel() {
         currentLevelId++;// TODO don't do this

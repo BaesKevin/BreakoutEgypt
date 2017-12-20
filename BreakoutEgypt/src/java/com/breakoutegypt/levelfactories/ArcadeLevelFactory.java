@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
@@ -34,8 +35,12 @@ public class ArcadeLevelFactory extends LevelFactory {
     public ArcadeLevelFactory(Game game, Difficulty difficulty) {
         super(game, 5, 5);
         this.difficulty = difficulty;
-        initializeLevels();
+        pack = Repositories.getLevelPackRepository().getByName("test", game);
 
+        if (pack == null) {
+            pack = createLevelPack();
+            Repositories.getLevelPackRepository().add(pack);
+        }
     }
 
     @Override
@@ -43,24 +48,16 @@ public class ArcadeLevelFactory extends LevelFactory {
         return currentLevel;
     }
 
-    @Override
-    protected void initializeLevels() {
-        if (pack == null) {
-            pack = levelPackRepo.getByName("arcade", game);
+    public LevelPack createLevelPack() {
+        List<Level> levels = new ArrayList();
+        levels.add(getSimpleTestLevel());
+        levels.add(getLevelWithUnbreakableAndExplosive());
+        levels.add(getSimpleTestLevel());
+        levels.get(2).setLevelNumber(3);
+        levels.add(getPossibleRealLevel());
+        levels.add(getLevelWithFloodPowerDown());
 
-            if (pack == null) {
-                List<Level> levels = new ArrayList();
-                levels.add(getSimpleTestLevel());
-                levels.add(getLevelWithUnbreakableAndExplosive());
-                levels.add(getSimpleTestLevel());
-                levels.get(2).setLevelNumber(3);
-                levels.add(getPossibleRealLevel());
-                levels.add(getLevelWithFloodPowerDown());
-                
-                pack = new LevelPack("arcade", "Regular levels", levels, 5, levels.size() );
-                levelPackRepo.add(pack);
-            }
-        }
+        return new LevelPack("arcade", "Regular levels", levels, 5, levels.size());
     }
 
     public Level getSimpleTestLevel() {

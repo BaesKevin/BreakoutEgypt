@@ -26,8 +26,8 @@ import org.junit.runners.Suite;
    LevelPackProgressTest.class,
    PowerDownTest.class,
    LifeRegenerationTest.class,
-   MysqlTest.class,
-   AutomaticIdentificationShapes.class
+//   MysqlTest.class,
+//   AutomaticIdentificationShapes.class
 })
 
 public class BreakoutTestSuite {

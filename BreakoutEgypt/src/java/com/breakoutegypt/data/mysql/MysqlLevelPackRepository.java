@@ -65,13 +65,15 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
 
     @Override
     public LevelPack getByName(String name, Game game) {
+        LevelPack pack = null;
+        
         try (
                 Connection conn = DbConnection.getConnection();
                 PreparedStatement prep = conn.prepareStatement(SELECT_BY_NAME);) {
             prep.setString(1, name);
             try (
                     ResultSet rs = prep.executeQuery();) {
-                LevelPack pack = null;
+                
                 while (rs.next()) {
                     int packId = rs.getInt("id");
                     String packName = rs.getString("name");
@@ -82,12 +84,15 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
                     
                     pack = new LevelPack(packId, name, description, levels, openLevels, levels.size());
                 }
-                return pack;
+                
             }
 
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load level", ex);
         }
+       
+        
+        return pack;
     }
 
     @Override

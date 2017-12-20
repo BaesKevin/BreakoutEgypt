@@ -5,14 +5,13 @@
  */
 package com.breakoutegypt.levelfactories;
 
-import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.LevelState;
-import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
-import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
@@ -27,20 +26,29 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
     public MultiplayerLevelFactory(Game game) {
         super(game, 1);
+        
+        pack = Repositories.getLevelPackRepository().getByName("multiplayer", game);
+        
+        if (pack == null) {
+            pack = createLevelPack();
+            Repositories.getLevelPackRepository().add(pack);
+        }
     }
 
     @Override
-    protected void initializeLevels() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public LevelPack createLevelPack() {
+        List<Level> levels = new ArrayList();
+
+        levels.add(makePong());
+
+        return new LevelPack("multiplayer", "versus levels", levels, 1, 1);
     }
-    
-    
 
-
+    @Override
     public void createCurrentLevel() {
         currentLevel = makePong();
     }
-    
+
     public Level makePong() {
 
         ShapeDimension ballShape = new ShapeDimension("ball", 60, 150, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);

@@ -40,7 +40,12 @@ public class TestLevelFactory extends LevelFactory {
 
     public TestLevelFactory(Game game) {
         super(game, 1000, DEFAULT_OPEN_LEVELS);
-        initializeLevels();
+        pack = Repositories.getLevelPackRepository().getByName("test", game);
+
+        if (pack == null) {
+            pack = createLevelPack();
+            Repositories.getLevelPackRepository().add(pack);
+        }
     }
 
     @Override
@@ -49,38 +54,66 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     @Override
-    protected void initializeLevels() {
-        if (pack == null) {
-            pack = levelPackRepo.getByName("test", game);
+    public LevelPack createLevelPack() {
+        List<Level> levels = new ArrayList();
+        levels.add(getOutOfBoundsTest());
+        levels.add(getTargetBrickTest());
+        levels.add(getSiwtchBrickTest());
+        levels.add(getExplosiveBrickTest());
+        levels.add(getLevelWithMultipleBalls());
+        levels.add(getLevelWithOnlyOneLife());
+        levels.add(getLevelWithOneBrick());
+        levels.add(getLevelWithBrokenPaddle());
+        levels.add(getLevelWithFloor());
+        levels.add(getLevelWithPowerUpBrick());
+        levels.add(getLevelWithExplosiveAndPowerUpBrick());
+        levels.add(getLevelWithBrokenPaddlePowerup());
+        levels.add(getSimpleScoreTestLevel());
+        levels.add(getLevelWith2AcidBalls());
+        levels.add(getLevelWith2Floors());
+        levels.add(getLevelWith2BrokenPaddles());
+        levels.add(getOneTargetBrickTest());
+        levels.add(getLevelWithFloodPowerDown());
+        levels.add(getLevelWithProjectile());
+        levels.add(getLevelWithPowerDownAndExplosive());
 
-            if (pack == null) {
-                List<Level> levels = new ArrayList();
-                levels.add(getOutOfBoundsTest());
-                levels.add(getTargetBrickTest());
-                levels.add(getSiwtchBrickTest());
-                levels.add(getExplosiveBrickTest());
-                levels.add(getLevelWithMultipleBalls());
-                levels.add(getLevelWithOnlyOneLife());
-                levels.add(getLevelWithOneBrick());
-                levels.add(getLevelWithBrokenPaddle());
-                levels.add(getLevelWithFloor());
-                levels.add(getLevelWithPowerUpBrick());
-                levels.add(getLevelWithExplosiveAndPowerUpBrick());
-                levels.add(getLevelWithBrokenPaddlePowerup());
-                levels.add(getSimpleScoreTestLevel());
-                levels.add(getLevelWith2AcidBalls());
-                levels.add(getLevelWith2Floors());
-                levels.add(getLevelWith2BrokenPaddles());
-                levels.add(getOneTargetBrickTest());
-                levels.add(getLevelWithFloodPowerDown());
-                levels.add(getLevelWithProjectile());
-                levels.add(getLevelWithPowerDownAndExplosive());
-                
-                pack = new LevelPack("test", "Testlevels", levels, 500, 1000);
-                levelPackRepo.add(pack);
-            }
-        }
+        return new LevelPack("test", "Testlevels", levels, 500, 1000);
+
     }
+
+//    @Override
+//    public void initializeLevels() {
+//        if (pack == null) {
+//            pack = levelPackRepo.getByName("test", game);
+//
+//            if (pack == null) {
+//                List<Level> levels = new ArrayList();
+//                levels.add(getOutOfBoundsTest());
+//                levels.add(getTargetBrickTest());
+//                levels.add(getSiwtchBrickTest());
+//                levels.add(getExplosiveBrickTest());
+//                levels.add(getLevelWithMultipleBalls());
+//                levels.add(getLevelWithOnlyOneLife());
+//                levels.add(getLevelWithOneBrick());
+//                levels.add(getLevelWithBrokenPaddle());
+//                levels.add(getLevelWithFloor());
+//                levels.add(getLevelWithPowerUpBrick());
+//                levels.add(getLevelWithExplosiveAndPowerUpBrick());
+//                levels.add(getLevelWithBrokenPaddlePowerup());
+//                levels.add(getSimpleScoreTestLevel());
+//                levels.add(getLevelWith2AcidBalls());
+//                levels.add(getLevelWith2Floors());
+//                levels.add(getLevelWith2BrokenPaddles());
+//                levels.add(getOneTargetBrickTest());
+//                levels.add(getLevelWithFloodPowerDown());
+//                levels.add(getLevelWithProjectile());
+//                levels.add(getLevelWithPowerDownAndExplosive());
+//
+//                pack = new LevelPack("test", "Testlevels", levels, 500, 1000);
+//                levelPackRepo.add(pack);
+//            }
+//        }
+//    }
 //    @Override
 //    protected void createCurrentLevel() {
 //        switch (currentLevelId) {
@@ -149,18 +182,13 @@ public class TestLevelFactory extends LevelFactory {
 //                currentLevel = getOneTargetBrickTest();
 //        }
 //    }
-
-    
-    
-    
-
     public Level getLevelWithPowerDownAndExplosive() {
 
         Ball b = shapeRepo.getDefaultBall(50, 40);
         Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 40, 20);
         Brick targetBrick = shapeRepo.getDefaultBrick("brick2", 1, 1, true, false);
         Brick explosiveBrick = shapeRepo.getDefaultBrick("brick3", 50, 20);
-        
+
         Paddle paddle = shapeRepo.getDefaultPaddle();
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
@@ -189,10 +217,10 @@ public class TestLevelFactory extends LevelFactory {
 
         Ball b = shapeRepo.getDefaultBall(30, 50);
         Paddle paddle = shapeRepo.getDefaultPaddle();
-        
+
         Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 30, 20);
         Brick targetBrick = shapeRepo.getDefaultBrick("brick2", 1, 1, true);
-        
+
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
 
@@ -242,7 +270,7 @@ public class TestLevelFactory extends LevelFactory {
     public Level getLevelWith2BrokenPaddles() {
         Ball b = shapeRepo.getDefaultBall(35, 10);
         Paddle paddle = shapeRepo.getDefaultPaddle();
-        
+
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
         List<Ball> balls = new ArrayList();
@@ -255,7 +283,7 @@ public class TestLevelFactory extends LevelFactory {
         Brick brick2 = shapeRepo.getDefaultBrick("brick2", 30, 20);
         Brick brick3 = shapeRepo.getDefaultBrick("brick3", 40, 20);
         Brick brick4 = shapeRepo.getDefaultBrick("brick4", 60, 20, true, false);
-        
+
         bricks.add(brick1);
         bricks.add(brick2);
         bricks.add(brick3);
@@ -275,20 +303,20 @@ public class TestLevelFactory extends LevelFactory {
 
     public Level getLevelWith2Floors() {
 
-        Ball b = shapeRepo.getDefaultBall(55,10);
-        
+        Ball b = shapeRepo.getDefaultBall(55, 10);
+
         List<Ball> balls = new ArrayList();
 
         b.setStartingBall(true);
         balls.add(b);
 
         List<Brick> bricks = new ArrayList();
-        
+
         Brick brick1 = shapeRepo.getDefaultBrick("brick1", 40, 20);
         Brick brick2 = shapeRepo.getDefaultBrick("brick2", 50, 20);
         Brick brick3 = shapeRepo.getDefaultBrick("brick3", 60, 20);
         Brick brick4 = shapeRepo.getDefaultBrick("brick4", 70, 20, true, false);
-        
+
         bricks.add(brick1);
         bricks.add(brick2);
         bricks.add(brick3);
@@ -319,7 +347,7 @@ public class TestLevelFactory extends LevelFactory {
         Brick brick2 = shapeRepo.getDefaultBrick("brick2", 30, 20);
         Brick brick3 = shapeRepo.getDefaultBrick("brick3", 40, 20);
         Brick brick4 = shapeRepo.getDefaultBrick("brick4", 50, 20, true, false);
-        
+
         bricks.add(brick1);
         bricks.add(brick2);
         bricks.add(brick3);
@@ -340,7 +368,7 @@ public class TestLevelFactory extends LevelFactory {
     // complicated tests rely on this level, change with care
     public Level getSimpleScoreTestLevel() {
         ShapeDimension ballShape = new ShapeDimension("ball", 150, 10, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
-        
+
         ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
         List<Ball> balls = new ArrayList();
         Ball b = new Ball(ballShape);
@@ -396,7 +424,7 @@ public class TestLevelFactory extends LevelFactory {
         Ball ball = shapeRepo.getDefaultBall();
         Paddle paddle = shapeRepo.getDefaultPaddle();
         ball.setStartingBall(true);
-        
+
         List<Brick> bricks = new ArrayList();
         bricks.add(shapeRepo.getDefaultBrick("targetbrick1", 20, 20, true));
         bricks.add(shapeRepo.getDefaultBrick("targetbrick1", 45, 20, true));
@@ -411,7 +439,7 @@ public class TestLevelFactory extends LevelFactory {
     public Level getSiwtchBrickTest() {
         Ball ball = shapeRepo.getDefaultBall(70, 50);
         Paddle paddle = shapeRepo.getDefaultPaddle(65);
-        
+
         ball.setStartingBall(true);
         Brick switchBrick = shapeRepo.getDefaultBrick("switchbrick", 62, 40, false, true, false);
         List<Brick> bricks = new ArrayList();
@@ -434,16 +462,16 @@ public class TestLevelFactory extends LevelFactory {
     public Level getExplosiveBrickTest() {
         Ball ball = shapeRepo.getDefaultBall(65, 50);
         Paddle paddle = shapeRepo.getDefaultPaddle();
-        
+
         ball.setStartingBall(true);
 
         List<Brick> bricks = new ArrayList();
         bricks.add(shapeRepo.getDefaultBrick("targetbrick", 40, 40, true));
         bricks.add(shapeRepo.getDefaultBrick("regularbrick", 50, 40));
-        
-        Brick explosive =shapeRepo.getDefaultBrick("explosivebrick", 60, 40);
+
+        Brick explosive = shapeRepo.getDefaultBrick("explosivebrick", 60, 40);
         bricks.add(explosive);
-        
+
         bricks.add(shapeRepo.getDefaultBrick("regularbrick", 70, 40));
 
         explosive.addEffect(new ExplosiveEffect(explosive, 1));
@@ -474,7 +502,7 @@ public class TestLevelFactory extends LevelFactory {
         Ball ball1 = shapeRepo.getDefaultBall(50, 50);
         Ball ball2 = shapeRepo.getDefaultBall(50, 70);
         ball1.setStartingBall(true);
-        
+
         List<Ball> balls = new ArrayList();
         balls.add(ball1);
         balls.add(ball1);
@@ -505,9 +533,9 @@ public class TestLevelFactory extends LevelFactory {
 
         Paddle basePaddle = shapeRepo.getDefaultPaddle();;
         BrokenPaddlePowerUp bp = new BrokenPaddlePowerUp(basePaddle, 0, difficulty.getPowerupTime());
-        
+
         List<Paddle> brokenPaddle = bp.getBrokenPaddle();
-        
+
         Ball ball1 = shapeRepo.getDefaultBall("ball1", brokenPaddle.get(0).getX(), 60);
         Ball ball2 = shapeRepo.getDefaultBall("ball2", brokenPaddle.get(0).getX() + brokenPaddle.get(0).getWidth(), 60);
         Ball ball3 = shapeRepo.getDefaultBall("ball3", brokenPaddle.get(1).getX(), 60);
@@ -548,7 +576,7 @@ public class TestLevelFactory extends LevelFactory {
         List<Brick> bricks = new ArrayList();
         bricks.add(shapeRepo.getDefaultBrick("regularbrick", 50, 20));
         bricks.add(shapeRepo.getDefaultBrick("targetbrick", 80, 20, true));
-        
+
         bricks.get(0).setPowerUp(new FloorPowerUp(shapeRepo.getDefaultFloor(), difficulty.getPowerupTime()));
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
