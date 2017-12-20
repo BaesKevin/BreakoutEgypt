@@ -17,6 +17,7 @@ public interface Message {
     
     // 0 = all players, 1 player 1, 2 player 2,...
     public int getRecipientIndex();
+    public void setRecipientIndex(int i);
     public MessageType getMessageType();
     public JsonObjectBuilder toJson();
 }

@@ -23,6 +23,7 @@ public class ProjectilePowerDown implements PowerDown {
 
     private Projectile projectile;
     private String name;
+    private int playerId;
 
     public ProjectilePowerDown(Projectile projectile) {
         this.name = projectile.getName();
@@ -30,7 +31,7 @@ public class ProjectilePowerDown implements PowerDown {
 //        BodyConfiguration projectileBodyConfig = new BodyConfigurationFactory().createProjectileConfig(this.projectile.getShape());
 //        this.projectile.setBox2dConfig(projectileBodyConfig);
         
-        
+        this.playerId = 1;
     }
     
     public void startProjectile(float endX, float endY, int width) {
@@ -68,6 +69,16 @@ public class ProjectilePowerDown implements PowerDown {
 
     public Projectile getProjectile() {
         return projectile;
+    }
+    
+     @Override
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
     }
 
 }

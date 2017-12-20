@@ -27,6 +27,11 @@ public abstract class GenericMessage  implements  Message{
     public int getRecipientIndex() {
         return recipientIndex;
     }
+    
+    @Override 
+    public void setRecipientIndex(int i) {
+        this.recipientIndex = i;
+    }
 
     @Override
     public MessageType getMessageType() {

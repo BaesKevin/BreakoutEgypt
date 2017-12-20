@@ -14,7 +14,9 @@ let PowerUpModule = (function () {
 
     function requestActivatePowerUp(name) {
         let gameId = $("#gameId").val();
-        fetch("powerup?gameId=" + gameId + "&powerup=" + name, {method: "post", credentials: "same-origin",
+        fetch("powerup?gameId=" + gameId + "&powerup=" + name, {
+            method: "post", 
+            credentials: "same-origin",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             }

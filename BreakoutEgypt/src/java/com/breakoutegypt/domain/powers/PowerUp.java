@@ -23,5 +23,9 @@ public interface PowerUp {
     
     public PowerUpMessageType getType();
     
+    public void setPlayerId(int i);
+    
+    public int getPlayerId();
+    
     
 }

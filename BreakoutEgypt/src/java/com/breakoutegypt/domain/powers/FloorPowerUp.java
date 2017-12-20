@@ -25,6 +25,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     private int timeVisible;
     private int startTime;
     private String name;
+    private int playerId;
 
     public FloorPowerUp(ShapeDimension s, int timeVisible) {
         super(s);
@@ -33,6 +34,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
         startTime = timeVisible;
         BodyConfiguration floorConfig = BodyConfigurationFactory.getInstance().createFloorConfig(s);
         this.setBox2dConfig(floorConfig);
+        this.playerId = 1;
     }
 
     public boolean isVisible() {
@@ -83,5 +85,15 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
 
     void addTime(int othersTimeVisible) {
         this.timeVisible += othersTimeVisible;
+    }
+    
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return this.playerId;
     }
 }
