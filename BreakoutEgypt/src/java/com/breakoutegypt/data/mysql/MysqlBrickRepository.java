@@ -35,13 +35,17 @@ public class MysqlBrickRepository implements BrickRepository {
 
     private final String SELECT_ALL_BRICKS = "select * from bricks";
     private final String SELECT_ALL_LEVELBRICKS_BYLEVELID = "select bricks.* from bricks inner join levelbricks on levelbricks.brickid=bricks.brickid where levelbricks.levelid = ?";
+    private final String SELECT_BRICK_BY_ID = "select * from bricks where brickId=?";
     private final String INSERT_BRICK = "insert into bricks(shapedimensionid,typeid,isbreakable,isvisible,istarget) values(?, ?, ?, ?, ? )";
     private final String DELETE_BRICK = "delete from bricks where brickid = ?";
     private final String DELETE_LEVELBRICKS = "delete from levelbricks where levelid = ?";
     private final String INSERT_LEVELBRICKS = "insert into levelbricks(levelid,brickid) values(?,?)";
 
     List<Brick> bricks;
-
+    Map<Integer, List<Effect>> effects = new HashMap();
+    
+    EffectRepository effectRepo = Repositories.getEffectRepository();
+    
     @Override
     public List<Brick> getBricks() {
         this.bricks = new ArrayList<>();
@@ -52,15 +56,46 @@ public class MysqlBrickRepository implements BrickRepository {
             while (rs.next()) {
                 initializeBricks(rs);
             }
-            return this.bricks;
+            
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load the bricks", ex);
         }
+        
+        for (Brick brick : bricks) {
+            effectRepo.giveEffectsToBrick(brick, bricks);
+        }
+        
+        return this.bricks;
     }
 
     @Override
     public Brick getBrickById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.bricks = new ArrayList<>();
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(SELECT_BRICK_BY_ID);) {
+
+            prep.setInt(1, id);
+            
+            try (ResultSet rs = prep.executeQuery();) {
+                while (rs.next()) {
+                    initializeBricks(rs);
+                }
+                if (this.bricks.isEmpty()) {
+                    return null;
+                }
+                
+            }
+
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't load the bricks", ex);
+        }
+        
+         for (Brick brick : bricks) {
+            effectRepo.giveEffectsToBrick(brick, bricks);
+        }
+         
+         return this.bricks.get(0);
     }
 
     @Override
@@ -75,11 +110,16 @@ public class MysqlBrickRepository implements BrickRepository {
                 while (rs.next()) {
                     initializeBricks(rs);
                 }
-                return this.bricks;
             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load levelbricks", ex);
         }
+        
+         for (Brick brick : bricks) {
+            effectRepo.giveEffectsToBrick(brick, bricks);
+        }
+         
+         return this.bricks;
     }
 
     public void initializeBricks(ResultSet rs) throws SQLException {
@@ -91,9 +131,9 @@ public class MysqlBrickRepository implements BrickRepository {
         BrickType bricktype = Repositories.getBrickTypeRepository().getBrickTypeById(rs.getInt("typeid"));
         Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable);
         brick.setBrickId(brickId);
-        EffectRepository effectRepo = new MysqlEffectRepository();
+//        EffectRepository effectRepo = new MysqlEffectRepository();
         PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
-        effectRepo.giveEffectsToBrick(brick);
+//        effectRepo.giveEffectsToBrick(brick);
         powerdownRepo.givePowerDownToBrick(brick);
         this.bricks.add(brick);
     }
@@ -155,16 +195,22 @@ public class MysqlBrickRepository implements BrickRepository {
 
     @Override
     public void addBricksForLevel(int levelId, List<Brick> bricks) {
-        Map<Integer, List<Effect>> effects = new HashMap();
+        
         for (Brick brick : bricks) {
             this.addBrick(brick);
             effects.put(brick.getBrickId(), brick.getEffects());
             populateLevelBricks(levelId, brick);
         }
 
+        addEffectsForBricks();
+    }
+    
+    private void addEffectsForBricks(){
         for (Entry<Integer, List<Effect>> entry : effects.entrySet()) {
-            new MysqlEffectRepository().insertEffectsToBrick(entry.getKey(), entry.getValue());
+            effectRepo.insertEffectsToBrick(entry.getKey(), entry.getValue());
         }
+        
+        effects = new HashMap();
     }
 
     private void populateLevelBricks(int levelId, Brick brick) {

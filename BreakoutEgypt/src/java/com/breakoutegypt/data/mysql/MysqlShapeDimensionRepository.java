@@ -68,7 +68,7 @@ public class MysqlShapeDimensionRepository implements ShapeDimensionRepository{
                     float yPos=rs.getFloat("y");
                     int width=rs.getInt("width");
                     int height=rs.getInt("height");
-                    dimension=new ShapeDimension(yPos, yPos, width, height);
+                    dimension=new ShapeDimension(xPos, yPos, width, height);
                     
                 }
                 return dimension;

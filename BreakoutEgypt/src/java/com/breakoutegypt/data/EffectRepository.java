@@ -14,7 +14,7 @@ import java.util.List;
  * @author Bjarne Deketelaere
  */
 public interface EffectRepository {
-    public void giveEffectsToBrick(Brick brick);
+    public void giveEffectsToBrick(Brick brick, List<Brick> allBricks);
     public void insertEffectsToBrick(int brickId,List<Effect> effects);
     public void removeEffectsOfBrick(int brickId);
 }

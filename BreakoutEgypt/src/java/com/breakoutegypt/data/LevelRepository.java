@@ -19,4 +19,6 @@ public interface LevelRepository {
     public Level getLevelByNumber(int number, Game game);
     public void addLevel(Level level);
     public void removeLevel(Level level);
+
+    public List<Level> getLevelsByPackId(int packId, Game game);
 }

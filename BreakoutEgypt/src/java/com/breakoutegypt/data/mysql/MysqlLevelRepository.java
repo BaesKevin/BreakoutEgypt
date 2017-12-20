@@ -37,6 +37,7 @@ public class MysqlLevelRepository implements LevelRepository {
 
     private final String SELECT_ALL_LEVELS = "select * from level";
     private final String SELECT_LEVEL_BYID = "select * from level where levelid = ?";
+    private final String SELECT_LEVEL_BY_PACKID = "select * from level where levelpackid = ?";
     private final String SELECT_LEVEL_BYNUMBER = "select * from level where levelNumber = ?";
     private final String INSERT_LEVEL = "insert into level(levelpackid,name,description, levelNumber) values(?,?,?,?)";
     private final String DELETE_LEVEL = "delete from level where levelid = ?";
@@ -115,6 +116,8 @@ public class MysqlLevelRepository implements LevelRepository {
                     int levelid = rs.getInt("levelid");
                     int levelpackid = rs.getInt("levelpackid");
                     int levelNumber = rs.getInt("levelNumber");
+                    
+                    
                     String name = rs.getString("name");
                     String description = rs.getString("description");
                     List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
@@ -133,6 +136,44 @@ public class MysqlLevelRepository implements LevelRepository {
             throw new BreakoutException("Couldn't load level", ex);
         }
     }
+
+    @Override
+    public List<Level> getLevelsByPackId(int packId, Game game) {
+          try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(SELECT_LEVEL_BY_PACKID);) {
+            prep.setInt(1, packId);
+            try (
+                    ResultSet rs = prep.executeQuery();) {
+               List<Level> levels = new ArrayList<>();
+               
+                while (rs.next()) {
+                    int levelid = rs.getInt("levelid");
+                    int levelpackid = rs.getInt("levelpackid");
+                    int levelNumber = rs.getInt("levelNumber");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
+                    List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
+                    List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
+                    LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
+//                    Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
+                    Level level =new Level(levelid, game, levelstate);
+                    level.setLevelName(name);
+                    level.setLevelNumber(levelNumber);
+                    level.setLevelDescription(description);
+                    levels.add(level);
+                    
+                }
+                return levels;
+            }
+
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't load level", ex);
+        }
+    }
+    
+    
 
     @Override
     public void addLevel(Level level) {

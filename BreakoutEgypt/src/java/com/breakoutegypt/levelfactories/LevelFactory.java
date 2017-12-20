@@ -6,10 +6,11 @@
 package com.breakoutegypt.levelfactories;
 
 import com.breakoutegypt.data.DefaultShapeRepository;
-import com.breakoutegypt.data.LevelRepository;
+import com.breakoutegypt.data.LevelPackRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ public abstract class LevelFactory {
     protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
     protected final static DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
-    protected List<Level> levels;
-    protected LevelRepository levelRepo = Repositories.getLevelRepository();
+    protected LevelPackRepository levelPackRepo = Repositories.getLevelPackRepository();
+    protected LevelPack pack;
     
     public LevelFactory(Game game, int totalLevels) {
         this(game, totalLevels, totalLevels);
@@ -41,7 +42,6 @@ public abstract class LevelFactory {
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
-        this.levels = new ArrayList();
         
     }
 
@@ -53,12 +53,11 @@ public abstract class LevelFactory {
     public Level getCurrentLevel() {
         return currentLevel;
     }
-
-    public List<Level> getLevels(){
-        return levels;
+    
+    protected void createCurrentLevel(){
+        currentLevel = pack.getLevelByNumber(currentLevelId);
     }
     
-    protected abstract void createCurrentLevel();
     protected abstract void initializeLevels();
 
     public Level getNextLevel() {

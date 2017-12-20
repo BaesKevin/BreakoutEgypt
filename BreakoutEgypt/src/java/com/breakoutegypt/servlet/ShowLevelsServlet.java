@@ -7,6 +7,7 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
+import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.exceptions.BreakoutException;
@@ -54,8 +55,9 @@ public class ShowLevelsServlet extends HttpServlet {
             String difficulty = request.getParameter("difficulty");
             
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
-            int totalLevels = new ArcadeLevelFactory(null, null).getTotalLevels();
-            int defaultLevels = new ArcadeLevelFactory(null, null).getDefaultOpenLevels();
+            LevelPack pack = Repositories.getLevelPackRepository().getByNameWithoutLevels("arcade");
+            int totalLevels = pack.getTotalLevels();
+            int defaultLevels = pack.getDefaultOpenLevels();
 
             if (levelReached < defaultLevels) {
                 levelReached = defaultLevels;

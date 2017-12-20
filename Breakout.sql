@@ -15,7 +15,8 @@ create table levelpacks(
 	id int primary key auto_increment,
     name varchar(50),
     description varchar(150),
-    default_open_levels int
+    default_open_levels int,
+    total_levels int
 )engine=innodb;
 
 create table difficulties(
@@ -65,6 +66,7 @@ create table balls(
     shapedimensionid int,
     xspeed int,
     yspeed int,
+    isStartingBall tinyint,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension)
 )engine=innodb;
 
@@ -193,4 +195,3 @@ insert into difficulties(difficultyname,
         brickscore_time_penalty) values(
         "BRUTAL",100,1,false,2000,0,0,0,null);
         
-insert into levelpacks(name,description,default_open_levels) values("ARCADE","This are the arcade levels.",2);

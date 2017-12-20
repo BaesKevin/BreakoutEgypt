@@ -35,8 +35,8 @@ public class MysqlEffectRepository implements EffectRepository {
     private final String DELETE_EXPLOSIVE_EFFECTS = " delete from explosiveeffects where brickid = ? or centerbrickid = ?";
 
     @Override
-    public void giveEffectsToBrick(Brick brick) {
-        this.getToggleEffects(brick);
+    public void giveEffectsToBrick(Brick brick, List<Brick> allBricks) {
+        this.getToggleEffects(brick, allBricks);
         this.getExplosiveEffects(brick);
     }
 
@@ -60,7 +60,7 @@ public class MysqlEffectRepository implements EffectRepository {
         }
     }
 
-    private void getToggleEffects(Brick brick) {
+    private void getToggleEffects(Brick brick, List<Brick> allBricks) {
         try (
                 Connection conn = DbConnection.getConnection();
                 PreparedStatement prep = conn.prepareStatement(TOGGLE_EFFECTS);) {
@@ -72,13 +72,27 @@ public class MysqlEffectRepository implements EffectRepository {
                     int brickId = rs.getInt("brickid");
                     int toToggleBrickId = rs.getInt("totogglebrickid");
                     BrickRepository brickRepo = new MysqlBrickRepository();
-                    toToggleBricks.add(brickRepo.getBrickById(toToggleBrickId));
+                    toToggleBricks.add(findBrickById(toToggleBrickId, allBricks));
                 }
-                brick.addEffect(new ToggleEffect(toToggleBricks));
+                if (!toToggleBricks.isEmpty()) {
+                    brick.addEffect(new ToggleEffect(toToggleBricks));
+                }
             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't get toggleEffects for brick", ex);
         }
+    }
+    
+    private Brick findBrickById(int id, List<Brick> bricks){
+        Brick brick = null;
+        
+        for(Brick b : bricks){
+            if(b.getBrickId() == id){
+                return b;
+            }
+        }
+        
+        return brick;
     }
 
     @Override
@@ -87,9 +101,9 @@ public class MysqlEffectRepository implements EffectRepository {
             if (effect instanceof ToggleEffect) {
                 this.insertToggleEffect(brickId, (ToggleEffect) effect);
             } else if (effect instanceof ExplosiveEffect) {
-                if(((ExplosiveEffect) effect).getRadius()!=0){
+                if (((ExplosiveEffect) effect).getRadius() != 0) {
                     this.insertExplosiveEffect(brickId, (ExplosiveEffect) effect);
-                }                
+                }
             }
         }
     }
@@ -117,7 +131,7 @@ public class MysqlEffectRepository implements EffectRepository {
                 prep.executeUpdate();
 
             } catch (SQLException ex) {
-                    throw new BreakoutException("Couldn't add toggleEffect to brick", ex);
+                throw new BreakoutException("Couldn't add toggleEffect to brick", ex);
             }
         }
     }
@@ -127,11 +141,11 @@ public class MysqlEffectRepository implements EffectRepository {
         this.removeExplosiveEffects(brickId);
         this.removeToggleEffects(brickId);
     }
-    private void removeToggleEffects(int brickId){
+
+    private void removeToggleEffects(int brickId) {
         try (
                 Connection conn = DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_TOGGLE_EFFECTS);
-                ) {
+                PreparedStatement prep = conn.prepareStatement(DELETE_TOGGLE_EFFECTS);) {
             prep.setInt(1, brickId);
             prep.setInt(2, brickId);
             prep.executeUpdate();
@@ -139,11 +153,11 @@ public class MysqlEffectRepository implements EffectRepository {
             throw new BreakoutException("Couldn't remove toggleEffect", ex);
         }
     }
-    private void removeExplosiveEffects(int brickId){
+
+    private void removeExplosiveEffects(int brickId) {
         try (
                 Connection conn = DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_EXPLOSIVE_EFFECTS);
-                ) {
+                PreparedStatement prep = conn.prepareStatement(DELETE_EXPLOSIVE_EFFECTS);) {
             prep.setInt(1, brickId);
             prep.setInt(2, brickId);
             prep.executeUpdate();

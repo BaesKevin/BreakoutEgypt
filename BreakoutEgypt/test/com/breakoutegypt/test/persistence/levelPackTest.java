@@ -5,13 +5,17 @@
  */
 package com.breakoutegypt.test.persistence;
 
+import com.breakoutegypt.data.BrickRepository;
+import com.breakoutegypt.data.LevelPackRepository;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.data.LevelRepository;
 import com.breakoutegypt.data.Repositories;
+import com.breakoutegypt.data.mysql.MysqlBrickRepository;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import java.util.List;
@@ -31,17 +35,13 @@ public class levelPackTest {
         
         LevelProgress progress = LevelProgressionRepository.getDefault(GameType.ARCADE);
         Game game = gm.getGame(gameId);
+        game.initStartingLevel(4, LevelProgressionRepository.getDefault(GameType.ARCADE));
         
-        List<Level> levels = game.getLevelFactory().getLevels();
-        LevelRepository levelRepo = Repositories.getLevelRepository();
-        
-        for(Level level : levels){
-            levelRepo.addLevel(level);
-        }
-        
-        Level level2 = levelRepo.getLevelByNumber(2, game);
+        Level level4 = game.getCurrentLevel();
         String expectedName = "unbreakable and explosive";
-        Assert.assertEquals(2, level2.getLevelNumber());
-        Assert.assertEquals(expectedName, level2.getLevelName());
+        Assert.assertEquals(4, level4.getLevelNumber());
+        Assert.assertEquals(expectedName, level4.getLevelName());
+        
     }
+    
 }
