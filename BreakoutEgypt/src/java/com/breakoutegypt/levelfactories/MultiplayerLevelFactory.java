@@ -29,6 +29,13 @@ public class MultiplayerLevelFactory extends LevelFactory {
         super(game, 1);
     }
 
+    @Override
+    protected void initializeLevels() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+
 
     public void createCurrentLevel() {
         currentLevel = makePong();

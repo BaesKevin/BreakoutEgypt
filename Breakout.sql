@@ -1,4 +1,4 @@
-drop database dbBreakout;
+drop database if exists dbBreakout;
 create database dbBreakout;
 use dbBreakout;
 
@@ -46,6 +46,7 @@ create table levelprogression(
 create table level(
 	levelid int primary key auto_increment,
     levelpackid int,
+    levelNumber int,
     name varchar(50),
     description varchar(150),
     foreign key(levelpackid) references levelpacks(id)

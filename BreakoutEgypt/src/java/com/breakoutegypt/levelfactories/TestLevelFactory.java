@@ -115,6 +115,13 @@ public class TestLevelFactory extends LevelFactory {
         }
     }
 
+    @Override
+    protected void initializeLevels() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+
     public Level getLevelWithPowerDownAndExplosive() {
 
         Ball b = shapeRepo.getDefaultBall(50, 40);

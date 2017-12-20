@@ -38,11 +38,23 @@ public class ArcadeLevelFactory extends LevelFactory {
     public ArcadeLevelFactory(Game game, Difficulty difficulty) {
         super(game, 5, 5);
         this.difficulty = difficulty;
+        initializeLevels();
+
     }
 
     @Override
     public Level getCurrentLevel() {
         return currentLevel;
+    }
+
+    @Override
+    protected void initializeLevels() {
+        levels.add(getSimpleTestLevel());
+        levels.add(getLevelWithUnbreakableAndExplosive());
+        levels.add(getSimpleTestLevel());
+        levels.get(2).setLevelNumber(3);
+        levels.add(getPossibleRealLevel());
+        levels.add(getLevelWithFloodPowerDown());
     }
 
     @Override
@@ -74,18 +86,18 @@ public class ArcadeLevelFactory extends LevelFactory {
     public Level getLevelWithFloodPowerDown() {
         Paddle paddle = shapeRepo.getDefaultPaddle();
         Ball ball = shapeRepo.getDefaultBall(50, 0);
-        
+
         Brick powerdownBrick = shapeRepo.getDefaultBrick("brick1", 40, 20);
         Brick target = new Brick(new ShapeDimension("brick2", 1, 1, 1, 1), true, false);
-        
+
         List<Paddle> paddles = new ArrayList();
         List<Ball> balls = new ArrayList();
         List<Brick> bricks = new ArrayList();
-        
+
         balls.add(ball);
         paddles.add(paddle);
         balls.get(0).setStartingBall(true);
-        
+
         powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50));
 
         bricks.add(powerdownBrick);
@@ -94,7 +106,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         LevelState initialState = new LevelState(balls, paddles, bricks);
 
         Level level = new Level(1, game, initialState);
-
+        level.setLevelNumber(5);
         return level;
     }
 
@@ -124,7 +136,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         paddles.add(paddle);
         LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(1, game, initialState);
-
+        level.setLevelNumber(1);
+        level.setLevelName("simpletest");
         return level;
     }
 
@@ -146,14 +159,14 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         String id;
         for (int x = 10; x < 10 + ((width) * cols); x += width) {
-            for (int y = 10; y < 10 + ((height ) * rows); y += height) {
+            for (int y = 10; y < 10 + ((height) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
 
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
 
                 brick = shapeRepo.getDefaultBrick(id, x, y);
-                
+
                 bricks.add(brick);
                 col++;
             }
@@ -172,7 +185,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         paddles.add(paddle);
         LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(2, game, initialState);
-
+        level.setLevelNumber(2);
+        level.setLevelName("unbreakable and explosive");
         return level;
     }
 
@@ -199,7 +213,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         Ball ball = shapeRepo.getDefaultBall();
         Paddle paddle = shapeRepo.getDefaultPaddle();
         ball.setStartingBall(true);
-        
+
         int row = 1;
         int col = 1;
         int rows = 3;
@@ -248,7 +262,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         bricks.get(4).addEffect(new ExplosiveEffect(bricks.get(4), 1));
         bricks.get(23).addEffect(new ExplosiveEffect(bricks.get(23), 1));
-        
+
         List<Brick> bricksToToggle = new ArrayList();
         for (int i = 0; i < 11; i++) {
             bricksToToggle.add(bricks.get(i));
@@ -275,6 +289,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(currentLevelId, game, initialState);
+        level.setLevelNumber(4);
 
         return level;
     }

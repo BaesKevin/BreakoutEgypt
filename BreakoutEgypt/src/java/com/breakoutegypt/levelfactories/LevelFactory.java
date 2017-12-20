@@ -6,12 +6,14 @@
 package com.breakoutegypt.levelfactories;
 
 import com.breakoutegypt.data.DefaultShapeRepository;
+import com.breakoutegypt.data.LevelRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
-import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -27,6 +29,8 @@ public abstract class LevelFactory {
     protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
     protected final static DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
+    protected List<Level> levels;
+    protected LevelRepository levelRepo = Repositories.getLevelRepository();
     
     public LevelFactory(Game game, int totalLevels) {
         this(game, totalLevels, totalLevels);
@@ -37,6 +41,8 @@ public abstract class LevelFactory {
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
+        this.levels = new ArrayList();
+        
     }
 
     public boolean hasNextLevel() {
@@ -48,7 +54,12 @@ public abstract class LevelFactory {
         return currentLevel;
     }
 
+    public List<Level> getLevels(){
+        return levels;
+    }
+    
     protected abstract void createCurrentLevel();
+    protected abstract void initializeLevels();
 
     public Level getNextLevel() {
         currentLevelId++;// TODO don't do this

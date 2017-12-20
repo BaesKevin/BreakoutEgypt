@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
 import java.util.List;
 
@@ -13,8 +14,9 @@ import java.util.List;
  * @author Bjarne Deketelaere
  */
 public interface LevelRepository {
-    public List<Level> getLevels();
-    public Level getLevelById(int id);
+    public List<Level> getLevels(Game game);
+    public Level getLevelById(int id, Game game);
+    public Level getLevelByNumber(int number, Game game);
     public void addLevel(Level level);
     public void removeLevel(Level level);
 }

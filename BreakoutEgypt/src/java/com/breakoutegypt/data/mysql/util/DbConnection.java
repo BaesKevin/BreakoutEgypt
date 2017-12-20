@@ -16,8 +16,8 @@ import java.sql.SQLException;
  */
 public class DbConnection {
     private static final String URL = "jdbc:mysql://localhost/dbBreakout?useSSL=false";
-    private static final String UID = "databankman";
-    private static final String PWD = "databankman";
+    private static final String UID = "usrbreakout";
+    private static final String PWD = "TIbreakout2017";
     
     static
     {

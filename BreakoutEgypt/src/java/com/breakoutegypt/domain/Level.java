@@ -34,6 +34,7 @@ import com.breakoutegypt.data.HighscoreRepository;
 public class Level implements BreakoutWorldEventListener {
 
     private int id;
+    private int levelNumber;
     private String levelName="";
     private String levelDescription="";
 
@@ -102,6 +103,8 @@ public class Level implements BreakoutWorldEventListener {
         this.invertedControls = false;
     }
 
+    public void setId(int id){ this.id = id; }
+    
     public String getLevelName() {
         return levelName;
     }
@@ -109,8 +112,17 @@ public class Level implements BreakoutWorldEventListener {
     public String getLevelDescription() {
         return levelDescription;
     }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public void setLevelDescription(String levelDescription) {
+        this.levelDescription = levelDescription;
+    }
     
-    
+    public int getLevelNumber(){ return levelNumber; }
+    public void setLevelNumber( int levelNumber ) { this.levelNumber = levelNumber; } 
 
     public boolean isInvertedControls() {
         return invertedControls;
@@ -128,9 +140,10 @@ public class Level implements BreakoutWorldEventListener {
         return levelStarted;
     }
 
-    public void setLevelNumber(int id) {
-        this.id = id;
-    }
+    
+//    public void setLevelNumber(int id) {
+//        this.id = id;
+//    }
 
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;

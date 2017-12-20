@@ -117,7 +117,7 @@ public class MysqlEffectRepository implements EffectRepository {
                 prep.executeUpdate();
 
             } catch (SQLException ex) {
-                throw new BreakoutException("Couldn't add toggleEffect to brick", ex);
+                    throw new BreakoutException("Couldn't add toggleEffect to brick", ex);
             }
         }
     }

@@ -12,6 +12,7 @@ import com.breakoutegypt.data.PowerDownRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.ShapeDimensionRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
+import com.breakoutegypt.domain.effects.Effect;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.bricks.BrickType;
@@ -21,7 +22,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -35,7 +39,7 @@ public class MysqlBrickRepository implements BrickRepository {
     private final String DELETE_BRICK = "delete from bricks where brickid = ?";
     private final String DELETE_LEVELBRICKS = "delete from levelbricks where levelid = ?";
     private final String INSERT_LEVELBRICKS = "insert into levelbricks(levelid,brickid) values(?,?)";
-    
+
     List<Brick> bricks;
 
     @Override
@@ -79,7 +83,7 @@ public class MysqlBrickRepository implements BrickRepository {
     }
 
     public void initializeBricks(ResultSet rs) throws SQLException {
-        int brickId=rs.getInt("brickid");
+        int brickId = rs.getInt("brickid");
         boolean isVisible = rs.getBoolean("isvisible");
         boolean isBreakable = rs.getBoolean("isbreakable");
         boolean isTarget = rs.getBoolean("istarget");
@@ -87,8 +91,8 @@ public class MysqlBrickRepository implements BrickRepository {
         BrickType bricktype = Repositories.getBrickTypeRepository().getBrickTypeById(rs.getInt("typeid"));
         Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable);
         brick.setBrickId(brickId);
-        EffectRepository effectRepo=new MysqlEffectRepository();
-        PowerDownRepository powerdownRepo=new MysqlPowerDownRepository();
+        EffectRepository effectRepo = new MysqlEffectRepository();
+        PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
         effectRepo.giveEffectsToBrick(brick);
         powerdownRepo.givePowerDownToBrick(brick);
         this.bricks.add(brick);
@@ -96,91 +100,98 @@ public class MysqlBrickRepository implements BrickRepository {
 
     @Override
     public void addBrick(Brick brick) {
-        ShapeDimensionRepository shapedimensionRepo=new MysqlShapeDimensionRepository();
+        ShapeDimensionRepository shapedimensionRepo = new MysqlShapeDimensionRepository();
         shapedimensionRepo.addShapeDimension(brick.getShape());
-        BrickTypeRepository bricktypeRepo=new MysqlBrickTypeRepository();
-        BrickType bricktype=bricktypeRepo.getBrickTypeByName("REGULAR");
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_BRICK,PreparedStatement.RETURN_GENERATED_KEYS);
-                ){
-            prep.setInt(1,brick.getShape().getShapeId());
+        BrickTypeRepository bricktypeRepo = new MysqlBrickTypeRepository();
+        BrickType bricktype = bricktypeRepo.getBrickTypeByName("REGULAR");
+
+//        List<Effect> effectsToSave = new ArrayList();
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_BRICK, PreparedStatement.RETURN_GENERATED_KEYS);) {
+            prep.setInt(1, brick.getShape().getShapeId());
             prep.setInt(2, bricktype.getBrickTypeId());
             prep.setBoolean(3, brick.isBreakable());
             prep.setBoolean(4, brick.isVisible());
-            prep.setBoolean(5,brick.isTarget());
+            prep.setBoolean(5, brick.isTarget());
             prep.executeUpdate();
-            try(ResultSet rs=prep.getGeneratedKeys()){
+            try (ResultSet rs = prep.getGeneratedKeys()) {
                 int brickId = -1;
-                if(rs.next()){
-                    brickId=rs.getInt(1);
+                if (rs.next()) {
+                    brickId = rs.getInt(1);
                 }
-                if(brickId<0){
+                if (brickId < 0) {
                     throw new BreakoutException("Unable to add brick");
                 }
                 brick.setBrickId(brickId);
-                new MysqlEffectRepository().insertEffectsToBrick(brickId, brick.getEffects());
+//                effectsToSave.addAll(brick.getEffects());
+
                 new MysqlPowerDownRepository().insertPowerDownsToBrick(brickId, brick.getPowerDown());
             }
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't add brick",ex);
+            throw new BreakoutException("Couldn't add brick", ex);
         }
+
     }
 
     @Override
     public void removeBrick(Brick brick) {
-        EffectRepository effectRepo=new MysqlEffectRepository();
+        EffectRepository effectRepo = new MysqlEffectRepository();
         effectRepo.removeEffectsOfBrick(brick.getBrickId());
-        PowerDownRepository powerdownRepo=new MysqlPowerDownRepository();
+        PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
         powerdownRepo.removePowerDownsOfBrick(brick.getBrickId());
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_BRICK);
-                ){
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_BRICK);) {
             prep.setInt(1, brick.getBrickId());
             prep.executeUpdate();
-            
-            ShapeDimensionRepository shapedimensionRepo=new MysqlShapeDimensionRepository();
+
+            ShapeDimensionRepository shapedimensionRepo = new MysqlShapeDimensionRepository();
             shapedimensionRepo.removeShapeDimension(brick.getShape());
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't remove brick",ex);
+            throw new BreakoutException("Couldn't remove brick", ex);
         }
     }
 
     @Override
-    public void addBricksForLevel(int levelId,List<Brick> bricks) {
-        for(Brick brick:bricks){
+    public void addBricksForLevel(int levelId, List<Brick> bricks) {
+        Map<Integer, List<Effect>> effects = new HashMap();
+        for (Brick brick : bricks) {
             this.addBrick(brick);
-            populateLevelBricks(levelId,brick);
+            effects.put(brick.getBrickId(), brick.getEffects());
+            populateLevelBricks(levelId, brick);
+        }
+
+        for (Entry<Integer, List<Effect>> entry : effects.entrySet()) {
+            new MysqlEffectRepository().insertEffectsToBrick(entry.getKey(), entry.getValue());
         }
     }
-    private void populateLevelBricks(int levelId,Brick brick){
+
+    private void populateLevelBricks(int levelId, Brick brick) {
         try (
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_LEVELBRICKS);
-                ){
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_LEVELBRICKS);) {
             prep.setInt(1, levelId);
             prep.setInt(2, brick.getBrickId());
             prep.executeUpdate();
-            
+
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't add brick",ex);
+            throw new BreakoutException("Couldn't add brick", ex);
         }
     }
 
     @Override
-    public void removeLevelBricks(int levelId,List<Brick> bricks) {
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_LEVELBRICKS);
-                ){
+    public void removeLevelBricks(int levelId, List<Brick> bricks) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_LEVELBRICKS);) {
             prep.setInt(1, levelId);
             prep.executeUpdate();
-            for(Brick brick:bricks){
+            for (Brick brick : bricks) {
                 this.removeBrick(brick);
             }
         } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't remove bricks",ex);
+            throw new BreakoutException("Couldn't remove bricks", ex);
         }
     }
 }
