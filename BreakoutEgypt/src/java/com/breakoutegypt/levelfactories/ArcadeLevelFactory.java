@@ -49,12 +49,12 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         LevelPack pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
         if (pack == null) {
-            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", 5, 5));
+            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", defaultOpenLevels, totalLevels));
             pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
         }
 
         LevelRepository levelRepo = Repositories.getLevelRepository();
-        Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId, game);
+        Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId,pack.getId(), game);
 
         if (levelFromDatabase == null) {
             switch (currentLevelId) {
@@ -78,7 +78,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
             currentLevel.setLevelPackId(pack.getId());
             Repositories.getLevelRepository().addLevel(currentLevel);
-            currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
+            currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId,pack.getId(), game);
         } else {
             currentLevel = levelFromDatabase;
         }

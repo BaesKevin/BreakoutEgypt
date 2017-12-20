@@ -50,6 +50,7 @@ create table level(
     levelNumber int,
     name varchar(50),
     description varchar(150),
+    isMultiplayer bool,
     foreign key(levelpackid) references levelpacks(id)
 )engine=innodb;
 
@@ -67,6 +68,7 @@ create table balls(
     xspeed int,
     yspeed int,
     isStartingBall tinyint,
+    playerIndex int,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension)
 )engine=innodb;
 
@@ -90,6 +92,7 @@ create table bricks(
     isVisible bool,
     istarget bool,
     isInverted bool,
+    playerIndex int,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension),
     foreign key(typeid) references brick_types(id)
 )engine=innodb;
@@ -127,6 +130,7 @@ create table levelbricks(
 create table paddles(
 	paddleid int primary key auto_increment,
     shapedimensionid int,
+    playerIndex int,
     constraint foreign key(shapedimensionid) references shapedimensions(idshapedimension)
 )engine=innodb;
 

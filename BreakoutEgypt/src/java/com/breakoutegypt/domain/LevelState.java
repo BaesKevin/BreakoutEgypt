@@ -51,7 +51,8 @@ public class LevelState {
     private FloorPowerUp floor;
     private List<Projectile> projectiles;
     private Difficulty difficulty;
-
+    private boolean isMultiplayer;
+    
     public List<Message> getMessages() {
         return messages;
     }
@@ -78,7 +79,7 @@ public class LevelState {
         this(balls, paddles, bricks, difficulty, hasPowerups, false);
     }
     
-    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups, boolean hasTwoOutOfBounds) {
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups, boolean isMultiplayer) {
         this.bricks = Collections.synchronizedList(new ArrayList());
         this.paddles = Collections.synchronizedList(new ArrayList());
         this.walls = new ArrayList();
@@ -87,9 +88,10 @@ public class LevelState {
         this.projectiles = new ArrayList();
         this.difficulty = difficulty;
         this.startingBalls = new ArrayList();
+        this.isMultiplayer = isMultiplayer;
         factory = BodyConfigurationFactory.getInstance();
 
-        createBounds(hasTwoOutOfBounds);
+        createBounds(isMultiplayer);
         addBalls(balls);
 
         for (Paddle paddle : paddles) {
@@ -101,6 +103,14 @@ public class LevelState {
         if (hasPowerups) generatePowerUpsAndDowns();
     }
 
+    public boolean isMultiplayer() {
+        return isMultiplayer;
+    }
+
+    public void setIsMultiplayer(boolean isMultiplayer) {
+        this.isMultiplayer = isMultiplayer;
+    }
+    
     public void addPaddle(Paddle p) {
         paddles.add(p);
     }
@@ -201,7 +211,7 @@ public class LevelState {
         return targetsLeft;
     }
 
-    private void createBounds(boolean hasTwoOutOfBounds) {
+    private void createBounds(boolean isMultiplayer) {
         ShapeDimension groundShape = new ShapeDimension("ground", -5 , BreakoutWorld.DIMENSION + 5, BreakoutWorld.DIMENSION + 10, 5);
         ShapeDimension leftWallDim = new ShapeDimension("leftwall", -5, -5, 5, BreakoutWorld.DIMENSION + 10);
         ShapeDimension rightWallDim = new ShapeDimension("rightwall", BreakoutWorld.DIMENSION + 5, -5, 5, BreakoutWorld.DIMENSION + 10);
@@ -209,7 +219,7 @@ public class LevelState {
          
          ShapeDimension middleWallDim = new ShapeDimension("middlewall", 0, BreakoutWorld.DIMENSION / 2, BreakoutWorld.DIMENSION, 1);
          
-        if(hasTwoOutOfBounds){
+        if(isMultiplayer){
             topWallDim.setName("ground");
             
             RegularBody middleWall = new RegularBody(middleWallDim);
@@ -227,7 +237,7 @@ public class LevelState {
         BodyConfiguration groundConfig = factory.createWallConfig(groundShape, true);
         BodyConfiguration leftWallConfig = factory.createWallConfig(leftWallDim, false);
         BodyConfiguration rightWallConfig = factory.createWallConfig(rightWallDim, false);
-        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, hasTwoOutOfBounds);
+        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, isMultiplayer);
 
         ground.setBox2dConfig(groundConfig);
         leftWall.setBox2dConfig(leftWallConfig);
