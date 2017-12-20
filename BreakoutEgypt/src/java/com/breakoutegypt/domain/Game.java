@@ -195,8 +195,8 @@ public class Game {
         }
     }
 
-    public PowerUpMessage triggerPowerup(String powerup) {
-        return getCurrentLevel().triggerPowerup(powerup);
+    public PowerUpMessage triggerPowerup(String powerup, int playerIndex) {
+        return getCurrentLevel().triggerPowerup(powerup, playerIndex);
     }
 
     public Difficulty getDifficulty() {

@@ -7,6 +7,7 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,13 +38,15 @@ public class PowerUpServlet extends HttpServlet {
 
         int gameId = Integer.parseInt(request.getParameter("gameId"));
         String powerup = request.getParameter("powerup");
+        
+        Player p = (Player) request.getSession().getAttribute("player");
 
         if (powerup != null) {
 
             GameManager manager = new GameManager();
             Game game = manager.getGame(gameId);
-
-            PowerUpMessage msg = game.triggerPowerup(powerup);
+            
+            PowerUpMessage msg = game.triggerPowerup(powerup, p.getIndex());
 
             if (msg != null) {
                 try (PrintWriter out = response.getWriter()) {

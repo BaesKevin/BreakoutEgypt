@@ -32,6 +32,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
     public static final int GAP = 6;
     
     private String name;
+    
+    private int playerId;
 
     public BrokenPaddlePowerUp(Paddle p,  int i, int timeVisible) {
         this.name = "brokenpaddle" + i;
@@ -40,6 +42,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         brokenPaddle = new ArrayList();
         breakPaddle();
         startTime = timeVisible;
+        this.playerId = 1;
     }
 
     public List<Paddle> getBrokenPaddle() {
@@ -117,7 +120,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     @Override
     public PowerUpMessage accept(PowerUpHandler puh) {
-        return puh.handleAddBrokenPaddle(this);
+        return puh.handleBrokenPaddle(this);
     }
 
     @Override
@@ -146,6 +149,16 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     void addTime(int othersTime) {
         this.timeVisible += othersTime;
+    }
+    
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return this.playerId;
     }
 
 }

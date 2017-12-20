@@ -302,8 +302,8 @@ public class Level implements BreakoutWorldEventListener {
         return brickScoreCalc.getScore();
     }
 
-    public PowerUpMessage triggerPowerup(String powerup) {
-        PowerUp p = bpuh.getPowerupByName(powerup);
+    public PowerUpMessage triggerPowerup(String powerup, int playerIndex) {
+        PowerUp p = bpuh.getPowerupByName(powerup, playerIndex);
 
         PowerUpMessage msg = new PowerUpMessage("You are trying to trigger a powerup that doesn't exist", null, PowerUpMessageType.NOSUCHPOWERUP);
 

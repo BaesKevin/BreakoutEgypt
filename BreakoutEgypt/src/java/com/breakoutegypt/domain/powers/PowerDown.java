@@ -23,4 +23,8 @@ public interface PowerDown {
     
     public PowerDownMessageType getType();
     
+    public int getPlayerId();
+    
+    public void setPlayerId(int i);
+    
 }

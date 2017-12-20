@@ -15,9 +15,8 @@ import java.util.List;
 public interface PowerUpHandler {
     void addPowerUp(PowerUp up);
     List<PowerUp> getPowerUps();
-    void emptyPowerups();
     PowerUpMessage handleFloorPowerUp(FloorPowerUp fpu);
-    PowerUpMessage handleAddBrokenPaddle(BrokenPaddlePowerUp bppu);
+    PowerUpMessage handleBrokenPaddle(BrokenPaddlePowerUp bppu);
     PowerUpMessage handleAcidBall(AcidBallPowerUp abpu);
     void removePowerupsIfTimedOut();
 }

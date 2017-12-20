@@ -14,6 +14,9 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
+import com.breakoutegypt.domain.powers.AcidBallPowerUp;
+import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
+import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.exceptions.BreakoutException;
@@ -49,6 +52,49 @@ public class MultiplayerTest {
         game.addConnectingPlayer(player2);
         game.addConnectionForPlayer(player2.getUsername(), new DummyConnection());
 
+    }
+
+    @Test
+    public void testPowerupsPerPlayer() {
+
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+        level = game.getCurrentLevel();
+
+        AcidBallPowerUp abpu1 = new AcidBallPowerUp("acidball1");
+        abpu1.setPlayerId(1);
+        AcidBallPowerUp abpu2 = new AcidBallPowerUp("acidball2");
+        abpu2.setPlayerId(2);
+
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+
+        bpuh.addPowerUp(abpu1);
+        bpuh.addPowerUp(abpu2);
+
+        PowerUp powerupPlayer1 = bpuh.getPowerupByName("acidball1", 1);
+
+        level.triggerPowerup(powerupPlayer1.getName(), powerupPlayer1.getPlayerId());
+
+        Assert.assertEquals(1, bpuh.getPowerUps().size());
+    }
+    
+    @Test (expected = NullPointerException.class)
+    public void testWrongPowerupTrigger() {
+        game.initStartingLevel(21, ALL_LEVELS_UNLOCKED);
+        level = game.getCurrentLevel();
+
+        AcidBallPowerUp abpu1 = new AcidBallPowerUp("acidball1");
+        abpu1.setPlayerId(1);
+        AcidBallPowerUp abpu2 = new AcidBallPowerUp("acidball2");
+        abpu2.setPlayerId(2);
+
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+
+        bpuh.addPowerUp(abpu1);
+        bpuh.addPowerUp(abpu2);
+
+        PowerUp powerupPlayer1 = bpuh.getPowerupByName("acidball1", 2);
+
+        level.triggerPowerup(powerupPlayer1.getName(), powerupPlayer1.getPlayerId());
     }
 
     @Test

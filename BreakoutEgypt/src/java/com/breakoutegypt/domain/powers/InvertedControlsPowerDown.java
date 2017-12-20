@@ -19,8 +19,11 @@ public class InvertedControlsPowerDown implements PowerDown {
 
     private int timeActive;
     
+    private int playerId;
+    
     public InvertedControlsPowerDown(int timeActive) {
         this.timeActive = timeActive;
+        this.playerId =1;
     }
     
     public int getTimeActive() {
@@ -61,4 +64,14 @@ public class InvertedControlsPowerDown implements PowerDown {
     public PowerDownMessageType getType() {
         return PowerDownMessageType.INVERTEDCONTROLS;
     }    
+    
+     @Override
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
+    }
 }
