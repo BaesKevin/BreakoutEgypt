@@ -27,29 +27,34 @@
         </header>
         <main>
             <p class="back"><a href="index.jsp">Back</a></p>
+            <div class='text-center'>
+                <noscript class="error">JavaScript is disabled or your browser does not support JavaScript! <br/>
+                        You won't be able to do anything while it's disabled.
+                    </noscript>
+            </div>
             <form action="highscores" method="POST">
                 <label>Difficulty</label>
                 <div id='difficulties'>
                     <c:forEach items="${difficulties}" var="difficultyFromRepo">
                         <c:choose>
                             <c:when test="${difficultyFromRepo.getName().equals(difficulty)}">
-                                    <label class="radioButtonContainer" for="radio${difficultyFromRepo.name}">${difficultyFromRepo.name}
+                                <label class="radioButtonContainer" for="radio${difficultyFromRepo.name}">${difficultyFromRepo.name}
                                     <input checked="checked" type="radio" name="difficulty" value="${difficultyFromRepo.name}"
-                                       id="radio${difficultyFromRepo.name}">
+                                           id="radio${difficultyFromRepo.name}">
                                     <span class="checkmark"></span>
-                                    </label>
+                                </label>
                             </c:when>
                             <c:otherwise>
-                                    <label class="radioButtonContainer" for="radio${difficultyFromRepo.name}">${difficultyFromRepo.name}
+                                <label class="radioButtonContainer" for="radio${difficultyFromRepo.name}">${difficultyFromRepo.name}
                                     <input type="radio" name="difficulty" value="${difficultyFromRepo.name}"
-                                       id="radio${difficultyFromRepo.name}">
+                                           id="radio${difficultyFromRepo.name}">
                                     <span class="checkmark"></span>
-                                    </label>
+                                </label>
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
                 </div>
-                
+
                 <label for="gameId">Level:</label><input type="number" value="<c:out value="${gameIdentification}"/>" min="1"
                                                          max="50" name="gameId" id="gameId"/>
             </form>

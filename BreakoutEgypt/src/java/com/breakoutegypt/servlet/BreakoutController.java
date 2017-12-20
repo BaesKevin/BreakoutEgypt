@@ -36,7 +36,8 @@ import com.breakoutegypt.domain.levelprogression.Difficulty;
     "/arcade",
     "/login",
     "/register",
-    "/highscores"})
+    "/highscores",
+    "/explanation"})
 public class BreakoutController extends HttpServlet {
 
     public static final String DIFFICULTY = "difficulty";
@@ -80,6 +81,9 @@ public class BreakoutController extends HttpServlet {
                 break;
             case "/multiplayer":
                 handleMultiplayer(request, response);
+                break;
+            case "/explanation":
+                request.getRequestDispatcher("WEB-INF/pages/explanation.jsp").forward(request, response);
                 break;
             default:
         }

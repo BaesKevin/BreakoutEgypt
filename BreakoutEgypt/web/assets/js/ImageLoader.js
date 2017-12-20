@@ -8,7 +8,8 @@ const ImageLoader = (function(){
         "acidball" : new Image(),
         "brokenpaddle" : new Image(),
         "floor" : new Image(),
-        "projectile": new Image()
+        "projectile": new Image(),
+        "questionmark": new Image()
     };
 
     let imageAssets = [
@@ -20,7 +21,8 @@ const ImageLoader = (function(){
         {image: images["brokenpaddle"], src: "assets/media/brokenpaddle.png"},
         {image: images["floor"], src: "assets/media/floor.png"},
         {image: images["acidball"], src: "assets/media/acidball.png"},
-        {image: images["projectile"], src: "assets/media/flames.jpg"}
+        {image: images["projectile"], src: "assets/media/flames.jpg"},
+        {image: images["questionmark"], src: "assets/media/questionmark.png"}
     ];
 
 
@@ -31,14 +33,13 @@ const ImageLoader = (function(){
         this.images = images;
     };
 
-    ImageLoader.prototype.loadImages = function(){
+    ImageLoader.prototype.loadImages = function(ctx){
         let self = this;
         return getImageRequestPromiseChain().then(function () {
-
-            self.patterns["brick"] = DrawingModule.createPattern(images["brick"], "repeat");
-            self.patterns["gold"] = DrawingModule.createPattern(images["gold"], "repeat");
-            self.patterns["fire"] = DrawingModule.createPattern(images["fire"], "repeat");
-            self.patterns["projectile"] = DrawingModule.createPattern(images["projectile"], "repeat");
+            self.patterns["brick"] = DrawingModule.createPattern(images["brick"], "repeat", ctx);
+            self.patterns["gold"] = DrawingModule.createPattern(images["gold"], "repeat", ctx);
+            self.patterns["fire"] = DrawingModule.createPattern(images["fire"], "repeat", ctx);
+            self.patterns["projectile"] = DrawingModule.createPattern(images["projectile"], "repeat", ctx);
         }).catch(function (err) {
             console.log(err);
         });
