@@ -19,10 +19,12 @@ public class AcidBallPowerUp implements PowerUp {
     
     private String name;
     private int range = 1;
+    private int playerId;
     
     
     public AcidBallPowerUp(String name) {
         this.name = name;
+        this.playerId = 1;
     }
 
     public int getRange() {
@@ -60,5 +62,17 @@ public class AcidBallPowerUp implements PowerUp {
     void addRange(int range) {
         this.range += range;
     }
+
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return this.playerId;
+    }
+    
+    
     
 }

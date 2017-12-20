@@ -1,0 +1,27 @@
+{
+    "brick": {
+        "target": "These are where it is all about. This type of brick is called 'Target'. When you destroy all of the targets, you won the game.",
+        "switch": "These badboys are real fun. They hide and show other bricks (you won't know which till you try &#x1F609; ). The bricks that it hides are not gone, just invisible. Nor the switch nor the hidden bricks can be destroyed.",
+        "explosive" :"If you like Micheal Bay then you will like the explosive bricks. When you hit them they will detonate and destroy the surrounding bricks!",
+        "unbreakable":"The unbreakable bricks are, as the name suggests, unbreakable. But not really, you just need an explosive to destroy them!",
+        "regular" : "These bricks are just normal... Boring... Oh wait! They are the only bricks that can contain a powerup! <small>And powerdowns (minor detail)<small>"
+    },
+    "powerup": {
+        "questionmark": "You can activate a powerup that is in your inventory (left bottom corner) by pressing the corresponding key. The duration depends on the difficulty setting you have chosen. When a powerup is active it will become green. If it's done, it will disapear from the inventory.",
+        "brokenpaddle":"2 for the price of 1! Sale in Egypt! Your paddle will become a set of 2 paddles. This will give you more accuracy and a bigger area covered.",
+        "floor": "The gods are good-humoured. They gave you a temporarily floor so your energyball can't go out of bounds!",
+        "acidball": "The Gunpowder Plot of 1605. But then in Egypt. Way earlier... The next brick you hit will be like the parliament on that 5th november! <small>(If they succeeded)</small>"
+    },
+    "powerdown": {
+        "flood": "A plague broke loose! Stuff flying through the sky. Don't lose your energyball in the chaos!",
+        "projectile": "You pissed of a god. That sheep you offered must've been spoiled. Evade the fireball raining from the sky!",
+        "inverted controls": "Been to the Festival of Drunkenness? Now you have to face the consequences!"
+    },
+    "examplebricks": {
+        "regular": {"name": "regular", "x": 0, "y": 0, "width": 100, "height": 100, "show": true, "isBreakable": true},
+        "switch": {"name": "switch", "x": 0, "y": 0, "width": 100, "height": 100, "show": true, "isBreakable": false, "effect": "toggle"},
+        "explosive": {"name": "explosive", "x": 0, "y": 0, "width": 100, "height": 100, "show": true, "isBreakable": true, "effect": "explosive"},
+        "target": {"name": "target", "x": 0, "y": 0, "width": 100, "height": 100, "show": true, "isBreakable": true, "isTarget": true},
+        "unbreakable": {"name": "unbreakable", "x": 0, "y": 0, "width": 100, "height": 100, "show": true, "isBreakable": false}    
+    }
+}

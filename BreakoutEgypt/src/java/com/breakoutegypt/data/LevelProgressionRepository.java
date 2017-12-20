@@ -23,6 +23,7 @@ public class LevelProgressionRepository {
         
         defaultProgressions.put(GameType.TEST, new LevelProgress(1000));
         defaultProgressions.put(GameType.ARCADE, new LevelProgress(4));
+        defaultProgressions.put(GameType.MULTIPLAYER, new LevelProgress(1));
     }
     
     public static LevelProgress getDefault(GameType type){

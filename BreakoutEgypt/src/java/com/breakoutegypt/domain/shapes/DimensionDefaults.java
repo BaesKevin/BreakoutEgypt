@@ -19,5 +19,6 @@ public class DimensionDefaults {
     
     public static final int BRICK_WIDTH = 10;
     public static final int BRICK_HEIGHT =  10;
+    public static final int BRICK_HEIGHT_MULTIPLAYER =  5;
     
 }

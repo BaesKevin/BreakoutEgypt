@@ -1,9 +1,3 @@
-<%-- 
-    Document   : arcade_levels
-    Created on : Nov 23, 2017, 2:45:42 PM
-    Author     : snc
---%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -26,17 +20,16 @@
                 <div class="col-lg-12 text-center text-capitalize">
                     <h1>Breakout Egypt</h1>
                 </div>
-
             </header>
-
+            <p class="back"><a href="index.jsp">Back</a></p>
             <form action="arcade" method="GET" class="arcadelevels-container">
                 <div class="arcadelevels-formheader">
                     <h2>Arcade levels <c:out value="${difficulty}"/></h2>
-                        <select name="difficulty" id="difficulty">
-                            <c:forEach items="${difficulties}" var="difficulty">
-                                <option value="${difficulty.name}">${difficulty.name}</option>
-                            </c:forEach>
-                        </select>
+                    <select name="difficulty" id="difficulty">
+                        <c:forEach items="${difficulties}" var="difficulty">
+                            <option value="${difficulty.name}">${difficulty.name}</option>
+                        </c:forEach>
+                    </select>
                 </div>
 
                 <ul id="levels">
@@ -45,10 +38,10 @@
 
                         <c:choose>
                             <c:when test="${loop.index <= levelReached}">
-                                    <li><a href=\"arcade?startLevel=${loop.index}&difficulty=${difficulty}\" data-level="${loop.index}">Level ${loop.index}</a></li>
+                                <li><a href=\"arcade?startLevel=${loop.index}&difficulty=${difficulty}\" data-level="${loop.index}">Level ${loop.index}</a></li>
                                 </c:when>
                                 <c:otherwise>
-                                    <li class="locked">Level ${loop.index}</li>
+                                <li class="locked">Level ${loop.index}</li>
                                 </c:otherwise>
                             </c:choose>
 

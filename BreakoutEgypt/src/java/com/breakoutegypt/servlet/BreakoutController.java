@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.breakoutegypt.data.HighscoreRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
+import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 
 /**
@@ -31,11 +32,14 @@ import com.breakoutegypt.domain.levelprogression.Difficulty;
 @WebServlet(name = "BreakoutController", urlPatterns = {"/index.jsp",
     "/index",
     "/multiplayerMenu",
+    "/multiplayer",
     "/arcade",
     "/login",
     "/register",
-    "/highscores"})
+    "/highscores",
+    "/explanation"})
 public class BreakoutController extends HttpServlet {
+
     public static final String DIFFICULTY = "difficulty";
     public static final String DIFFICULTIES = "difficulties";
     public static final String LEVEL = "levelId";
@@ -75,6 +79,9 @@ public class BreakoutController extends HttpServlet {
             case "/arcade":
                 handleArcade(request, response);
                 break;
+            case "/explanation":
+                request.getRequestDispatcher("WEB-INF/pages/explanation.jsp").forward(request, response);
+                break;
             default:
         }
     }
@@ -89,24 +96,23 @@ public class BreakoutController extends HttpServlet {
             GameManager gm = new GameManager();
 
             Player player = (Player) request.getSession().getAttribute("player");
-            if (player == null) {
-                player = new Player(new User("player"));
-                request.getSession().setAttribute("player", player);
-            }
-            
+
             LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.ARCADE, gameDifficulty);
             int gameId = gm.createGame(GameType.ARCADE, gameDifficulty);
+
             gm.getGame(gameId).initStartingLevel(startingLevel, progress);
             gm.addConnectingPlayer(gameId, player);
+            request.getSession().setAttribute("player", player);
 
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);
             request.setAttribute(LEVELDIMENSION, BreakoutWorld.DIMENSION);
             
-            request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());
         }
+
+        request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
     }
     
     
@@ -115,18 +121,18 @@ public class BreakoutController extends HttpServlet {
         String levelId = request.getParameter("gameId");
         String difficulty = request.getParameter(DIFFICULTY);
         List<Difficulty> difficulties = Repositories.getDifficultyRepository().findAll();
-        
-        if(difficulty == null){
+
+        if (difficulty == null) {
             difficulty = "medium";
         }
-        
+
         request.setAttribute(DIFFICULTY, difficulty);
         request.setAttribute(DIFFICULTIES, difficulties);
-        
+
         if (levelId == null) {
             levelId = "1";
         }
-        
+
         HighscoreRepository hr = Repositories.getHighscoreRepository();
         List<Score> scores = hr.getScoresByLevel(Integer.parseInt(levelId), difficulty); // TODO from querystring
         request.getSession().setAttribute("gameIdentification", levelId);
@@ -172,5 +178,7 @@ public class BreakoutController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    
 
 }

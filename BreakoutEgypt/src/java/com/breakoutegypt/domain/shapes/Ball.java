@@ -87,7 +87,7 @@ public class Ball extends RegularBody {
 
     @Override
     public BodyConfiguration getConfig() {
-        BodyConfiguration ballBodyConfig = BodyConfigurationFactory.getInstance().createBallConfig(dimension);
+        BodyConfiguration ballBodyConfig = BodyConfigurationFactory.getInstance().createBallConfig(getInitialShape());
         setBox2dConfig(ballBodyConfig);
         
         return config;

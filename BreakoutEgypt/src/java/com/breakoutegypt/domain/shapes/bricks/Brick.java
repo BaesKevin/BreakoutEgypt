@@ -40,6 +40,7 @@ public class Brick extends RegularBody {
     private PowerUpType poweruptype;
     private PowerUp powerup;
     private PowerDown powerdown;
+    private boolean isInverted;
 
 //    private int points = 2000;
     public Brick(ShapeDimension s) {
@@ -53,21 +54,25 @@ public class Brick extends RegularBody {
     public Brick(ShapeDimension s, boolean isTarget, boolean isVisible) {
         this(s, isTarget, isVisible, true);
     }
-
+    
     public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable) {
+        this(s, isTarget, isVisible, isBreakable, false);
+    }
+
+    public Brick(ShapeDimension s, boolean isTarget, boolean isVisible, boolean isBreakable, boolean isInverted) {
         super(s);
         s.setName("Brick"+brickIdentifier.getAndIncrement());
         this.isVisibible = isVisible;
         this.isBreakable = isBreakable;
         this.brickTypeName = new BrickType("REGULAR").getName();
         this.isTarget = isTarget;
+        this.isInverted = isInverted;
 
         effects = new ArrayList();
 
         if (isVisible && isBreakable) {
             effects.add(new ExplosiveEffect(this, 0));
         }
-//        this.points = points;
 
     }
 
@@ -104,18 +109,10 @@ public class Brick extends RegularBody {
         return isBreakable;
     }
 
-//    protected void setBrickTypeName(String name) {
-//        this.brickTypeName = name;
-//    }
-//
-//    protected String getBrickTypeName() {
-//        return brickTypeName;
-//    }
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder builder = super.toJson();
 
         builder.add("show", isVisibible);
-//        builder.add("type", getBrickTypeName());
         builder.add("isTarget", isTarget());
         if (hasToggleEffect()) {
             builder.add("effect", "toggle");
@@ -125,6 +122,7 @@ public class Brick extends RegularBody {
             builder.add("effect", "");
         }
         builder.add("isBreakable", isBreakable);
+        builder.add("isInverted", isInverted);
         return builder;
     }
 
@@ -215,7 +213,7 @@ public class Brick extends RegularBody {
     @Override
     public BodyConfiguration getConfig() {
         BodyConfigurationFactory factory = BodyConfigurationFactory.getInstance();
-        BodyConfiguration brickBody = factory.createTriangleConfig(this.dimension);
+        BodyConfiguration brickBody = factory.createTriangleConfig(this.dimension, isInverted);
 
         if (!this.isVisibible) {
             brickBody.getFixtureConfig().setMaskBits(0);

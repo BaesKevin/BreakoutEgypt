@@ -13,35 +13,22 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class LifeMessage implements Message {
+public class LifeMessage extends GenericMessage {
 
-    private String playerName;
     private int livesLeft;
-    private LifeMessageType gameOver;
 
-    public LifeMessage(String playerName, int livesLeft, LifeMessageType gameOver) {
+    public LifeMessage(String playerName, int livesLeft, LifeMessageType gameOver, int playerIndex) {
+        super(playerIndex, playerName, gameOver);
         this.livesLeft = livesLeft;
-        this.gameOver = gameOver;
-        this.playerName = playerName;
-    }
-
-    @Override
-    public String getName() {
-        return playerName;
     }
 
     public int getLivesLeft() {
         return livesLeft;
     }
-
-    @Override
-    public LifeMessageType getMessageType() {
-        return gameOver;
-    }
-
+    
     @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job = super.toJson();
         job.add("name", getName());
         job.add("livesLeft", livesLeft);
         job.add("lifeaction", getMessageType().name().toLowerCase());
@@ -56,7 +43,7 @@ public class LifeMessage implements Message {
 
     @Override
     public String toString() {
-        return "LifeMessage{" + "name=" + playerName + ", livesLeft=" + livesLeft + ", lifeaction=" + gameOver + '}';
+        return "LifeMessage{" + "name=" + getName() + ", livesLeft=" + livesLeft + ", lifeaction=" + getMessageType() + '}';
     }
 
     @Override
@@ -74,10 +61,10 @@ public class LifeMessage implements Message {
         if (this.livesLeft != other.livesLeft) {
             return false;
         }
-        if (!Objects.equals(this.playerName, other.playerName)) {
+        if (!Objects.equals(this.getName(), other.getName())) {
             return false;
         }
-        if (this.gameOver != other.gameOver) {
+        if (this.getMessageType() != other.getMessageType()) {
             return false;
         }
         return true;

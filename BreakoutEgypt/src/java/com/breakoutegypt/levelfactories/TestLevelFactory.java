@@ -73,7 +73,6 @@ public class TestLevelFactory extends LevelFactory {
 //        return new LevelPack("test", "Testlevels", levels, 500, 1000);
 //
 //    }
-
 //    @Override
 //    public void initializeLevels() {
 //        if (pack == null) {
@@ -109,73 +108,118 @@ public class TestLevelFactory extends LevelFactory {
 //    }
     @Override
     protected void createCurrentLevel() {
-        switch (currentLevelId) {
-            case 1:
-                currentLevel = getOutOfBoundsTest();
-                break;
-            case 2:
-                currentLevel = getTargetBrickTest();
-                break;
-            case 3:
-                currentLevel = getSiwtchBrickTest();
-                break;
-            case 4:
-                currentLevel = getExplosiveBrickTest();
-                break;
-            case 5:
-                currentLevel = getLevelWithMultipleBalls();
-                break;
-            case 6:
-                currentLevel = getLevelWithOnlyOneLife();
-                break;
-            case 7:
-                currentLevel = getLevelWithOneBrick();
-                break;
-            case 8:
-                currentLevel = getLevelWithBrokenPaddle();
-                break;
-            case 9:
-                currentLevel = getLevelWithFloor();
-                break;
-            case 10:
-                currentLevel = getLevelWithPowerUpBrick();
-                break;
-            case 11:
-                currentLevel = getLevelWithExplosiveAndPowerUpBrick();
-                break;
-            case 12:
-                currentLevel = getLevelWithBrokenPaddlePowerup();
-                break;
-            case 13:
-                currentLevel = getSimpleScoreTestLevel();
-                break;
-            case 14:
-                currentLevel = getLevelWith2AcidBalls();
-                break;
-            case 15:
-                currentLevel = getLevelWith2Floors();
-                break;
-            case 16:
-                currentLevel = getLevelWith2BrokenPaddles();
-                break;
-            case 17:
-                currentLevel = getOneTargetBrickTest();
-                break;
-            case 18:
-                currentLevel = getLevelWithFloodPowerDown();
-                break;
-            case 19:
-                currentLevel = getLevelWithProjectile();
-                break;
-            case 20:
-                currentLevel = getLevelWithPowerDownAndExplosive();
-                break;
-            default:
-                // if there is a last level in this factory the liferegeneration can't be tested
-                currentLevel = getOneTargetBrickTest();
+        Level level = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
+
+        if (level == null) {
+            switch (currentLevelId) {
+                case 1:
+                    currentLevel = getOutOfBoundsTest();
+                    break;
+                case 2:
+                    currentLevel = getTargetBrickTest();
+                    break;
+                case 3:
+                    currentLevel = getSiwtchBrickTest();
+                    break;
+                case 4:
+                    currentLevel = getExplosiveBrickTest();
+                    break;
+                case 5:
+                    currentLevel = getLevelWithMultipleBalls();
+                    break;
+                case 6:
+                    currentLevel = getLevelWithOnlyOneLife();
+                    break;
+                case 7:
+                    currentLevel = getLevelWithOneBrick();
+                    break;
+                case 8:
+                    currentLevel = getLevelWithBrokenPaddle();
+                    break;
+                case 9:
+                    currentLevel = getLevelWithFloor();
+                    break;
+                case 10:
+                    currentLevel = getLevelWithPowerUpBrick();
+                    break;
+                case 11:
+                    currentLevel = getLevelWithExplosiveAndPowerUpBrick();
+                    break;
+                case 12:
+                    currentLevel = getLevelWithBrokenPaddlePowerup();
+                    break;
+                case 13:
+                    currentLevel = getSimpleScoreTestLevel();
+                    break;
+                case 14:
+                    currentLevel = getLevelWith2AcidBalls();
+                    break;
+                case 15:
+                    currentLevel = getLevelWith2Floors();
+                    break;
+                case 16:
+                    currentLevel = getLevelWith2BrokenPaddles();
+                    break;
+                case 17:
+                    currentLevel = getOneTargetBrickTest();
+                    break;
+                case 18:
+                    currentLevel = getLevelWithFloodPowerDown();
+                    break;
+                case 19:
+                    currentLevel = getLevelWithProjectile();
+                    break;
+                case 20:
+                    currentLevel = getLevelWithPowerDownAndExplosive();
+                    break;
+                case 21:
+                    currentLevel = getLevelWith2Paddles();
+                    break;
+                default:
+                    // if there is a last level in this factory the liferegeneration can't be tested
+                    currentLevel = getOneTargetBrickTest();
+            }
         }
+        
+        Repositories.getLevelRepository().addLevel(level);
+        currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, game);
+
     }
-    
+
+    public Level getLevelWith2Paddles() {
+
+//        ShapeDimension ballShape = new ShapeDimension("ball", 60, 200, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
+//        ShapeDimension ballShape2 = new ShapeDimension("ball", 60, 150, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
+        Ball ball = shapeRepo.getDefaultBall();
+        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 30);
+
+//        Paddle paddle = new Paddle(new ShapeDimension("paddle1", 45, 250, 100, 4, Color.BLUE));
+//        Paddle paddle2 = new Paddle(new ShapeDimension("paddle2", 45, 100, 100, 4, Color.BLUE));
+        Paddle paddle = shapeRepo.getDefaultPaddle("paddle1", 50, 80);
+        Paddle paddle2 = shapeRepo.getDefaultPaddle("paddle2", 50, 10);
+
+        paddle2.setPlayerIndex(2);
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(paddle);
+        paddles.add(paddle2);
+
+        List<Ball> balls = new ArrayList();
+//        Ball ball = new Ball(ballShape);
+//        Ball ball2 = new Ball(ballShape2);
+        ball2.setPlayerIndex(2);
+        ball.setStartingBall(true);
+        ball2.setStartingBall(true);
+
+//        ball.setStartingBall(true);
+        balls.add(ball);
+        balls.add(ball2);
+
+        LevelState initialState = new LevelState(balls, paddles, new ArrayList(), Repositories.getDifficultyRepository().findByName(Difficulty.EASY), false, true);
+        Level level = new Level(currentLevelId, game, initialState);
+        level.setLevelNumber(21);
+        return level;
+    }
+
     public Level getLevelWithPowerDownAndExplosive() {
 
         Ball b = shapeRepo.getDefaultBall(50, 40);
@@ -583,7 +627,7 @@ public class TestLevelFactory extends LevelFactory {
     }
 
     private Level getLevelWithExplosiveAndPowerUpBrick() {
-        Ball ball = shapeRepo.getDefaultBall();
+        Ball ball = shapeRepo.getDefaultBall(49, 30);
         Paddle paddle = shapeRepo.getDefaultPaddle();;
 
         List<Ball> balls = new ArrayList();

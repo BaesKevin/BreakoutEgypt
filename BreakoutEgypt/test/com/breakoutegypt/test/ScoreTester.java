@@ -46,7 +46,7 @@ public class ScoreTester {
             ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
         }
 
-        player = new Player(new User("Kevin"));
+        player = new Player("Kevin");
 
         game.addConnectingPlayer(player);
 

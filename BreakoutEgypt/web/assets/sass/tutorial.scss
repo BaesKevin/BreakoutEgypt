@@ -1,0 +1,40 @@
+
+.container {
+  font-size: 1em;
+  width: 80%;
+  margin: 1% auto;
+  h3 {
+    + p {
+      font-size: 0.6em;
+    }
+    small {
+      font-size: 0.5em;
+    }
+  }
+  h4 {
+    text-transform: capitalize;
+    font-size: 1.3em;
+    + p {
+      color: red;
+    }
+  }
+}
+
+.info {
+  display: flex;
+  align-content: center;
+  color: darkgreen;
+  canvas {
+    height: 100px;
+    width: 100px;
+    border: none;
+  }
+  p {
+    margin-left: 15%;
+    width: 60%;
+  }
+}
+
+.back {
+  margin-top: 0.83em;
+}

@@ -2,6 +2,7 @@
 package com.breakoutegypt.domain;
 
 import com.breakoutegypt.domain.messages.Message;
+import com.breakoutegypt.domain.messages.PaddlePositionMessage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,7 +17,7 @@ public class ServerClientMessageRepository {
     private Set<Message> brickMessages;
     private List<Message> powerupMessages;
     private List<Message> powerdownMessages;
-
+    
     public ServerClientMessageRepository() {
         this.brickMessages = new HashSet();
         this.powerupMessages = new ArrayList();
@@ -74,5 +75,9 @@ public class ServerClientMessageRepository {
 
         return jab.build();
     }    
+
+    void addPaddleMessage(PaddlePositionMessage paddleMessage) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

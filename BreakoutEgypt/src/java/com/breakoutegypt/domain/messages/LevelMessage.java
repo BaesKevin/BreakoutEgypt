@@ -13,39 +13,21 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class LevelMessage implements Message {
-
-//    job.add("levelComplete", true);
-//        job.add("scoreTimer", t.getDuration());
-//        job.add("isLastLevel", isLastLevel);
-    
-    private final String name;
+public class LevelMessage extends GenericMessage {
     private final boolean isLastLevel;
     private final long score;
     private int brickScore;
-    private final LevelMessageType messageType;
 
     public LevelMessage(String name, boolean isLastLevel, long score, int brickScore, LevelMessageType messageType) {
-        this.name = name;
+        super(0, name, messageType);
         this.isLastLevel = isLastLevel;
         this.score = score;
-        this.messageType = messageType;
         this.brickScore = brickScore;
     }
     
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public LevelMessageType getMessageType() {
-        return messageType;
-    }
-
-    @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job = super.toJson();
         job.add("name", getName());
         job.add("levelComplete", true);
         job.add("scoreTimer", score);

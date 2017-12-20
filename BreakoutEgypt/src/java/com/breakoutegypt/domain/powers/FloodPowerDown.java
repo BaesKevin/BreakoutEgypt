@@ -30,12 +30,13 @@ public class FloodPowerDown implements PowerDown {
     private Ball originalBall;
     private final int decoyBallSpeed = 50;
     private final String name;
-
+    private int playerId;
     public FloodPowerDown(Ball originalBall, int noOfBalls) {
         this.name = "flood" + this.identifier.getAndIncrement();
         this.noOfBalls = noOfBalls;
         this.balls = new ArrayList();
         this.originalBall = originalBall;
+        this.playerId = 1;
     }
     public FloodPowerDown(int noOfBalls){
         this(null, noOfBalls);
@@ -107,6 +108,16 @@ public class FloodPowerDown implements PowerDown {
             }
             b.setLinearVelocity(x, y);
         }
+    }
+
+    @Override
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
     }
 
 }

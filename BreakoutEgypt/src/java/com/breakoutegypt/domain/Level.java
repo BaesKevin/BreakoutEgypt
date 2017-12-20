@@ -8,7 +8,6 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.effects.BreakoutEffectHandler;
-import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.messages.PowerDownMessageType;
 import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
@@ -25,6 +24,8 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -43,9 +44,6 @@ public class Level implements BreakoutWorldEventListener {
 
     private BreakoutWorld breakoutWorld;
 
-    private int lives;
-
-    // TODO use isLastLevel so frontend doesn't have to get 2 messagse, it can just know when loading the last level that it's the last level
     private boolean isLastLevel;
     private LevelState levelState;
 
@@ -60,6 +58,8 @@ public class Level implements BreakoutWorldEventListener {
     private boolean invertedControls;
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
+    private Map<Integer, Boolean> startedLevelMap;
+    
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
     
@@ -97,10 +97,10 @@ public class Level implements BreakoutWorldEventListener {
                 new BreakoutEffectHandler(this, levelState, breakoutWorld),
                 bpuh, bpdh);
 
-        this.lives = game.getInitialLives();
         this.timer = new Timer();
         runLevelManually = false;
         this.invertedControls = false;
+        startedLevelMap = new HashMap();
     }
 
     public void setId(int id){ this.id = id; }
@@ -160,6 +160,7 @@ public class Level implements BreakoutWorldEventListener {
         }
     }
 
+    // should not be used by real classes, still here for tests
     public void startBall() {
         if (!levelStarted) {
             setLevelStarted(true);
@@ -171,20 +172,34 @@ public class Level implements BreakoutWorldEventListener {
         }
     }
 
+    public void startBall(int playerIndex) {
+        if (startedLevelMap.get(playerIndex) == null || startedLevelMap.get(playerIndex) == false) {
+            startedLevelMap.put(playerIndex, true);
+            List<Ball> balls = levelState.getBalls();
+
+            for (Ball ball : balls) {
+                if (ball.getPlayerIndex() == playerIndex) {
+                    scoreTimer.start();
+                    ball.setLinearVelocity(0, game.getDifficulty().getBallspeed());
+                }
+            }
+        }
+
+    }
+
     // x coordinate is the center of the most left paddle
-    public void movePaddle(Paddle paddle, int firstPaddleCenter, int y) {
-        
-        List<Paddle> paddles = levelState.getPaddles();
-        int totalWidth = levelState.calculatePaddleWidthWithGaps();
+    public synchronized void movePaddle(int playerIndex, int firstPaddleCenter, int y) {
+        List<Paddle> paddles = levelState.getPaddlesForPlayer(playerIndex);
+
+        int totalWidth = levelState.calculatePaddleWidthWithGaps(paddles);
         int paddleWidth = paddles.get(0).getWidth();
-        // x is the center of the most left paddle
         int min = paddleWidth / 2;
         int max = BreakoutWorld.DIMENSION - totalWidth + (paddleWidth / 2);
 
         if (invertedControls) {
             firstPaddleCenter = BreakoutWorld.DIMENSION - firstPaddleCenter;
         }
-        
+
         float paddleCenter = firstPaddleCenter;
         if (paddleCenter < min) {
             paddleCenter = min;
@@ -197,18 +212,17 @@ public class Level implements BreakoutWorldEventListener {
             paddleCenter += (paddleWidth + BrokenPaddlePowerUp.GAP);
         }
 
-        if (!levelStarted) {
-            float yPos = levelState.getBall().getPosition().y;
-            List<Ball> balls = levelState.getBalls();
-
-            float temp = firstPaddleCenter;
-            for (Ball ball : balls) {
-                ball.moveTo(temp, yPos);
-                temp += paddleWidth;
-            }
-
-        }
-
+//        if (!levelStarted) {
+//            float yPos = levelState.getBall().getPosition().y;
+//            List<Ball> balls = levelState.getBalls();
+//
+//            float temp = firstPaddleCenter;
+//            for (Ball ball : balls) {
+//                ball.moveTo(temp, yPos);
+//                temp += paddleWidth;
+//            }
+//
+//        }
     }
 
     public int getId() {
@@ -220,25 +234,21 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     void resetBall(Ball ball) {
-        if (this.getLevelState().getBalls().size() == 1) {
-            setLevelStarted(false);
-            levelState.removeBall(ball);
-            levelState.resetBall(breakoutWorld);
+        int playerIndex = ball.getPlayerIndex();
 
-            loseLifeBasedOnDifficulty();
-        } else {
-            levelState.removeBall(ball);
+        if (!ball.isDecoy()) {
+            game.loseLife(playerIndex);
         }
+
+        levelState.removeBall(ball);
+        if (levelState.noMoreBallsForPlayer(ball.getPlayerIndex())) {
+            this.startedLevelMap.put(playerIndex, false);
+
+            levelState.resetBall(breakoutWorld, ball.getPlayerIndex());
+        }
+
         game.notifyPlayersOfBallAction();
-        game.notifyPlayersOfLivesLeft();
-    }
-    
-    private void loseLifeBasedOnDifficulty(){
-        Difficulty diff = game.getDifficulty();
-       
-        if(diff.getLives() != Difficulty.INFINITE_LIVES){
-            lives--;
-        }
+        game.notifyPlayersOfLivesLeft(ball.getPlayerIndex());
     }
 
     private int getTargetBricksLeft() {
@@ -252,14 +262,6 @@ public class Level implements BreakoutWorldEventListener {
     public void step() {
         breakoutWorld.step();
         game.notifyPlayers(this, breakoutWorld.getMessageRepo());
-    }
-
-    public boolean noLivesLeft() {
-        return lives == 0;
-    }
-
-    public int getLives() {
-        return lives;
     }
 
     public void stop() {
@@ -279,9 +281,9 @@ public class Level implements BreakoutWorldEventListener {
         scoreTimer.pauseTimer();
     }
 
-    public void initNextLevel() {
+    public void initNextLevel(int winnerIndex) {
         stop();
-        game.initNextLevel();
+        game.initNextLevel(winnerIndex);
     }
 
     public boolean isLastLevel() {
@@ -300,15 +302,17 @@ public class Level implements BreakoutWorldEventListener {
         brickScoreCalc.addPointsToScore();
 
         if (allTargetBricksDestroyed()) {
+            int winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
             HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
             int brickScore = brickScoreCalc.getScore();
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int)getScoreTimer().getDuration());
+            //TODO user with playerindex x
+            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
-            
-            initNextLevel();
+
+            initNextLevel(winnerIndex);
         }
     }
 
@@ -329,8 +333,8 @@ public class Level implements BreakoutWorldEventListener {
         return brickScoreCalc.getScore();
     }
 
-    public PowerUpMessage triggerPowerup(String powerup) {
-        PowerUp p = bpuh.getPowerupByName(powerup);
+    public PowerUpMessage triggerPowerup(String powerup, int playerIndex) {
+        PowerUp p = bpuh.getPowerupByName(powerup, playerIndex);
 
         PowerUpMessage msg = new PowerUpMessage("You are trying to trigger a powerup that doesn't exist", null, PowerUpMessageType.NOSUCHPOWERUP);
 
@@ -349,8 +353,8 @@ public class Level implements BreakoutWorldEventListener {
         levelState.removeProjectile(projectile);
         breakoutWorld.deSpawn(projectile.getBody());
         if (lostLife) {
-            lives--;
-            game.notifyPlayersOfLivesLeft();
+            game.loseLife(projectile.getPlayerIndex());
+            game.notifyPlayersOfLivesLeft(projectile.getPlayerIndex());
         }
         return new ProjectilePositionMessage(projectile, PowerDownMessageType.REMOVEPROJECTILE);
     }

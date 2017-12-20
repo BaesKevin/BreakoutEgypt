@@ -3,7 +3,7 @@
     Created on : 23-nov-2017, 15:51:34
     Author     : Bjarne Deketelaere
 --%>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -27,20 +27,24 @@
                 <div class="card mx-auto mt-5">
                     <div class="card-header">Registration</div>
                     <div class="card-body">
+                        <c:forEach var="error" items="${errors}" >
+                            <p class="error"><c:out value="${error}"></c:out></p>
+                        </c:forEach>
                         <form action="LoginSystem" method="POST">
                             <div class="form-group">
                                 <label for="username">Username:</label>
-                                <input type="text" id="username" class="form-control" name="username" placeholder="Username"/>
+                                <input type="text" value="<c:out value="${username}"></c:out>" id="username" class="form-control" name="username" placeholder="Username"/>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email:</label>
-                                <input type="email" id="email" class="form-control" name="email" placeholder="example@domain.com"/>
+                                <input type="email" value="<c:out value="${email}"></c:out>" id="email" class="form-control" name="email" placeholder="example@domain.com"/>
                             </div>
                             <div class="form-group">
-                                <label for="password">Password</label>
+                                <label for="password">Passphrase</label>
                                 <input type="password" id="password" class="form-control" name="password" placeholder="******"/>
                             </div>
                             <input type="submit" class="btn" name="register" value="Register"/>
+                            <p class="back btn"><a href="login">Back</a></p>
                         </form>
                     </div>
                 </div>

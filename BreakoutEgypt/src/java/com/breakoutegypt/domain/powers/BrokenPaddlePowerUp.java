@@ -32,6 +32,8 @@ public class BrokenPaddlePowerUp implements PowerUp {
     public static final int GAP = 6;
     
     private String name;
+    
+    private int playerId;
 
     public BrokenPaddlePowerUp(Paddle p,  int i, int timeVisible) {
         this.name = "brokenpaddle" + i;
@@ -40,6 +42,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
         brokenPaddle = new ArrayList();
         breakPaddle();
         startTime = timeVisible;
+        this.playerId = 1;
     }
 
     public List<Paddle> getBrokenPaddle() {
@@ -63,8 +66,14 @@ public class BrokenPaddlePowerUp implements PowerUp {
         ShapeDimension leftPaddleShape = new ShapeDimension("leftpaddle", newXs[0], baseY, newWidth, 4);
         ShapeDimension rightPaddleShape = new ShapeDimension("rightpaddle", newXs[1], baseY, newWidth, 4);
         
-        brokenPaddle.add(new Paddle(leftPaddleShape));
-        brokenPaddle.add(new Paddle(rightPaddleShape));
+        Paddle leftPaddle = new Paddle(leftPaddleShape);
+        Paddle rightPaddle = new Paddle(rightPaddleShape);
+        
+        leftPaddle.setPlayerIndex(base.getPlayerIndex());
+        rightPaddle.setPlayerIndex(base.getPlayerIndex());
+        
+        brokenPaddle.add(leftPaddle);
+        brokenPaddle.add(rightPaddle);
     }
     
     public boolean isVisible() {
@@ -111,7 +120,7 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     @Override
     public PowerUpMessage accept(PowerUpHandler puh) {
-        return puh.handleAddBrokenPaddle(this);
+        return puh.handleBrokenPaddle(this);
     }
 
     @Override
@@ -140,6 +149,16 @@ public class BrokenPaddlePowerUp implements PowerUp {
 
     void addTime(int othersTime) {
         this.timeVisible += othersTime;
+    }
+    
+    @Override
+    public void setPlayerId(int i) {
+        this.playerId = i;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return this.playerId;
     }
 
 }

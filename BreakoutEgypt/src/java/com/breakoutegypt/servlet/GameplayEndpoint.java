@@ -50,9 +50,9 @@ public class GameplayEndpoint {
         HttpSession httpSession=(HttpSession) config.getUserProperties().get(HttpSession.class.getName());
 //        user=(User)httpSession.getAttribute("user");
         player = (Player) httpSession.getAttribute("player");
-        
+        System.out.println("Player id from session in gameplayendpoint: " +  player.getIndex());
         game = gm.getGame(gameId);
-        username = player.getUser().getUsername();
+        username = player.getUsername();
         
         // TODO retrieve actual username from session/path parameter
         gm.addConnectionForPlayer(gameId, username, new WebsocketConnection(peer));

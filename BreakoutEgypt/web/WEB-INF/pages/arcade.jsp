@@ -22,22 +22,24 @@
         <div class="container-fluid">
             <main class="row">
                 <div id="gameMain" class="clearfix">
-                    <canvas id="stationaryParts" height="${levelDimension}" width="${levelDimension}"></canvas>
-                    <canvas id="effectCanvas" height="${levelDimension}" width="${levelDimension}"></canvas>
-                    <canvas id="movingParts" height="${levelDimension}" width="${levelDimension}"></canvas>
-                    <p id="level"></p>
-                    <p id="pause"><a>Pause (P)</a></p>
-                    <p class="quit"><a>Quit (Q)</a></p>
+                    <aside>
+                        <p id="level"></p>
+                        <p id="pause"><a>Pause (P)</a></p>
+                        <p class="quit"><a>Quit (Q)</a></p>
+                    </aside>
+                    <canvas id="stationaryParts" height="300" width="300"></canvas>
+                    <canvas id="effectCanvas" height="300" width="300"></canvas>
+                    <canvas id="movingParts" height="300" width="300"></canvas>
                 </div>
-        </main>
-    </div>
+            </main>
+        </div>
         <%
-            int id=Integer.parseInt(request.getAttribute("gameId").toString());
-            int levelId=Integer.parseInt(request.getAttribute("level").toString());
-            out.println("<input type='hidden' value='"+id+"' id='gameId'/>");
-            out.println("<input type='hidden' value='"+levelId+"' id='levelid'/>");
+            int id = Integer.parseInt(request.getAttribute("gameId").toString());
+            int levelId = Integer.parseInt(request.getAttribute("level").toString());
+            out.println("<input type='hidden' value='" + id + "' id='gameId'/>");
+            out.println("<input type='hidden' value='" + levelId + "' id='levelid'/>");
         %>
-        
+
         <div id="modalPlaceholder"></div>
         <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="assets/js/popper.min.js"></script>

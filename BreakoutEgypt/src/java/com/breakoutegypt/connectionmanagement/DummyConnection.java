@@ -8,6 +8,7 @@ package com.breakoutegypt.connectionmanagement;
 import com.breakoutegypt.domain.messages.BallMessageType;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +23,7 @@ import javax.json.JsonObjectBuilder;
  *
  * @author kevin
  */
-public class DummyConnection implements PlayerConnection {
+public class DummyConnection implements PlayerConnection,Serializable {
 
     private List<JsonObject> jsonMessages = new ArrayList();
     private List<Message> ballMessages = new ArrayList();
@@ -71,9 +72,7 @@ public class DummyConnection implements PlayerConnection {
 
     @Override
     public void send(Message msg) {
-        if (msg.getMessageType().equals(BallMessageType.ADD) || msg.getMessageType().equals(BallMessageType.REMOVE)) {
-            ballMessages.add(msg);
-        } else if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
+        if (msg.getMessageType().equals(LifeMessageType.PLAYING) || msg.getMessageType().equals(LifeMessageType.GAMEOVER)) {
             lifeMessages.add(msg);
         }
         this.send(msg.toJson().build());
@@ -110,5 +109,10 @@ public class DummyConnection implements PlayerConnection {
             result.add(arrayToAdd.get(i));
         }
         return result.build();
+    }
+
+    @Override
+    public void send(List<Message> msgs) {
+        ballMessages.addAll(msgs);
     }
 }

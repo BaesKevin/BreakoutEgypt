@@ -18,6 +18,8 @@ import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.BrickMessage;
 import com.breakoutegypt.domain.effects.EffectHandler;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
+import com.breakoutegypt.domain.messages.GenericMessage;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.messages.PowerDownMessage;
 import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.powers.PowerUpHandler;
@@ -119,18 +121,22 @@ public class BreakoutWorld implements ContactHandler {
 
     @Override
     public void handle(BallBrickContact bbc) {
-        Brick b = bbc.getBrick();
+        Brick brick = bbc.getBrick();
         Ball ball = bbc.getBall();
+        brick.setPlayerIndex(ball.getPlayerIndex());
+        
         AcidBallPowerUp abpu = ball.getAcidBall();
         if (!ball.isDecoy()) {
             if (abpu != null) {
-                if (!b.hasToggleEffect()) {
-                    b.addEffect(new ExplosiveEffect(b, abpu.getRange()));
+                if (!brick.hasToggleEffect()) {
+                    brick.addEffect(new ExplosiveEffect(brick, abpu.getRange()));
                 }
                 ball.setAcidballPowerup(null);
-                messageRepo.addPowerupMessages(new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL));
+                Message message = new PowerUpMessage(abpu.getName(), abpu, PowerUpMessageType.REMOVEACIDBALL);
+                message.setRecipientIndex(ball.getPlayerIndex());
+                messageRepo.addPowerupMessages(message);
             }
-            new BrickCollisionDecider(b, this.effectHandler).handleCollision();
+            new BrickCollisionDecider(brick, this.effectHandler).handleCollision();
         }
     }
 
@@ -169,10 +175,12 @@ public class BreakoutWorld implements ContactHandler {
             brickName = brick.getName();
             if (brick.hasPowerUp()) {
                 PowerUp pu = brick.getPowerUp();
+                pu.setPlayerId(brick.getPlayerIndex());
                 powerupHandler.addPowerUp(pu);
             } 
             if (brick.hasPowerDown()) {
                 PowerDown pd = brick.getPowerDown();
+                pd.setPlayerId(brick.getPlayerIndex());
                 powerdownHandler.handle(pd);
             }
 

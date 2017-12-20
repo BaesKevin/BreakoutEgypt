@@ -22,7 +22,9 @@ import com.breakoutegypt.domain.shapes.Paddle;
 import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -52,7 +54,7 @@ public class ArcadeLevelFactory extends LevelFactory {
                 currentLevel = getLevelWithUnbreakableAndExplosive();
                 break;
             case 3:
-                currentLevel = getSimpleTestLevel();
+                currentLevel = getLevelWithInvertedTriangles();
                 currentLevel.setLevelNumber(3);
                 break;
             case 4:
@@ -64,17 +66,49 @@ public class ArcadeLevelFactory extends LevelFactory {
         }
     }
 
-//    public LevelPack createLevelPack() {
-//        List<Level> levels = new ArrayList();
-//        levels.add(getSimpleTestLevel());
-//        levels.add(getLevelWithUnbreakableAndExplosive());
-//        levels.add(getSimpleTestLevel());
-//        levels.get(2).setLevelNumber(3);
-//        levels.add(getPossibleRealLevel());
-//        levels.add(getLevelWithFloodPowerDown());
-//
-//        return new LevelPack("arcade", "Regular levels", levels, 5, levels.size());
-//    }
+    public Level getLevelWithInvertedTriangles() {
+        List<Brick> bricks = new ArrayList();
+        int rows = 6;
+        int noOfBricks = 1;
+        int startX = (BreakoutWorld.DIMENSION / 2);
+        int startY = 0;
+        int id = 0;
+        Brick b;
+        for (int row = 0; row < rows; row++) {
+            boolean inverted = false;
+            int bricksToTheLeft = (int) Math.floor(noOfBricks / 2);
+            int x = startX - ((DimensionDefaults.BRICK_WIDTH / 2) * bricksToTheLeft) - (DimensionDefaults.BRICK_WIDTH / 2);
+            for (int i = 0; i < noOfBricks; i++) {
+                b = Repositories.getDefaultShapeRepository().getDefaultBrick("brick" + id, x, startY, false, true, true, inverted);
+                bricks.add(b);
+                inverted = !inverted;
+                x += 5;
+                id++;
+            }
+            noOfBricks += 2;
+            startY += 10;
+        }
+        
+        bricks.get(6).setTarget(true);
+        Brick[] brickToToggle = new Brick[]{bricks.get(6)};
+        bricks.get(30).setBreakable(false);
+        bricks.get(30).addEffect(new ToggleEffect(Arrays.asList(brickToToggle)));
+        
+        
+        System.out.println("Bricks in pyramid level: " + bricks.size());
+
+        List<Ball> balls = new ArrayList();
+        Ball ball = Repositories.getDefaultShapeRepository().getDefaultBall(50, 80);
+        ball.setStartingBall(true);
+        balls.add(ball);
+
+        List<Paddle> paddles = new ArrayList();
+        paddles.add(Repositories.getDefaultShapeRepository().getDefaultPaddle());
+
+        LevelState state = new LevelState(balls, paddles, bricks, difficulty, true);
+        Level level = new Level(currentLevelId, game, state);
+        return level;
+    }
 
     public Level getSimpleTestLevel() {
         return getSimpleTestLevel(BreakoutWorld.TIMESTEP_DEFAULT);
@@ -94,6 +128,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         balls.add(ball);
         paddles.add(paddle);
         balls.get(0).setStartingBall(true);
+
+        powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50));
 
         powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50));
 
@@ -126,7 +162,10 @@ public class ArcadeLevelFactory extends LevelFactory {
         brickShape = new ShapeDimension(name, x, y, width, height);
         brick = new Brick(brickShape, true, true);
 
+        Brick invertedBrick = Repositories.getDefaultShapeRepository().getDefaultBrick("inverted", 50, 5, false, true, true, true);
+
         bricks.add(brick);
+        bricks.add(invertedBrick);
         List<Ball> balls = new ArrayList();
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();
@@ -236,17 +275,13 @@ public class ArcadeLevelFactory extends LevelFactory {
             for (int y = 5; y < 5 + ((height) * rows); y += height) {
                 int colPadding = cols / 10 + 1;
                 int rowPadding = rows / 10 + 1;
-
                 id = String.format("brick%0" + rowPadding + "d%0" + colPadding + "d", col, row); //altijd genoeg padding 0en zetten zodat id's uniek zijn
-
                 brickShape = new ShapeDimension(id, x, y, width, height, Color.PINK);
-
                 if (unbreakables.contains(index)) {
                     brick = new Brick(brickShape, false, true, false);
                 } else {
                     brick = new Brick(brickShape);
                 }
-
                 bricks.add(brick);
                 col++;
                 index++;
@@ -268,7 +303,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(11).setBreakable(false);
 
         bricksToToggle = new ArrayList();
-        for (int i = 15; i < bricks.size(); i++) {
+        for (int i = 15; i < 27; i++) {
             bricksToToggle.add(bricks.get(i));
             bricks.get(i).setVisible(false);
         }

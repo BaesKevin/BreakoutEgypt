@@ -9,12 +9,15 @@ import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.ServerClientMessageRepository;
+import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -27,20 +30,28 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     private Level level;
 
     // powerups might need to be stored as a player field
-    private BrokenPaddlePowerUp paddlePowerup;
-    private FloorPowerUp floorPowerup;
-    private List<PowerUp> powerups;
+    private Map<Integer, List<PowerUp>> playerToPowerUpMap;
+    private List<BrokenPaddlePowerUp> activeBrokenPaddlePowerUps;
+    private List<FloorPowerUp> activeFloorPowerUps;
 
     public BreakoutPowerUpHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
         this.level = level;
         this.levelState = levelState;
         this.breakoutWorld = breakoutWorld;
-        powerups = new ArrayList();
+        this.activeBrokenPaddlePowerUps = new ArrayList();
+        this.activeFloorPowerUps = new ArrayList();
+        this.playerToPowerUpMap = new HashMap<>();
     }
 
-    public PowerUp getPowerupByName(String name) {
+    public PowerUp getPowerupByName(String name, int playerIndex) {
 
-        for (PowerUp p : powerups) {
+        List<PowerUp> powerupsFromPlayer = playerToPowerUpMap.get(playerIndex);
+
+        if (powerupsFromPlayer == null || powerupsFromPlayer.isEmpty()) {
+            return null;
+        }
+
+        for (PowerUp p : powerupsFromPlayer) {
             if (p.getName().equals(name)) {
                 return p;
             }
@@ -50,44 +61,63 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
 
     @Override
     public void addPowerUp(PowerUp up) {
-        breakoutWorld
-                .getMessageRepo()
-                .addPowerupMessages(new PowerUpMessage(up.getName(), up, up.getType()));
-        this.powerups.add(up); // TODO check if powerup is already in the list
+        List<PowerUp> powerUpsForPlayer = playerToPowerUpMap.get(up.getPlayerId());
+        if (powerUpsForPlayer == null) {
+            powerUpsForPlayer = new ArrayList<>();
+        }
+        if (powerUpsForPlayer.size() < 3) {
+            Message message = new PowerUpMessage(up.getName(), up, up.getType());
+            message.setRecipientIndex(up.getPlayerId());
+
+            breakoutWorld
+                    .getMessageRepo()
+                    .addPowerupMessages(message);
+
+            powerUpsForPlayer.add(up);
+
+            playerToPowerUpMap.put(up.getPlayerId(), powerUpsForPlayer);
+        }
     }
 
     @Override
     public List<PowerUp> getPowerUps() {
-        return powerups;
-    }
-
-    @Override
-    public void emptyPowerups() {
-        this.powerups = new ArrayList();
+        List<PowerUp> all = new ArrayList<>();
+        for (List<PowerUp> l : playerToPowerUpMap.values()) {
+            all.addAll(l);
+        }
+        return all;
     }
 
     @Override
     public PowerUpMessage handleFloorPowerUp(FloorPowerUp floorPowerup) {
-        FloorPowerUp floorInLevel = levelState.getFloor();
+        FloorPowerUp floorInLevel = getActiveFloorForPlayer(floorPowerup.getPlayerId());
 
+        PowerUpMessage m = new PowerUpMessage("floor", floorPowerup, PowerUpMessageType.NULLMESSAGE);
         if (floorInLevel == null) {
-            this.floorPowerup = floorPowerup;
+            this.activeFloorPowerUps.add(floorPowerup);
             floorPowerup.setIsVisible(true);
 
             levelState.addFloor(floorPowerup);
             breakoutWorld.spawn(floorPowerup);
-            return new PowerUpMessage("name", floorPowerup, PowerUpMessageType.ACTIVATEFLOOR);
+            m = new PowerUpMessage("floor", floorPowerup, PowerUpMessageType.ACTIVATEFLOOR);
         } else {
             floorInLevel.addTime(floorPowerup.getTimeVisible());
+            floorPowerup.setIsVisible(true);
         }
-        powerups.remove(floorPowerup);
-        return new PowerUpMessage("brokenPaddle", floorPowerup, PowerUpMessageType.NULLMESSAGE);
+        m.setRecipientIndex(floorPowerup.getPlayerId());
+        removePowerUpFromMap(floorPowerup);
+        return m;
     }
 
     @Override
-    public PowerUpMessage handleAddBrokenPaddle(BrokenPaddlePowerUp bppu) {
-        if (this.paddlePowerup == null) {
-            this.paddlePowerup = bppu;
+    public PowerUpMessage handleBrokenPaddle(BrokenPaddlePowerUp bppu) {
+
+        BrokenPaddlePowerUp brokenPaddleInLevel = getActiveBrokenPaddleForPlayer(bppu.getPlayerId());
+
+        PowerUpMessage m = new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.NULLMESSAGE);
+
+        if (brokenPaddleInLevel == null) {
+            this.activeBrokenPaddlePowerUps.add(bppu);
 
             levelState.removePaddle(bppu.getBasePaddle());
             breakoutWorld.deSpawn(bppu.getBasePaddle().getBody());
@@ -96,50 +126,59 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
                 levelState.addPaddle(p);
                 breakoutWorld.spawn(p);
             }
-
-            powerups.remove(bppu);
-            return new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.ACTIVATEBROKENPADDLE);
+            m = new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.ACTIVATEBROKENPADDLE);
         } else {
-            this.paddlePowerup.addTime(bppu.getTimeVisible());
+            brokenPaddleInLevel.addTime(bppu.getTimeVisible());
         }
-        return new PowerUpMessage("brokenPaddle", bppu, PowerUpMessageType.NULLMESSAGE);
+        m.setRecipientIndex(bppu.getPlayerId());
+
+        removePowerUpFromMap(bppu);
+        return m;
     }
 
     @Override
     public void removePowerupsIfTimedOut() {
         ServerClientMessageRepository repo = breakoutWorld.getMessageRepo();
-
-        if (paddlePowerup != null) {
-            removeBrokenPaddleIfTimedOut(repo);
+        List<FloorPowerUp> floorsToRemove = new ArrayList();
+        List<BrokenPaddlePowerUp> paddlesToRemove = new ArrayList();
+        for (FloorPowerUp fpu : activeFloorPowerUps) {
+            if (removeFloorIfTimedOut(fpu, repo)) {
+                floorsToRemove.add(fpu);
+            }
         }
-
-        if (floorPowerup != null) {
-            removeFloorIfTimedOut(repo);
+        for (BrokenPaddlePowerUp bppu : activeBrokenPaddlePowerUps) {
+            if (removeBrokenPaddleIfTimedOut(bppu, repo)) {
+                paddlesToRemove.add(bppu);
+            }
         }
-
+        activeBrokenPaddlePowerUps.removeAll(paddlesToRemove);
+        activeFloorPowerUps.removeAll(floorsToRemove);
     }
 
-    private void removeFloorIfTimedOut(ServerClientMessageRepository repo) {
-        int timeLeft = floorPowerup.getTimeVisible();
+    private boolean removeFloorIfTimedOut(FloorPowerUp fpu, ServerClientMessageRepository repo) {
+
+        int timeLeft = fpu.getTimeVisible();
         if (timeLeft > 0) {
-            floorPowerup.setTimeVisible(timeLeft - 1);
+            fpu.setTimeVisible(timeLeft - 1);
         } else {
-            breakoutWorld.deSpawn(floorPowerup.getBody());
-            repo.addPowerupMessages(new PowerUpMessage(floorPowerup.getName(), floorPowerup, PowerUpMessageType.REMOVEFLOOR));
-            floorPowerup = null;
+            breakoutWorld.deSpawn(fpu.getBody());
+            repo.addPowerupMessages(new PowerUpMessage(fpu.getName(), fpu, PowerUpMessageType.REMOVEFLOOR));
+            this.levelState.removeFloor();
+            return true;
         }
+        return false;
     }
 
-    private void removeBrokenPaddleIfTimedOut(ServerClientMessageRepository repo) {
-        int timeLeft = paddlePowerup.getTimeVisible();
+    private boolean removeBrokenPaddleIfTimedOut(BrokenPaddlePowerUp bppu, ServerClientMessageRepository repo) {
+        int timeLeft = bppu.getTimeVisible();
         if (timeLeft > 0) {
-            paddlePowerup.setTimeVisible(timeLeft - 1);
+            bppu.setTimeVisible(timeLeft - 1);
         } else {
-            handleRemoveBrokenPaddle(paddlePowerup);
-            repo.addPowerupMessages(new PowerUpMessage("name", paddlePowerup, PowerUpMessageType.REMOVEBROKENPADDLE));
-
-            paddlePowerup = null;
+            handleRemoveBrokenPaddle(bppu);
+            repo.addPowerupMessages(new PowerUpMessage("name", bppu, PowerUpMessageType.REMOVEBROKENPADDLE));
+            return true;
         }
+        return false;
     }
 
     private void handleRemoveBrokenPaddle(BrokenPaddlePowerUp bppu) {
@@ -162,12 +201,45 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         } else {
             b.setAcidballPowerup(abpu);
         }
-        powerups.remove(abpu);
+        playerToPowerUpMap.get(abpu.getPlayerId()).remove(abpu);
+        msg.setRecipientIndex(abpu.getPlayerId());
         return msg;
     }
 
-    public BrokenPaddlePowerUp getPaddlePowerup() {
-        return paddlePowerup;
+    public List<BrokenPaddlePowerUp> getPaddlePowerup() {
+        return activeBrokenPaddlePowerUps;
+    }
+
+    public FloorPowerUp getActiveFloorForPlayer(int playerId) {
+        for (FloorPowerUp p : activeFloorPowerUps) {
+            if (p.getPlayerId() == playerId) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public BrokenPaddlePowerUp getActiveBrokenPaddleForPlayer(int playerId) {
+        for (BrokenPaddlePowerUp p : activeBrokenPaddlePowerUps) {
+            if (p.getPlayerId() == playerId) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public void removePowerUpFromMap(PowerUp powerupToRemove) {
+
+        List<PowerUp> powerupsForPlayer = playerToPowerUpMap.get(powerupToRemove.getPlayerId());
+        PowerUp foundPowerUp = null;
+
+        for (PowerUp p : powerupsForPlayer) {
+            if (p.equals(powerupToRemove)) {
+                foundPowerUp = p;
+            }
+        }
+        powerupsForPlayer.remove(foundPowerUp);
+
     }
 
 }

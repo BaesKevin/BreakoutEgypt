@@ -16,7 +16,6 @@ public class Paddle extends RegularBody{
     private static AtomicInteger paddleIdentifier = new AtomicInteger(1);
     public Paddle(ShapeDimension s){
         super(s);
-        s.setName("Paddle"+paddleIdentifier.getAndIncrement());
     }
 
     public void setPaddleId(int paddleId) {

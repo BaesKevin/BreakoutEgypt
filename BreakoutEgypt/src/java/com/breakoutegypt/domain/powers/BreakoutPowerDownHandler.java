@@ -44,33 +44,39 @@ public class BreakoutPowerDownHandler implements PowerDownHandler {
     public PowerDownMessage handle(FloodPowerDown flood) {
         flood.initBalls();
         Random r = new Random();
+        PowerDownMessage m = new PowerDownMessage(flood.getName(), flood, PowerDownMessageType.FLOOD);
+        m.setRecipientIndex(flood.getPlayerId());
         for (Ball b : flood.getBalls()) {
             levelState.addBall(b);
             breakoutWorld.spawn(b);
         }
         flood.doPulse();
-        return new PowerDownMessage("todo", flood, PowerDownMessageType.FLOOD);
+        return m;
     }
 
     @Override
     public PowerDownMessage handle(ProjectilePowerDown projectile) {
         levelState.addProjectile(projectile.getProjectile());
         breakoutWorld.spawn(projectile.getProjectile());
-        Paddle target = levelState.getPaddles().get(0);
+        Paddle target = levelState.getPaddleWithPlayerIndex(projectile.getPlayerId());
         projectile.startProjectile(target.getPosition().x, target.getPosition().y, target.getWidth());
-        return new PowerDownMessage("TODO", projectile, PowerDownMessageType.PROJECTILE);
+        PowerDownMessage m = new PowerDownMessage(projectile.getName(), projectile, PowerDownMessageType.PROJECTILE);
+        m.setRecipientIndex(projectile.getPlayerId());
+        return m;
     }
 
     @Override
     public PowerDownMessage handle(InvertedControlsPowerDown invertedControl) {
+        PowerDownMessage m = new PowerDownMessage(invertedControl.getName(), invertedControl, PowerDownMessageType.NULLMESSAGE);
         if (this.invertedControls == null) {
             this.invertedControls = invertedControl;
             level.invertControls();
-            return new PowerDownMessage(invertedControl.getName(), invertedControl, PowerDownMessageType.INVERTEDCONTROLS);
+            m = new PowerDownMessage(invertedControl.getName(), invertedControl, PowerDownMessageType.INVERTEDCONTROLS);
         } else {
             this.invertedControls.increaseTimeActive(invertedControl.getTimeActive());
         }
-        return new PowerDownMessage(invertedControl.getName(), invertedControl, PowerDownMessageType.NULLMESSAGE);
+        m.setRecipientIndex(invertedControl.getPlayerId());
+        return m;
     }
 
     @Override

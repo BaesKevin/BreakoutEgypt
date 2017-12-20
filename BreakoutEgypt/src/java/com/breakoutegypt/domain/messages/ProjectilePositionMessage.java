@@ -13,37 +13,22 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class ProjectilePositionMessage implements Message {
+public class ProjectilePositionMessage extends GenericMessage {
 
-    private String name;
     private Projectile projectile;
-    private MessageType messageType;
 
     public ProjectilePositionMessage(Projectile projectile) {
-        this.name = projectile.getName();
-        this.projectile = projectile;
-        this.messageType = PowerDownMessageType.PROJECTILEPOSITION;
+        this(projectile, PowerDownMessageType.PROJECTILEPOSITION);
     }
 
     public ProjectilePositionMessage(Projectile projectile, PowerDownMessageType powerDownMessageType) {
-        this.name = projectile.getName();
+        super(0, projectile.getName(), powerDownMessageType);
         this.projectile = projectile;
-        this.messageType = powerDownMessageType;
     }
     
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public MessageType getMessageType() {
-        return messageType;
-    }
-
-    @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job = super.toJson();
         job.add("projectile", getName());
         job.add("x", projectile.getPosition().x);
         job.add("y", projectile.getPosition().y);

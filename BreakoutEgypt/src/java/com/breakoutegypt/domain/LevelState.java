@@ -44,7 +44,8 @@ public class LevelState {
     private List<Brick> bricks;
     private List<Paddle> paddles;
     private List<RegularBody> walls;
-    private Ball startingBall;
+//    private Ball startingBall;
+    private List<Ball> startingBalls;
     private List<Ball> balls;
     private List<Message> messages;
     private FloorPowerUp floor;
@@ -74,6 +75,10 @@ public class LevelState {
     }
     
     public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups) {
+        this(balls, paddles, bricks, difficulty, hasPowerups, false);
+    }
+    
+    public LevelState(List<Ball> balls, List<Paddle> paddles, List<Brick> bricks, Difficulty difficulty, boolean hasPowerups, boolean hasTwoOutOfBounds) {
         this.bricks = Collections.synchronizedList(new ArrayList());
         this.paddles = Collections.synchronizedList(new ArrayList());
         this.walls = new ArrayList();
@@ -81,9 +86,10 @@ public class LevelState {
         this.messages = new ArrayList();
         this.projectiles = new ArrayList();
         this.difficulty = difficulty;
+        this.startingBalls = new ArrayList();
         factory = BodyConfigurationFactory.getInstance();
 
-        createBounds();
+        createBounds(hasTwoOutOfBounds);
         addBalls(balls);
 
         for (Paddle paddle : paddles) {
@@ -112,7 +118,8 @@ public class LevelState {
     public void addBalls(List<Ball> balls) {
         for (Ball b : balls) {
             if (b.isStartingBall()) {
-                this.startingBall = b;
+                this.startingBalls.add(b);
+//                this.startingBall = b;
             }
             this.balls.add(b);
         }
@@ -127,7 +134,6 @@ public class LevelState {
     }
 
     public void removeFloor() {
-        //TODO remove floor
         this.floor = null;
     }
 
@@ -140,7 +146,7 @@ public class LevelState {
     }
 
     public Ball getBall() {
-        return startingBall;
+        return startingBalls.get(0);
     }
 
     public List<Ball> getBalls() {
@@ -154,9 +160,28 @@ public class LevelState {
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
+    
+    private void removeDecoys(int playerIndex) {
+        List<Ball> ballsWithoutDecoys = new ArrayList();
+        Ball startingBallForPlayer = getStartingBallForPlayer(playerIndex);
+        
+        for (Ball b : balls) {
+            if (!b.isDecoy() || b.equals(startingBallForPlayer)) {
+                ballsWithoutDecoys.add(b);
+            } else {
+                messages.add(new BallMessage(b, BallMessageType.REMOVE));
+            }
+        }
+        this.balls = ballsWithoutDecoys;
+    }
 
-    void resetBall(BreakoutWorld breakoutWorld) {
-        startingBall.setDecoy(false);
+    void resetBall(BreakoutWorld breakoutWorld, int playerIndex) {
+        Ball startingBall = null;
+        for(Ball ball : startingBalls){
+            if(ball.getPlayerIndex() == playerIndex) startingBall = ball;
+        }
+        
+         startingBall.setDecoy(false);
         ShapeDimension originalDimension =
                 new ShapeDimension(startingBall.getName(), startingBall.getOriginalX(), startingBall.getOriginalY(), startingBall.getWidth(), startingBall.getHeight());
         BodyConfiguration ballBodyBodyConfig = factory.createBallConfig(originalDimension);
@@ -176,11 +201,23 @@ public class LevelState {
         return targetsLeft;
     }
 
-    private void createBounds() {
+    private void createBounds(boolean hasTwoOutOfBounds) {
         ShapeDimension groundShape = new ShapeDimension("ground", -5 , BreakoutWorld.DIMENSION + 5, BreakoutWorld.DIMENSION + 10, 5);
         ShapeDimension leftWallDim = new ShapeDimension("leftwall", -5, -5, 5, BreakoutWorld.DIMENSION + 10);
         ShapeDimension rightWallDim = new ShapeDimension("rightwall", BreakoutWorld.DIMENSION + 5, -5, 5, BreakoutWorld.DIMENSION + 10);
         ShapeDimension topWallDim = new ShapeDimension("topwall", -5, -5, BreakoutWorld.DIMENSION + 10, 5);
+         
+         ShapeDimension middleWallDim = new ShapeDimension("middlewall", 0, BreakoutWorld.DIMENSION / 2, BreakoutWorld.DIMENSION, 1);
+         
+        if(hasTwoOutOfBounds){
+            topWallDim.setName("ground");
+            
+            RegularBody middleWall = new RegularBody(middleWallDim);
+            BodyConfiguration middleWallConfig = factory.createWallConfig(middleWallDim, false);
+            middleWall.setBox2dConfig(middleWallConfig);
+            walls.add(middleWall);
+        }
+       
 
         RegularBody ground = new RegularBody(groundShape);
         RegularBody leftWall = new RegularBody(leftWallDim);
@@ -190,7 +227,7 @@ public class LevelState {
         BodyConfiguration groundConfig = factory.createWallConfig(groundShape, true);
         BodyConfiguration leftWallConfig = factory.createWallConfig(leftWallDim, false);
         BodyConfiguration rightWallConfig = factory.createWallConfig(rightWallDim, false);
-        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, false);
+        BodyConfiguration topWallConfig = factory.createWallConfig(topWallDim, hasTwoOutOfBounds);
 
         ground.setBox2dConfig(groundConfig);
         leftWall.setBox2dConfig(leftWallConfig);
@@ -213,14 +250,14 @@ public class LevelState {
     }
 
     private List<Brick> getRangeOfBricksAroundBodyHelper(Brick centreBrick, int range, List<Brick> bricksToRemove) {
-        if (range == 0) {
+        if (range == 0 && !centreBrick.hasToggleEffect()) {
             bricksToRemove.add(centreBrick);
         } else {
             for (Brick brick : bricks) {
-                int horizontalRange = range * DimensionDefaults.BRICK_WIDTH;
-                int verticalRange = range * DimensionDefaults.BRICK_HEIGHT;
+                int horizontalRange = range * (DimensionDefaults.BRICK_WIDTH + 6);
+                int verticalRange = range * (DimensionDefaults.BRICK_HEIGHT + 6);
 
-                boolean isBrickInHorizontalRange = Math.abs(centreBrick.getX() - brick.getX()) <= horizontalRange;
+                boolean isBrickInHorizontalRange = Math.round(Math.abs(centreBrick.getX() - brick.getX())) <= horizontalRange;
                 boolean isBrickInVerticalRange = Math.abs(centreBrick.getY() - brick.getY()) <= verticalRange;
                 boolean isNotSwitchBrick = !(brick.hasToggleEffect());
                 
@@ -251,10 +288,13 @@ public class LevelState {
     }
 
     public void removeBall(Ball ball) {
+        if (!ball.isDecoy()) {
+            removeDecoys(ball.getPlayerIndex());
+        }
         for (Ball b : balls) {
             if (b.getName().equals(ball.getName())) {
                 balls.remove(b);
-                messages.add(new BallMessage(ball.getName(), BallMessageType.REMOVE));
+                messages.add(new BallMessage(ball, BallMessageType.REMOVE));
                 break;
             }
         }
@@ -264,8 +304,8 @@ public class LevelState {
         messages.clear();
     }
 
-    public int calculatePaddleWidthWithGaps() {
-        List<Paddle> paddles = getPaddles();
+    public int calculatePaddleWidthWithGaps(List<Paddle> paddles) {
+        
         int paddlewidth = paddles.get(0).getWidth();
         int noOfPaddles = paddles.size();
         int noOfGaps = noOfPaddles - 1;
@@ -337,7 +377,7 @@ public class LevelState {
 
         switch (powerupNr) {
             case 1:
-                b.setPowerdown(new FloodPowerDown(startingBall, 3));
+                b.setPowerdown(new FloodPowerDown(startingBalls.get(0), 3));
                 break;
             case 2:
                 b.setPowerdown(createProjectilePowerDown(b, identifier));
@@ -396,5 +436,60 @@ public class LevelState {
 
     public List<Projectile> getProjectiles() {
         return projectiles;
+    }
+
+//    public Paddle getPaddleWithPlayerIndex(int index) {
+//        for(Paddle paddle : paddles){
+//            if(paddle.getPlayerIndex() == index){
+//                return paddle;
+//            }
+//        }
+//        
+//        throw new BreakoutException("No paddle for this playerindex exists!");
+//    }
+
+    public List<Paddle> getPaddlesForPlayer(int playerIndex) {
+        List<Paddle> paddlesOfPlayer = new ArrayList();
+        
+        for (Paddle paddle : paddles) {
+            if (paddle.getPlayerIndex() == playerIndex) {
+                paddlesOfPlayer.add(paddle);
+            }
+        }
+        
+        return paddlesOfPlayer;
+    }
+    
+    public boolean noMoreBallsForPlayer(int playerIndex){
+        boolean noMoreBalls = true;
+        
+        for(Ball ball : balls){
+            if(ball.getPlayerIndex() == playerIndex){
+                noMoreBalls = false;
+                break;
+            }
+        }
+        
+        return noMoreBalls;
+    }
+    
+    private Ball getStartingBallForPlayer(int playerIndex){
+        for(Ball ball : startingBalls){
+            if(ball.getPlayerIndex() == playerIndex){
+                return ball;
+            }
+        }
+        
+        return null;
+    }
+    
+    public Paddle getPaddleWithPlayerIndex(int index) {
+        
+        for (Paddle p : paddles) {
+            if (p.getPlayerIndex() == index) {
+                return p;
+            }
+        }
+        return null;
     }
 }

@@ -1,9 +1,5 @@
-<%-- 
-    Document   : login
-    Created on : 23-nov-2017, 15:37:50
-    Author     : Bjarne Deketelaere
---%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -27,15 +23,19 @@
                     <div class="card-header">Login</div>
                     <div class="card-body">
                         <form action="LoginSystem" method="POST">
+                            <c:if test="${error != null}"><p class="error"><c:out value="${error}" ></c:out></p></c:if>
                             <div class="form-group">
                                 <label for="email">Email:</label>
                                 <input type="email" id="email" class="form-control" name="email" placeholder="example@domain.com"/>
                             </div>
                             <div class="form-group">
-                                <label for="password">Password:</label>
+                                <label for="password">Passphrase:</label>
                                 <input type="password" id="password" class="form-control" name="password" placeholder="******"/>
                             </div>
                             <input type="submit" class="btn" name="login" value="Login"/>
+                            <p>
+                                <a class="d-block small mt-3" href="register">No account? Register here!</a>
+                            </p>
                         </form>
                     </div>
                 </div>

@@ -51,7 +51,7 @@ public class MessageTest {
             ALL_LEVELS_UNLOCKED.incrementHighestLevelReached();
         }
         
-        player = new Player(new User("Kevin"));
+        player = new Player("Kevin");
  
         game.addConnectingPlayer(player);
  
@@ -88,8 +88,8 @@ public class MessageTest {
         //TODO get name of actual player in session
         
         
-        Message msg1 = new LifeMessage("jef", 3, LifeMessageType.PLAYING);
-        Message msg2 = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER);
+        Message msg1 = new LifeMessage("jef", 3, LifeMessageType.PLAYING, player.getIndex());
+        Message msg2 = new LifeMessage("jef", 0, LifeMessageType.GAMEOVER, player.getIndex());
         
         for (int i = 0; i < 99; i++) {
             expectedMessages.add(msg1);

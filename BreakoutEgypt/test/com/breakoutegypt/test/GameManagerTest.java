@@ -31,14 +31,14 @@ public class GameManagerTest {
         int id = gm.createGame(GameType.ARCADE, "medium");
         game = gm.getGame(id);
         game.initStartingLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
-        player = new Player(new User("player"));
+        player = new Player("player");
     }
     
     @Test
     public void removeLastPlayerCleansUpGame(){
         
         game.addConnectingPlayer(player);
-        game.addConnectionForPlayer(player.getUser().getUsername(), new DummyConnection());
+        game.addConnectionForPlayer(player.getUsername(), new DummyConnection());
         game.startLevel();
         gm.removePlayer(game.getId(),"player");
         

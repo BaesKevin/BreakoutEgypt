@@ -45,10 +45,6 @@ public class ShowLevelsServlet extends HttpServlet {
 
         // TODO remove the if when sessions are fully integrated
         Player player = (Player) request.getSession().getAttribute("player");
-        if (player == null) {
-            player = new Player(new User("player"));
-            request.getSession().setAttribute("player", player);
-        }
 
         try {
             GameType gameType = getGameTypeFromRequestOrThrow(request);

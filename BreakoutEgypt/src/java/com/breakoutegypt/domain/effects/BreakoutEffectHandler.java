@@ -35,6 +35,11 @@ public class BreakoutEffectHandler implements EffectHandler {
     public void handle(ExplosiveEffect e) {
         List<Brick> bricks = levelState.getRangeOfBricksAroundBody(e.getCentreBrick(), e.getRadius());
 
+        // all bricks now belong to the person that destroyed them
+        for(Brick b : bricks){
+            b.setPlayerIndex(e.getCentreBrick().getPlayerIndex());
+        }
+        
         breakoutWorld.destroyBricks(bricks);
     }
 

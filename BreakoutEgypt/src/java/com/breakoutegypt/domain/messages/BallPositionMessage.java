@@ -13,40 +13,20 @@ import javax.json.JsonObjectBuilder;
  *
  * @author BenDB
  */
-public class BallPositionMessage implements Message {
+public class BallPositionMessage extends GenericMessage {
 
-    private final String ballName;
     private final float x;
     private final float y;
-    private final BallMessageType messageType;
-
-    public BallPositionMessage(String ballName, float x, float y) {
-        this.ballName = ballName;
-        this.x = x;
-        this.y = y;
-        messageType = BallMessageType.POSITION;
-    }
-
+    
     public BallPositionMessage(Ball b) {
-        this.ballName = b.getName();
+        super(0, b.getName(), BallMessageType.POSITION);
         this.x = b.getPosition().x;
         this.y = b.getPosition().y;
-        this.messageType = BallMessageType.POSITION;
-    }
-
-    @Override
-    public String getName() {
-        return ballName;
-    }
-
-    @Override
-    public BallMessageType getMessageType() {
-        return messageType;
     }
 
     @Override
     public JsonObjectBuilder toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job = super.toJson();
         job.add("ball", getName());
         job.add("x", x);
         job.add("y", y);
@@ -55,7 +35,7 @@ public class BallPositionMessage implements Message {
 
     @Override
     public String toString() {
-        return "BallPositionMessage{" + "ballName=" + ballName + ", x=" + x + ", y=" + y + ", messageType=" + messageType + '}';
+        return "BallPositionMessage{" + "ballName=" + getName() + ", x=" + x + ", y=" + y + ", messageType=" + getMessageType() + '}';
     }
 
 }

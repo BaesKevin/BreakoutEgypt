@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.test;
 
+import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.LevelProgressionRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
@@ -36,11 +37,15 @@ public class LevelTest {
     }
     
     private void createGame(GameType type, String diff, int startingLevel){
+        player = new Player("player");
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, "medium");
         game = gm.getGame(id);
+        game.addConnectingPlayer(player);
+        game.addConnectionForPlayer(player.getUsername(), new DummyConnection());
+        
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
-
+        
         level = game.getCurrentLevel();
 
         for (int i = 0; i < 1000; i++) {
@@ -52,8 +57,8 @@ public class LevelTest {
     public void ballOutOfBoundsLosesLife() {
         level.startBall();
 
-        stepTimes(10);
-        Assert.assertEquals(2, level.getLives());
+        stepTimes(60);
+        Assert.assertEquals(2, player.getLives());
     }
 
     @Test
