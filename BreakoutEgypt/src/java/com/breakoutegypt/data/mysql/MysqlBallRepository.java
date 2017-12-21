@@ -26,7 +26,7 @@ public class MysqlBallRepository implements BallRepository {
     private final String SELECT_ALL_BALLS = "select * from balls";
     private final String SELECT_BALLBYID = "select * from balls where ballid = ?";
     private final String SELECT_BALLS_BYLEVELID = "select * from balls join levelballs on levelballs.idball=balls.ballid where levelid = ?";
-    private final String INSERT_BALL = "insert into balls(shapedimensionid,xspeed,yspeed, isStartingBall) values(?, ?, ?,?)";
+    private final String INSERT_BALL = "insert into balls(shapedimensionid,xspeed,yspeed, isStartingBall, playerIndex) values(?, ?, ?,?, ?)";
     private final String DELETE_BALL = "delete from balls where ballid = ?";
     private final String INSERT_LEVELBALLS = "insert into levelballs(levelid,idball) values(?, ?)";
     private final String DELETE_LEVELBALLS = "delete from levelballs where levelid = ?";
@@ -66,13 +66,17 @@ public class MysqlBallRepository implements BallRepository {
             try (
                     ResultSet rs = prep.executeQuery();) {
                 while (rs.next()) {
+                    int ballId = rs.getInt("ballid");
                     int xSpeed = rs.getInt("xspeed");
                     int ySpeed = rs.getInt("yspeed");
                     int shapedimensionId = rs.getInt("shapedimensionid");
                     boolean isStartingBall = rs.getBoolean("isStartingBall");
+                    int playerIndex = rs.getInt("playerIndex");
                     ShapeDimension shapeDimension = new MysqlShapeDimensionRepository().getShapeDimensionById(shapedimensionId);
                     Ball ball = new Ball(shapeDimension, xSpeed, ySpeed);
+                    ball.setBallId(ballId);
                     ball.setStartingBall(isStartingBall);
+                    ball.setPlayerIndex(playerIndex);
                     this.balls.add(ball);
                 }
                 return this.balls;
@@ -93,6 +97,7 @@ public class MysqlBallRepository implements BallRepository {
             prep.setInt(2, (int) ball.getXspeed());
             prep.setInt(3, (int) ball.getYspeed());
             prep.setBoolean(4, ball.isStartingBall());
+            prep.setInt(5, ball.getPlayerIndex());
             prep.executeUpdate();
             try (ResultSet rs = prep.getGeneratedKeys();) {
                 int ballId = -1;

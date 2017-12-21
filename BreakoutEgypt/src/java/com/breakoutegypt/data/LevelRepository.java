@@ -16,7 +16,7 @@ import java.util.List;
 public interface LevelRepository {
     public List<Level> getLevels(Game game);
     public Level getLevelById(int id, Game game);
-    public Level getLevelByNumber(int number, Game game);
+    public Level getLevelByNumber(int number,int levelPackId, Game game);
     public void addLevel(Level level);
     public void removeLevel(Level level);
 

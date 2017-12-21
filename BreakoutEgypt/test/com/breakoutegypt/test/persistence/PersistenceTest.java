@@ -8,10 +8,10 @@ package com.breakoutegypt.test.persistence;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.UserRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.exceptions.BreakoutException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -68,7 +68,7 @@ public class PersistenceTest {
         int diamonds = 3;
         int gold = 50;
 
-        User newUser = new User(0, name, mail, pass, diamonds, gold);
+        User newUser = new User(0, name, mail, pass, diamonds, gold, false);
 
         repo.addUser(newUser);
 
@@ -87,8 +87,9 @@ public class PersistenceTest {
         int diamonds = 3;
         int gold = 50;
 
-        User newUser = new User(1, name, mail, pass, diamonds, gold);
-        Score s = new Score(0, 1, newUser, 123456, Difficulty.EASY, 654321);
+        User newUser = new User(1, name, mail, pass, diamonds, gold, false);
+        Player p = new Player(newUser.getUsername(), newUser.getEmail(), newUser.getHash());
+        Score s = new Score(0, 1, p, 123456, Difficulty.EASY, 654321);
 
         Repositories.getHighscoreRepository().addScore(s);
 

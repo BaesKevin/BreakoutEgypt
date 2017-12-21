@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
 import com.breakoutegypt.domain.User;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class StaticDummyHighscoreRepo implements HighscoreRepository {
         
         scores = new ArrayList();
         
-        User dummy = new User("Ben");
+        Player dummy = new Player("Ben");
         
         scores.add(new Score(0, 1, dummy, 2500, "hard", 16545));
         scores.add(new Score(1, 1, dummy, 4548, "hard", 24324));

@@ -37,7 +37,7 @@ public class User implements Serializable {
         this.setGold(gold);
     }
 
-    public User(int id, String username, String email, String password, int gold, int diamonds) {
+    public User(int id, String username, String email, String password, int gold, int diamonds, boolean isHash) {
         this.userId = id;
         this.setEmail(email);
         this.setHashFromPassword(password);
@@ -47,7 +47,7 @@ public class User implements Serializable {
     }
 
     public User(String username, String email, String password) {
-        this(0, username, email, password, 0, 0);
+        this(0, username, email, password, 0, 0, false);
     }
 
     public User(String email, String password) {

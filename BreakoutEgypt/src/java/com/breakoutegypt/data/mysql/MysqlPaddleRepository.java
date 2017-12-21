@@ -25,10 +25,10 @@ import java.util.List;
  */
 public class MysqlPaddleRepository implements PaddleRepository{
     private final String SELECT_ALL_PADDLES = "select paddleid, shapedimensions.* from paddles join shapedimensions on shapedimensions.idshapedimension=paddles.shapedimensionid";
-    private final String SELECT_ALL_PADDLES_BYLEVELID = "select levelpaddles.levelid,paddles.paddleid, shapedimensions.* "
+    private final String SELECT_ALL_PADDLES_BYLEVELID = "select levelpaddles.levelid,paddles.paddleid, paddles.playerIndex, shapedimensions.* "
             + "from paddles join levelpaddles on levelpaddles.idpaddle=paddles.paddleid "
             + "join shapedimensions on shapedimensions.idshapedimension=paddles.shapedimensionid where levelpaddles.levelid = ?";
-    private final String INSERT_PADDLE = "Insert into paddles(shapedimensionid) values(?)";
+    private final String INSERT_PADDLE = "Insert into paddles(shapedimensionid, playerIndex) values(?,?)";
     private final String DELETE_PADDLE = "Delete from paddles where paddleid = ?";
     private final String INSERT_LEVELPADDLES = "insert into levelpaddles(levelid, idpaddle) values(?, ?)";
     private final String DELETE_LEVELPADDLES = "Delete from levelpaddles where levelid = ?";
@@ -78,8 +78,10 @@ public class MysqlPaddleRepository implements PaddleRepository{
         int yPos=rs.getInt("y");
         int width=rs.getInt("width");
         int height=rs.getInt("height");
-        Paddle paddle=new Paddle(new ShapeDimension("paddle",xPos,yPos,width,height));
+        int playerIndex = rs.getInt("playerIndex");
+        Paddle paddle=new Paddle(new ShapeDimension("paddle" + paddleId,xPos,yPos,width,height));
         paddle.setPaddleId(paddleId);
+        paddle.setPlayerIndex(playerIndex);
         this.paddles.add(paddle);
     }
 
@@ -92,6 +94,7 @@ public class MysqlPaddleRepository implements PaddleRepository{
                 PreparedStatement prep=conn.prepareStatement(INSERT_PADDLE,PreparedStatement.RETURN_GENERATED_KEYS);
                 ){
             prep.setInt(1, paddle.getShapeDimension().getShapeId());
+            prep.setInt(2, paddle.getPlayerIndex());
             prep.executeUpdate();
             try(ResultSet rs=prep.getGeneratedKeys()){
                 int paddleId = -1;

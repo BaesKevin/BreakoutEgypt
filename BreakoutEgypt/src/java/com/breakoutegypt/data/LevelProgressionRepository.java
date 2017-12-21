@@ -7,8 +7,10 @@ package com.breakoutegypt.data;
 
 import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
+import java.util.List;
 
 /**
  *
@@ -16,8 +18,12 @@ import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
  */
 public interface LevelProgressionRepository {
     
-    void addNewLevelProgression(Player p, LevelPack lp, Difficulty d, int highestLevelReached, boolean isCampaign);
-    void incrementHighestLevelReached(int levelProgressionId);
+    void addNewLevelProgression(int userid, LevelPack lp, Difficulty d, int highestLevelReached, boolean isCampaign);
+    void incrementHighestLevelReached(Player p, LevelPack lp, Difficulty d);
     LevelPackProgress getLevelPackProgress(int playerId, LevelPack lp, Difficulty d);
-    
+    void removeLevelPackProgress(int playerId, LevelPack lp, Difficulty d);
+    List<LevelPackProgress> getAllForPlayer(int userId);
+    public void initDefaults(int userid);
+
+    public void setHighestLevelReached(int levelid, Player p, LevelPack lp, Difficulty difficulty);
 }

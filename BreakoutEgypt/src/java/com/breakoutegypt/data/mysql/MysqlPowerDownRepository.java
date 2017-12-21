@@ -5,7 +5,9 @@
  */
 package com.breakoutegypt.data.mysql;
 
+import com.breakoutegypt.data.BallRepository;
 import com.breakoutegypt.data.PowerDownRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.mysql.util.DbConnection;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.powers.PowerDown;
@@ -17,8 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,25 +31,38 @@ public class MysqlPowerDownRepository implements PowerDownRepository {
     private final String SELECT_FLOODPOWERDOWN = "select * from spawnballeffect where brickid = ?";
 
     @Override
-    public void givePowerDownToBrick(Brick brick) {
-        MysqlBallRepository ballRepo = new MysqlBallRepository();
-
-        try (
-                Connection conn = DbConnection.getConnection();
-                PreparedStatement prep = conn.prepareStatement(SELECT_FLOODPOWERDOWN);) {
-            prep.setInt(1, brick.getBrickId());
-            try (ResultSet rs = prep.executeQuery()) {
-                while (rs.next()) {
-                    int amount = rs.getInt("amountofballs");
-                    int ballId = rs.getInt("ballid");
-                    Ball defaultBall=ballRepo.getBallById(ballId);
-                    FloodPowerDown floodpowerdown = new FloodPowerDown(defaultBall,amount);
-                    brick.setPowerdown(floodpowerdown);
+    public void givePowerDownToBricks(List<Brick> bricks, List<Ball> balls) {
+        for (Brick brick : bricks) {
+            try (
+                    Connection conn = DbConnection.getConnection();
+                    PreparedStatement prep = conn.prepareStatement(SELECT_FLOODPOWERDOWN);) {
+                prep.setInt(1, brick.getBrickId());
+                try (ResultSet rs = prep.executeQuery()) {
+                    while (rs.next()) {
+                        int amount = rs.getInt("amountofballs");
+                        int ballId = rs.getInt("ballid");
+                        Ball defaultBall = findBallById(balls, ballId);
+                        FloodPowerDown floodpowerdown = new FloodPowerDown(defaultBall, amount);
+                        brick.setPowerdown(floodpowerdown);
+                    }
                 }
+            } catch (SQLException ex) {
+                throw new BreakoutException("Couldn't get powerdowns for brick");
             }
-        } catch (SQLException ex) {
-            throw new BreakoutException("Couldn't get powerdowns for brick");
         }
+    }
+    
+    private Ball findBallById(List<Ball> balls, int id){
+        Ball ball = null;
+        
+        for(Ball b : balls){
+            if(b.getBallId() == id){
+                ball = b;
+                break;
+            }
+        }
+        
+        return ball;
     }
 
     @Override

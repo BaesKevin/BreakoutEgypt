@@ -44,6 +44,7 @@ public class BreakoutController extends HttpServlet {
     public static final String DIFFICULTIES = "difficulties";
     public static final String LEVEL = "levelId";
     public static final String LEVELDIMENSION = "levelDimension";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -58,17 +59,15 @@ public class BreakoutController extends HttpServlet {
         String path = request.getServletPath();
         System.out.println("PATH: " + path);
         switch (path) {
-            case "/index.jsp":
-                request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
-                break;
             case "/index":
+            case "/index.jsp":
                 request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 break;
             case "/multiplayerMenu":
                 request.getRequestDispatcher("WEB-INF/pages/multiplayerMenu.jsp").forward(request, response);
                 break;
             case "/login":
-                request.getRequestDispatcher("WEB-INF/pages/login.jsp").forward(request, response);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
             case "/register":
                 request.getRequestDispatcher("WEB-INF/pages/registration.jsp").forward(request, response);
@@ -90,7 +89,7 @@ public class BreakoutController extends HttpServlet {
             throws ServletException, IOException {
         try {
             int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
-            
+
             String gameDifficulty = request.getParameter("difficulty");
 
             GameManager gm = new GameManager();
@@ -107,15 +106,14 @@ public class BreakoutController extends HttpServlet {
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);
             request.setAttribute(LEVELDIMENSION, BreakoutWorld.DIMENSION);
-            
+
         } catch (BreakoutException boe) {
             request.setAttribute("error", boe.getMessage());
         }
 
         request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
     }
-    
-    
+
     private void handleHighscores(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String levelId = request.getParameter("gameId");
@@ -178,7 +176,5 @@ public class BreakoutController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    
 
 }

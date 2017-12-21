@@ -11,6 +11,10 @@ create table users(
     diamonds int(150) default 0
 ) engine=innodb;
 
+ALTER TABLE `dbbreakout`.`users` 
+CHANGE COLUMN `email` `email` VARCHAR(50) NOT NULL ,
+ADD UNIQUE INDEX `email_UNIQUE` (`email` ASC);
+
 create table levelpacks(
 	id int primary key auto_increment,
     name varchar(50),
@@ -44,12 +48,36 @@ create table levelprogression(
     foreign key(difficultyid) references difficulties(difficultyid)
 )engine=innodb;
 
+ALTER TABLE `dbbreakout`.`levelprogression` 
+DROP FOREIGN KEY `levelprogression_ibfk_1`,
+DROP FOREIGN KEY `levelprogression_ibfk_2`,
+DROP FOREIGN KEY `levelprogression_ibfk_3`;
+ALTER TABLE `dbbreakout`.`levelprogression` 
+CHANGE COLUMN `userid` `userid` INT(11) NOT NULL ,
+CHANGE COLUMN `levelpackid` `levelpackid` INT(11) NOT NULL ,
+CHANGE COLUMN `difficultyid` `difficultyid` INT(11) NOT NULL ,
+ADD PRIMARY KEY (`userid`, `levelpackid`, `difficultyid`);
+ALTER TABLE `dbbreakout`.`levelprogression` 
+ADD CONSTRAINT `levelprogression_ibfk_1`
+  FOREIGN KEY (`userid`)
+  REFERENCES `dbbreakout`.`users` (`userid`),
+ADD CONSTRAINT `levelprogression_ibfk_2`
+  FOREIGN KEY (`levelpackid`)
+  REFERENCES `dbbreakout`.`levelpacks` (`id`),
+ADD CONSTRAINT `levelprogression_ibfk_3`
+  FOREIGN KEY (`difficultyid`)
+  REFERENCES `dbbreakout`.`difficulties` (`difficultyid`);
+ALTER TABLE `dbbreakout`.`levelprogression` 
+CHANGE COLUMN `isCampaign` `isCampaign` TINYINT(1) NULL DEFAULT 0 ;
+
+
 create table level(
 	levelid int primary key auto_increment,
     levelpackid int,
     levelNumber int,
     name varchar(50),
     description varchar(150),
+    isMultiplayer bool,
     foreign key(levelpackid) references levelpacks(id)
 )engine=innodb;
 
@@ -67,6 +95,7 @@ create table balls(
     xspeed int,
     yspeed int,
     isStartingBall tinyint,
+    playerIndex int,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension)
 )engine=innodb;
 
@@ -89,6 +118,8 @@ create table bricks(
     isbreakable bool,
     isVisible bool,
     istarget bool,
+    isInverted bool,
+    playerIndex int,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension),
     foreign key(typeid) references brick_types(id)
 )engine=innodb;
@@ -126,6 +157,7 @@ create table levelbricks(
 create table paddles(
 	paddleid int primary key auto_increment,
     shapedimensionid int,
+    playerIndex int,
     constraint foreign key(shapedimensionid) references shapedimensions(idshapedimension)
 )engine=innodb;
 
@@ -141,7 +173,7 @@ create table level_scores(
     levelid int,
     userid int,
     difficultyid int,
-    time int,
+    time bigint,
     points int,
     foreign key(levelid) references level(levelid),
     foreign key(userid) references users(userid),
@@ -195,3 +227,5 @@ insert into difficulties(difficultyname,
         brickscore_time_penalty) values(
         "BRUTAL",100,1,false,2000,0,0,0,null);
         
+insert into levelpacks(name, description, default_open_levels, total_levels)
+values('arcade', 'arcade', 3, 5), ('multiplayer', 'multiplayer', 1, 2);

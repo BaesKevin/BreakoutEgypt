@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import java.util.List;
 

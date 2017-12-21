@@ -8,9 +8,11 @@ package com.breakoutegypt.data.mysql;
 import com.breakoutegypt.data.HighscoreRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.mysql.util.DbConnection;
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.LevelProgressManager;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,7 +54,9 @@ public class MysqlHighscoreRepository implements HighscoreRepository {
 
                 User user = Repositories.getUserRepository().getUserById(userid);
 
-                s = new Score(scoreid, levelid, user, time, diff, points);
+                Player p = new Player(user.getUserId(), user.getUsername(), user.getEmail(), user.getHash(), new LevelProgressManager());
+                
+                s = new Score(scoreid, levelid, p, time, diff, points);
                 scores.add(s);
             }
             return scores;

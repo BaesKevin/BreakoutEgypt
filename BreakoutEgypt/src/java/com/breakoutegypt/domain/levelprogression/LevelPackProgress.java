@@ -7,6 +7,8 @@ package com.breakoutegypt.domain.levelprogression;
 
 import com.breakoutegypt.data.DummyLevelProgressionRepository;
 import com.breakoutegypt.domain.GameType;
+import com.breakoutegypt.domain.LevelPack;
+import com.breakoutegypt.domain.Player;
 import java.io.Serializable;
 
 /**
@@ -27,8 +29,7 @@ public class LevelPackProgress implements Serializable {
         this.progress = DummyLevelProgressionRepository.getDefault(type);
     }
     
-    public LevelPackProgress(int id, GameType type, String difficulty, LevelProgress lp) {
-        this.id = id;
+    public LevelPackProgress(GameType type, String difficulty, LevelProgress lp) {
         this.type = type;
         this.difficulty = difficulty;
         this.progress = lp;
@@ -37,9 +38,13 @@ public class LevelPackProgress implements Serializable {
     public LevelProgress getLevelProgress() {
         return new LevelProgress(progress);
     }
-
+    
     public void incrementLevel() {
         this.progress.incrementHighestLevelReached();
+    }
+
+    public void incrementLevel(Player p, LevelPack lp, Difficulty d) {
+        this.progress.incrementHighestLevelReached(p, lp, d);
     }
 
     public int getId() {
@@ -60,7 +65,11 @@ public class LevelPackProgress implements Serializable {
 
         final LevelPackProgress other = (LevelPackProgress) obj;
 
-        return this.type == other.type && this.difficulty == other.difficulty;
+        return this.type == other.type && this.difficulty.equals(other.difficulty);
+    }
+
+    public void sethighestLevelReached(int levelid, Player p, LevelPack lp, Difficulty difficulty) {
+        this.progress.sethighestLevelReached(levelid, p, lp, difficulty);
     }
 
 }

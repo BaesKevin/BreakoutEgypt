@@ -50,6 +50,8 @@ public class ShowLevelsServlet extends HttpServlet {
             GameType gameType = getGameTypeFromRequestOrThrow(request);
             String difficulty = request.getParameter("difficulty");
 
+            player.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(player.getUserId()));
+            
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
             int totalLevels = new ArcadeLevelFactory(null, null).getTotalLevels();
             int defaultLevels = new ArcadeLevelFactory(null, null).getDefaultOpenLevels();
@@ -95,7 +97,6 @@ public class ShowLevelsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-
     }
 
     /**

@@ -5,8 +5,10 @@
  */
 package com.breakoutegypt.data.mysql;
 
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.UserRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.sql.Connection;
@@ -15,8 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -27,10 +27,11 @@ public class MysqlUserRepository implements UserRepository {
 
     private List<User> users;
     private final String SELECT_ALL_USERS = "select * from users";
-    private final String INSERT_USER = "insert into users(username,email,`hash`,gold,diamonds) values(?, ?, ?, ?, ?)";
+    private final String INSERT_USER = "insert into users(username,email,`hash`,gold,diamonds) values(?, ?, ?, 0, 0)";
     private final String SELECT_USER_BYEMAIL_BYPASS = "select * from users where email = ?";
     private final String DELETE_USER_BYEMAIL = "delete from users where email = ?;";
     private final String SELECT_USER_BY_ID = "select * from users where userid = ?";
+    private final String GET_DEFAULT_PLAYER = "select * from users where username = player and email = player@test.be";
 
     @Override
     public List<User> getUsers() {
@@ -46,7 +47,7 @@ public class MysqlUserRepository implements UserRepository {
                 String hash = rs.getString("hash");
                 int gold = rs.getInt("gold");
                 int diamonds = rs.getInt("diamonds");
-                User user = new User(id, username, email, hash, gold, diamonds);
+                User user = new User(id, username, email, hash, gold, diamonds, true);
                 this.users.add(user);
             }
             return this.users;
@@ -63,8 +64,6 @@ public class MysqlUserRepository implements UserRepository {
             prep.setString(1, user.getUsername());
             prep.setString(2, user.getEmail());
             prep.setString(3, user.getHash());
-            prep.setInt(4, user.getGold());
-            prep.setInt(5, user.getDiamonds());
             prep.executeUpdate();
             try (ResultSet rs = prep.getGeneratedKeys()) {
                 int userId = -1;
@@ -78,7 +77,6 @@ public class MysqlUserRepository implements UserRepository {
                 }
                 user.setUserId(userId);
             }
-
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add user", ex);
         }
@@ -102,8 +100,8 @@ public class MysqlUserRepository implements UserRepository {
                 String hash = rs.getString("hash");
                 int gold = rs.getInt("gold");
                 int diamonds = rs.getInt("diamonds");
-                
-                user = new User(userid, username, email, hash, gold, diamonds);
+
+                user = new User(userid, username, email, hash, gold, diamonds, true);
             }
             return user;
         } catch (SQLException ex) {
@@ -114,9 +112,10 @@ public class MysqlUserRepository implements UserRepository {
     @Override
     public boolean alreadyExists(User user) {
         boolean found = false;
+        getUsers();
         for (int i = 0; i < this.users.size(); i++) {
             User selectedUser = this.users.get(i);
-            if (selectedUser.equals(user)) {
+            if (selectedUser.getEmail().equals(user.getEmail())) {
                 found = true;
             }
         }
@@ -134,12 +133,13 @@ public class MysqlUserRepository implements UserRepository {
                 User user = null;
                 while (rs.next()) {
                     if (BCrypt.checkpw(password, rs.getString("hash"))) {
+                        int id = rs.getInt("userid");
                         String username = rs.getString("username");
                         String curEmail = rs.getString("email");
                         String curHash = rs.getString("hash");
                         int gold = rs.getInt("gold");
                         int diamonds = rs.getInt("diamonds");
-                        user = new User(username, curEmail, curHash, gold, diamonds, true);
+                        user = new User(id, username, curEmail, curHash, gold, diamonds, true);
                     }
                 }
                 return user;

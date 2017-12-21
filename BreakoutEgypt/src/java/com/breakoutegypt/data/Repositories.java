@@ -5,11 +5,14 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.data.mysql.MysqlBallRepository;
 import com.breakoutegypt.data.mysql.MysqlBrickTypeRepository;
 import com.breakoutegypt.data.mysql.MysqlEffectRepository;
 import com.breakoutegypt.data.mysql.MysqlHighscoreRepository;
 import com.breakoutegypt.data.mysql.MysqlLevelPackRepository;
+import com.breakoutegypt.data.mysql.MysqlLevelProgressionRepository;
 import com.breakoutegypt.data.mysql.MysqlLevelRepository;
+import com.breakoutegypt.data.mysql.MysqlPowerDownRepository;
 import com.breakoutegypt.data.mysql.MysqlShapeDimensionRepository;
 import com.breakoutegypt.data.mysql.MysqlUserRepository;
 
@@ -27,6 +30,10 @@ public class Repositories {
     private static DefaultShapeRepository defaultShapeRepository = DefaultShapeRepository.getInstance();
     private static UserRepository userRepository = null;
     private static LevelRepository levelRepo = new MysqlLevelRepository();
+    private static LevelPackRepository levelPackRepo = new MysqlLevelPackRepository();
+    private static PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
+    private static BallRepository ballRepo = new MysqlBallRepository();
+    private static LevelProgressionRepository levelProgressRepo = new MysqlLevelProgressionRepository();
     
     public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
@@ -64,7 +71,20 @@ public class Repositories {
     public static EffectRepository getEffectRepository() {
         return effectRepository;
     }
+
+    public static LevelPackRepository getLevelPackRepo() {
+        return levelPackRepo;
+    }
+
+    public static PowerDownRepository getPowerdownRepo() {
+        return powerdownRepo;
+    }
+
+    public static BallRepository getBallRepo() {
+        return ballRepo;
+    }
     
-    
-    
+    public static LevelProgressionRepository getLevelProgressionRepository() {
+        return levelProgressRepo;
+    }
 }

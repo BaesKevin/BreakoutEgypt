@@ -24,6 +24,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +37,9 @@ public class Level implements BreakoutWorldEventListener {
 
     private int id;
     private int levelNumber;
-    private String levelName="";
-    private String levelDescription="";
+    private String levelName = "";
+    private String levelDescription = "";
+    private int levelPackId;
 
     private Timer timer;
     private Game game;
@@ -59,16 +61,16 @@ public class Level implements BreakoutWorldEventListener {
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
     private Map<Integer, Boolean> startedLevelMap;
-    
+
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
-    
+
     }
-    
-    public Level(int id,String name,String description, Game game, LevelState initialObjects){
+
+    public Level(int id, String name, String description, Game game, LevelState initialObjects) {
         this(id, game, initialObjects);
-        this.levelName=name;
-        this.levelDescription=description;
+        this.levelName = name;
+        this.levelDescription = description;
     }
 
     private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
@@ -101,10 +103,15 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
         this.invertedControls = false;
         startedLevelMap = new HashMap();
+
+        this.levelName = "level" + id;
+        this.levelDescription = "description";
     }
 
-    public void setId(int id){ this.id = id; }
-    
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getLevelName() {
         return levelName;
     }
@@ -120,9 +127,14 @@ public class Level implements BreakoutWorldEventListener {
     public void setLevelDescription(String levelDescription) {
         this.levelDescription = levelDescription;
     }
-    
-    public int getLevelNumber(){ return levelNumber; }
-    public void setLevelNumber( int levelNumber ) { this.levelNumber = levelNumber; } 
+
+    public int getLevelNumber() {
+        return levelNumber;
+    }
+
+    public void setLevelNumber(int levelNumber) {
+        this.levelNumber = levelNumber;
+    }
 
     public boolean isInvertedControls() {
         return invertedControls;
@@ -140,11 +152,17 @@ public class Level implements BreakoutWorldEventListener {
         return levelStarted;
     }
 
-    
+    public int getLevelPackId() {
+        return levelPackId;
+    }
+
+    public void setLevelPackId(int levelPackId) {
+        this.levelPackId = levelPackId;
+    }
+
 //    public void setLevelNumber(int id) {
 //        this.id = id;
 //    }
-
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;
     }
@@ -305,14 +323,28 @@ public class Level implements BreakoutWorldEventListener {
             int winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
-            HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
-
-            int brickScore = brickScoreCalc.getScore();
-            Score scoreOfPlayer = new Score(0, getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
-            highScoreRepo.addScore(scoreOfPlayer);
+            endOfGame(winnerIndex);
 
             initNextLevel(winnerIndex);
         }
+    }
+
+    private void endOfGame(int winnerIndex) {
+        HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
+        Player p = game.getPlayer(winnerIndex);
+        int brickScore = brickScoreCalc.getScore();
+        Score scoreOfPlayer = new Score(0, getId(), p, getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
+        
+        LevelPackProgress progress = p.getProgressions().getProgress(game.getGameType(), game.getDifficulty().getName());
+        LevelPack lp = Repositories.getLevelPackRepo().getById(levelPackId);
+
+        if (this.levelNumber >= progress.getLevelProgress().getHighestLevelReached()) {
+            progress.sethighestLevelReached(this.levelNumber + 1, p, lp, game.getDifficulty());
+        }
+        
+        p.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(p.getUserId()));
+        
+        highScoreRepo.addScore(scoreOfPlayer);
     }
 
     @Override

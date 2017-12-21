@@ -30,17 +30,18 @@ public abstract class LevelFactory {
     protected LevelProgress defaultProgression;
     protected final static int DEFAULT_STARTING_LEVEL = 1;
     protected final static DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
+    protected final String LEVELPACK_NAME;
     
-    public LevelFactory(Game game, int totalLevels) {
-        this(game, totalLevels, totalLevels);
+    public LevelFactory(Game game, int totalLevels, String levelPackName) {
+        this(game, totalLevels, totalLevels, levelPackName);
     }
 
-    public LevelFactory(Game game, int totalLevels, int defaultOpenLevels) {
+    public LevelFactory(Game game, int totalLevels, int defaultOpenLevels, String levelPackName) {
         this.currentLevelId = 1;
         this.totalLevels = totalLevels;
         this.game = game;
         this.defaultOpenLevels = defaultOpenLevels;
-        
+        this.LEVELPACK_NAME = levelPackName;
     }
 
     public boolean hasNextLevel() {

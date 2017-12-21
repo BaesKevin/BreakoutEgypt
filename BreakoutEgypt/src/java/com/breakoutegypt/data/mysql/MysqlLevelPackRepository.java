@@ -27,6 +27,7 @@ import java.util.List;
 public class MysqlLevelPackRepository implements LevelPackRepository{
     private LevelRepository levelRepo = Repositories.getLevelRepository();
     private final String SELECT_BY_NAME = "select * from levelpacks where name = ?";
+    private final String SELECT_BY_ID = "select * from levelpacks where id = ?";
     private final String INSERT = "insert into levelpacks(name, description, default_open_levels, total_levels) values(?,?,?,?)";
     
     @Override
@@ -52,10 +53,6 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
                 pack.setId(packId);
 //                level.setLevelNumber(levelId); 
             }
-            
-             for(Level level : pack.getLevels()){
-                 levelRepo.addLevel(level);
-             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add level", ex);
         }
@@ -64,7 +61,7 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
    
 
     @Override
-    public LevelPack getByName(String name, Game game) {
+    public LevelPack getByName(String name) {
         LevelPack pack = null;
         
         try (
@@ -79,10 +76,8 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
                     String packName = rs.getString("name");
                     String description = rs.getString("description");
                     int openLevels = rs.getInt("default_open_levels");
-                    
-                    List<Level> levels = levelRepo.getLevelsByPackId(packId, game);
-                    
-                    pack = new LevelPack(packId, name, description, levels, openLevels, levels.size());
+                    int totalLevels = rs.getInt("total_levels");
+                    pack = new LevelPack(packId, packName, description, openLevels, totalLevels);
                 }
                 
             }
@@ -96,32 +91,31 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
     }
 
     @Override
-    public LevelPack getByNameWithoutLevels(String name) {
+    public LevelPack getById(int levelpackid) {
+        LevelPack pack = null;
         try (
                 Connection conn = DbConnection.getConnection();
-                PreparedStatement prep = conn.prepareStatement(SELECT_BY_NAME);) {
-            prep.setString(1, name);
+                PreparedStatement prep = conn.prepareStatement(SELECT_BY_ID);) {
+            prep.setInt(1, levelpackid);
             try (
                     ResultSet rs = prep.executeQuery();) {
-                LevelPack pack = null;
+                
                 while (rs.next()) {
                     int packId = rs.getInt("id");
                     String packName = rs.getString("name");
                     String description = rs.getString("description");
-                    int openLevels = rs.getInt("default_open_levels");                    
+                    int openLevels = rs.getInt("default_open_levels");
                     int totalLevels = rs.getInt("total_levels");
-
-                    
-                    pack = new LevelPack(packId, name, description, new ArrayList(), openLevels, totalLevels);
+                    pack = new LevelPack(packId, packName, description, openLevels, totalLevels);
                 }
-                return pack;
+                
             }
 
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load level", ex);
         }
+        return pack;
     }
-    
     
     
 }

@@ -10,8 +10,8 @@ function requestLevelWithDifficulty(e){
     form.submit();
 }
 
-function changeLevelDifficulty(e){
-    let difficulty = $(this).val();
+function changeLevelDifficulty(){
+    let difficulty = $("select").val();
 
     document.location = `showLevels?gameType=arcade&difficulty=${difficulty}`;
 }

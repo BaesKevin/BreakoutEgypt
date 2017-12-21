@@ -180,6 +180,10 @@ public class Game {
     public Player getPlayer(String username) {
         return manager.getPlayer(username);
     }
+    
+    public Player getPlayer(int playerIndex) {
+        return manager.getPlayer(playerIndex);
+    }
 
     public Level getLevel() {
         return levelFactory.getCurrentLevel();

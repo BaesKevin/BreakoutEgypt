@@ -5,9 +5,10 @@
  */
 package com.breakoutegypt.domain.levelprogression;
 
-import com.breakoutegypt.domain.GameType;
+import com.breakoutegypt.data.Repositories;
+import com.breakoutegypt.domain.LevelPack;
+import com.breakoutegypt.domain.Player;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
@@ -38,8 +39,19 @@ public class LevelProgress implements Serializable {
             this.highestLevelReached++;
         }
     }
+    
+    public void incrementHighestLevelReached(Player p, LevelPack lp, Difficulty d) {
+        if (highestLevelReached < maxLevel) {
+            this.highestLevelReached++;
+            Repositories.getLevelProgressionRepository().incrementHighestLevelReached(p, lp, d);
+        }
+    }
 
     public int getHighestLevelReached() {
         return highestLevelReached;
+    }
+
+    void sethighestLevelReached(int playerid, Player p, LevelPack lp, Difficulty difficulty) {
+        Repositories.getLevelProgressionRepository().setHighestLevelReached(playerid, p, lp, difficulty);
     }
 }

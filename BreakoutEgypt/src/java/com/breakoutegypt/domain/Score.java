@@ -16,16 +16,16 @@ import javax.json.JsonObjectBuilder;
 public class Score implements Comparable<Score> {
 
     private int level;
-    private User user;
+    private Player player;
     private long timeScore;
     private String difficulty;
     private int brickScore;
     private int scoreId;
 
-    public Score(int id, int level, User user, long score, String difficulty, int brickScore) {
+    public Score(int id, int level, Player player, long score, String difficulty, int brickScore) {
         this.level = level;
         this.scoreId = id;
-        this.user = user;
+        this.player = player;
         this.timeScore = score;
         this.difficulty = difficulty;
         this.brickScore = brickScore;
@@ -40,11 +40,11 @@ public class Score implements Comparable<Score> {
     }
 
     public String getUser() {
-        return user.getUsername();
+        return player.getUsername();
     }
     
     public int getUserId(){
-        return user.getUserId();
+        return player.getUserId();
     }
     
     public long getTimeScore() {
@@ -74,7 +74,7 @@ public class Score implements Comparable<Score> {
 
     @Override
     public String toString() {
-        return "Score{" + "level=" + level + ", user=" + user.getUsername() + ", score=" + timeScore + "}\n";
+        return "Score{" + "level=" + level + ", user=" + player.getUsername() + ", score=" + timeScore + "}\n";
     }
 
     public JsonObject toJson() {
