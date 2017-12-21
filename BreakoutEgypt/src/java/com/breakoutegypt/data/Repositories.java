@@ -7,6 +7,7 @@ package com.breakoutegypt.data;
 
 import com.breakoutegypt.data.mysql.MysqlBrickTypeRepository;
 import com.breakoutegypt.data.mysql.MysqlEffectRepository;
+import com.breakoutegypt.data.mysql.MysqlHighscoreRepository;
 import com.breakoutegypt.data.mysql.MysqlLevelPackRepository;
 import com.breakoutegypt.data.mysql.MysqlLevelRepository;
 import com.breakoutegypt.data.mysql.MysqlShapeDimensionRepository;
@@ -18,7 +19,7 @@ import com.breakoutegypt.data.mysql.MysqlUserRepository;
  */
 public class Repositories {
     
-    private static final HighscoreRepository highscoreRepository = new StaticDummyHighscoreRepo();
+    private static final HighscoreRepository highscoreRepository = new MysqlHighscoreRepository();
     private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
     private static final BrickTypeRepository bricktypeRepository = new MysqlBrickTypeRepository();
     private static final EffectRepository effectRepository = new MysqlEffectRepository();

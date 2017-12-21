@@ -17,5 +17,5 @@ public interface HighscoreRepository {
     public List<Score> getScoresByLevel(int levelID, String diff);
     public void addScore(Score s);
     public int getRank(int levelID, Score s);
-    
+    public void removeScore(int id);
 }

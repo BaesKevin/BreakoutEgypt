@@ -12,6 +12,7 @@ import java.util.List;
  * @author kevin
  */
 public class LevelPack {
+
     private int id;
     private String name;
     private String description;
@@ -19,12 +20,11 @@ public class LevelPack {
     private int defaultOpenLevels;
     private int totalLevels; // necessary for showLevelServlet
 
-    
     public LevelPack(String name, String description, List<Level> levels, int defaultOpenLevels, int totalLevels) {
         this(0, name, description, levels, defaultOpenLevels, totalLevels);
     }
 
-    public LevelPack(int id, String name, String description, List<Level> levels,int defaultOpenLevels, int totalLevels) {
+    public LevelPack(int id, String name, String description, List<Level> levels, int defaultOpenLevels, int totalLevels) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -72,17 +72,17 @@ public class LevelPack {
     public void setDefaultOpenLevels(int defaultOpenLevels) {
         this.defaultOpenLevels = defaultOpenLevels;
     }
-    
-    public Level getLevelByNumber(int number){
+
+    public Level getLevelByNumber(int number) {
         Level level = null;
-        
-        for(Level l : levels){
-            if(l.getLevelNumber() == number){
+
+        for (Level l : levels) {
+            if (l.getLevelNumber() == number) {
                 level = l;
                 break;
             }
         }
-        
+
         return level;
     }
 
@@ -93,6 +93,5 @@ public class LevelPack {
     public void setTotalLevels(int totalLevels) {
         this.totalLevels = totalLevels;
     }
-    
-    
+
 }

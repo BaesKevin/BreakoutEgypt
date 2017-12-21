@@ -64,5 +64,10 @@ public class StaticUserRepository implements UserRepository {
     public void deleteUser(String email) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public User getUserById(int id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

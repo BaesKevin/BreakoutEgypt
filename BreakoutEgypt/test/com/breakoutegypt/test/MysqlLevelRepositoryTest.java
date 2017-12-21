@@ -109,7 +109,7 @@ public class MysqlLevelRepositoryTest {
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
-        LevelState initialState = new LevelState(balls, paddles, bricks, new Difficulty("easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15), true);
+        LevelState initialState = new LevelState(balls, paddles, bricks, new Difficulty(1, "easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15), true);
         Level level = new Level(1, new Game(GameType.ARCADE, Difficulty.EASY), initialState);
         
         return level;

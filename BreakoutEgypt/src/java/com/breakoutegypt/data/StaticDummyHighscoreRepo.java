@@ -25,19 +25,19 @@ public class StaticDummyHighscoreRepo implements HighscoreRepository {
         
         User dummy = new User("Ben");
         
-        scores.add(new Score(1, dummy, 2500, "hard", 16545));
-        scores.add(new Score(1, dummy, 4548, "hard", 24324));
-        scores.add(new Score(1, dummy, 2580, "hard", 24234));
-        scores.add(new Score(2, dummy, 48648, "hard", 46756));
-        scores.add(new Score(1, dummy, 2500, "hard", 63245));
-        scores.add(new Score(1, dummy, 25448, "hard", 2364754));
-        scores.add(new Score(2, dummy, 25486, "hard", 42357));
-        scores.add(new Score(1, dummy, 12345, "hard", 54767));
-        scores.add(new Score(1, dummy, 486, "hard", 54774));
-        scores.add(new Score(2, dummy, 2560, "hard", 74576));
-        scores.add(new Score(1, dummy, 46, "hard", 57472));
-        scores.add(new Score(2, dummy, 8686, "hard", 76543));
-        scores.add(new Score(2, dummy, 486, "hard", 56732));
+        scores.add(new Score(0, 1, dummy, 2500, "hard", 16545));
+        scores.add(new Score(1, 1, dummy, 4548, "hard", 24324));
+        scores.add(new Score(2, 1, dummy, 2580, "hard", 24234));
+        scores.add(new Score(3 ,2, dummy, 48648, "hard", 46756));
+        scores.add(new Score(4, 1, dummy, 2500, "hard", 63245));
+        scores.add(new Score(5, 1, dummy, 25448, "hard", 2364754));
+        scores.add(new Score(6, 2, dummy, 25486, "hard", 42357));
+        scores.add(new Score(7, 1, dummy, 12345, "hard", 54767));
+        scores.add(new Score(8, 1, dummy, 486, "hard", 54774));
+        scores.add(new Score(9, 2, dummy, 2560, "hard", 74576));
+        scores.add(new Score(10, 1, dummy, 46, "hard", 57472));
+        scores.add(new Score(11, 2, dummy, 8686, "hard", 76543));
+        scores.add(new Score(12, 2, dummy, 486, "hard", 56732));
     }
     
     @Override
@@ -66,6 +66,18 @@ public class StaticDummyHighscoreRepo implements HighscoreRepository {
         List<Score> temp = getScoresByLevel(levelID, s.getDifficulty());
         return temp.indexOf(s) + 1;
         
+    }
+
+    @Override
+    public void removeScore(int id) {
+        Score scoreToRemove = null;
+        for (Score s : scores) {
+            if (s.getScoreId() == id) {
+                scoreToRemove = s;
+                break;
+            }
+        }
+        scores.remove(scoreToRemove);
     }
         
 }

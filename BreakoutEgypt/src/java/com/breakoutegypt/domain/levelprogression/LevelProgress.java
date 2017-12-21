@@ -14,21 +14,27 @@ import java.util.List;
  * @author snc
  */
 public class LevelProgress implements Serializable {
+
     private int highestLevelReached;
     private int maxLevel;
-    
-    public LevelProgress(int maxLevel){
+
+    public LevelProgress(int maxLevel) {
         this.highestLevelReached = 1;
         this.maxLevel = maxLevel;
     }
     
+    public LevelProgress(int maxLevel, int highestLevelReached) {
+        this.maxLevel = maxLevel;
+        this.highestLevelReached = highestLevelReached;
+    }
+
     public LevelProgress(LevelProgress p) {
         this.highestLevelReached = p.highestLevelReached;
-        this.maxLevel =p.maxLevel;
+        this.maxLevel = p.maxLevel;
     }
-            
-    public void incrementHighestLevelReached(){
-        if(highestLevelReached < maxLevel){
+
+    public void incrementHighestLevelReached() {
+        if (highestLevelReached < maxLevel) {
             this.highestLevelReached++;
         }
     }

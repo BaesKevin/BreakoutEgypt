@@ -7,7 +7,7 @@ package com.breakoutegypt.test.persistence;
 
 import com.breakoutegypt.data.BrickRepository;
 import com.breakoutegypt.data.LevelPackRepository;
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
 import com.breakoutegypt.data.LevelRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.mysql.MysqlBrickRepository;
@@ -33,9 +33,9 @@ public class levelPackTest {
         GameManager gm = new GameManager();
         int gameId = gm.createGame(GameType.ARCADE, Difficulty.HARD);
         
-        LevelProgress progress = LevelProgressionRepository.getDefault(GameType.ARCADE);
+        LevelProgress progress = DummyLevelProgressionRepository.getDefault(GameType.ARCADE);
         Game game = gm.getGame(gameId);
-        game.initStartingLevel(4, LevelProgressionRepository.getDefault(GameType.ARCADE));
+        game.initStartingLevel(4, DummyLevelProgressionRepository.getDefault(GameType.ARCADE));
         
         Level level4 = game.getCurrentLevel();
         String expectedName = "Level by ben";

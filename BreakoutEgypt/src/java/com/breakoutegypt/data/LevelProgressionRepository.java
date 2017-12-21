@@ -5,28 +5,19 @@
  */
 package com.breakoutegypt.data;
 
-import com.breakoutegypt.domain.GameType;
-import com.breakoutegypt.domain.levelprogression.LevelProgress;
-import java.util.HashMap;
-import java.util.Map;
+import com.breakoutegypt.domain.LevelPack;
+import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
 
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public class LevelProgressionRepository {
-    private static Map<GameType, LevelProgress> defaultProgressions;
+public interface LevelProgressionRepository {
     
-    // default levelprogression is not different between difficulties of the same levelpack
-    static{
-        defaultProgressions = new HashMap();
-        
-        defaultProgressions.put(GameType.TEST, new LevelProgress(1000));
-        defaultProgressions.put(GameType.ARCADE, new LevelProgress(4));
-        defaultProgressions.put(GameType.MULTIPLAYER, new LevelProgress(1));
-    }
+    void addNewLevelProgression(Player p, LevelPack lp, Difficulty d, int highestLevelReached, boolean isCampaign);
+    void incrementHighestLevelReached(int levelProgressionId);
+    LevelPackProgress getLevelPackProgress(int playerId, LevelPack lp, Difficulty d);
     
-    public static LevelProgress getDefault(GameType type){
-        return new LevelProgress(defaultProgressions.get(type));
-    }
 }

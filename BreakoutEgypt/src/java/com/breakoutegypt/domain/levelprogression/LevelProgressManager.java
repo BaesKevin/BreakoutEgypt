@@ -5,7 +5,7 @@
  */
 package com.breakoutegypt.domain.levelprogression;
 
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
 import com.breakoutegypt.domain.GameType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class LevelProgressManager implements Serializable{
     
     public LevelProgress getLevelProgressOrDefault(GameType type, String difficulty){
         LevelPackProgress packProgress = getProgress(type, difficulty);
-        LevelProgress progress = LevelProgressionRepository.getDefault(type);
+        LevelProgress progress = DummyLevelProgressionRepository.getDefault(type);
         
         if(packProgress != null)
             progress = packProgress.getLevelProgress();

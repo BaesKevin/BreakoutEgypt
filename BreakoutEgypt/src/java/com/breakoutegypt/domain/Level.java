@@ -308,8 +308,7 @@ public class Level implements BreakoutWorldEventListener {
             HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
 
             int brickScore = brickScoreCalc.getScore();
-            //TODO user with playerindex x
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
+            Score scoreOfPlayer = new Score(0, getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
             highScoreRepo.addScore(scoreOfPlayer);
 
             initNextLevel(winnerIndex);

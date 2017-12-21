@@ -17,5 +17,6 @@ public interface UserRepository {
     public void addUser(User user);
     public boolean alreadyExists(User user);
     public User getUser(String email,String password);
+    public User getUserById(int id);
     public void deleteUser(String email);
 }

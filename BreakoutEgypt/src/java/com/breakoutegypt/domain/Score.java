@@ -17,16 +17,26 @@ public class Score implements Comparable<Score> {
 
     private int level;
     private User user;
-    private long score;
+    private long timeScore;
     private String difficulty;
     private int brickScore;
+    private int scoreId;
 
-    public Score(int level, User user, long score, String difficulty, int brickScore) {
+    public Score(int id, int level, User user, long score, String difficulty, int brickScore) {
         this.level = level;
+        this.scoreId = id;
         this.user = user;
-        this.score = score;
+        this.timeScore = score;
         this.difficulty = difficulty;
         this.brickScore = brickScore;
+    }
+
+    public int getScoreId() {
+        return scoreId;
+    }
+
+    public void setScoreId(int scoreId) {
+        this.scoreId = scoreId;
     }
 
     public String getUser() {
@@ -37,8 +47,8 @@ public class Score implements Comparable<Score> {
         return user.getUserId();
     }
     
-    public long getScore() {
-        return score;
+    public long getTimeScore() {
+        return timeScore;
     }
 
     public int getLevel() {
@@ -53,9 +63,9 @@ public class Score implements Comparable<Score> {
 
     @Override
     public int compareTo(Score other) {
-        if (this.score < other.score) {
+        if (this.timeScore < other.timeScore) {
             return -1;
-        } else if (this.score == other.score) {
+        } else if (this.timeScore == other.timeScore) {
             return 0;
         } else {
             return 1;
@@ -64,13 +74,13 @@ public class Score implements Comparable<Score> {
 
     @Override
     public String toString() {
-        return "Score{" + "level=" + level + ", user=" + user.getUsername() + ", score=" + score + "}\n";
+        return "Score{" + "level=" + level + ", user=" + user.getUsername() + ", score=" + timeScore + "}\n";
     }
 
     public JsonObject toJson() {
         JsonObjectBuilder scoreObjectBuilder = Json.createObjectBuilder();
         scoreObjectBuilder.add("username", this.getUser());
-        scoreObjectBuilder.add("score", this.getScore());
+        scoreObjectBuilder.add("score", this.getTimeScore());
         scoreObjectBuilder.add("difficulty", this.getDifficulty());
         return scoreObjectBuilder.build();
     }
