@@ -404,7 +404,7 @@ public class LevelState {
         Random r = new Random();
         int powerupNr = r.nextInt(noOfPowerupTypes) + 1;
 
-        b.setPowerUp(new BallPowerup(balls.get(0), 20, 20));
+        b.setPowerUp(new BallPowerup(balls.get(0), 10, 10, 500));
         
 //        switch (powerupNr) {
 //            case 1:

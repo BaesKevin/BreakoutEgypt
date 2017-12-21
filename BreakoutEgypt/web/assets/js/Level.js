@@ -96,8 +96,9 @@ const Level = (function () {
         UpdateLevelDataHelper.addBall(json, this);
     };
     
-    Level.prototype.resizeBody = function(json){
-        UpdateLevelDataHelper.resizeBody(json,this);
+    Level.prototype.resizeBody = function(json, useOriginalSize){
+        useOriginalSize = useOriginalSize || false;
+        UpdateLevelDataHelper.resizeBody(json, useOriginalSize,this);
     }
 
     Level.prototype.updateLevelData = function (json) {
@@ -201,10 +202,16 @@ const Level = (function () {
                     ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
         }
         
-        function resizeBody(json, self){
+        function resizeBody(json, useOriginalSize, self){
             let width = json.powerup.width;
             let height = json.powerup.height;
-            let name = json.powerup.powerupname;
+            
+            if(useOriginalSize){
+                width = json.powerup.originalWidth;
+                height = json.powerup.originalHeight;
+            }
+            
+            let name = json.powerup.bodyname;
             let type = json.powerup.type;
             
             switch(type){

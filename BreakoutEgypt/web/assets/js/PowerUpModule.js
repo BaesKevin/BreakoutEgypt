@@ -27,6 +27,7 @@ let PowerUpModule = (function () {
             let powerup = powerups.find(function (powerup) {
                 return powerup.name === name;
             });
+            
             powerup.active = true;
             level.powerups = powerups;
             DrawingModule.updateStaticContent();
@@ -87,12 +88,16 @@ let PowerUpModule = (function () {
             case "REMOVEACIDBALL":
                 removeActivePowerup(json.powerup.powerupname);
                 break;
+            case "REMOVEGENERICPOWERUP":
+                level.resizeBody(json, true);
+                removeActivePowerup(json.powerup.name);
+                break;
             case "ADDFLOOR":
             case "ADDBROKENPADDLE":
             case "ADDACIDBALL":
                 powerups.push({name: json.powerup.powerupname, active: false});
             case "GENERICPOWERUP":
-                powerups.push({ name: json.powerup.powerupname, active: false});
+                powerups.push({ name: json.powerup.name, active: false});
         }
     }
 
