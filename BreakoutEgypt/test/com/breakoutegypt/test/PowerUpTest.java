@@ -22,6 +22,7 @@ import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.List;
+import junit.framework.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -226,7 +227,25 @@ public class PowerUpTest {
     }
     
     @Test
-    public void testAcidBallNotOnDecoyBall() {
+    public void testGenericPowerup() {
+        createGame(22, true);
+        
+        DummyConnection con = (DummyConnection) player.getConnection();
+        
+        level = game.getCurrentLevel();
+        level.startBall();
+        
+        stepTimes(level, 15);
+        
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+         List<PowerUp> powerups = bpuh.getPowerUps();
+
+        level.triggerPowerup(powerups.get(0).getName(),1);
+        Ball ball = level.getLevelState().getBall();
+        
+        Assert.assertEquals(1, con.getPowerupMessages().size());
+        Assert.assertEquals(20, ball.getWidth());
+        Assert.assertEquals(20, ball.getHeight());
         
     }
 

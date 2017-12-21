@@ -72,6 +72,15 @@ public class RegularBody {
     public Vec2 getPosition() {
         return body.getPosition();
     }
+    
+    public void setPosition(Vec2 position){
+        dimension.setPosX(position.x);
+        dimension.setPosY(position.y);
+        
+        if(body != null ){
+            body.setTransform(position, 0);
+        }
+    }
 
     public int getPlayerIndex() {
         return playerIndex;
@@ -81,7 +90,13 @@ public class RegularBody {
         this.playerIndex = playerIndex;
     }    
     
-
+    public void setWidth(int width){
+        dimension.setWidth(width);
+    }
+    public void setHeight(int height){
+        dimension.setHeight(height);
+    }
+    
     //    // uitleg visitor en double dispatch van Mattias De Wael
 ////    static interface ShapeUser {
 ////     void   doForBrick(Brick b);

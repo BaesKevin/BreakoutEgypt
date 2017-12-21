@@ -243,6 +243,7 @@ public class SessionManager {
 
         JsonArray powerupmessages = messageRepo.getPowerupMessages();
         if (powerupmessages.size() > 0) {
+            System.out.println("putting powerup");
             messages.put("powerupactions", powerupmessages);
         }
 

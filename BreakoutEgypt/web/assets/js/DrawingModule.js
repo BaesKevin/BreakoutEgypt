@@ -120,7 +120,12 @@ let DrawingModule = (function () {
             let x = ((imgObj.width - width) / 2) + padding;
             let y = imgObj.y;
             brickCtx.fillRect(imgObj.x, imgObj.y, imgObj.width, imgObj.height);
-            brickCtx.drawImage(ImageLoader.images[powerupname], x, y, width, height);
+            
+            let powerupImage = ImageLoader.images[powerupname];
+            if( !powerupImage ){
+                powerupImage = ImageLoader.images["floor"];
+            }
+            brickCtx.drawImage(powerupImage, x, y, width, height);
             brickCtx.font = Math.ceil(pixels) + "px Arial";
             brickCtx.textAlign = "start";
             brickCtx.fillStyle = "black";

@@ -5,13 +5,18 @@
  */
 package com.breakoutegypt.domain.powers;
 
+import com.breakoutegypt.domain.powers.generic.GenericPowerup;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.ServerClientMessageRepository;
+import com.breakoutegypt.domain.messages.GenericPowerupMessage;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
+import com.breakoutegypt.domain.powers.generic.BrickPowerup;
+import com.breakoutegypt.domain.powers.generic.PaddlePowerup;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
 import java.util.ArrayList;
@@ -33,7 +38,8 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     private Map<Integer, List<PowerUp>> playerToPowerUpMap;
     private List<BrokenPaddlePowerUp> activeBrokenPaddlePowerUps;
     private List<FloorPowerUp> activeFloorPowerUps;
-
+    private List<GenericPowerup> genericPowerups;
+    
     public BreakoutPowerUpHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
         this.level = level;
         this.levelState = levelState;
@@ -86,6 +92,25 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
             all.addAll(l);
         }
         return all;
+    }
+
+    @Override
+    public PowerUpMessage handleBallPowerUp(BallPowerup gp) {
+        level.resizeBall((Ball)gp.getBaseBody(), gp.getWidth(), gp.getHeight());
+        
+        return new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
+    }
+
+    @Override
+    public PowerUpMessage handlePaddlePowerUp(PaddlePowerup gp) {
+        
+        return new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
+    }
+
+    @Override
+    public PowerUpMessage handleBrickPowerUp(BrickPowerup gp) {
+        
+        return new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
     }
 
     @Override

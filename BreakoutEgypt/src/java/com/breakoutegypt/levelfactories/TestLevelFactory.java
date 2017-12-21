@@ -8,7 +8,6 @@ package com.breakoutegypt.levelfactories;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
-import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
@@ -19,6 +18,7 @@ import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.powers.ProjectilePowerDown;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -173,6 +173,9 @@ public class TestLevelFactory extends LevelFactory {
                     break;
                 case 21:
                     currentLevel = getLevelWith2Paddles();
+                    break;
+                case 22:
+                    currentLevel = getLevelWithGenericBallGrowingPowerup();
                     break;
                 default:
                     // if there is a last level in this factory the liferegeneration can't be tested
@@ -679,5 +682,31 @@ public class TestLevelFactory extends LevelFactory {
         level.setRunManual(true);
         return level;
 
+    }
+    
+    public Level getLevelWithGenericBallGrowingPowerup(){
+        Ball ball = shapeRepo.getDefaultBall(49, 30);
+        Paddle paddle = shapeRepo.getDefaultPaddle();;
+
+        List<Ball> balls = new ArrayList();
+        List<Paddle> paddles = new ArrayList();
+
+        balls.add(ball);
+        paddles.add(paddle);
+
+        balls.get(0).setStartingBall(true);
+        List<Brick> bricks = new ArrayList();
+
+        bricks.add(shapeRepo.getDefaultBrick("regularBrick", 45, 40));
+        bricks.add(shapeRepo.getDefaultBrick("target", 1,1, true));
+
+        bricks.get(0).setPowerUp(new BallPowerup(ball, 20, 20));
+
+        LevelState initialState = new LevelState(balls, paddles, bricks);
+
+        Level level = new Level(16, game, initialState);
+        level.setLevelNumber(22);
+        level.setRunManual(true);
+        return level;
     }
 }

@@ -6,6 +6,9 @@
 package com.breakoutegypt.domain.powers;
 
 import com.breakoutegypt.domain.messages.PowerUpMessage;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
+import com.breakoutegypt.domain.powers.generic.BrickPowerup;
+import com.breakoutegypt.domain.powers.generic.PaddlePowerup;
 import java.util.List;
 
 /**
@@ -18,5 +21,9 @@ public interface PowerUpHandler {
     PowerUpMessage handleFloorPowerUp(FloorPowerUp fpu);
     PowerUpMessage handleBrokenPaddle(BrokenPaddlePowerUp bppu);
     PowerUpMessage handleAcidBall(AcidBallPowerUp abpu);
+    
+    PowerUpMessage handleBallPowerUp(BallPowerup gp);
+    PowerUpMessage handlePaddlePowerUp(PaddlePowerup gp);
+    PowerUpMessage handleBrickPowerUp(BrickPowerup gp);
     void removePowerupsIfTimedOut();
 }

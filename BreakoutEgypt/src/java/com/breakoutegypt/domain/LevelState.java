@@ -7,7 +7,6 @@ package com.breakoutegypt.domain;
 
 import com.breakoutegypt.data.DefaultShapeRepository;
 import com.breakoutegypt.data.Repositories;
-import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.powers.BrokenPaddlePowerUp;
 import com.breakoutegypt.domain.powers.FloorPowerUp;
 import com.breakoutegypt.domain.messages.BallMessage;
@@ -20,6 +19,7 @@ import com.breakoutegypt.domain.powers.InvertedControlsPowerDown;
 import com.breakoutegypt.domain.powers.PowerDownType;
 import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.powers.ProjectilePowerDown;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
@@ -381,7 +381,7 @@ public class LevelState {
 
     private void createPowerdown(Brick b, int identifier) {
 
-        int noOfPowerdownTypes = PowerDownType.values().length;
+        int noOfPowerdownTypes = PowerDownType.values().length ;
         Random r = new Random();
         int powerupNr = r.nextInt(noOfPowerdownTypes) + 1;
 
@@ -400,21 +400,26 @@ public class LevelState {
 
     private void createPowerUp(Brick b, Paddle p, int identifier) {
 
-        int noOfPowerupTypes = PowerUpType.values().length;
+        int noOfPowerupTypes = PowerUpType.values().length + 1;
         Random r = new Random();
         int powerupNr = r.nextInt(noOfPowerupTypes) + 1;
 
-        switch (powerupNr) {
-            case 1:
-                b.setPowerUp(createFloor(identifier));
-                break;
-            case 2:
-                b.setPowerUp(createBrokenPaddle(p, identifier));
-                break;
-            case 3:
-                b.setPowerUp(new AcidBallPowerUp("acidball" + identifier));
-                break;
-        }
+        b.setPowerUp(new BallPowerup(balls.get(0), 20, 20));
+        
+//        switch (powerupNr) {
+//            case 1:
+//                b.setPowerUp(createFloor(identifier));
+//                break;
+//            case 2:
+//                b.setPowerUp(createBrokenPaddle(p, identifier));
+//                break;
+//            case 3:
+//                b.setPowerUp(new AcidBallPowerUp("acidball" + identifier));
+//                break;
+//            case 4:
+//                b.setPowerUp(new GenericPowerup(balls.get(0), 20, 20));
+//                break;
+//        }
     }
 
     public FloorPowerUp createFloor(int x) {

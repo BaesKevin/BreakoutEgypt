@@ -26,6 +26,7 @@ import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
 import java.util.HashMap;
 import java.util.Map;
+import org.jbox2d.common.Vec2;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -369,5 +370,20 @@ public class Level implements BreakoutWorldEventListener {
             game.notifyPlayersOfLivesLeft(projectile.getPlayerIndex());
         }
         return new ProjectilePositionMessage(projectile, PowerDownMessageType.REMOVEPROJECTILE);
+    }
+
+    public void resizeBall(Ball ball, int width, int height) {
+        Vec2 originalSpeed = new Vec2(ball.getLinearVelocity());
+        Vec2 originalPosition = new Vec2(ball.getPosition());
+        
+        breakoutWorld.deSpawn(ball.getBody());
+        
+        ball.setWidth(width);
+        ball.setHeight(height);
+        
+        ball.setPosition(originalPosition);
+        
+        breakoutWorld.spawn(ball);
+        ball.setLinearVelocity(originalSpeed.x, originalSpeed.y);
     }
 }

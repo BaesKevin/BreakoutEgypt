@@ -34,9 +34,10 @@ let PowerUpModule = (function () {
     }
 
     function activatePowerUp(json) {
+        console.log("activating powerup");
+        console.log(json);
         switch (json.powerupaction) {
             case "ACTIVATEFLOOR":
-                console.log(json)
                 let jsonpowerup = json.powerup;
                 if (!level.floor) {
                     level.floor = ScalingModule.scaleObject({x: jsonpowerup.x, y: jsonpowerup.y, width: jsonpowerup.width, height: jsonpowerup.height},
@@ -46,6 +47,10 @@ let PowerUpModule = (function () {
             case "ACTIVATEBROKENPADDLE":
                 addBrokenPaddle(json);
                 break;
+            case "GENERICPOWERUP":
+                level.resizeBody(json);
+                break;
+            
         }
         ScalingModule.scaleAfterResize();
         DrawingModule.updateStaticContent();
@@ -61,6 +66,7 @@ let PowerUpModule = (function () {
     }
 
     function handlePowerUpMessage(json) {
+        console.log(json);
         json.forEach(function (data) {
             doPowerupaction(data);
             level.powerups = powerups;
@@ -85,6 +91,8 @@ let PowerUpModule = (function () {
             case "ADDBROKENPADDLE":
             case "ADDACIDBALL":
                 powerups.push({name: json.powerup.powerupname, active: false});
+            case "GENERICPOWERUP":
+                powerups.push({ name: json.powerup.powerupname, active: false});
         }
     }
 
