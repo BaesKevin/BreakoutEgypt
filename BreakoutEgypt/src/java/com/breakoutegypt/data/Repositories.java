@@ -11,6 +11,7 @@ import com.breakoutegypt.data.mysql.MysqlEffectRepository;
 import com.breakoutegypt.data.mysql.MysqlLevelPackRepository;
 import com.breakoutegypt.data.mysql.MysqlLevelRepository;
 import com.breakoutegypt.data.mysql.MysqlPowerDownRepository;
+import com.breakoutegypt.data.mysql.MysqlPowerUpRepository;
 import com.breakoutegypt.data.mysql.MysqlShapeDimensionRepository;
 import com.breakoutegypt.data.mysql.MysqlUserRepository;
 
@@ -31,6 +32,7 @@ public class Repositories {
     private static LevelPackRepository levelPackRepo = new MysqlLevelPackRepository();
     private static PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
     private static BallRepository ballRepo = new MysqlBallRepository();
+    private static PowerUpRepository powerupRepo = new MysqlPowerUpRepository();
     
     public static HighscoreRepository getHighscoreRepository() {
         return highscoreRepository;
@@ -79,5 +81,9 @@ public class Repositories {
 
     public static BallRepository getBallRepo() {
         return ballRepo;
+    }  
+    
+    public static PowerUpRepository getPowerUpRepository(){
+        return powerupRepo;
     }
 }

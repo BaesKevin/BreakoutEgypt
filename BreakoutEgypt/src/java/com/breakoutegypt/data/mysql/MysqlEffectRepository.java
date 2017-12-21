@@ -71,7 +71,6 @@ public class MysqlEffectRepository implements EffectRepository {
                 while (rs.next()) {
                     int brickId = rs.getInt("brickid");
                     int toToggleBrickId = rs.getInt("totogglebrickid");
-                    BrickRepository brickRepo = new MysqlBrickRepository();
                     toToggleBricks.add(findBrickById(toToggleBrickId, allBricks));
                 }
                 if (!toToggleBricks.isEmpty()) {

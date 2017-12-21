@@ -9,6 +9,7 @@ import com.breakoutegypt.data.BrickRepository;
 import com.breakoutegypt.data.BrickTypeRepository;
 import com.breakoutegypt.data.EffectRepository;
 import com.breakoutegypt.data.PowerDownRepository;
+import com.breakoutegypt.data.PowerUpRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.data.ShapeDimensionRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
@@ -45,6 +46,7 @@ public class MysqlBrickRepository implements BrickRepository {
     Map<Integer, List<Effect>> effects = new HashMap();
     
     EffectRepository effectRepo = Repositories.getEffectRepository();
+    PowerUpRepository powerupRepo = Repositories.getPowerUpRepository();
     
     @Override
     public List<Brick> getBricks() {
@@ -184,8 +186,8 @@ public class MysqlBrickRepository implements BrickRepository {
 
     @Override
     public void removeBrick(Brick brick) {
-        EffectRepository effectRepo = new MysqlEffectRepository();
         effectRepo.removeEffectsOfBrick(brick.getBrickId());
+        powerupRepo.removePowerUpsOfBrick(brick.getBrickId());
         PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
         powerdownRepo.removePowerDownsOfBrick(brick.getBrickId());
         try (

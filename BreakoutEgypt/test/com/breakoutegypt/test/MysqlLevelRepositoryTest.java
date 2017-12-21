@@ -111,7 +111,7 @@ public class MysqlLevelRepositoryTest {
         paddles.add(paddle);
         LevelState initialState = new LevelState(balls, paddles, bricks, new Difficulty("easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15), true);
         Level level = new Level(1, new Game(GameType.ARCADE, Difficulty.EASY), initialState);
-        
+        level.setLevelPackId(1);
         return level;
     }
     public Level getLevelWithFloodPowerDown() {
@@ -135,6 +135,7 @@ public class MysqlLevelRepositoryTest {
 
         LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
         Level level = new Level(1, new Game(GameType.ARCADE, Difficulty.EASY), initialState);
+        level.setLevelPackId(1);
         level.setRunManual(true);
         return level;
     }
