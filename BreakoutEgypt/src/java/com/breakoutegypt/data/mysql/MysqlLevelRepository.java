@@ -95,6 +95,7 @@ public class MysqlLevelRepository implements LevelRepository {
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
                     
                     Repositories.getPowerdownRepo().givePowerDownToBricks(levelBricks, levelBalls);
+                    Repositories.getPowerUpRepository().givePowerUpsToBricks(levelBricks, levelBalls,levelPaddles);
                     
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
 //                    Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
