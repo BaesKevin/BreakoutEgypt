@@ -177,6 +177,8 @@ public class MysqlBrickRepository implements BrickRepository {
 //                effectsToSave.addAll(brick.getEffects());
 
                 new MysqlPowerDownRepository().insertPowerDownsToBrick(brickId, brick.getPowerDown());
+                powerupRepo.insertPowerUpsToBrick(brick.getBrickId(), brick.getPowerUp());
+
             }
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add brick", ex);
@@ -214,7 +216,6 @@ public class MysqlBrickRepository implements BrickRepository {
 
         addEffectsForBricks();
     }
-    
     private void addEffectsForBricks(){
         for (Entry<Integer, List<Effect>> entry : effects.entrySet()) {
             effectRepo.insertEffectsToBrick(entry.getKey(), entry.getValue());

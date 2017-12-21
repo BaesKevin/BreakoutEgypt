@@ -16,6 +16,7 @@ import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -39,7 +40,7 @@ import static org.junit.Assert.*;
 public class MysqlLevelRepositoryTest {
     private Level level;
     public MysqlLevelRepositoryTest() {
-        this.level=this.getLevelWithFloodPowerDown();
+        this.level=this.getLevelWithPowerup();
     }
     @Test
     public void levelOperations(){
@@ -112,6 +113,31 @@ public class MysqlLevelRepositoryTest {
         LevelState initialState = new LevelState(balls, paddles, bricks, new Difficulty("easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15), true);
         Level level = new Level(1, new Game(GameType.ARCADE, Difficulty.EASY), initialState);
         level.setLevelPackId(1);
+        return level;
+    }
+    public Level getLevelWithPowerup() {
+        DefaultShapeRepository shapeRepo = Repositories.getDefaultShapeRepository();
+        Ball b = shapeRepo.getDefaultBall();        
+        
+
+        Brick powerupBrick = shapeRepo.getDefaultBrick("floodBrick", 40, 20);
+        Brick targetBrick = shapeRepo.getDefaultBrick("target", 1, 1);
+
+        List<Ball> balls = new ArrayList();
+        List<Brick> bricks = new ArrayList();
+
+        b.setStartingBall(true);
+        balls.add(b);
+
+        powerupBrick.setPowerUp(new BallPowerup(b, 20, 20));
+
+        bricks.add(powerupBrick);
+        bricks.add(targetBrick);
+
+        LevelState initialState = new LevelState(balls, new ArrayList(), bricks);
+        Level level = new Level(1, new Game(GameType.ARCADE, Difficulty.EASY), initialState);
+        level.setLevelPackId(1);
+        level.setRunManual(true);
         return level;
     }
     public Level getLevelWithFloodPowerDown() {
