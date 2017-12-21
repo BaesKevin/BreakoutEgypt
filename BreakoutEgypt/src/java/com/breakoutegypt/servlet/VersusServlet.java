@@ -56,25 +56,20 @@ public class VersusServlet extends HttpServlet {
     private void joinVersusGame(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String gameId = request.getParameter("gameId");
-            Validator validator = new Validator();
-            if(! validator.isInteger(gameId)){
-                throw new BreakoutException("Game does not exist.");
-            }
-            int id = Integer.parseInt(gameId);
+            String gameId = request.getParameter("gameId");  
             
             GameManager gm = new GameManager();
-            Game game = gm.getGame(id);
+            Game game = gm.getGame(gameId);
             
             if(game == null){
                 throw new BreakoutException("Game does not exist.");
             }
             
             Player player = (Player) request.getSession().getAttribute("player");
-            gm.addConnectingPlayer(id, player);
+            gm.addConnectingPlayer(gameId, player);
 
-            request.setAttribute("gameId", id);
-            request.setAttribute("level", gm.getGame(id).getLevel().getId());
+            request.setAttribute("gameId", gameId);
+            request.setAttribute("level", gm.getGame(gameId).getLevel().getId());
             request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
         } catch (BreakoutException boe) {
             System.out.println(boe.getMessage());
@@ -95,7 +90,7 @@ public class VersusServlet extends HttpServlet {
 
         LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.MULTIPLAYER, gameDifficulty);
 
-        int gameId = gm.createGame(GameType.MULTIPLAYER, gameDifficulty, 2);
+        String gameId = gm.createGame(GameType.MULTIPLAYER, gameDifficulty, 2);
         Game game = gm.getGame(gameId);
         game.initStartingLevel(1, progress);
         

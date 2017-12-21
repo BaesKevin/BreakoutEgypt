@@ -99,7 +99,7 @@ public class BreakoutController extends HttpServlet {
             Player player = (Player) request.getSession().getAttribute("player");
 
             LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.ARCADE, gameDifficulty);
-            int gameId = gm.createGame(GameType.ARCADE, gameDifficulty);
+            String gameId = gm.createGame(GameType.ARCADE, gameDifficulty);
 
             gm.getGame(gameId).initStartingLevel(startingLevel, progress);
             gm.addConnectingPlayer(gameId, player);

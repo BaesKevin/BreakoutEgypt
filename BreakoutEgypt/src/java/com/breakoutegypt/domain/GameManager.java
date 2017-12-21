@@ -8,6 +8,7 @@ package com.breakoutegypt.domain;
 import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,36 +19,37 @@ import java.util.Map;
  */
 public class GameManager {
 
-    private static Map<Integer, Game> games = Collections.synchronizedMap(new HashMap());
+    private static Map<String, Game> games = Collections.synchronizedMap(new HashMap());
        
-    public int createGame(GameType type, GameDifficulty difficulty){
+    public String createGame(GameType type, GameDifficulty difficulty){
         return createGame(type, difficulty, 1);
     }
     
-    public int createGame(GameType type, GameDifficulty difficulty,int numberOfPlayers){
-        Game game = new Game(numberOfPlayers, type, difficulty);
+    public String createGame(GameType type, GameDifficulty difficulty,int numberOfPlayers){
+        String uniqueId = getUniqueId(4);
+        Game game = new Game(numberOfPlayers, type, difficulty, uniqueId);
         
         games.put(game.getId(), game);
                
         return game.getId();
     }
 
-    public Game getGame(int gameId){
+    public Game getGame(String gameId){
         return games.get(gameId);
     }
     
-    public void startGame(int gameId){
+    public void startGame(String gameId){
         Game game = games.get(gameId);
         
         game.startLevel();
        
     }
     
-    public void stopGame(int gameId){
+    public void stopGame(String gameId){
         games.get(gameId).stopLevel();        
     }
 
-    public void addConnectingPlayer(int gameId, Player player) {
+    public void addConnectingPlayer(String gameId, Player player) {
         
         Game game = games.get(gameId);
         
@@ -55,7 +57,7 @@ public class GameManager {
             game.addConnectingPlayer(player);
     }
     
-    public void addConnectionForPlayer(int gameId, String name, PlayerConnection conn){
+    public void addConnectionForPlayer(String gameId, String name, PlayerConnection conn){
          Game game = games.get(gameId);
         
         if(game!=null)
@@ -70,7 +72,7 @@ public class GameManager {
 //        
 //    }
 
-    public void removePlayer(int gameId, String name) {
+    public void removePlayer(String gameId, String name) {
         if(games != null){
             Game game = games.get(gameId);
 
@@ -85,7 +87,7 @@ public class GameManager {
         
     }
     
-    public boolean hasNextLevel(int gameId) {
+    public boolean hasNextLevel(String gameId) {
         Game game = games.get(gameId);
         
         if( game != null ){
@@ -93,5 +95,25 @@ public class GameManager {
         }
         
         return false;
+    }
+    
+    private String getUniqueId(int length) {
+        String uniqueId = null;
+        do {
+            uniqueId = generateUniqueId(length);
+        } while (games.containsKey(uniqueId));
+        return uniqueId;
+    }
+    
+    private String generateUniqueId(int length) {        
+
+        String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder( length );
+            for( int i = 0; i < length; i++ ) 
+                sb.append( alphabet.charAt( rnd.nextInt(alphabet.length()) ) );
+       return sb.toString();
+       
     }
 }

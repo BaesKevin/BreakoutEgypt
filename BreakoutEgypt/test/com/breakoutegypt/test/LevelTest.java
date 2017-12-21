@@ -41,7 +41,7 @@ public class LevelTest {
         player = new Player("player");
         
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
         game.addConnectingPlayer(player);
         game.addConnectionForPlayer(player.getUsername(), new DummyConnection());

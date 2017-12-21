@@ -41,7 +41,7 @@ public class MultiplayerTest {
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM, 2);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM, 2);
         game = gm.getGame(id);
 
         player1 = new Player("player1");

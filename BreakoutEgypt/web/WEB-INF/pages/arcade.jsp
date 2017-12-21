@@ -17,7 +17,7 @@
             </main>
         </div>
         <%
-            int id = Integer.parseInt(request.getAttribute("gameId").toString());
+            String id = (String) request.getAttribute("gameId");
             int levelId = Integer.parseInt(request.getAttribute("level").toString());
             out.println("<input type='hidden' value='" + id + "' id='gameId'/>");
             out.println("<input type='hidden' value='" + levelId + "' id='levelid'/>");

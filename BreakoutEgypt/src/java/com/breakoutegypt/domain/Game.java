@@ -18,6 +18,8 @@ import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
+import com.sun.xml.rpc.processor.modeler.j2ee.xml.genericBooleanType;
+import java.security.SecureRandom;
 import java.util.Set;
 
 /**
@@ -25,7 +27,7 @@ import java.util.Set;
  * @author kevin
  */
 public class Game {
-
+    private String uniqueId;
     private static int ID = 0;
     private int id;
     private Level currentLevel;
@@ -40,12 +42,13 @@ public class Game {
 
     private SessionManager manager;
 
-    public Game(GameType gameType, GameDifficulty difficulty) {
-        this(1, gameType, difficulty);
+    public Game(GameType gameType, GameDifficulty difficulty, String uniqueId) {
+        this(1, gameType, difficulty, uniqueId);
     }
 
-    public Game(int numberOfPlayers, GameType gameType, GameDifficulty difficultyType) {
+    public Game(int numberOfPlayers, GameType gameType, GameDifficulty difficultyType, String uniqueId) {
         id = ID++;
+        this.uniqueId = uniqueId;
         this.gameType = gameType;
         this.difficultyType = difficultyType;
         this.difficulty = Repositories.getDifficultyRepository().findByName(difficultyType); // TODO CLONE
@@ -70,8 +73,8 @@ public class Game {
 
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return uniqueId;
     }
 
     public GameType getGameType() {
@@ -214,4 +217,6 @@ public class Game {
             player.decreaseLives();
         }
     }
+    
+    
 }

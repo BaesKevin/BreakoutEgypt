@@ -36,7 +36,7 @@ public class PowerUpServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int gameId = Integer.parseInt(request.getParameter("gameId"));
+        String gameId = request.getParameter("gameId");
         String powerup = request.getParameter("powerup");
         
         Player p = (Player) request.getSession().getAttribute("player");

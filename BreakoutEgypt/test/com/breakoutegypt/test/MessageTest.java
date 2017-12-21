@@ -42,7 +42,7 @@ public class MessageTest {
 
     private void createGame(int startingLevel) {
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 

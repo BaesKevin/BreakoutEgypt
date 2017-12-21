@@ -33,7 +33,7 @@ public class LifeRegenerationTest {
         player = new Player("player");
         
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, diff);
+        String id = gm.createGame(GameType.TEST, diff);
         game = gm.getGame(id);
         game.addConnectingPlayer(player);
         game.addConnectionForPlayer(player.getUsername(), new DummyConnection());

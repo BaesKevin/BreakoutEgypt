@@ -35,7 +35,7 @@ public class PowerDownTest {
     @Before
     public void init() {
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
 
         player = new Player("Kevin");

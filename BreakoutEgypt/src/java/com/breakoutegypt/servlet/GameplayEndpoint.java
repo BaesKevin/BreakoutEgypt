@@ -46,7 +46,7 @@ public class GameplayEndpoint {
         
         GameManager gm = new GameManager();
         
-        int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
+        String gameId = peer.getPathParameters().get("gameId");
         HttpSession httpSession=(HttpSession) config.getUserProperties().get(HttpSession.class.getName());
 //        user=(User)httpSession.getAttribute("user");
         player = (Player) httpSession.getAttribute("player");
@@ -61,7 +61,7 @@ public class GameplayEndpoint {
 
     @OnClose
     public void onClose(Session peer) {
-        int gameId = Integer.parseInt(peer.getPathParameters().get("gameId"));
+        String gameId = peer.getPathParameters().get("gameId");
         new GameManager().removePlayer(gameId, username);
     }
     

@@ -50,7 +50,7 @@ public class LevelPackProgressTest {
     private void createGame(int startingLevel) {
         GameManager gm = new GameManager();
 
-        int id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
         game = gm.getGame(id);
         factory = game.getLevelFactory();
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
@@ -104,7 +104,7 @@ public class LevelPackProgressTest {
 
     @Test(expected = BreakoutException.class)
     public void gameCrashesWhenIllegalLevelIsSet() {
-        int id = gm.createGame(GameType.TEST, GameDifficulty.EASY);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.EASY);
 
         final String playername = "kevin";
         Game game = new GameManager().getGame(id);
@@ -121,7 +121,7 @@ public class LevelPackProgressTest {
 
     @Test
     public void gameIncrementsLevelReachedOnLevelCompletion() {
-        int id = gm.createGame(GameType.TEST, GameDifficulty.BRUTAL);
+        String id = gm.createGame(GameType.TEST, GameDifficulty.BRUTAL);
 
         final String playername = "kevin";
         game = gm.getGame(id);

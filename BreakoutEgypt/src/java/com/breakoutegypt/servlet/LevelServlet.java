@@ -44,7 +44,7 @@ public class LevelServlet extends HttpServlet {
         HttpSession session = request.getSession();
 //        User user = (User)session.getAttribute("user");
         Player playerFromSession = (Player) session.getAttribute("player");
-        int gameId = Integer.parseInt(request.getParameter("gameId"));
+        String gameId = request.getParameter("gameId");
         
         GameManager manager = new GameManager();
         Game game = manager.getGame(gameId);
@@ -61,7 +61,7 @@ public class LevelServlet extends HttpServlet {
             if(playerFromSession!=null){
                 String name = playerFromSession.getUsername();
                 Player connectingPlayer = game.getPlayer(name);
-                System.out.printf("Game: %d Level: %d Player: %s", game.getId(), level.getId(), name);
+                System.out.printf("Game: %s Level: %d Player: %s", game.getId(), level.getId(), name);
             
                 job = Json.createObjectBuilder();
                 if (level != null) {
@@ -97,7 +97,7 @@ public class LevelServlet extends HttpServlet {
             throws ServletException, IOException {
         
        
-        int gameId = Integer.parseInt(request.getParameter("gameId"));
+        String gameId = request.getParameter("gameId");
                 
         GameManager manager = new GameManager();
 

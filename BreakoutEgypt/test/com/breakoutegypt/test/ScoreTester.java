@@ -37,7 +37,7 @@ public class ScoreTester {
 
     private void createGame(int startingLevel, GameDifficulty diff) {
         GameManager gm = new GameManager();
-        int id = gm.createGame(GameType.TEST, diff);
+        String id = gm.createGame(GameType.TEST, diff);
         game = gm.getGame(id);
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 

@@ -30,15 +30,12 @@ public class PauseServlet extends HttpServlet {
             
             String gameId = request.getParameter("gameid");
             
-            try {
-                int id = Integer.parseInt(gameId);
-                Game game = gm.getGame(id);
-                if (game != null) {
-                    game.togglePaused();
-                }
-            } catch (NumberFormatException ex) {
-                throw new NumberFormatException("Wrong id");
+            
+            Game game = gm.getGame(gameId);
+            if (game != null) {
+                game.togglePaused();
             }
+           
         }
     }
 
