@@ -19,8 +19,10 @@ import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import org.jbox2d.common.Vec2;
+import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -35,9 +37,17 @@ public class ScoreTester {
     private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
 
     public ScoreTester() {
+    }
+    
+    @Before
+    public void setTesting() {
         Repositories.isTesting(true);
     }
-
+    
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
+    }
     
     
     private void createGame(int startingLevel, String diff) {

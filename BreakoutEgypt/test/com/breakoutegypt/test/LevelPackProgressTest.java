@@ -22,6 +22,7 @@ import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.LevelFactory;
 import com.breakoutegypt.levelfactories.TestLevelFactory;
 import junit.framework.Assert;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,6 +48,11 @@ public class LevelPackProgressTest {
         factory = new TestLevelFactory(null);
         gm = new GameManager();
         Repositories.isTesting(true);
+    }
+    
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
     }
 
     private void createGame(int startingLevel) {

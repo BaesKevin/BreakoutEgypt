@@ -21,16 +21,22 @@ import org.junit.runners.Suite;
     GameManagerTest.class,
     SessionManagerTest.class,
     LevelTest.class,
+    LevelPackProgressTest.class,
     LevelObjectSpawningTest.class,
     MessageTest.class,
     PowerUpTest.class,
     LevelStateTest.class,
     ScoreTester.class,
-    LevelPackProgressTest.class,
     PowerDownTest.class,
     LifeRegenerationTest.class,
     MultiplayerTest.class
 })
 
 public class BreakoutTestSuite {
+
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
+    }
+
 }

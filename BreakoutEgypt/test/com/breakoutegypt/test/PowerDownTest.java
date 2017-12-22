@@ -17,6 +17,7 @@ import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.shapes.Ball;
 import java.util.List;
+import org.junit.After;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,6 @@ public class PowerDownTest {
 
     @Before
     public void init() {
-//        Repositories.isTesting(true);
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, "medium");
         game = gm.getGame(id);
@@ -45,7 +45,12 @@ public class PowerDownTest {
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
 
-//        game.assignPaddleToPlayer(player);
+        Repositories.isTesting(true);
+    }
+
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
     }
 
     @Test
@@ -59,28 +64,28 @@ public class PowerDownTest {
         balls = level.getLevelState().getBalls();
         assertTrue(balls.size() == 6);
     }
-    
+
     @Test
     public void testProjectilePowerDown() {
         game.initStartingLevel(19, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         level.startBall();
-        
+
         stepTimes(level, 120);
         DummyConnection conn = (DummyConnection) player.getConnection();
         assertTrue(1 == conn.getLifeMessages().size());
     }
-    
+
     @Test
     public void testTriggerPowerdownWithExplosive() {
-                
+
         game.initStartingLevel(20, ALL_LEVELS_UNLOCKED);
         level = game.getLevel();
         level.startBall();
-        
+
         stepTimes(level, 120);
         DummyConnection conn = (DummyConnection) player.getConnection();
-        assertTrue(2 == conn.getBrickMessages().size());        
+        assertTrue(2 == conn.getBrickMessages().size());
     }
 
     private void stepTimes(Level level, int times) {

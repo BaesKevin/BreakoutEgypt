@@ -7,6 +7,7 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -14,7 +15,9 @@ import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -27,6 +30,16 @@ public class LifeRegenerationTest {
     private Level level;
     private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
     private Player player;
+    
+    @Before
+    public void setTesting() {
+        Repositories.isTesting(true);
+    }
+    
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
+    }
 
     private void createGame(String diff, int startingLevel) {
         player = new Player("player");
