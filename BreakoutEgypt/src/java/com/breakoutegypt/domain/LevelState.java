@@ -170,6 +170,10 @@ public class LevelState {
     public void removeBrick(Brick brick) {
         bricks.remove(brick);
     }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
     
     private void removeDecoys(int playerIndex) {
         List<Ball> ballsWithoutDecoys = new ArrayList();

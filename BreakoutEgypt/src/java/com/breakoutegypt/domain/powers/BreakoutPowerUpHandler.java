@@ -74,7 +74,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         if (powerUpsForPlayer.size() < 3) {
             Message message = new PowerUpMessage(up.getName(), up, up.getType());
             message.setRecipientIndex(up.getPlayerId());
-
+            
             breakoutWorld
                     .getMessageRepo()
                     .addPowerupMessages(message);

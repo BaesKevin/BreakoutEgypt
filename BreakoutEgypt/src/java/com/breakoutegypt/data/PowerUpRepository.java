@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author Bjarne Deketelaere
  */
 public interface PowerUpRepository {
-    public void givePowerUpsToBricks(List<Brick> levelBricks, List<Ball> levelBalls, List<Paddle> levelPaddles);
+    public void givePowerUpsToBricks(List<Brick> levelBricks, List<Ball> levelBalls, List<Paddle> levelPaddles, Difficulty difficulty);
     public void insertPowerUpsToBrick(int brickId,PowerUp powerdown);
     public void removePowerUpsOfBrick(int brickId);
 }

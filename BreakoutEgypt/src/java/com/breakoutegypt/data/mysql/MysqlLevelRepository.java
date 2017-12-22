@@ -62,7 +62,7 @@ public class MysqlLevelRepository implements LevelRepository {
                 List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
                 List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
                 LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
-                
+
 //                Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
                 Level level = new Level(levelid, game, levelstate);
                 level.setLevelName(name);
@@ -83,7 +83,7 @@ public class MysqlLevelRepository implements LevelRepository {
             prep.setInt(1, id);
             try (
                     ResultSet rs = prep.executeQuery();) {
-                Level level=null;
+                Level level = null;
                 while (rs.next()) {
                     int levelid = rs.getInt("levelid");
                     int levelpackid = rs.getInt("levelpackid");
@@ -93,11 +93,10 @@ public class MysqlLevelRepository implements LevelRepository {
                     List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
                     List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
-                    
-                    Repositories.getPowerdownRepo().givePowerDownToBricks(levelBricks, levelBalls);
-                    Repositories.getPowerUpRepository().givePowerUpsToBricks(levelBricks, levelBalls,levelPaddles);
-                    
+
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
+                    Repositories.getPowerdownRepo().givePowerDownToBricks(levelBricks, levelBalls);
+                    Repositories.getPowerUpRepository().givePowerUpsToBricks(levelBricks, levelBalls, levelPaddles, game.getDifficulty());
 //                    Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
                     level = new Level(levelid, game, levelstate);
                 }
@@ -111,29 +110,29 @@ public class MysqlLevelRepository implements LevelRepository {
 
     @Override
     public Level getLevelByNumber(int number, int packId, Game game) {
-         try (
+        try (
                 Connection conn = DbConnection.getConnection();
                 PreparedStatement prep = conn.prepareStatement(SELECT_LEVEL_BYNUMBER);) {
             prep.setInt(1, number);
             prep.setInt(2, packId);
             try (
                     ResultSet rs = prep.executeQuery();) {
-                Level level=null;
+                Level level = null;
                 while (rs.next()) {
                     int levelid = rs.getInt("levelid");
                     int levelpackid = rs.getInt("levelpackid");
                     int levelNumber = rs.getInt("levelNumber");
                     boolean isMultiplayer = rs.getBoolean("isMultiplayer");
-                    
+
                     String name = rs.getString("name");
                     String description = rs.getString("description");
                     List<Brick> levelBricks = brickRepo.getBricksByLevel(levelid);
                     List<Paddle> levelPaddles = paddleRepo.getPaddlesByLevelId(levelid);
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks, game.getDifficulty(), true, isMultiplayer);
-                    
                     Repositories.getPowerdownRepo().givePowerDownToBricks(levelBricks, levelBalls);
-                    
+                    Repositories.getPowerUpRepository().givePowerUpsToBricks(levelBricks, levelBalls, levelPaddles, game.getDifficulty());
+
                     level = new Level(levelid, game, levelstate);
                     level.setLevelNumber(levelNumber);
                     level.setLevelName(name);
@@ -149,14 +148,14 @@ public class MysqlLevelRepository implements LevelRepository {
 
     @Override
     public List<Level> getLevelsByPackId(int packId, Game game) {
-          try (
+        try (
                 Connection conn = DbConnection.getConnection();
                 PreparedStatement prep = conn.prepareStatement(SELECT_LEVEL_BY_PACKID);) {
             prep.setInt(1, packId);
             try (
                     ResultSet rs = prep.executeQuery();) {
-               List<Level> levels = new ArrayList<>();
-               
+                List<Level> levels = new ArrayList<>();
+
                 while (rs.next()) {
                     int levelid = rs.getInt("levelid");
                     int levelpackid = rs.getInt("levelpackid");
@@ -168,12 +167,12 @@ public class MysqlLevelRepository implements LevelRepository {
                     List<Ball> levelBalls = ballRepo.getBallsByLevelId(levelid);
                     LevelState levelstate = new LevelState(levelBalls, levelPaddles, levelBricks);
 //                    Game game = new Game(GameType.ARCADE, Difficulty.MEDIUM); //todo
-                    Level level =new Level(levelid, game, levelstate);
+                    Level level = new Level(levelid, game, levelstate);
                     level.setLevelName(name);
                     level.setLevelNumber(levelNumber);
                     level.setLevelDescription(description);
                     levels.add(level);
-                    
+
                 }
                 return levels;
             }
@@ -182,27 +181,24 @@ public class MysqlLevelRepository implements LevelRepository {
             throw new BreakoutException("Couldn't load level", ex);
         }
     }
-    
-    
 
     @Override
     public void addLevel(Level level) {
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_LEVEL,PreparedStatement.RETURN_GENERATED_KEYS);
-                ){
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_LEVEL, PreparedStatement.RETURN_GENERATED_KEYS);) {
             prep.setInt(1, level.getLevelPackId());
             prep.setString(2, level.getLevelName());
             prep.setString(3, level.getLevelDescription());
             prep.setInt(4, level.getLevelNumber());
             prep.setBoolean(5, level.getLevelState().isMultiplayer());
             prep.executeUpdate();
-            try(ResultSet rs=prep.getGeneratedKeys();){
+            try (ResultSet rs = prep.getGeneratedKeys();) {
                 int levelId = -1;
-                if(rs.next()){
-                    levelId=rs.getInt(1);
+                if (rs.next()) {
+                    levelId = rs.getInt(1);
                 }
-                if(levelId<0){
+                if (levelId < 0) {
                     throw new BreakoutException("Unable to add level");
                 }
                 level.setId(levelId);
@@ -215,16 +211,15 @@ public class MysqlLevelRepository implements LevelRepository {
             throw new BreakoutException("Couldn't add level", ex);
         }
     }
-    
+
     @Override
     public void removeLevel(Level level) {
         brickRepo.removeLevelBricks(level.getId(), level.getLevelState().getBricks());
         paddleRepo.removeLevelPaddles(level.getId(), level.getLevelState().getPaddles());
         ballRepo.removeLevelBalls(level.getId(), level.getLevelState().getBalls());
         try (
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_LEVEL);
-                ){
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_LEVEL);) {
             prep.setInt(1, level.getId());
             prep.executeUpdate();
         } catch (SQLException ex) {

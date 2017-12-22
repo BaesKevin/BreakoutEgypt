@@ -7,10 +7,9 @@ package com.breakoutegypt.data.mysql;
 
 import com.breakoutegypt.data.PowerUpRepository;
 import com.breakoutegypt.data.mysql.util.DbConnection;
-import com.breakoutegypt.domain.powers.FloodPowerDown;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.powers.PowerUp;
 import com.breakoutegypt.domain.powers.generic.BallPowerup;
-import com.breakoutegypt.domain.powers.generic.BrickPowerup;
 import com.breakoutegypt.domain.powers.generic.PaddlePowerup;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
@@ -21,8 +20,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -37,14 +34,14 @@ public class MysqlPowerUpRepository implements PowerUpRepository{
     private final String SELECT_BALLPOWERUPS = "select * from genericballpowerup where brickid = ?";
     
     @Override
-    public void givePowerUpsToBricks(List<Brick> levelBricks, List<Ball> levelBalls, List<Paddle> levelPaddles) {
+    public void givePowerUpsToBricks(List<Brick> levelBricks, List<Ball> levelBalls, List<Paddle> levelPaddles, Difficulty difficulty) {
         for (Brick brick : levelBricks) {
-            this.giveBallPowerupToBrick(brick, levelBalls);
-            this.givePaddlePowerupToBrick(brick,levelPaddles);
+            this.giveBallPowerupToBrick(brick, levelBalls, difficulty);
+            this.givePaddlePowerupToBrick(brick,levelPaddles, difficulty);
         }
     }
     
-    private void givePaddlePowerupToBrick(Brick brick, List<Paddle> paddles){
+    private void givePaddlePowerupToBrick(Brick brick, List<Paddle> paddles, Difficulty difficulty){
         try (
                     Connection conn = DbConnection.getConnection();
                     PreparedStatement prep = conn.prepareStatement(SELECT_PADDLEPOWERUPS);) {
@@ -56,7 +53,7 @@ public class MysqlPowerUpRepository implements PowerUpRepository{
                         int width = rs.getInt("width");
                         int height = rs.getInt("height");
                         Paddle defaultPaddle = findPaddleById(paddles, paddleId);
-                        PaddlePowerup paddlepowerup = new PaddlePowerup(defaultPaddle, width, height);
+                        PaddlePowerup paddlepowerup = new PaddlePowerup(defaultPaddle, width, height, difficulty.getPowerupTime());
                         brick.setPowerUp(paddlepowerup);
                     }
                 }
@@ -65,7 +62,7 @@ public class MysqlPowerUpRepository implements PowerUpRepository{
             }
     }
     
-    private void giveBallPowerupToBrick(Brick brick, List<Ball> balls){
+    private void giveBallPowerupToBrick(Brick brick, List<Ball> balls, Difficulty difficulty){
         try (
                     Connection conn = DbConnection.getConnection();
                     PreparedStatement prep = conn.prepareStatement(SELECT_BALLPOWERUPS);) {
@@ -77,7 +74,7 @@ public class MysqlPowerUpRepository implements PowerUpRepository{
                         int width = rs.getInt("width");
                         int height = rs.getInt("height");
                         Ball defaultBall = findBallById(balls, ballId);
-                        BallPowerup ballpowerup = new BallPowerup(defaultBall, width, height);
+                        BallPowerup ballpowerup = new BallPowerup(defaultBall, width, height, difficulty.getPowerupTime());
                         brick.setPowerUp(ballpowerup);
                     }
                 }

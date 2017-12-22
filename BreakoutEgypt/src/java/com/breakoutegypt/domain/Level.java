@@ -86,6 +86,7 @@ public class Level implements BreakoutWorldEventListener {
         breakoutWorld = new BreakoutWorld(worldTimeStepInMs);
 
         levelState = initialState;
+        levelState.setDifficulty(game.getDifficulty());
         List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
         for (RegularBody rb : bodiesToSpawn) {
             breakoutWorld.spawn(rb);
