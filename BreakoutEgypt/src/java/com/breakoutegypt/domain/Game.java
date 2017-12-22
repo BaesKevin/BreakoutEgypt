@@ -217,6 +217,12 @@ public class Game {
             player.decreaseLives();
         }
     }
+
+    public void startBall(int playerIndex) {
+        if(manager.hasMaxPlayers()){
+            currentLevel.startBall(playerIndex);
+        }   
+    }
     
     
 }

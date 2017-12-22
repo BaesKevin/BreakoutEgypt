@@ -159,6 +159,10 @@ public class SessionManager {
     public boolean isFull() {
         return connectedPlayers.size() + connectingPlayers.size() == maxPlayers;
     }
+    
+    public boolean hasMaxPlayers(){
+        return connectedPlayers.size()==this.maxPlayers;
+    }
 
     public Set<Player> getPlayers() {
         Set<Player> allPlayers = new HashSet();
