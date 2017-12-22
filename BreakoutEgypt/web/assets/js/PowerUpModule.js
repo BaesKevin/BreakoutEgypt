@@ -24,6 +24,7 @@ let PowerUpModule = (function () {
             return response.json();
         }).then(function (json) {
             activatePowerUp(json);
+            
             let powerup = powerups.find(function (powerup) {
                 return powerup.name === name;
             });
@@ -96,8 +97,10 @@ let PowerUpModule = (function () {
             case "ADDBROKENPADDLE":
             case "ADDACIDBALL":
                 powerups.push({name: json.powerup.powerupname, active: false});
+                break;
             case "GENERICPOWERUP":
                 powerups.push({ name: json.powerup.name, active: false});
+                break;
         }
     }
 

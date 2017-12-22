@@ -89,7 +89,7 @@ public class PersistenceTest {
 
         User newUser = new User(1, name, mail, pass, diamonds, gold, false);
         Player p = new Player(newUser.getUsername(), newUser.getEmail(), newUser.getHash());
-        Score s = new Score(0, 1, p, 123456, Difficulty.EASY, 654321);
+        Score s = new Score(0, 1,1, p, 123456, Difficulty.EASY, 654321);
 
         Repositories.getHighscoreRepository().addScore(s);
 

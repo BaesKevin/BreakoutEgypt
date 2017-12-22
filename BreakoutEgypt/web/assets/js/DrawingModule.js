@@ -5,7 +5,7 @@ let DrawingModule = (function () {
         y: 0
     };
     let explosions = [];
-
+    
     function doDocumentLoaded() {
         $('canvas').on('mousemove', updateMouseX);
         initCanvasAndContextFields();

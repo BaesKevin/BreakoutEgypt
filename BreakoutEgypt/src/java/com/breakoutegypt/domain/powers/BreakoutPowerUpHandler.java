@@ -91,6 +91,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         for (List<PowerUp> l : playerToPowerUpMap.values()) {
             all.addAll(l);
         }
+        
         return all;
     }
 
