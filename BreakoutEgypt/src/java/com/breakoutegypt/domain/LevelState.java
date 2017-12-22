@@ -345,7 +345,7 @@ public class LevelState {
 
         int noOfPowerups = (int) Math.ceil(noOfPowers * difficulty.getPercentageOfPowerups());
         int noOfPowerdowns = (int) Math.floor(noOfPowers * difficulty.getPercentageOfPowerdowns());
-
+        
         if (noOfPowers > 0) {
             List<Brick> bricksToAddPower = bricksToAddPowers(regularBricks, noOfPowerdowns + noOfPowerups);
             int identifier = 0;

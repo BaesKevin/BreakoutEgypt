@@ -117,8 +117,6 @@ public class ArcadeLevelFactory extends LevelFactory {
         bricks.get(30).setBreakable(false);
         bricks.get(30).addEffect(new ToggleEffect(Arrays.asList(brickToToggle)));
 
-        System.out.println("Bricks in pyramid level: " + bricks.size());
-
         List<Ball> balls = new ArrayList();
         Ball ball = Repositories.getDefaultShapeRepository().getDefaultBall(50, 80);
         ball.setStartingBall(true);

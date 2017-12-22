@@ -243,7 +243,6 @@ public class SessionManager {
 
         JsonArray powerupmessages = messageRepo.getPowerupMessages();
         if (powerupmessages.size() > 0) {
-            System.out.println("putting powerup");
             messages.put("powerupactions", powerupmessages);
         }
 
@@ -267,7 +266,6 @@ public class SessionManager {
             messages.put("paddlepositions", paddlepositions);
         }
 
-//        System.out.println(paddlePositionMessages.get(0).getName());
         return messages;
     }
 

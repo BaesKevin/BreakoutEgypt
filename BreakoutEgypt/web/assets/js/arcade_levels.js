@@ -21,7 +21,6 @@ function setDifficultySelect(){
     let select = $("#difficulty");
     
     if(diffFromQueryString){
-        console.log("diff from querystring " + diffFromQueryString);
         select.val(diffFromQueryString);
     }
 }

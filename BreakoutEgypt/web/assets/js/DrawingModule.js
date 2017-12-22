@@ -60,8 +60,6 @@ let DrawingModule = (function () {
 
         if (!level.allLevelsComplete) {
             window.requestAnimationFrame(draw);
-        } else {
-            console.log("Completed all levels");
         }
     }
 

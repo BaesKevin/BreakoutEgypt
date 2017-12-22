@@ -39,7 +39,7 @@ public class VersusServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        System.out.println("PATH: " + path);
+
         switch (path) {
             case "/versusLobby":
                 createVersusLobby(request, response);

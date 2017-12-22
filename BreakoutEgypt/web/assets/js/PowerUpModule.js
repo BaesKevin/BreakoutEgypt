@@ -36,8 +36,6 @@ let PowerUpModule = (function () {
     }
 
     function activatePowerUp(json) {
-        console.log("activating powerup");
-        console.log(json);
         switch (json.powerupaction) {
             case "ACTIVATEFLOOR":
                 let jsonpowerup = json.powerup;
@@ -68,7 +66,6 @@ let PowerUpModule = (function () {
     }
 
     function handlePowerUpMessage(json) {
-        console.log(json);
         json.forEach(function (data) {
             doPowerupaction(data);
             level.powerups = powerups;

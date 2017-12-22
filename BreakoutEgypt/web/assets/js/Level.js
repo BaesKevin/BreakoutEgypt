@@ -271,16 +271,12 @@ const Level = (function () {
         function initializeNextLevel(response, self) {
             if (!response.error) {
                 if (response.allLevelsComplete) {
-                    console.log("Load level: got allLevelsComplete message");
-                    console.log(response)
                     ModalModule.modalAllLevelsCompleted(self.level);
                     self.allLevelsComplete = true;
                 } else {
-                    console.log("Load level: got data for level " + response.level);
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
                     self.playerIndex = response.playerIndex;
-                    console.log("%cMy paddle : " + response.mypaddle, "font-size: 2em;");
                     console.log(response.lives);
                     self.levelDimension = response.levelDimension;
 

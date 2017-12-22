@@ -57,7 +57,7 @@ public class BreakoutController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        System.out.println("PATH: " + path);
+
         switch (path) {
             case "/index":
             case "/index.jsp":

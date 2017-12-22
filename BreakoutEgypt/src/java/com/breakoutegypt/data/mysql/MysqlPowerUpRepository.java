@@ -33,11 +33,7 @@ public class MysqlPowerUpRepository implements PowerUpRepository {
     private final String INSERT_BALLPOWERUP = "insert into genericballpowerup(brickid,ballid,width,height) values(?, ?, ?, ?)";
     private final String SELECT_PADDLEPOWERUPS = "select * from genericpaddlepowerup where brickid = ?";
     private final String SELECT_BALLPOWERUPS = "select * from genericballpowerup where brickid = ?";
-
-    public MysqlPowerUpRepository() {
-        System.out.println("creating poweruprepo");
-    }
-
+    
     @Override
     public void givePowerUpsToBricks(List<Brick> levelBricks, List<Ball> levelBalls, List<Paddle> levelPaddles, Difficulty difficulty) {
         for (Brick brick : levelBricks) {

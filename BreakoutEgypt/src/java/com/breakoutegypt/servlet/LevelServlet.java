@@ -108,7 +108,6 @@ public class LevelServlet extends HttpServlet {
         Player player = (Player) request.getSession().getAttribute("player");
         player = manager.getGame(gameId).getPlayer(player.getUsername());
         
-        System.out.println("Receive start from player " + player.getUsername() + " index " + player.getIndex());
         level.startBall(player.getIndex());
         response.setContentType("application/json");
 

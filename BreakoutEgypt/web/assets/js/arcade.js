@@ -34,7 +34,6 @@ var pauseGame = function () {
 
 var redirectToMainMenu = function (e) {
     e.preventDefault();
-    console.log("test");
     location.replace('index');
 };
 
