@@ -21,7 +21,7 @@ import java.awt.Color;
 public class DefaultShapeRepository {
     private static DefaultShapeRepository INSTANCE;
     
-    private DefaultShapeRepository(){
+    DefaultShapeRepository(){
         
     }
     

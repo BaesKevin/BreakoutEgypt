@@ -62,7 +62,7 @@
                 <table>
                     <tr>
                         <th>Username</th>
-                        <th>Timescore <i class="fa fa-sort-asc" aria-hidden="true"></i></th>
+                        <th>Timescore <i class="fa fa-sort" aria-hidden="true"></i></th>
                         <th>Brickscore <i class="fa fa-sort" aria-hidden="true"></i></th>
                     </tr>
                     <c:if test="${empty scores}">
@@ -75,7 +75,7 @@
                     <c:forEach var="score" items="${scores}">
                         <tr>
                             <td><c:out value="${score.getUser()}"/></td>
-                            <td><c:out value="${score.getScore()}"/></td>
+                            <td><c:out value="${score.getTimeScore()}"/></td>
                             <td><c:out value="${score.brickScore}"/></td>
                         </tr>
                     </c:forEach>

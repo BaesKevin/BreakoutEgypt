@@ -6,22 +6,21 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
-import com.breakoutegypt.domain.messages.BrickMessage;
-import com.breakoutegypt.domain.messages.BrickMessageType;
 import com.breakoutegypt.domain.messages.LifeMessage;
 import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,14 +34,24 @@ public class MessageTest {
     Level level;
     Game game;
     Player player;
-    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
+    
+    @Before
+    public void setTesting() {
+        Repositories.isTesting(true);
+    }
+    
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
+    }
     
     public MessageTest() {
     }
 
     private void createGame(int startingLevel) {
         GameManager gm = new GameManager();
-        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM);
+        String id = gm.createGame(GameType.TEST, Difficulty.MEDIUM);
         game = gm.getGame(id);
         game.initStartingLevel(startingLevel, ALL_LEVELS_UNLOCKED);
 

@@ -17,7 +17,8 @@ import javax.json.JsonObjectBuilder;
  * @author kevin
  */
 public class ShapeDimension {
-
+    
+    private int shapeId=0;
     private float posX;
     private float posY;
     private int width, height;
@@ -28,7 +29,11 @@ public class ShapeDimension {
     public ShapeDimension(String name, float x, float y, int width, int height) {
         this(name, x, y, width, height, Color.BLACK);
     }
-
+    
+    public ShapeDimension(float posX, float posY, int width, int height){
+        this("shape",posX,posY,width,height);
+    }
+    
     public ShapeDimension(String name, float posX, float posY, int width, int height, Color color) {
         this.name = name;
         this.posX = posX;
@@ -40,6 +45,14 @@ public class ShapeDimension {
 
     public ShapeDimension(ShapeDimension s) {
         this(s.name, s.posX, s.posY, s.width, s.height, s.color);
+    }
+    
+    public int getShapeId(){
+        return this.shapeId;
+    }
+    
+    public void setShapeId(int id){
+        this.shapeId=id;
     }
 
     public String getName() {

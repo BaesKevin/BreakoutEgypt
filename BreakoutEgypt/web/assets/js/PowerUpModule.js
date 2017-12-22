@@ -24,9 +24,11 @@ let PowerUpModule = (function () {
             return response.json();
         }).then(function (json) {
             activatePowerUp(json);
+            
             let powerup = powerups.find(function (powerup) {
                 return powerup.name === name;
             });
+            
             powerup.active = true;
             level.powerups = powerups;
             DrawingModule.updateStaticContent();
@@ -36,7 +38,6 @@ let PowerUpModule = (function () {
     function activatePowerUp(json) {
         switch (json.powerupaction) {
             case "ACTIVATEFLOOR":
-                console.log(json)
                 let jsonpowerup = json.powerup;
                 if (!level.floor) {
                     level.floor = ScalingModule.scaleObject({x: jsonpowerup.x, y: jsonpowerup.y, width: jsonpowerup.width, height: jsonpowerup.height},
@@ -46,6 +47,10 @@ let PowerUpModule = (function () {
             case "ACTIVATEBROKENPADDLE":
                 addBrokenPaddle(json);
                 break;
+            case "GENERICPOWERUP":
+                level.resizeBody(json);
+                break;
+            
         }
         ScalingModule.scaleAfterResize();
         DrawingModule.updateStaticContent();
@@ -81,10 +86,18 @@ let PowerUpModule = (function () {
             case "REMOVEACIDBALL":
                 removeActivePowerup(json.powerup.powerupname);
                 break;
+            case "REMOVEGENERICPOWERUP":
+                level.resizeBody(json, true);
+                removeActivePowerup(json.powerup.name);
+                break;
             case "ADDFLOOR":
             case "ADDBROKENPADDLE":
             case "ADDACIDBALL":
                 powerups.push({name: json.powerup.powerupname, active: false});
+                break;
+            case "GENERICPOWERUP":
+                powerups.push({ name: json.powerup.name, active: false});
+                break;
         }
     }
 

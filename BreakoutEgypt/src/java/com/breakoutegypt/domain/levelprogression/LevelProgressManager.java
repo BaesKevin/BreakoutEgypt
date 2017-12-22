@@ -5,7 +5,8 @@
  */
 package com.breakoutegypt.domain.levelprogression;
 
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,7 +24,11 @@ public class LevelProgressManager implements Serializable{
         packProgresses = new ArrayList();
     }
     
-    public LevelPackProgress getProgress(GameType type, GameDifficulty difficulty){
+    public LevelProgressManager(List<LevelPackProgress> llpp) {
+        this.packProgresses = llpp;
+    }
+    
+    public LevelPackProgress getProgress(GameType type, String difficulty){
         LevelPackProgress toFind = new LevelPackProgress(type, difficulty);
         
          for (LevelPackProgress p : packProgresses) {
@@ -32,12 +37,12 @@ public class LevelProgressManager implements Serializable{
             }
         }
          
-         return null;
+         return new LevelPackProgress(type, difficulty);
     }
     
-    public LevelProgress getLevelProgressOrDefault(GameType type, GameDifficulty difficulty){
+    public LevelProgress getLevelProgressOrDefault(GameType type, String difficulty){
         LevelPackProgress packProgress = getProgress(type, difficulty);
-        LevelProgress progress = LevelProgressionRepository.getDefault(type);
+        LevelProgress progress = DummyLevelProgressionRepository.getDefault(type);
         
         if(packProgress != null)
             progress = packProgress.getLevelProgress();
@@ -45,7 +50,7 @@ public class LevelProgressManager implements Serializable{
         return progress;
     }
 
-    public void addNewProgression(GameType type, GameDifficulty difficulty) {
+    public void addNewProgression(GameType type, String difficulty) {
         LevelPackProgress newProgress = new LevelPackProgress(type, difficulty);
 
         if (!levelPackProgressExists(newProgress)) {
@@ -63,14 +68,18 @@ public class LevelProgressManager implements Serializable{
         return false;
     }
 
-    public void incrementHighestLevel(GameType gameType, GameDifficulty difficulty) {
+    public void incrementHighestLevel(GameType gameType, String difficulty) {
         getProgress(gameType, difficulty).incrementLevel();
     }
     
-    public int getHighestLevelReached(GameType gameType, GameDifficulty difficulty){
+    public int getHighestLevelReached(GameType gameType, String difficulty){
         LevelPackProgress p = getProgress(gameType, difficulty);
         
         return p != null? p.getLevelProgress().getHighestLevelReached() : 1; 
+    }
+
+    public void setProgressions(List<LevelPackProgress> allForPlayer) {
+        this.packProgresses = allForPlayer;
     }
 
 

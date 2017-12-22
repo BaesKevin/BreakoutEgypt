@@ -5,28 +5,25 @@
  */
 package com.breakoutegypt.data;
 
-import com.breakoutegypt.domain.GameType;
-import com.breakoutegypt.domain.levelprogression.LevelProgress;
-import java.util.HashMap;
-import java.util.Map;
+import com.breakoutegypt.domain.LevelPack;
+import com.breakoutegypt.domain.Player;
+import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
+import java.util.List;
 
 /**
  *
- * @author kevin
+ * @author BenDB
  */
-public class LevelProgressionRepository {
-    private static Map<GameType, LevelProgress> defaultProgressions;
+public interface LevelProgressionRepository {
     
-    // default levelprogression is not different between difficulties of the same levelpack
-    static{
-        defaultProgressions = new HashMap();
-        
-        defaultProgressions.put(GameType.TEST, new LevelProgress(1000));
-        defaultProgressions.put(GameType.ARCADE, new LevelProgress(4));
-        defaultProgressions.put(GameType.MULTIPLAYER, new LevelProgress(1));
-    }
-    
-    public static LevelProgress getDefault(GameType type){
-        return new LevelProgress(defaultProgressions.get(type));
-    }
+    void addNewLevelProgression(int userid, LevelPack lp, Difficulty d, int highestLevelReached, boolean isCampaign);
+    void incrementHighestLevelReached(Player p, LevelPack lp, Difficulty d);
+    LevelPackProgress getLevelPackProgress(int playerId, LevelPack lp, Difficulty d);
+    void removeLevelPackProgress(int playerId, LevelPack lp, Difficulty d);
+    List<LevelPackProgress> getAllForPlayer(int userId);
+    public void initDefaults(int userid);
+
+    public void setHighestLevelReached(int levelid, Player p, LevelPack lp, Difficulty difficulty);
 }

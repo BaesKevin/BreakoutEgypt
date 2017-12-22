@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,25 +40,13 @@ public class StaticUserRepository implements UserRepository {
     }
 
     @Override
-    public User getUser(String email, String password) {
-        for (User selectedUser : this.users) {
-            if (selectedUser.getEmail().equals(email) && BCrypt.checkpw(password, selectedUser.getPassword())) {
+    public User getUser(String email,String password){
+        for(User selectedUser:this.users){
+            if(selectedUser.getEmail().equals(email) && BCrypt.checkpw(password, selectedUser.getHash())){
                 return selectedUser;
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean inList(User user) {
-        boolean found = false;
-        for (int i = 0; i < this.users.size(); i++) {
-            User selectedUser = this.users.get(i);
-            if (selectedUser.getEmail().equals(user.getEmail()) && selectedUser.getPassword().equals(user.getPassword())) {
-                found = true;
-            }
-        }
-        return found;
     }
 
     @Override
@@ -72,4 +61,14 @@ public class StaticUserRepository implements UserRepository {
         return found;
     }
 
+    @Override
+    public void deleteUser(String email) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public User getUserById(int id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

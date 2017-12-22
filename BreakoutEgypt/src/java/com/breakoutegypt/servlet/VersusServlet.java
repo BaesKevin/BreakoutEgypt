@@ -9,11 +9,13 @@ import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.servlet.util.Validator;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,10 +41,10 @@ public class VersusServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        System.out.println("PATH: " + path);
+
         switch (path) {
             case "/toVersus":
-                request.getRequestDispatcher("WEB-INF/versus.jsp").forward(request, response);
+                request.getRequestDispatcher("versus.jsp").forward(request, response);
                 break;
             case "/versusLobby":
                 createVersusLobby(request, response);
@@ -55,6 +57,7 @@ public class VersusServlet extends HttpServlet {
 
     private void joinVersusGame(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        List<String> errors = new ArrayList();
         try {
             String gameId = request.getParameter("gameId");  
             
@@ -71,26 +74,27 @@ public class VersusServlet extends HttpServlet {
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", gm.getGame(gameId).getLevel().getId());
             request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+            return;
         } catch (BreakoutException boe) {
             System.out.println(boe.getMessage());
-            request.setAttribute("error", boe.getMessage());
-//            response.sendRedirect("versusLobby.jsp");
-            request.getRequestDispatcher("WEB-INF/versus.jsp").forward(request, response);
-        } 
+            errors.add(boe.getMessage());
+        } catch (Exception ex) {
+            errors.add("Something went wrong...");
+        }
+        request.setAttribute("errors", errors);
+        request.getRequestDispatcher("versus.jsp").forward(request, response);
 
     }
 
     private void createVersusLobby(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        GameDifficulty gameDifficulty = GameDifficulty.MEDIUM;
-
         GameManager gm = new GameManager();
 
         Player player = (Player) request.getSession().getAttribute("player");
 
-        LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.MULTIPLAYER, gameDifficulty);
+        LevelProgress progress = player.getProgressions().getLevelProgressOrDefault(GameType.MULTIPLAYER, Difficulty.MEDIUM);
 
-        String gameId = gm.createGame(GameType.MULTIPLAYER, gameDifficulty, 2);
+        String gameId = gm.createGame(GameType.MULTIPLAYER, Difficulty.MEDIUM, 2);
         Game game = gm.getGame(gameId);
         game.initStartingLevel(1, progress);
         

@@ -5,15 +5,18 @@
  */
 package com.breakoutegypt.levelfactories;
 
+import com.breakoutegypt.data.LevelRepository;
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.effects.ExplosiveEffect;
 import com.breakoutegypt.domain.effects.ToggleEffect;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.powers.FloodPowerDown;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.DimensionDefaults;
 import com.breakoutegypt.domain.shapes.bricks.Brick;
@@ -23,7 +26,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  *
@@ -34,8 +36,12 @@ public class ArcadeLevelFactory extends LevelFactory {
     private Difficulty difficulty;
 
     public ArcadeLevelFactory(Game game, Difficulty difficulty) {
-        super(game, 5, 5);
+        this(game, Repositories.getLevelPackRepo().getByName("arcade"));
         this.difficulty = difficulty;
+    }
+
+    private ArcadeLevelFactory(Game game, LevelPack lp) {
+        super(game, lp.getTotalLevels(), lp.getDefaultOpenLevels(), lp.getName());
     }
 
     @Override
@@ -45,23 +51,41 @@ public class ArcadeLevelFactory extends LevelFactory {
 
     @Override
     protected void createCurrentLevel() {
-        switch (currentLevelId) {
-            case 1:
-                currentLevel = getSimpleTestLevel();
-                break;
-            case 2:
-                currentLevel = getLevelWithUnbreakableAndExplosive();
-                break;
-            case 3:
-                currentLevel = getLevelWithInvertedTriangles();
-                currentLevel.setLevelNumber(3);
-                break;
-            case 4:
-                currentLevel = getPossibleRealLevel();
-                break;
-            case 5:
-                currentLevel = getLevelWithFloodPowerDown();
-                break;
+
+        LevelPack pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
+//        if (pack == null) {
+//            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", defaultOpenLevels, totalLevels));
+//            pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
+//        }
+
+        LevelRepository levelRepo = Repositories.getLevelRepository();
+        Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId, pack.getId(), game);
+
+        if (levelFromDatabase == null) {
+            switch (currentLevelId) {
+                case 1:
+                    currentLevel = getSimpleTestLevel();
+                    break;
+                case 2:
+                    currentLevel = getLevelWithUnbreakableAndExplosive();
+                    break;
+                case 3:
+                    currentLevel = getLevelWithInvertedTriangles();
+                    currentLevel.setLevelNumber(3);
+                    break;
+                case 4:
+                    currentLevel = getPossibleRealLevel();
+                    break;
+                case 5:
+                    currentLevel = getLevelWithFloodPowerDown();
+                    break;
+            }
+
+            currentLevel.setLevelPackId(pack.getId());
+            Repositories.getLevelRepository().addLevel(currentLevel);
+            currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, pack.getId(), game);
+        } else {
+            currentLevel = levelFromDatabase;
         }
     }
 
@@ -87,14 +111,11 @@ public class ArcadeLevelFactory extends LevelFactory {
             noOfBricks += 2;
             startY += 10;
         }
-        
+
         bricks.get(6).setTarget(true);
         Brick[] brickToToggle = new Brick[]{bricks.get(6)};
         bricks.get(30).setBreakable(false);
         bricks.get(30).addEffect(new ToggleEffect(Arrays.asList(brickToToggle)));
-        
-        
-        System.out.println("Bricks in pyramid level: " + bricks.size());
 
         List<Ball> balls = new ArrayList();
         Ball ball = Repositories.getDefaultShapeRepository().getDefaultBall(50, 80);
@@ -128,7 +149,9 @@ public class ArcadeLevelFactory extends LevelFactory {
         paddles.add(paddle);
         balls.get(0).setStartingBall(true);
 
-        powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50, 15));
+        powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50));
+
+        powerdownBrick.setPowerdown(new FloodPowerDown(ball, 50));
 
         bricks.add(powerdownBrick);
         bricks.add(target);
@@ -136,7 +159,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         LevelState initialState = new LevelState(balls, paddles, bricks);
 
         Level level = new Level(1, game, initialState);
-
+        level.setLevelNumber(5);
         return level;
     }
 
@@ -160,16 +183,18 @@ public class ArcadeLevelFactory extends LevelFactory {
         brick = new Brick(brickShape, true, true);
 
         Brick invertedBrick = Repositories.getDefaultShapeRepository().getDefaultBrick("inverted", 50, 5, false, true, true, true);
-
+        invertedBrick.setPowerUp(new BallPowerup(ball, 1, 1, difficulty.getPowerupTime()));
+        
         bricks.add(brick);
         bricks.add(invertedBrick);
         List<Ball> balls = new ArrayList();
         balls.add(ball);
         List<Paddle> paddles = new ArrayList();
         paddles.add(paddle);
-        LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
+        LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, false);
         Level level = new Level(1, game, initialState);
-
+        level.setLevelNumber(1);
+        level.setLevelName("simpletest");
         return level;
     }
 
@@ -217,7 +242,8 @@ public class ArcadeLevelFactory extends LevelFactory {
         paddles.add(paddle);
         LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(2, game, initialState);
-
+        level.setLevelNumber(2);
+        level.setLevelName("unbreakable and explosive");
         return level;
     }
 
@@ -316,6 +342,9 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(currentLevelId, game, initialState);
+        level.setLevelNumber(4);
+        level.setLevelName("Level by ben");
+        level.setLevelDescription("2 switches and the target is guarded by unbreakables");
 
         return level;
     }

@@ -15,31 +15,53 @@ import javax.json.JsonObjectBuilder;
  */
 public class Score implements Comparable<Score> {
 
-    private int level;
-    private User user;
-    private long score;
+    private int levelId;
+    private int levelNumber;
+    private Player player;
+    private long timeScore;
     private String difficulty;
     private int brickScore;
+    private int scoreId;
 
-    public Score(int level, User user, long score, String difficulty, int brickScore) {
-        this.level = level;
-        this.user = user;
-        this.score = score;
+    public Score(int id, int level, int levelNumber, Player player, long score, String difficulty, int brickScore) {
+        this.levelId = level;
+        this.levelNumber = levelNumber;
+        this.scoreId = id;
+        this.player = player;
+        this.timeScore = score;
         this.difficulty = difficulty;
         this.brickScore = brickScore;
     }
 
+    public int getScoreId() {
+        return scoreId;
+    }
+
+    public void setScoreId(int scoreId) {
+        this.scoreId = scoreId;
+    }
+
     public String getUser() {
-        return user.getUsername();
+        return player.getUsername();
+    }
+    
+    public int getUserId(){
+        return player.getUserId();
+    }
+    
+    public long getTimeScore() {
+        return timeScore;
     }
 
-    public long getScore() {
-        return score;
+    public int getLevelId() {
+        return levelId;
     }
 
-    public int getLevel() {
-        return level;
+    public int getLevelNumber() {
+        return levelNumber;
     }
+    
+    
 
     public String getDifficulty() {
         return difficulty;
@@ -49,9 +71,9 @@ public class Score implements Comparable<Score> {
 
     @Override
     public int compareTo(Score other) {
-        if (this.score < other.score) {
+        if (this.timeScore < other.timeScore) {
             return -1;
-        } else if (this.score == other.score) {
+        } else if (this.timeScore == other.timeScore) {
             return 0;
         } else {
             return 1;
@@ -60,13 +82,13 @@ public class Score implements Comparable<Score> {
 
     @Override
     public String toString() {
-        return "Score{" + "level=" + level + ", user=" + user.getUsername() + ", score=" + score + "}\n";
+        return "Score{" + "level=" + levelId + ", user=" + player.getUsername() + ", score=" + timeScore + "}\n";
     }
 
     public JsonObject toJson() {
         JsonObjectBuilder scoreObjectBuilder = Json.createObjectBuilder();
         scoreObjectBuilder.add("username", this.getUser());
-        scoreObjectBuilder.add("score", this.getScore());
+        scoreObjectBuilder.add("score", this.getTimeScore());
         scoreObjectBuilder.add("difficulty", this.getDifficulty());
         return scoreObjectBuilder.build();
     }

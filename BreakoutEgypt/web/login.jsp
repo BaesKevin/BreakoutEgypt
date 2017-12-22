@@ -1,4 +1,4 @@
-<%@include file="../jspf/_head.jspf" %>
+<%@include file="WEB-INF/jspf/_head.jspf" %>
 <link rel="stylesheet" type="text/css" href="assets/css/loginsystem.css"/>
 </head>
 <body class="background">
@@ -30,7 +30,7 @@
                         </div>
                     </main>
                 </div>
-        <%@include file="../jspf/_footer.jspf" %>
+        <%@include file="WEB-INF/jspf/_footer.jspf" %>
     </div>
 </body>
 </html>

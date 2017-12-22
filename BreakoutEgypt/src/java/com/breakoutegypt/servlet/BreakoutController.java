@@ -10,7 +10,6 @@ import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.io.IOException;
@@ -22,8 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.breakoutegypt.data.HighscoreRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
-import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
+import java.util.ArrayList;
 
 /**
  *
@@ -44,6 +43,7 @@ public class BreakoutController extends HttpServlet {
     public static final String DIFFICULTIES = "difficulties";
     public static final String LEVEL = "levelId";
     public static final String LEVELDIMENSION = "levelDimension";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -56,19 +56,17 @@ public class BreakoutController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        System.out.println("PATH: " + path);
+
         switch (path) {
-            case "/index.jsp":
-                request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
-                break;
             case "/index":
+            case "/index.jsp":
                 request.getRequestDispatcher("WEB-INF/pages/index.jsp").forward(request, response);
                 break;
             case "/multiplayerMenu":
                 request.getRequestDispatcher("WEB-INF/pages/multiplayerMenu.jsp").forward(request, response);
                 break;
             case "/login":
-                request.getRequestDispatcher("WEB-INF/pages/login.jsp").forward(request, response);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
                 break;
             case "/register":
                 request.getRequestDispatcher("WEB-INF/pages/registration.jsp").forward(request, response);
@@ -89,10 +87,11 @@ public class BreakoutController extends HttpServlet {
 
     private void handleArcade(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        List<String> errors = new ArrayList();
         try {
             int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
 
-            GameDifficulty gameDifficulty = getDifficultyFromRequest(request);
+            String gameDifficulty = request.getParameter("difficulty");
 
             GameManager gm = new GameManager();
 
@@ -108,33 +107,17 @@ public class BreakoutController extends HttpServlet {
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);
             request.setAttribute(LEVELDIMENSION, BreakoutWorld.DIMENSION);
-            
+            request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+            return;
         } catch (BreakoutException boe) {
-            request.setAttribute("error", boe.getMessage());
+            errors.add(boe.getMessage());
+        } catch (NumberFormatException ex) {
+            errors.add("Level not unlocked");
+        } catch (Exception ex) {
+            errors.add("Something went wrong...");
         }
-
-        request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
-    }
-
-    private GameDifficulty getDifficultyFromRequest(HttpServletRequest request) throws BreakoutException {
-        GameDifficulty gameDifficulty;
-        switch (request.getParameter("difficulty")) {
-            case ShowLevelsServlet.EASY:
-                gameDifficulty = GameDifficulty.EASY;
-                break;
-            case ShowLevelsServlet.MEDIUM:
-                gameDifficulty = GameDifficulty.MEDIUM;
-                break;
-            case ShowLevelsServlet.HARD:
-                gameDifficulty = GameDifficulty.HARD;
-                break;
-            case ShowLevelsServlet.BRUTAL:
-                gameDifficulty = GameDifficulty.BRUTAL;
-                break;
-            default:
-                throw new BreakoutException("unknown difficulty");
-        }
-        return gameDifficulty;
+        request.setAttribute("errors", errors);
+        request.getRequestDispatcher("showLevels?gameType=arcade").forward(request, response);
     }
 
     private void handleHighscores(HttpServletRequest request, HttpServletResponse response)
@@ -199,7 +182,5 @@ public class BreakoutController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    
 
 }

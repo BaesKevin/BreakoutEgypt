@@ -9,7 +9,7 @@ import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.ServerClientMessageRepository;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.messages.BallPositionMessage;
 import com.breakoutegypt.domain.messages.LevelMessage;
 import com.breakoutegypt.domain.messages.LevelMessageType;
@@ -176,9 +176,9 @@ public class SessionManager {
         return connectedPlayers.size() + connectingPlayers.size() - 1;
     }
 
-    public void incrementLevelReachedForAllPlayers(GameType gameType, GameDifficulty difficulty) {
+    public void incrementLevelReachedForAllPlayers(GameType gameType, Difficulty difficulty) {
         for (Player p : getPlayers()) {
-            p.getProgressions().incrementHighestLevel(gameType, difficulty);
+            p.getProgressions().incrementHighestLevel(gameType, difficulty.getName());
         }
     }
 
@@ -270,7 +270,6 @@ public class SessionManager {
             messages.put("paddlepositions", paddlepositions);
         }
 
-//        System.out.println(paddlePositionMessages.get(0).getName());
         return messages;
     }
 

@@ -93,7 +93,6 @@ const ModalModule = (function () {
 
     function redirectToArcade(e) {
         e.preventDefault();
-        console.log("got to redirectarcade");
         modalChooseDifficulty();
     }
 

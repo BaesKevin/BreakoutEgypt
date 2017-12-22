@@ -24,8 +24,10 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
 import java.util.HashMap;
 import java.util.Map;
+import org.jbox2d.common.Vec2;
 
 /**
  * keeps track of all the objects present in the level, only one level for now
@@ -35,6 +37,10 @@ import java.util.Map;
 public class Level implements BreakoutWorldEventListener {
 
     private int id;
+    private int levelNumber;
+    private String levelName = "";
+    private String levelDescription = "";
+    private int levelPackId;
 
     private Timer timer;
     private Game game;
@@ -56,10 +62,16 @@ public class Level implements BreakoutWorldEventListener {
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
     private Map<Integer, Boolean> startedLevelMap;
-    
+
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
 
+    }
+
+    public Level(int id, String name, String description, Game game, LevelState initialObjects) {
+        this(id, game, initialObjects);
+        this.levelName = name;
+        this.levelDescription = description;
     }
 
     private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
@@ -75,6 +87,7 @@ public class Level implements BreakoutWorldEventListener {
         breakoutWorld = new BreakoutWorld(worldTimeStepInMs);
 
         levelState = initialState;
+        levelState.setDifficulty(game.getDifficulty());
         List<RegularBody> bodiesToSpawn = levelState.getAllObjectsToSpawn();
         for (RegularBody rb : bodiesToSpawn) {
             breakoutWorld.spawn(rb);
@@ -92,6 +105,37 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
         this.invertedControls = false;
         startedLevelMap = new HashMap();
+
+        this.levelName = "level" + id;
+        this.levelDescription = "description";
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public String getLevelDescription() {
+        return levelDescription;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public void setLevelDescription(String levelDescription) {
+        this.levelDescription = levelDescription;
+    }
+
+    public int getLevelNumber() {
+        return levelNumber;
+    }
+
+    public void setLevelNumber(int levelNumber) {
+        this.levelNumber = levelNumber;
     }
 
     public boolean isInvertedControls() {
@@ -110,10 +154,17 @@ public class Level implements BreakoutWorldEventListener {
         return levelStarted;
     }
 
-    public void setLevelNumber(int id) {
-        this.id = id;
+    public int getLevelPackId() {
+        return levelPackId;
     }
 
+    public void setLevelPackId(int levelPackId) {
+        this.levelPackId = levelPackId;
+    }
+
+//    public void setLevelNumber(int id) {
+//        this.id = id;
+//    }
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;
     }
@@ -149,7 +200,12 @@ public class Level implements BreakoutWorldEventListener {
             for (Ball ball : balls) {
                 if (ball.getPlayerIndex() == playerIndex) {
                     scoreTimer.start();
-                    ball.setLinearVelocity(0, game.getDifficulty().getBallspeed());
+                    int speed = game.getDifficulty().getBallspeed();
+                    if(ball.getPlayerIndex() == 2){
+                        speed = -speed;
+                    }
+                    
+                    ball.setLinearVelocity(0, speed);
                 }
             }
         }
@@ -274,15 +330,28 @@ public class Level implements BreakoutWorldEventListener {
             int winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
-            HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
-
-            int brickScore = brickScoreCalc.getScore();
-            //TODO user with playerindex x
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
-            highScoreRepo.addScore(scoreOfPlayer);
+            endOfGame(winnerIndex);
 
             initNextLevel(winnerIndex);
         }
+    }
+
+    private void endOfGame(int winnerIndex) {
+        HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
+        Player p = game.getPlayer(winnerIndex);
+        int brickScore = brickScoreCalc.getScore();
+        Score scoreOfPlayer = new Score(0, getId(), getLevelNumber(), p, getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
+        
+        LevelPackProgress progress = p.getProgressions().getProgress(game.getGameType(), game.getDifficulty().getName());
+        LevelPack lp = Repositories.getLevelPackRepo().getById(levelPackId);
+
+        if (this.levelNumber >= progress.getLevelProgress().getHighestLevelReached()) {
+            progress.sethighestLevelReached(this.levelNumber + 1, p, lp, game.getDifficulty());
+        }
+        
+        p.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(p.getUserId()));
+        
+        highScoreRepo.addScore(scoreOfPlayer);
     }
 
     @Override
@@ -326,5 +395,33 @@ public class Level implements BreakoutWorldEventListener {
             game.notifyPlayersOfLivesLeft(projectile.getPlayerIndex());
         }
         return new ProjectilePositionMessage(projectile, PowerDownMessageType.REMOVEPROJECTILE);
+    }
+
+    public void resizeBall(Ball ball, int width, int height) {
+        Vec2 originalSpeed = new Vec2(ball.getLinearVelocity());
+        Vec2 originalPosition = new Vec2(ball.getPosition());
+
+        breakoutWorld.deSpawn(ball.getBody());
+
+        ball.setWidth(width);
+        ball.setHeight(height);
+
+        ball.setPosition(originalPosition);
+
+        breakoutWorld.spawn(ball);
+        ball.setLinearVelocity(originalSpeed.x, originalSpeed.y);
+    }
+
+    public void resizePaddle(Paddle paddle, int width, int height) {
+        Vec2 originalPosition = new Vec2(paddle.getPosition());
+
+        breakoutWorld.deSpawn(paddle.getBody());
+
+        paddle.setWidth(width);
+        paddle.setHeight(height);
+
+        paddle.setPosition(originalPosition);
+
+        breakoutWorld.spawn(paddle);
     }
 }

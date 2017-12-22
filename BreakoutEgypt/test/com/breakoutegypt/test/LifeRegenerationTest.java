@@ -6,16 +6,18 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -26,12 +28,21 @@ public class LifeRegenerationTest {
 
     private Game game;
     private Level level;
-    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
     private Player player;
     
-    private void createGame(GameDifficulty diff, int startingLevel) {
+    @Before
+    public void setTesting() {
+        Repositories.isTesting(true);
+    }
+    
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
+    }
+
+    private void createGame(String diff, int startingLevel) {
         player = new Player("player");
-        
         GameManager gm = new GameManager();
         String id = gm.createGame(GameType.TEST, diff);
         game = gm.getGame(id);
@@ -49,7 +60,7 @@ public class LifeRegenerationTest {
 
     @Test
     public void noLivesLostOnEasy() {
-        createGame(GameDifficulty.EASY, 1);
+        createGame("easy", 1);
 
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(Difficulty.INFINITE_LIVES, player.getLives());
@@ -57,34 +68,34 @@ public class LifeRegenerationTest {
 
     @Test
     public void LivesLostOnMediumHardBrutal() {
-        createGame(GameDifficulty.MEDIUM, 1);
+        createGame("medium", 1);
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(2, player.getLives());
 
-        createGame(GameDifficulty.HARD, 1);
+        createGame("hard", 1);
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(2, player.getLives());
 
-        createGame(GameDifficulty.BRUTAL, 1);
+        createGame("brutal", 1);
         goOutOfBoundsNumberOfTimes(1);
         Assert.assertEquals(0, player.getLives());
     }
 
     @Test
     public void livesRegenerateAfterLevelCompleteOnMedium() {
-        goToNextLevel(GameDifficulty.MEDIUM);
+        goToNextLevel("medium");
 
         Assert.assertEquals(3, player.getLives());
     }
 
     @Test
     public void livesDontRegenerateOnHard() {
-        goToNextLevel(GameDifficulty.HARD);
+        goToNextLevel("hard");
 
         Assert.assertEquals(2, player.getLives());
     }
 
-    private void goToNextLevel(GameDifficulty diff) {
+    private void goToNextLevel(String diff) {
         createGame(diff, 17);
 
         goOutOfBoundsNumberOfTimes(1);

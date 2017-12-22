@@ -6,7 +6,6 @@
  */
 package com.breakoutegypt.domain;
 
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.connectionmanagement.PlayerConnection;
 import com.breakoutegypt.connectionmanagement.SessionManager;
 import com.breakoutegypt.data.Repositories;
@@ -32,7 +31,6 @@ public class Game {
     private int id;
     private Level currentLevel;
     private GameType gameType;
-    private GameDifficulty difficultyType;
     private Difficulty difficulty;
 
 //    private int livesLeftInLastLevel;
@@ -42,21 +40,21 @@ public class Game {
 
     private SessionManager manager;
 
-    public Game(GameType gameType, GameDifficulty difficulty, String uniqueId) {
+    public Game(GameType gameType, String difficulty, String uniqueId){
         this(1, gameType, difficulty, uniqueId);
     }
-
-    public Game(int numberOfPlayers, GameType gameType, GameDifficulty difficultyType, String uniqueId) {
+    
+    public Game(int numberOfPlayers, GameType gameType, String difficultyType, String uniqueId) {
         id = ID++;
         this.uniqueId = uniqueId;
         this.gameType = gameType;
-        this.difficultyType = difficultyType;
         this.difficulty = Repositories.getDifficultyRepository().findByName(difficultyType); // TODO CLONE
 
         manager = new SessionManager(numberOfPlayers);
 
-        levelFactory = createLevelFactoryForGameType(gameType, difficulty);
+        
         isFirstLevel = true;
+        levelFactory = createLevelFactoryForGameType(gameType, difficulty);
     }
 
     private LevelFactory createLevelFactoryForGameType(GameType gameType, Difficulty difficulty) {
@@ -97,7 +95,7 @@ public class Game {
     public void addConnectingPlayer(Player player) {
         if (!manager.isFull()) {
             player.setLives(getInitialLives(player));
-            player.getProgressions().addNewProgression(this.gameType, this.difficultyType);
+            player.getProgressions().addNewProgression(this.gameType, this.difficulty.getName());
             manager.addConnectingPlayer(player);
         } else {
             throw new BreakoutException("Party already full.");
@@ -172,7 +170,7 @@ public class Game {
         manager.notifyLevelComplete(currentLevel, winnerIndex);
 
         if (levelFactory.hasNextLevel()) {
-            manager.incrementLevelReachedForAllPlayers(gameType, difficultyType);
+            manager.incrementLevelReachedForAllPlayers(gameType, difficulty);
             currentLevel = levelFactory.getNextLevel();
         }
 
@@ -184,6 +182,10 @@ public class Game {
 
     public Player getPlayer(String username) {
         return manager.getPlayer(username);
+    }
+    
+    public Player getPlayer(int playerIndex) {
+        return manager.getPlayer(playerIndex);
     }
 
     public Level getLevel() {

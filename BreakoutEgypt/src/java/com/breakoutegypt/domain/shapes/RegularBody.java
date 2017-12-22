@@ -16,8 +16,6 @@ import org.jbox2d.dynamics.Body;
  */
 public class RegularBody {
 
-    private String name;
-
     protected ShapeDimension dimension;
     private Body body;
     protected BodyConfiguration config;
@@ -26,6 +24,13 @@ public class RegularBody {
     public RegularBody(ShapeDimension s) {
         this.dimension = s; // clone
         playerIndex = 1;
+    }
+    
+    /**
+     * This method is only used inside the MysqlRepositories
+     */
+    public ShapeDimension getShape(){
+        return dimension;
     }
 
     public String getName() { return dimension.getName();}
@@ -67,6 +72,15 @@ public class RegularBody {
     public Vec2 getPosition() {
         return body.getPosition();
     }
+    
+    public void setPosition(Vec2 position){
+        dimension.setPosX(position.x);
+        dimension.setPosY(position.y);
+        
+        if(body != null ){
+            body.setTransform(position, 0);
+        }
+    }
 
     public int getPlayerIndex() {
         return playerIndex;
@@ -76,7 +90,13 @@ public class RegularBody {
         this.playerIndex = playerIndex;
     }    
     
-
+    public void setWidth(int width){
+        dimension.setWidth(width);
+    }
+    public void setHeight(int height){
+        dimension.setHeight(height);
+    }
+    
     //    // uitleg visitor en double dispatch van Mattias De Wael
 ////    static interface ShapeUser {
 ////     void   doForBrick(Brick b);
@@ -113,5 +133,9 @@ public class RegularBody {
         brickkObjectBuilder.add("height", dimension.getHeight());
 //        brickkObjectBuilder.add("color", String.format("rgb(%d,%d,%d)", this.color.getRed(), this.color.getGreen(), this.color.getBlue()));
         return brickkObjectBuilder;
+    }
+    
+    public ShapeDimension getShapeDimension() {
+        return dimension;
     }
 }

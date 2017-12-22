@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 public interface UserRepository {
     public List<User> getUsers();
     public void addUser(User user);
-    public boolean inList(User user);
     public boolean alreadyExists(User user);
     public User getUser(String email,String password);
+    public User getUserById(int id);
+    public void deleteUser(String email);
 }

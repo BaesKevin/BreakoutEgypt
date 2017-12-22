@@ -6,13 +6,12 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
 import com.breakoutegypt.domain.Game;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.User;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +28,9 @@ public class GameManagerTest {
     @Before
     public void setup(){
         gm = new GameManager();
-        String id = gm.createGame(GameType.ARCADE, GameDifficulty.MEDIUM);
+        String id = gm.createGame(GameType.ARCADE, Difficulty.MEDIUM);
         game = gm.getGame(id);
-        game.initStartingLevel(1, LevelProgressionRepository.getDefault(GameType.TEST));
+        game.initStartingLevel(1, DummyLevelProgressionRepository.getDefault(GameType.TEST));
         player = new Player("player");
     }
     

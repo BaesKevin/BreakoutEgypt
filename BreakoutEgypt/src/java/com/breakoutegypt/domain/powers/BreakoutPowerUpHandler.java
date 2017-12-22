@@ -5,19 +5,25 @@
  */
 package com.breakoutegypt.domain.powers;
 
+import com.breakoutegypt.domain.powers.generic.GenericPowerup;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Level;
 import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.ServerClientMessageRepository;
+import com.breakoutegypt.domain.messages.GenericPowerupMessage;
 import com.breakoutegypt.domain.messages.Message;
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.messages.PowerUpMessageType;
+import com.breakoutegypt.domain.powers.generic.BallPowerup;
+import com.breakoutegypt.domain.powers.generic.PaddlePowerup;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.Paddle;
+import com.breakoutegypt.domain.shapes.ShapeDimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jbox2d.common.Vec2;
 
 /**
  *
@@ -33,6 +39,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     private Map<Integer, List<PowerUp>> playerToPowerUpMap;
     private List<BrokenPaddlePowerUp> activeBrokenPaddlePowerUps;
     private List<FloorPowerUp> activeFloorPowerUps;
+    private List<GenericPowerup> activeGenericPowerups;
 
     public BreakoutPowerUpHandler(Level level, LevelState levelState, BreakoutWorld breakoutWorld) {
         this.level = level;
@@ -40,6 +47,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         this.breakoutWorld = breakoutWorld;
         this.activeBrokenPaddlePowerUps = new ArrayList();
         this.activeFloorPowerUps = new ArrayList();
+        this.activeGenericPowerups = new ArrayList();
         this.playerToPowerUpMap = new HashMap<>();
     }
 
@@ -85,12 +93,56 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         for (List<PowerUp> l : playerToPowerUpMap.values()) {
             all.addAll(l);
         }
+
         return all;
+    }
+
+    @Override
+    public PowerUpMessage handleBallPowerUp(BallPowerup gp) {
+        GenericPowerup activeGenericPowerup = getActiveGenericPowerupForPlayer(gp.getPlayerId());
+        PowerUpMessage message = new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.NULLMESSAGE);
+
+        if (activeGenericPowerup == null) {
+            this.activeGenericPowerups.add(gp);
+
+            level.resizeBall((Ball) gp.getBaseBody(), gp.getWidth(), gp.getHeight());
+
+            message = new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
+        } else {
+            activeGenericPowerup.addTime(gp.getTimeVisible());
+        }
+
+        removePowerUpFromMap(gp);
+
+        return message;
+    }
+
+    @Override
+    public PowerUpMessage handlePaddlePowerUp(PaddlePowerup gp) {
+
+        GenericPowerup activeGenericPowerup = getActiveGenericPowerupForPlayer(gp.getPlayerId());
+        PowerUpMessage message = new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.NULLMESSAGE);
+
+        if (activeGenericPowerup == null) {
+            this.activeGenericPowerups.add(gp);
+
+            level.resizePaddle((Paddle) gp.getBaseBody(), gp.getWidth(), gp.getHeight());
+
+            message = new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
+        } else {
+            activeGenericPowerup.addTime(gp.getTimeVisible());
+        }
+
+        removePowerUpFromMap(gp);
+
+        return message;
     }
 
     @Override
     public PowerUpMessage handleFloorPowerUp(FloorPowerUp floorPowerup) {
         FloorPowerUp floorInLevel = getActiveFloorForPlayer(floorPowerup.getPlayerId());
+
+        adjustFloorPositionIfPlayer2(floorPowerup);
 
         PowerUpMessage m = new PowerUpMessage("floor", floorPowerup, PowerUpMessageType.NULLMESSAGE);
         if (floorInLevel == null) {
@@ -106,6 +158,7 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         }
         m.setRecipientIndex(floorPowerup.getPlayerId());
         removePowerUpFromMap(floorPowerup);
+
         return m;
     }
 
@@ -141,6 +194,8 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         ServerClientMessageRepository repo = breakoutWorld.getMessageRepo();
         List<FloorPowerUp> floorsToRemove = new ArrayList();
         List<BrokenPaddlePowerUp> paddlesToRemove = new ArrayList();
+        List<GenericPowerup> powerupsToRemove = new ArrayList();
+
         for (FloorPowerUp fpu : activeFloorPowerUps) {
             if (removeFloorIfTimedOut(fpu, repo)) {
                 floorsToRemove.add(fpu);
@@ -151,8 +206,16 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
                 paddlesToRemove.add(bppu);
             }
         }
+
+        for (GenericPowerup gp : activeGenericPowerups) {
+            if (removeGenericPowerupIfTimedOut(gp, repo)) {
+                powerupsToRemove.add(gp);
+            }
+        }
+
         activeBrokenPaddlePowerUps.removeAll(paddlesToRemove);
         activeFloorPowerUps.removeAll(floorsToRemove);
+        activeGenericPowerups.removeAll(powerupsToRemove);
     }
 
     private boolean removeFloorIfTimedOut(FloorPowerUp fpu, ServerClientMessageRepository repo) {
@@ -181,6 +244,18 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         return false;
     }
 
+    private boolean removeGenericPowerupIfTimedOut(GenericPowerup gp, ServerClientMessageRepository repo) {
+        int timeLeft = gp.getTimeVisible();
+        if (timeLeft > 0) {
+            gp.setTimeVisible(timeLeft - 1);
+        } else {
+            handleRemoveGenericPowerup(gp);
+            repo.addPowerupMessages(new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.REMOVEGENERICPOWERUP));
+            return true;
+        }
+        return false;
+    }
+
     private void handleRemoveBrokenPaddle(BrokenPaddlePowerUp bppu) {
         for (Paddle p : bppu.getBrokenPaddle()) {
             levelState.removePaddle(p);
@@ -189,6 +264,14 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
 
         level.addPaddle(bppu.getBasePaddle());
         breakoutWorld.spawn(bppu.getBasePaddle());
+    }
+
+    private void handleRemoveGenericPowerup(GenericPowerup gp) {
+        if (gp instanceof BallPowerup) {
+            level.resizeBall((Ball) gp.getBaseBody(), gp.getOriginalWidth(), gp.getOriginalHeight());
+        } else if (gp instanceof PaddlePowerup) {
+            level.resizePaddle((Paddle) gp.getBaseBody(), gp.getOriginalWidth(), gp.getOriginalHeight());
+        }
     }
 
     @Override
@@ -228,6 +311,15 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
         return null;
     }
 
+    public GenericPowerup getActiveGenericPowerupForPlayer(int playerId) {
+        for (GenericPowerup p : activeGenericPowerups) {
+            if (p.getPlayerId() == playerId) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public void removePowerUpFromMap(PowerUp powerupToRemove) {
 
         List<PowerUp> powerupsForPlayer = playerToPowerUpMap.get(powerupToRemove.getPlayerId());
@@ -242,4 +334,16 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
 
     }
 
+    private void adjustFloorPositionIfPlayer2(FloorPowerUp floorPowerup) {
+        Paddle playerPaddle = levelState.getPaddlesForPlayer(floorPowerup.getPlayerId()).get(0);
+
+        if (playerPaddle.getShape().getPosY() < BreakoutWorld.DIMENSION / 2) {
+            ShapeDimension shape= floorPowerup.getShape();
+            
+            float x = shape.getPosX();
+            
+            shape.setPosX(x);
+            shape.setPosY(0);
+        }
+    }
 }

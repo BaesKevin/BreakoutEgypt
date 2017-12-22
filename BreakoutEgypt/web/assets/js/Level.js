@@ -96,15 +96,20 @@ const Level = (function () {
         UpdateLevelDataHelper.addBall(json, this);
     };
 
+    Level.prototype.resizeBody = function (json, useOriginalSize) {
+        useOriginalSize = useOriginalSize || false;
+        UpdateLevelDataHelper.resizeBody(json, useOriginalSize, this);
+    }
+
     Level.prototype.updateLevelData = function (json) {
 
         let self = this;
-        
+
         if (json.leveldata.ballpositions) {
             UpdateLevelDataHelper.updateBalldata(json.leveldata.ballpositions, self);
         }
-        
-        if(json.leveldata.paddlepositions){
+
+        if (json.leveldata.paddlepositions) {
             UpdateLevelDataHelper.updatePaddledata(json.leveldata.paddlepositions, self);
         }
 
@@ -174,12 +179,12 @@ const Level = (function () {
                 self.balls[i].y = ScalingModule.scaleYForClient(json[i].y);
             }
         }
-        
-        function updatePaddledata(json, self){
+
+        function updatePaddledata(json, self) {
             for (let i = 0; i < json.length; i++) {
-                self.paddles.forEach(function(paddle){
-                    if(paddle.name === json[i].name){
-                        paddle.x = ScalingModule.scaleXForClient(json[i].x)  - paddle.width / 2;
+                self.paddles.forEach(function (paddle) {
+                    if (paddle.name === json[i].name) {
+                        paddle.x = ScalingModule.scaleXForClient(json[i].x) - paddle.width / 2;
                         paddle.y = ScalingModule.scaleYForClient(json[i].y);
                     }
                 });
@@ -197,6 +202,48 @@ const Level = (function () {
                     ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
         }
 
+        function resizeBody(json, useOriginalSize, self) {
+            let width = json.powerup.width;
+            let height = json.powerup.height;
+
+            if (useOriginalSize) {
+                width = json.powerup.originalWidth;
+                height = json.powerup.originalHeight;
+            }
+
+            let name = json.powerup.bodyname;
+            let type = json.powerup.type;
+
+            switch (type) {
+                case "ball":
+                    resizeBall(name, width, height, self);
+                    break;
+                case "paddle":
+                    resizePaddle(name, width, height, self);
+                    break;
+            }
+        }
+
+        function resizeBall(name, width, height, self) {
+            let ballToResize = self.balls.find(function (ball) {
+                return ball.name === name;
+            });
+
+
+            ballToResize.width = ScalingModule.scaleXForClient(width) / 2;
+            ballToResize.height = ScalingModule.scaleYForClient(height) / 2;
+        }
+
+        function resizePaddle(name, width, height, self) {
+            let paddleToResize = self.paddles.find(function (ball) {
+                return ball.name === name;
+            });
+
+
+            paddleToResize.width = ScalingModule.scaleXForClient(width);
+            paddleToResize.height = ScalingModule.scaleYForClient(height);
+        }
+
 
         return {
             destroyBrick,
@@ -205,7 +252,8 @@ const Level = (function () {
             updateBalldata,
             removeBall,
             addBall,
-            updatePaddledata
+            updatePaddledata,
+            resizeBody
         };
     })(  );
 
@@ -223,19 +271,18 @@ const Level = (function () {
         function initializeNextLevel(response, self) {
             if (!response.error) {
                 if (response.allLevelsComplete) {
-                    console.log("Load level: got allLevelsComplete message");
-                    console.log(response)
                     ModalModule.modalAllLevelsCompleted(self.level);
                     self.allLevelsComplete = true;
                 } else {
                     console.log("Load level: got data for level " + response.level);
+                    $("#levelid")[0].innerHTML = response.level;
+                    $("#levelid").val(response.level);
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
                     self.playerIndex = response.playerIndex;
-                    console.log("%cMy paddle : " + response.mypaddle, "font-size: 2em;");
                     console.log(response.lives);
                     self.levelDimension = response.levelDimension;
-                    
+
                     ScalingModule.updateCanvasDimension(self.levelDimension);
                     DrawingModule.updateStaticContent();
                     ScalingModule.scaleLevel(self);

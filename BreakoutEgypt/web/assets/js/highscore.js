@@ -63,7 +63,6 @@ function fillTable(objToPutInTable, sortOn) {
 
 function doSort(e) {
     let thClicked = $(this);
-    console.log(thClicked.text())
     let HtmlTable = $("#highscoreTablePlaceholder table").find("tr");
     let table = [];
     HtmlTable.each(function () {

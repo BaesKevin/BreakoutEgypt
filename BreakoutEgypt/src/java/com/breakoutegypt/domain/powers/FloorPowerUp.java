@@ -33,8 +33,6 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
         isVisible = false;
         startTime = timeVisible;
         this.name = s.getName();
-        BodyConfiguration floorConfig = BodyConfigurationFactory.getInstance().createFloorConfig(s);
-        this.setBox2dConfig(floorConfig);
         this.playerId = 1;
     }
 
@@ -53,7 +51,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     public int getTimeVisible() {
         return timeVisible;
     }
-    
+
     public void resetTime() {
         timeVisible = startTime;
     }
@@ -87,7 +85,7 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     void addTime(int othersTimeVisible) {
         this.timeVisible += othersTimeVisible;
     }
-    
+
     @Override
     public void setPlayerId(int i) {
         this.playerId = i;
@@ -96,5 +94,13 @@ public class FloorPowerUp extends RegularBody implements PowerUp {
     @Override
     public int getPlayerId() {
         return this.playerId;
+    }
+
+    @Override
+    public BodyConfiguration getConfig() {
+        BodyConfiguration floorConfig = BodyConfigurationFactory.getInstance().createFloorConfig(this.dimension);
+        setBox2dConfig(floorConfig);
+        
+        return config;
     }
 }

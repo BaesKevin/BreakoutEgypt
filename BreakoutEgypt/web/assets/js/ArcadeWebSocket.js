@@ -110,7 +110,6 @@ let ArcadeWebSocket = (function () {
     }
 
     function handleGameOver() {
-        console.log("Gameplay: game over");
         level.lives = 0;
         DrawingModule.updateStaticContent();
         level.gameOver = true;
@@ -118,13 +117,11 @@ let ArcadeWebSocket = (function () {
     }
 
     function handleLivesLeft(json) {
-        console.log("Gameplay: livesLeft: " + json.livesLeft);
         level.lives = json.livesLeft;
         DrawingModule.updateStaticContent();
     }
 
     function handleLevelComplete(json) {
-        console.log(`Congratulations ${json.name}, you completed this level in ` + UtilModule.scoreTimerFormatter(json.scoreTimer));
         level.levelComplete = true;
 
         let time = UtilModule.scoreTimerFormatter(json.scoreTimer);
@@ -133,10 +130,8 @@ let ArcadeWebSocket = (function () {
 
     function handleLevelUpdateError(json) {
         if (json.error) {
-            console.log("%c" + json.error, "background-color: red; color: white;padding:5px;");
             ModalModule.modalErrorMessage(json.error);
         } else {
-            console.log("%cDamn something went sideways", "background-color: red; color: white;padding:5px;");
             ModalModule.modalErrorMessage();
         }
     }

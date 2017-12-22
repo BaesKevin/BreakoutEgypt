@@ -6,13 +6,15 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Level;
+import com.breakoutegypt.domain.LevelState;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.levelprogression.GameDifficulty;
+import com.breakoutegypt.domain.levelprogression.Difficulty;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.domain.powers.AcidBallPowerUp;
 import com.breakoutegypt.domain.powers.BreakoutPowerUpHandler;
@@ -36,12 +38,13 @@ public class MultiplayerTest {
     private Player player1, player2;
     Level level;
     Game game;
-    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
 
     @Before
     public void init() {
+        Repositories.isTesting(true);
         GameManager gm = new GameManager();
-        String id = gm.createGame(GameType.TEST, GameDifficulty.MEDIUM, 2);
+        String id = gm.createGame(GameType.TEST, Difficulty.MEDIUM, 2);
         game = gm.getGame(id);
 
         player1 = new Player("player1");
@@ -212,7 +215,7 @@ public class MultiplayerTest {
 
         List<Ball> balls = level.getLevelState().getBalls();
         Assert.assertEquals(ball1 + 10, balls.get(0).getPosition().y, 1);
-        Assert.assertEquals(ball2 + 10, balls.get(1).getPosition().y, 1);
+        Assert.assertEquals(ball2 - 10, balls.get(1).getPosition().y, 1);
     }
 
     @Test
@@ -273,6 +276,33 @@ public class MultiplayerTest {
         game.movePaddle(player1.getUsername(), 200, 0);
         game.movePaddle(player2.getUsername(), 200, 0);
 
+    }
+    
+    @Test
+    public void testPlayer2FloorActivation(){
+        game.initStartingLevel(23, ALL_LEVELS_UNLOCKED);
+
+        level = game.getCurrentLevel();
+        
+        game.movePaddle(player1.getUsername(), 200, 0);
+        game.movePaddle(player2.getUsername(), 200, 0);
+        
+        LevelState state = level.getLevelState();
+        
+        level.startBall(player1.getIndex());
+        level.startBall(player2.getIndex());
+        
+        stepTimes(30);
+        
+        BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
+        String powerupName = bpuh.getPowerUps().get(0).getName();
+        
+        game.triggerPowerup(powerupName, 0);
+        
+        stepTimes(20);
+        
+        Assert.assertEquals(2, player1.getLives());
+        Assert.assertEquals(3, player2.getLives());
     }
 
     private void stepTimes(int times) {
