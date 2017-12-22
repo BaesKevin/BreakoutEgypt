@@ -700,7 +700,7 @@ public class TestLevelFactory extends LevelFactory {
         bricks.add(shapeRepo.getDefaultBrick("regularBrick", 45, 40));
         bricks.add(shapeRepo.getDefaultBrick("target", 1,1, true));
 
-        bricks.get(0).setPowerUp(new BallPowerup(ball, 20, 20));
+        bricks.get(0).setPowerUp(new BallPowerup(ball, 20, 20, difficulty.getPowerupTime()));
 
         LevelState initialState = new LevelState(balls, paddles, bricks);
 

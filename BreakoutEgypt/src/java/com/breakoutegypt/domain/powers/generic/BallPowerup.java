@@ -7,7 +7,7 @@ package com.breakoutegypt.domain.powers.generic;
 
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.powers.PowerUpHandler;
-import com.breakoutegypt.domain.shapes.RegularBody;
+import com.breakoutegypt.domain.shapes.Ball;
 import javax.json.JsonObjectBuilder;
 
 /**
@@ -15,12 +15,11 @@ import javax.json.JsonObjectBuilder;
  * @author kevin
  */
 public class BallPowerup extends GenericPowerup {
-
-    public BallPowerup(RegularBody baseBody, int width, int height) {
-        super(baseBody, width, height);
+    public BallPowerup(Ball baseBody, int width, int height, int timeVisible) {
+        super("ballpowerup", baseBody, width, height, timeVisible);
     }
-    
-        @Override
+   
+    @Override
     public PowerUpMessage accept(PowerUpHandler puh) {
         return puh.handleBallPowerUp(this);
     }

@@ -181,7 +181,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         brick = new Brick(brickShape, true, true);
 
         Brick invertedBrick = Repositories.getDefaultShapeRepository().getDefaultBrick("inverted", 50, 5, false, true, true, true);
-        invertedBrick.setPowerUp(new BallPowerup(ball, 10, 10));
+        invertedBrick.setPowerUp(new BallPowerup(ball, 1, 1, difficulty.getPowerupTime()));
         
         bricks.add(brick);
         bricks.add(invertedBrick);

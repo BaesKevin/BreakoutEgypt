@@ -7,7 +7,7 @@ package com.breakoutegypt.domain.powers.generic;
 
 import com.breakoutegypt.domain.messages.PowerUpMessage;
 import com.breakoutegypt.domain.powers.PowerUpHandler;
-import com.breakoutegypt.domain.shapes.RegularBody;
+import com.breakoutegypt.domain.shapes.Paddle;
 import javax.json.JsonObjectBuilder;
 
 /**
@@ -16,8 +16,8 @@ import javax.json.JsonObjectBuilder;
  */
 public class PaddlePowerup extends GenericPowerup {
 
-    public PaddlePowerup(RegularBody baseBody, int width, int height) {
-        super(baseBody, width, height);
+    public PaddlePowerup(Paddle baseBody, int width, int height, int timeVisible) {
+        super("paddlepowerup", baseBody, width, height, timeVisible);
     }
 
     @Override

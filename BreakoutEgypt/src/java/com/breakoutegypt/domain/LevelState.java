@@ -19,7 +19,7 @@ import com.breakoutegypt.domain.powers.InvertedControlsPowerDown;
 import com.breakoutegypt.domain.powers.PowerDownType;
 import com.breakoutegypt.domain.powers.PowerUpType;
 import com.breakoutegypt.domain.powers.ProjectilePowerDown;
-import com.breakoutegypt.domain.powers.generic.BallPowerup;
+import com.breakoutegypt.domain.powers.generic.PaddlePowerup;
 import com.breakoutegypt.domain.shapes.BodyConfigurationFactory;
 import com.breakoutegypt.domain.shapes.Ball;
 import com.breakoutegypt.domain.shapes.BodyConfiguration;
@@ -404,7 +404,8 @@ public class LevelState {
         Random r = new Random();
         int powerupNr = r.nextInt(noOfPowerupTypes) + 1;
 
-        b.setPowerUp(new BallPowerup(balls.get(0), 20, 20));
+//        b.setPowerUp(new BallPowerup(balls.get(0), 10, 10, 500));
+        b.setPowerUp(new PaddlePowerup(paddles.get(0), 5, 5, 500));
         
 //        switch (powerupNr) {
 //            case 1:
