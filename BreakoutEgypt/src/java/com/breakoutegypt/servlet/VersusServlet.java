@@ -14,6 +14,8 @@ import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.servlet.util.Validator;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,6 +54,7 @@ public class VersusServlet extends HttpServlet {
 
     private void joinVersusGame(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        List<String> errors = new ArrayList();
         try {
             String gameId = request.getParameter("gameId");
             Validator validator = new Validator();
@@ -73,12 +76,15 @@ public class VersusServlet extends HttpServlet {
             request.setAttribute("gameId", id);
             request.setAttribute("level", gm.getGame(id).getLevel().getId());
             request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+            return;
         } catch (BreakoutException boe) {
             System.out.println(boe.getMessage());
-            request.setAttribute("error", boe.getMessage());
-//            response.sendRedirect("versusLobby.jsp");
-            request.getRequestDispatcher("versus.jsp").forward(request, response);
-        } 
+            errors.add(boe.getMessage());
+        } catch (Exception ex) {
+            errors.add("Something went wrong...");
+        }
+        request.setAttribute("errors", errors);
+        request.getRequestDispatcher("versus.jsp").forward(request, response);
 
     }
 

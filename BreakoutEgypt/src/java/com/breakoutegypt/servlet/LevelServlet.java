@@ -143,7 +143,7 @@ public class LevelServlet extends HttpServlet {
         job.add("paddles", paddleBuilder.build());
         job.add("mypaddle", myPaddle.getName()); //TODO when one player leaves and reconnects he doesn't get a paddle
         job.add("playerIndex", player.getIndex());
-        job.add("level", level.getId());
+        job.add("level", level.getLevelNumber());
         job.add("lives", player.getLives());
         
         job.add("levelDimension", BreakoutWorld.DIMENSION);

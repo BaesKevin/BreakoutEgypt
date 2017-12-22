@@ -35,7 +35,6 @@
                 <ul id="levels">
 
                     <c:forEach begin="1" end="${totalLevels}" varStatus="loop">
-
                         <c:choose>
                             <c:when test="${loop.index <= levelReached}">
                                 <li><a href="arcade?startLevel=${loop.index}&difficulty=${difficulty}" data-level="${loop.index}">Level ${loop.index}</a></li>
@@ -44,11 +43,13 @@
                                 <li class="locked"><a>Level ${loop.index}</a></li>
                                 </c:otherwise>
                             </c:choose>
-
-
                     </c:forEach>
-
                 </ul>
+                <c:if test="${errors != null}" >
+                    <c:forEach var="error" items="${errors}" >
+                        <p class="error"><c:out value="${error}"></c:out></p>
+                    </c:forEach>
+                </c:if>
             </form>
         </div>
         <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery-3.2.1.min.js"></script>   
