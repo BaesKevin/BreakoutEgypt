@@ -95,21 +95,21 @@ const Level = (function () {
     Level.prototype.addBall = function (json) {
         UpdateLevelDataHelper.addBall(json, this);
     };
-    
-    Level.prototype.resizeBody = function(json, useOriginalSize){
+
+    Level.prototype.resizeBody = function (json, useOriginalSize) {
         useOriginalSize = useOriginalSize || false;
-        UpdateLevelDataHelper.resizeBody(json, useOriginalSize,this);
+        UpdateLevelDataHelper.resizeBody(json, useOriginalSize, this);
     }
 
     Level.prototype.updateLevelData = function (json) {
 
         let self = this;
-        
+
         if (json.leveldata.ballpositions) {
             UpdateLevelDataHelper.updateBalldata(json.leveldata.ballpositions, self);
         }
-        
-        if(json.leveldata.paddlepositions){
+
+        if (json.leveldata.paddlepositions) {
             UpdateLevelDataHelper.updatePaddledata(json.leveldata.paddlepositions, self);
         }
 
@@ -179,12 +179,12 @@ const Level = (function () {
                 self.balls[i].y = ScalingModule.scaleYForClient(json[i].y);
             }
         }
-        
-        function updatePaddledata(json, self){
+
+        function updatePaddledata(json, self) {
             for (let i = 0; i < json.length; i++) {
-                self.paddles.forEach(function(paddle){
-                    if(paddle.name === json[i].name){
-                        paddle.x = ScalingModule.scaleXForClient(json[i].x)  - paddle.width / 2;
+                self.paddles.forEach(function (paddle) {
+                    if (paddle.name === json[i].name) {
+                        paddle.x = ScalingModule.scaleXForClient(json[i].x) - paddle.width / 2;
                         paddle.y = ScalingModule.scaleYForClient(json[i].y);
                     }
                 });
@@ -201,34 +201,47 @@ const Level = (function () {
             self.balls.push(ScalingModule.scaleObject({name: json.name, x: json.x, y: json.y, width: json.width / 2, height: json.height / 2},
                     ScalingModule.scaleXForClient, ScalingModule.scaleYForClient));
         }
-        
-        function resizeBody(json, useOriginalSize, self){
+
+        function resizeBody(json, useOriginalSize, self) {
             let width = json.powerup.width;
             let height = json.powerup.height;
-            
-            if(useOriginalSize){
+
+            if (useOriginalSize) {
                 width = json.powerup.originalWidth;
                 height = json.powerup.originalHeight;
             }
-            
+
             let name = json.powerup.bodyname;
             let type = json.powerup.type;
-            
-            switch(type){
+
+            switch (type) {
                 case "ball":
                     resizeBall(name, width, height, self);
                     break;
+                case "paddle":
+                    resizePaddle(name, width, height, self);
+                    break;
             }
         }
-        
-        function resizeBall(name, width, height, self){
-            let ballToResize = self.balls.find(function(ball){
+
+        function resizeBall(name, width, height, self) {
+            let ballToResize = self.balls.find(function (ball) {
                 return ball.name === name;
             });
-            
-            
+
+
             ballToResize.width = ScalingModule.scaleXForClient(width) / 2;
             ballToResize.height = ScalingModule.scaleYForClient(height) / 2;
+        }
+
+        function resizePaddle(name, width, height, self) {
+            let paddleToResize = self.paddles.find(function (ball) {
+                return ball.name === name;
+            });
+
+
+            paddleToResize.width = ScalingModule.scaleXForClient(width);
+            paddleToResize.height = ScalingModule.scaleYForClient(height);
         }
 
 
@@ -270,7 +283,7 @@ const Level = (function () {
                     console.log("%cMy paddle : " + response.mypaddle, "font-size: 2em;");
                     console.log(response.lives);
                     self.levelDimension = response.levelDimension;
-                    
+
                     ScalingModule.updateCanvasDimension(self.levelDimension);
                     DrawingModule.updateStaticContent();
                     ScalingModule.scaleLevel(self);

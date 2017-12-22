@@ -37,10 +37,10 @@ public class Level implements BreakoutWorldEventListener {
 
     private int id;
     private int levelNumber;
-    private String levelName="";
-    private String levelDescription="";
+    private String levelName = "";
+    private String levelDescription = "";
     private int levelPackId;
-    
+
     private Timer timer;
     private Game game;
 
@@ -61,16 +61,16 @@ public class Level implements BreakoutWorldEventListener {
     private BreakoutPowerUpHandler bpuh;
     private final BreakoutPowerDownHandler bpdh;
     private Map<Integer, Boolean> startedLevelMap;
-    
+
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
-    
+
     }
-    
-    public Level(int id,String name,String description, Game game, LevelState initialObjects){
+
+    public Level(int id, String name, String description, Game game, LevelState initialObjects) {
         this(id, game, initialObjects);
-        this.levelName=name;
-        this.levelDescription=description;
+        this.levelName = name;
+        this.levelDescription = description;
     }
 
     private Level(int id, Game game, LevelState initialState, float worldTimeStepInMs) {
@@ -103,13 +103,15 @@ public class Level implements BreakoutWorldEventListener {
         runLevelManually = false;
         this.invertedControls = false;
         startedLevelMap = new HashMap();
-        
+
         this.levelName = "level" + id;
         this.levelDescription = "description";
     }
 
-    public void setId(int id){ this.id = id; }
-    
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getLevelName() {
         return levelName;
     }
@@ -125,9 +127,14 @@ public class Level implements BreakoutWorldEventListener {
     public void setLevelDescription(String levelDescription) {
         this.levelDescription = levelDescription;
     }
-    
-    public int getLevelNumber(){ return levelNumber; }
-    public void setLevelNumber( int levelNumber ) { this.levelNumber = levelNumber; } 
+
+    public int getLevelNumber() {
+        return levelNumber;
+    }
+
+    public void setLevelNumber(int levelNumber) {
+        this.levelNumber = levelNumber;
+    }
 
     public boolean isInvertedControls() {
         return invertedControls;
@@ -153,11 +160,9 @@ public class Level implements BreakoutWorldEventListener {
         this.levelPackId = levelPackId;
     }
 
-    
 //    public void setLevelNumber(int id) {
 //        this.id = id;
 //    }
-
     public void setLevelStarted(boolean b) {
         this.levelStarted = b;
     }
@@ -375,15 +380,28 @@ public class Level implements BreakoutWorldEventListener {
     public void resizeBall(Ball ball, int width, int height) {
         Vec2 originalSpeed = new Vec2(ball.getLinearVelocity());
         Vec2 originalPosition = new Vec2(ball.getPosition());
-        
+
         breakoutWorld.deSpawn(ball.getBody());
-        
+
         ball.setWidth(width);
         ball.setHeight(height);
-        
+
         ball.setPosition(originalPosition);
-        
+
         breakoutWorld.spawn(ball);
         ball.setLinearVelocity(originalSpeed.x, originalSpeed.y);
+    }
+
+    public void resizePaddle(Paddle paddle, int width, int height) {
+        Vec2 originalPosition = new Vec2(paddle.getPosition());
+
+        breakoutWorld.deSpawn(paddle.getBody());
+
+        paddle.setWidth(width);
+        paddle.setHeight(height);
+
+        paddle.setPosition(originalPosition);
+
+        breakoutWorld.spawn(paddle);
     }
 }

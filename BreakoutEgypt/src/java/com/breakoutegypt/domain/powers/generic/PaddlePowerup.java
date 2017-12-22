@@ -16,8 +16,8 @@ import javax.json.JsonObjectBuilder;
  */
 public class PaddlePowerup extends GenericPowerup {
 
-    public PaddlePowerup(String name, Paddle baseBody, int width, int height, int timeVisible) {
-        super(name, baseBody, width, height, timeVisible);
+    public PaddlePowerup(Paddle baseBody, int width, int height, int timeVisible) {
+        super("paddlepowerup", baseBody, width, height, timeVisible);
     }
 
     @Override

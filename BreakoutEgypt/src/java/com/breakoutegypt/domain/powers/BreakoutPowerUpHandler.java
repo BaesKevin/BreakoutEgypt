@@ -117,7 +117,22 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     @Override
     public PowerUpMessage handlePaddlePowerUp(PaddlePowerup gp) {
 
-        return new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
+        GenericPowerup activeGenericPowerup = getActiveGenericPowerupForPlayer(gp.getPlayerId());
+        PowerUpMessage message = new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.NULLMESSAGE);
+
+        if (activeGenericPowerup == null) {
+            this.activeGenericPowerups.add(gp);
+
+            level.resizePaddle((Paddle) gp.getBaseBody(), gp.getWidth(), gp.getHeight());
+
+            message = new GenericPowerupMessage(gp.getName(), gp, PowerUpMessageType.GENERICPOWERUP);
+        } else {
+            activeGenericPowerup.addTime(gp.getTimeVisible());
+        }
+
+        removePowerUpFromMap(gp);
+
+        return message;
     }
 
     @Override
@@ -248,6 +263,8 @@ public class BreakoutPowerUpHandler implements PowerUpHandler {
     private void handleRemoveGenericPowerup(GenericPowerup gp) {
         if(gp instanceof BallPowerup){
             level.resizeBall((Ball)gp.getBaseBody(), gp.getOriginalWidth(), gp.getOriginalHeight());
+        } else if(gp instanceof PaddlePowerup){
+            level.resizePaddle((Paddle)gp.getBaseBody(), gp.getOriginalWidth(), gp.getOriginalHeight());
         }
     }
 
