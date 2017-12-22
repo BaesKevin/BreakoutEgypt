@@ -7,12 +7,12 @@ package com.breakoutegypt.servlet;
 
 import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
-import com.breakoutegypt.domain.LevelPack;
 import com.breakoutegypt.domain.Player;
-import com.breakoutegypt.domain.User;
 import com.breakoutegypt.exceptions.BreakoutException;
 import com.breakoutegypt.levelfactories.ArcadeLevelFactory;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,17 +45,17 @@ public class ShowLevelsServlet extends HttpServlet {
 
         // TODO remove the if when sessions are fully integrated
         Player player = (Player) request.getSession().getAttribute("player");
-
+        List<String> errors = new ArrayList();
         try {
             GameType gameType = getGameTypeFromRequestOrThrow(request);
             String difficulty = request.getParameter("difficulty");
 
-            if (difficulty != null) {
+            if (difficulty == null) {
                 difficulty = DEFAULT_DIFFICULTY;
             }
-            
+
             player.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(player.getUserId()));
-            
+
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);
             int totalLevels = new ArcadeLevelFactory(null, null).getTotalLevels();
             int defaultLevels = new ArcadeLevelFactory(null, null).getDefaultOpenLevels();
@@ -69,9 +69,14 @@ public class ShowLevelsServlet extends HttpServlet {
             request.setAttribute(DIFFICULTIES, Repositories.getDifficultyRepository().findAll());
 
             request.getRequestDispatcher("WEB-INF/arcade_levels.jsp").forward(request, response);
+            return;
         } catch (BreakoutException boe) {
-            request.setAttribute("error", boe.getMessage());
+            errors.add(boe.getMessage());
+        } catch (Exception ex) {
+            errors.add("Something went wrong...");
         }
+        request.setAttribute("errors", errors);
+        request.getRequestDispatcher("showLevels?gameType=arcade").forward(request, response);
 
     }
 

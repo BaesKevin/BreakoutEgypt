@@ -1,23 +1,23 @@
 const PowerDownModule = (function () {
-    
-    const powerdownnames = {FLOOD: "FLOOD", PROJECTILE: "PROJECTILE", 
-                            PROJECTILEPOSITION: "PROJECTILEPOSITION",
-                            REMOVEPROJECTILE: "REMOVEPROJECTILE",
-                            INVERTEDCONTROLS: "INVERTEDCONTROLS",
-                            REMOVEINVERTEDCONTROLS: "REMOVEINVERTEDCONTROLS"};
-    
+
+    const powerdownnames = {FLOOD: "FLOOD", PROJECTILE: "PROJECTILE",
+        PROJECTILEPOSITION: "PROJECTILEPOSITION",
+        REMOVEPROJECTILE: "REMOVEPROJECTILE",
+        INVERTEDCONTROLS: "INVERTEDCONTROLS",
+        REMOVEINVERTEDCONTROLS: "REMOVEINVERTEDCONTROLS"};
+
     function handlePowerDown(json) {
         json.forEach(function (jsonmessage) {
             handlePowerdownMessage(jsonmessage);
         });
     }
-    
+
     function addBalls(balls) {
         balls.forEach(function (b) {
             level.addBall(b);
         })
     }
-    
+
     function handlePowerdownMessage(json) {
         switch (json.powerdownaction) {
             case powerdownnames.FLOOD:
@@ -34,22 +34,26 @@ const PowerDownModule = (function () {
                 projectile.y = ScalingModule.scaleYForClient(json.y);
                 break;
             case powerdownnames.REMOVEPROJECTILE:
-                level.projectiles = level.projectiles.filter(function  (p) {
+                level.projectiles = level.projectiles.filter(function (p) {
                     return json.projectile !== p.name;
                 })
                 break;
             case powerdownnames.INVERTEDCONTROLS:
-                level.invertedcontrols = true;
+                if (json.playerIndex === level.playerIndex) {
+                    level.invertedcontrols = true;
+                }
                 break;
             case powerdownnames.REMOVEINVERTEDCONTROLS:
-                level.invertedcontrols = false;
+                if (json.playerIndex === level.playerIndex) {
+                    level.invertedcontrols = false;
+                }
                 break;
         }
-        
+
     }
-    
+
     return {
         handlePowerDown
     };
-    
+
 })();

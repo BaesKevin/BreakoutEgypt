@@ -21,15 +21,13 @@
                 <div class="col-lg-12 text-center">
 
                     <p class="back"><a href="index.jsp">Back</a>
+                        <c:if test="${errors != null}" >
+                            <c:forEach var="error" items="${errors}" >
+                            <p class="error"><c:out value="${error}"></c:out></p>
+                        </c:forEach>
+                    </c:if>
                     <div id="menu">
-
-
-
                         <h2>Versus</h2>
-
-                        <c:if test="${error != null}" >
-                            <p class="error" ><c:out value="${error}"></c:out></p>
-                        </c:if>
                         <form action="versus" id="joinVersusForm">
                             <input type="text" name="gameId" id="gameId" placeholder="Game id"/>
 

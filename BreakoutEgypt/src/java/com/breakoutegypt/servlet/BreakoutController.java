@@ -10,7 +10,6 @@ import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
 import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.Score;
-import com.breakoutegypt.domain.User;
 import com.breakoutegypt.domain.levelprogression.LevelProgress;
 import com.breakoutegypt.exceptions.BreakoutException;
 import java.io.IOException;
@@ -22,8 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.breakoutegypt.data.HighscoreRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
-import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.levelprogression.Difficulty;
+import java.util.ArrayList;
 
 /**
  *
@@ -87,6 +86,7 @@ public class BreakoutController extends HttpServlet {
 
     private void handleArcade(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        List<String> errors = new ArrayList();
         try {
             int startingLevel = Integer.parseInt(request.getParameter("startLevel"));
 
@@ -106,12 +106,17 @@ public class BreakoutController extends HttpServlet {
             request.setAttribute("gameId", gameId);
             request.setAttribute("level", startingLevel);
             request.setAttribute(LEVELDIMENSION, BreakoutWorld.DIMENSION);
-
+            request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+            return;
         } catch (BreakoutException boe) {
-            request.setAttribute("error", boe.getMessage());
+            errors.add(boe.getMessage());
+        } catch (NumberFormatException ex) {
+            errors.add("Level not unlocked");
+        } catch (Exception ex) {
+            errors.add("Something went wrong...");
         }
-
-        request.getRequestDispatcher("WEB-INF/pages/arcade.jsp").forward(request, response);
+        request.setAttribute("errors", errors);
+        request.getRequestDispatcher("showLevels?gameType=arcade").forward(request, response);
     }
 
     private void handleHighscores(HttpServletRequest request, HttpServletResponse response)

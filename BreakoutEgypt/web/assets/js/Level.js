@@ -274,6 +274,9 @@ const Level = (function () {
                     ModalModule.modalAllLevelsCompleted(self.level);
                     self.allLevelsComplete = true;
                 } else {
+                    console.log("Load level: got data for level " + response.level);
+                    $("#levelid")[0].innerHTML = response.level;
+                    $("#levelid").val(response.level);
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
                     self.playerIndex = response.playerIndex;
