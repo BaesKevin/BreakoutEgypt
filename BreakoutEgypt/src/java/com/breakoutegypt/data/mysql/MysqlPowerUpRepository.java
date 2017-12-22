@@ -25,104 +25,112 @@ import java.util.List;
  *
  * @author Bjarne Deketelaere
  */
-public class MysqlPowerUpRepository implements PowerUpRepository{
+public class MysqlPowerUpRepository implements PowerUpRepository {
+
     private final String DELETE_PADDLEPOWERUPS = "delete from genericpaddlepowerup where brickid = ?";
     private final String DELETE_BALLPOWERUPS = "delete from genericballpowerup where brickid = ?";
     private final String INSERT_PADDLEPOWERUP = "insert into genericpaddlepowerup(brickid,paddleid,width,height) values(?, ?, ?, ?)";
     private final String INSERT_BALLPOWERUP = "insert into genericballpowerup(brickid,ballid,width,height) values(?, ?, ?, ?)";
     private final String SELECT_PADDLEPOWERUPS = "select * from genericpaddlepowerup where brickid = ?";
     private final String SELECT_BALLPOWERUPS = "select * from genericballpowerup where brickid = ?";
-    
+
+    public MysqlPowerUpRepository() {
+        System.out.println("creating poweruprepo");
+    }
+
     @Override
     public void givePowerUpsToBricks(List<Brick> levelBricks, List<Ball> levelBalls, List<Paddle> levelPaddles, Difficulty difficulty) {
         for (Brick brick : levelBricks) {
             this.giveBallPowerupToBrick(brick, levelBalls, difficulty);
-            this.givePaddlePowerupToBrick(brick,levelPaddles, difficulty);
+            this.givePaddlePowerupToBrick(brick, levelPaddles, difficulty);
         }
     }
-    
-    private void givePaddlePowerupToBrick(Brick brick, List<Paddle> paddles, Difficulty difficulty){
+
+    private void givePaddlePowerupToBrick(Brick brick, List<Paddle> paddles, Difficulty difficulty) {
         try (
-                    Connection conn = DbConnection.getConnection();
-                    PreparedStatement prep = conn.prepareStatement(SELECT_PADDLEPOWERUPS);) {
-                prep.setInt(1, brick.getBrickId());
-                try (ResultSet rs = prep.executeQuery()) {
-                    while (rs.next()) {
-                        int brickId = rs.getInt("brickid");
-                        int paddleId = rs.getInt("paddleid");
-                        int width = rs.getInt("width");
-                        int height = rs.getInt("height");
-                        Paddle defaultPaddle = findPaddleById(paddles, paddleId);
-                        PaddlePowerup paddlepowerup = new PaddlePowerup(defaultPaddle, width, height, difficulty.getPowerupTime());
-                        brick.setPowerUp(paddlepowerup);
-                    }
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(SELECT_PADDLEPOWERUPS);) {
+            prep.setInt(1, brick.getBrickId());
+            try (ResultSet rs = prep.executeQuery()) {
+                while (rs.next()) {
+                    int brickId = rs.getInt("brickid");
+                    int paddleId = rs.getInt("paddleid");
+                    int width = rs.getInt("width");
+                    int height = rs.getInt("height");
+                    Paddle defaultPaddle = findPaddleById(paddles, paddleId);
+                    PaddlePowerup paddlepowerup = new PaddlePowerup(defaultPaddle, width, height, difficulty.getPowerupTime());
+                    brick.setPowerUp(paddlepowerup);
                 }
-            } catch (SQLException ex) {
-                throw new BreakoutException("Couldn't give powerups to brick");
             }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't give powerups to brick");
+        }
     }
-    
-    private void giveBallPowerupToBrick(Brick brick, List<Ball> balls, Difficulty difficulty){
+
+    private void giveBallPowerupToBrick(Brick brick, List<Ball> balls, Difficulty difficulty) {
         try (
-                    Connection conn = DbConnection.getConnection();
-                    PreparedStatement prep = conn.prepareStatement(SELECT_BALLPOWERUPS);) {
-                prep.setInt(1, brick.getBrickId());
-                try (ResultSet rs = prep.executeQuery()) {
-                    while (rs.next()) {
-                        int brickId = rs.getInt("brickid");
-                        int ballId = rs.getInt("ballid");
-                        int width = rs.getInt("width");
-                        int height = rs.getInt("height");
-                        Ball defaultBall = findBallById(balls, ballId);
-                        BallPowerup ballpowerup = new BallPowerup(defaultBall, width, height, difficulty.getPowerupTime());
-                        brick.setPowerUp(ballpowerup);
-                    }
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(SELECT_BALLPOWERUPS);) {
+            prep.setInt(1, brick.getBrickId());
+            try (ResultSet rs = prep.executeQuery()) {
+                while (rs.next()) {
+                    int brickId = rs.getInt("brickid");
+                    int ballId = rs.getInt("ballid");
+                    int width = rs.getInt("width");
+                    int height = rs.getInt("height");
+                    Ball defaultBall = findBallById(balls, ballId);
+                    BallPowerup ballpowerup = new BallPowerup(defaultBall, width, height, difficulty.getPowerupTime());
+                    brick.setPowerUp(ballpowerup);
                 }
-            } catch (SQLException ex) {
-                throw new BreakoutException("Couldn't give powerups to brick");
             }
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't give powerups to brick");
+        }
     }
-    private Ball findBallById(List<Ball> balls, int id){
+
+    private Ball findBallById(List<Ball> balls, int id) {
         Ball ball = null;
-        
-        for(Ball b : balls){
-            if(b.getBallId() == id){
+
+        for (Ball b : balls) {
+            if (b.getBallId() == id) {
                 ball = b;
                 break;
             }
         }
-        
+
         return ball;
     }
-    
-    private Paddle findPaddleById(List<Paddle> paddles, int id){
+
+    private Paddle findPaddleById(List<Paddle> paddles, int id) {
         Paddle paddle = null;
-        
-        for(Paddle p : paddles){
-            if(p.getPaddleId() == id){
+
+        for (Paddle p : paddles) {
+            if (p.getPaddleId() == id) {
                 paddle = p;
                 break;
             }
         }
-        
+
         return paddle;
     }
 
     @Override
     public void insertPowerUpsToBrick(int brickId, PowerUp powerup) {
-        if(powerup instanceof BallPowerup){
-            this.insertBallPowerup(brickId, (BallPowerup)powerup);
-        } else if(powerup instanceof PaddlePowerup){
-            this.insertPaddlePowerup(brickId, (PaddlePowerup)powerup);
+        if (powerup != null) {
+            if (powerup instanceof BallPowerup) {
+                this.insertBallPowerup(brickId, (BallPowerup) powerup);
+            } else if (powerup instanceof PaddlePowerup) {
+                this.insertPaddlePowerup(brickId, (PaddlePowerup) powerup);
+            }
         }
     }
-    private void insertBallPowerup(int brickId,BallPowerup powerup){
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_BALLPOWERUP);
-                ){
+
+    private void insertBallPowerup(int brickId, BallPowerup powerup) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_BALLPOWERUP);) {
             prep.setInt(1, brickId);
-            prep.setInt(2, ((Ball)powerup.getBaseBody()).getBallId());
+            prep.setInt(2, ((Ball) powerup.getBaseBody()).getBallId());
             prep.setInt(3, powerup.getWidth());
             prep.setInt(4, powerup.getHeight());
             prep.executeUpdate();
@@ -131,14 +139,13 @@ public class MysqlPowerUpRepository implements PowerUpRepository{
             throw new BreakoutException("Couldn't insert powerup");
         }
     }
-    
-    private void insertPaddlePowerup(int brickId,PaddlePowerup powerup){
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(INSERT_PADDLEPOWERUP);
-                ){
+
+    private void insertPaddlePowerup(int brickId, PaddlePowerup powerup) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(INSERT_PADDLEPOWERUP);) {
             prep.setInt(1, brickId);
-            prep.setInt(2, ((Paddle)powerup.getBaseBody()).getPaddleId());
+            prep.setInt(2, ((Paddle) powerup.getBaseBody()).getPaddleId());
             prep.setInt(3, powerup.getWidth());
             prep.setInt(4, powerup.getHeight());
             prep.executeUpdate();
@@ -150,29 +157,29 @@ public class MysqlPowerUpRepository implements PowerUpRepository{
     @Override
     public void removePowerUpsOfBrick(int brickId) {
         this.removeBrickPowerups(brickId);
-        this.removeBallPowerups(brickId);    
+        this.removeBallPowerups(brickId);
     }
-    private void removeBrickPowerups(int brickId){
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_PADDLEPOWERUPS);
-                ){
+
+    private void removeBrickPowerups(int brickId) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_PADDLEPOWERUPS);) {
             prep.setInt(1, brickId);
             prep.executeUpdate();
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't delete powerups");
         }
     }
-    private void removeBallPowerups(int brickId){
-        try(
-                Connection conn=DbConnection.getConnection();
-                PreparedStatement prep=conn.prepareStatement(DELETE_BALLPOWERUPS);
-                ){
+
+    private void removeBallPowerups(int brickId) {
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(DELETE_BALLPOWERUPS);) {
             prep.setInt(1, brickId);
             prep.executeUpdate();
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't delete powerups");
         }
     }
-    
+
 }

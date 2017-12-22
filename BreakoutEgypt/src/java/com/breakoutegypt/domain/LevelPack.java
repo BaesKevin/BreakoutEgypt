@@ -12,6 +12,7 @@ import java.util.List;
  * @author kevin
  */
 public class LevelPack {
+
     private int id;
     private String name;
     private String description;
@@ -70,6 +71,5 @@ public class LevelPack {
     public void setTotalLevels(int totalLevels) {
         this.totalLevels = totalLevels;
     }
-    
-    
+
 }

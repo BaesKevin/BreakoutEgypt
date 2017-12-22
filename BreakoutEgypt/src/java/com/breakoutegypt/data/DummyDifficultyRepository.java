@@ -6,10 +6,9 @@
 package com.breakoutegypt.data;
 
 import com.breakoutegypt.domain.levelprogression.Difficulty;
+import com.breakoutegypt.exceptions.BreakoutException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -21,10 +20,10 @@ public class DummyDifficultyRepository implements DifficultyRepository {
 
     public DummyDifficultyRepository() {
         difficulties = new ArrayList<>();
-        difficulties.add(new Difficulty("easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15));
-        difficulties.add(new Difficulty("medium", 65, 3, true, 6000, 50, 10));
-        difficulties.add(new Difficulty("hard", 80, 3, false, 4000, 30, 5));
-        difficulties.add(new Difficulty("brutal", 100, 1, false, 2000, 0, 0));
+        difficulties.add(new Difficulty(1, "easy", 50, Difficulty.INFINITE_LIVES, true, 8000, 80, 15));
+        difficulties.add(new Difficulty(2, "medium", 65, 3, true, 6000, 50, 10));
+        difficulties.add(new Difficulty(3, "hard", 80, 3, false, 4000, 30, 5));
+        difficulties.add(new Difficulty(4, "brutal", 100, 1, false, 2000, 0, 0));
     }
 
     @Override
@@ -44,6 +43,16 @@ public class DummyDifficultyRepository implements DifficultyRepository {
         
         return difficulty;
         
+    }
+
+    @Override
+    public Difficulty getById(int id) {
+        for (Difficulty d : difficulties) {
+            if (d.getId() == id) {
+                return d;
+            }
+        }
+        throw new BreakoutException("no difficulty with this index!");
     }
 
 }

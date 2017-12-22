@@ -22,13 +22,15 @@ public class Difficulty {
     private int powerupTime, powerdownTime;
 
     private String name;
+    private int id;
 
     public static final String EASY = "easy";
     public static final String MEDIUM = "medium";
     public static final String HARD = "hard";
     public static final String BRUTAL = "brutal";
 
-    public Difficulty(String name, int ballspeed, int lives, boolean livesRegenBetweenLevels, int pointsPerBlock, int percentageOfPowerups, int powerupTime) {
+    public Difficulty(int id, String name, int ballspeed, int lives, boolean livesRegenBetweenLevels, int pointsPerBlock, int percentageOfPowerups, int powerupTime) {
+        this.id = id;
         this.name = name;
         this.ballspeed = ballspeed;
         this.lives = lives;
@@ -77,6 +79,10 @@ public class Difficulty {
 
     public int getPowerdownTime() {
         return powerdownTime;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
 }

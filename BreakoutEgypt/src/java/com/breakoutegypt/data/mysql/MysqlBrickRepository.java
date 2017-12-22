@@ -44,10 +44,15 @@ public class MysqlBrickRepository implements BrickRepository {
 
     List<Brick> bricks;
     Map<Integer, List<Effect>> effects = new HashMap();
-    
-    EffectRepository effectRepo = Repositories.getEffectRepository();
-    PowerUpRepository powerupRepo = Repositories.getPowerUpRepository();
-    
+
+    EffectRepository effectRepo;
+    PowerUpRepository powerupRepo;
+
+    public MysqlBrickRepository() {
+        effectRepo = Repositories.getEffectRepository();
+        powerupRepo = Repositories.getPowerUpRepository();
+    }
+
     @Override
     public List<Brick> getBricks() {
         this.bricks = new ArrayList<>();
@@ -58,15 +63,15 @@ public class MysqlBrickRepository implements BrickRepository {
             while (rs.next()) {
                 initializeBricks(rs);
             }
-            
+
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load the bricks", ex);
         }
-        
+
         for (Brick brick : bricks) {
             effectRepo.giveEffectsToBrick(brick, bricks);
         }
-        
+
         return this.bricks;
     }
 
@@ -78,7 +83,7 @@ public class MysqlBrickRepository implements BrickRepository {
                 PreparedStatement prep = conn.prepareStatement(SELECT_BRICK_BY_ID);) {
 
             prep.setInt(1, id);
-            
+
             try (ResultSet rs = prep.executeQuery();) {
                 while (rs.next()) {
                     initializeBricks(rs);
@@ -86,18 +91,18 @@ public class MysqlBrickRepository implements BrickRepository {
                 if (this.bricks.isEmpty()) {
                     return null;
                 }
-                
+
             }
 
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load the bricks", ex);
         }
-        
-         for (Brick brick : bricks) {
+
+        for (Brick brick : bricks) {
             effectRepo.giveEffectsToBrick(brick, bricks);
         }
-         
-         return this.bricks.get(0);
+
+        return this.bricks.get(0);
     }
 
     @Override
@@ -116,12 +121,12 @@ public class MysqlBrickRepository implements BrickRepository {
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't load levelbricks", ex);
         }
-        
-         for (Brick brick : bricks) {
+
+        for (Brick brick : bricks) {
             effectRepo.giveEffectsToBrick(brick, bricks);
         }
-         
-         return this.bricks;
+
+        return this.bricks;
     }
 
     public void initializeBricks(ResultSet rs) throws SQLException {
@@ -131,13 +136,13 @@ public class MysqlBrickRepository implements BrickRepository {
         boolean isTarget = rs.getBoolean("istarget");
         boolean isInverted = rs.getBoolean("isInverted");
         int playerIndex = rs.getInt("playerIndex");
-        
+
         ShapeDimension dimension = Repositories.getShapeDimensionRepository().getShapeDimensionById(rs.getInt("shapedimensionid"));
         BrickType bricktype = Repositories.getBrickTypeRepository().getBrickTypeById(rs.getInt("typeid"));
         Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable, isInverted);
         brick.setBrickId(brickId);
         brick.setPlayerIndex(playerIndex);
-       
+
 //        EffectRepository effectRepo = new MysqlEffectRepository();
 //        PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
 //        effectRepo.giveEffectsToBrick(brick);
@@ -163,21 +168,20 @@ public class MysqlBrickRepository implements BrickRepository {
             prep.setBoolean(5, brick.isTarget());
             prep.setBoolean(6, brick.isInverted());
             prep.setInt(7, brick.getPlayerIndex());
-            
+
             prep.executeUpdate();
             try (ResultSet rs = prep.getGeneratedKeys()) {
                 int brickId = -1;
                 if (rs.next()) {
                     brickId = rs.getInt(1);
                 }
-                if (brickId < 0) {
-                    throw new BreakoutException("Unable to add brick");
-                }
+                
+//                if (brickId < 0) {
+//                    throw new BreakoutException("Unable to add brick");
+//                }
                 brick.setBrickId(brickId);
 //                effectsToSave.addAll(brick.getEffects());
 
-                new MysqlPowerDownRepository().insertPowerDownsToBrick(brickId, brick.getPowerDown());
-                powerupRepo.insertPowerUpsToBrick(brick.getBrickId(), brick.getPowerUp());
 
             }
         } catch (SQLException ex) {
@@ -207,7 +211,7 @@ public class MysqlBrickRepository implements BrickRepository {
 
     @Override
     public void addBricksForLevel(int levelId, List<Brick> bricks) {
-        
+
         for (Brick brick : bricks) {
             this.addBrick(brick);
             effects.put(brick.getBrickId(), brick.getEffects());
@@ -216,11 +220,12 @@ public class MysqlBrickRepository implements BrickRepository {
 
         addEffectsForBricks();
     }
-    private void addEffectsForBricks(){
+
+    private void addEffectsForBricks() {
         for (Entry<Integer, List<Effect>> entry : effects.entrySet()) {
             effectRepo.insertEffectsToBrick(entry.getKey(), entry.getValue());
         }
-        
+
         effects = new HashMap();
     }
 

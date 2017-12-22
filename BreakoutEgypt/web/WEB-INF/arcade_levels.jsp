@@ -38,10 +38,10 @@
 
                         <c:choose>
                             <c:when test="${loop.index <= levelReached}">
-                                <li><a href=\"arcade?startLevel=${loop.index}&difficulty=${difficulty}\" data-level="${loop.index}">Level ${loop.index}</a></li>
+                                <li><a href="arcade?startLevel=${loop.index}&difficulty=${difficulty}" data-level="${loop.index}">Level ${loop.index}</a></li>
                                 </c:when>
                                 <c:otherwise>
-                                <li class="locked">Level ${loop.index}</li>
+                                <li class="locked"><a>Level ${loop.index}</a></li>
                                 </c:otherwise>
                             </c:choose>
 

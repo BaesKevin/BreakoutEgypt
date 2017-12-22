@@ -207,6 +207,13 @@ public class MysqlLevelRepository implements LevelRepository {
             ballRepo.addBallsForLevel(level.getId(), level.getLevelState().getBalls());
             brickRepo.addBricksForLevel(level.getId(), level.getLevelState().getBricks());
             paddleRepo.addPaddlesForLevel(level.getId(), level.getLevelState().getPaddles());
+
+            List<Brick> bricks = brickRepo.getBricksByLevel(level.getId());
+            for (Brick brick : bricks) {
+                new MysqlPowerDownRepository().insertPowerDownsToBrick(brick.getBrickId(), brick.getPowerDown());
+                Repositories.getPowerUpRepository().insertPowerUpsToBrick(brick.getBrickId(), brick.getPowerUp());
+            }
+
         } catch (SQLException ex) {
             throw new BreakoutException("Couldn't add level", ex);
         }

@@ -6,7 +6,7 @@
 package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
@@ -29,7 +29,7 @@ public class LevelTest {
     private Game game;
     private Level level;
     private Player player;
-    private final LevelProgress ALL_LEVELS_UNLOCKED = LevelProgressionRepository.getDefault(GameType.TEST);
+    private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
     
     @Before
     public void setup() {

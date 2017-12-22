@@ -45,67 +45,7 @@ public class TestLevelFactory extends LevelFactory {
     public Level getCurrentLevel() {
         return currentLevel;
     }
-
-//    @Override
-//    public LevelPack createLevelPack() {
-//        List<Level> levels = new ArrayList();
-//        levels.add(getOutOfBoundsTest());
-//        levels.add(getTargetBrickTest());
-//        levels.add(getSiwtchBrickTest());
-//        levels.add(getExplosiveBrickTest());
-//        levels.add(getLevelWithMultipleBalls());
-//        levels.add(getLevelWithOnlyOneLife());
-//        levels.add(getLevelWithOneBrick());
-//        levels.add(getLevelWithBrokenPaddle());
-//        levels.add(getLevelWithFloor());
-//        levels.add(getLevelWithPowerUpBrick());
-//        levels.add(getLevelWithExplosiveAndPowerUpBrick());
-//        levels.add(getLevelWithBrokenPaddlePowerup());
-//        levels.add(getSimpleScoreTestLevel());
-//        levels.add(getLevelWith2AcidBalls());
-//        levels.add(getLevelWith2Floors());
-//        levels.add(getLevelWith2BrokenPaddles());
-//        levels.add(getOneTargetBrickTest());
-//        levels.add(getLevelWithFloodPowerDown());
-//        levels.add(getLevelWithProjectile());
-//        levels.add(getLevelWithPowerDownAndExplosive());
-//
-//        return new LevelPack("test", "Testlevels", levels, 500, 1000);
-//
-//    }
-//    @Override
-//    public void initializeLevels() {
-//        if (pack == null) {
-//            pack = levelPackRepo.getByName("test", game);
-//
-//            if (pack == null) {
-//                List<Level> levels = new ArrayList();
-//                levels.add(getOutOfBoundsTest());
-//                levels.add(getTargetBrickTest());
-//                levels.add(getSiwtchBrickTest());
-//                levels.add(getExplosiveBrickTest());
-//                levels.add(getLevelWithMultipleBalls());
-//                levels.add(getLevelWithOnlyOneLife());
-//                levels.add(getLevelWithOneBrick());
-//                levels.add(getLevelWithBrokenPaddle());
-//                levels.add(getLevelWithFloor());
-//                levels.add(getLevelWithPowerUpBrick());
-//                levels.add(getLevelWithExplosiveAndPowerUpBrick());
-//                levels.add(getLevelWithBrokenPaddlePowerup());
-//                levels.add(getSimpleScoreTestLevel());
-//                levels.add(getLevelWith2AcidBalls());
-//                levels.add(getLevelWith2Floors());
-//                levels.add(getLevelWith2BrokenPaddles());
-//                levels.add(getOneTargetBrickTest());
-//                levels.add(getLevelWithFloodPowerDown());
-//                levels.add(getLevelWithProjectile());
-//                levels.add(getLevelWithPowerDownAndExplosive());
-//
-//                pack = new LevelPack("test", "Testlevels", levels, 500, 1000);
-//                levelPackRepo.add(pack);
-//            }
-//        }
-//    }
+    
     @Override
     protected void createCurrentLevel() {
         

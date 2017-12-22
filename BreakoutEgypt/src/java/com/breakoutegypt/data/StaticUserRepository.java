@@ -5,6 +5,7 @@
  */
 package com.breakoutegypt.data;
 
+import com.breakoutegypt.domain.Player;
 import com.breakoutegypt.domain.User;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,6 +64,11 @@ public class StaticUserRepository implements UserRepository {
     @Override
     public void deleteUser(String email) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public User getUserById(int id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

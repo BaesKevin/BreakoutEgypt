@@ -27,6 +27,7 @@ import java.util.List;
 public class MysqlLevelPackRepository implements LevelPackRepository{
     private LevelRepository levelRepo = Repositories.getLevelRepository();
     private final String SELECT_BY_NAME = "select * from levelpacks where name = ?";
+    private final String SELECT_BY_ID = "select * from levelpacks where id = ?";
     private final String INSERT = "insert into levelpacks(name, description, default_open_levels, total_levels) values(?,?,?,?)";
     
     @Override
@@ -86,6 +87,33 @@ public class MysqlLevelPackRepository implements LevelPackRepository{
         }
        
         
+        return pack;
+    }
+
+    @Override
+    public LevelPack getById(int levelpackid) {
+        LevelPack pack = null;
+        try (
+                Connection conn = DbConnection.getConnection();
+                PreparedStatement prep = conn.prepareStatement(SELECT_BY_ID);) {
+            prep.setInt(1, levelpackid);
+            try (
+                    ResultSet rs = prep.executeQuery();) {
+                
+                while (rs.next()) {
+                    int packId = rs.getInt("id");
+                    String packName = rs.getString("name");
+                    String description = rs.getString("description");
+                    int openLevels = rs.getInt("default_open_levels");
+                    int totalLevels = rs.getInt("total_levels");
+                    pack = new LevelPack(packId, packName, description, openLevels, totalLevels);
+                }
+                
+            }
+
+        } catch (SQLException ex) {
+            throw new BreakoutException("Couldn't load level", ex);
+        }
         return pack;
     }
     

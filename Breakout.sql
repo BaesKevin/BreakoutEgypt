@@ -11,6 +11,10 @@ create table users(
     diamonds int(150) default 0
 ) engine=innodb;
 
+ALTER TABLE `dbbreakout`.`users` 
+CHANGE COLUMN `email` `email` VARCHAR(50) NOT NULL ,
+ADD UNIQUE INDEX `email_UNIQUE` (`email` ASC);
+
 create table levelpacks(
 	id int primary key auto_increment,
     name varchar(50),
@@ -43,6 +47,29 @@ create table levelprogression(
     foreign key(levelpackid) references levelpacks(id),
     foreign key(difficultyid) references difficulties(difficultyid)
 )engine=innodb;
+
+ALTER TABLE `dbbreakout`.`levelprogression` 
+DROP FOREIGN KEY `levelprogression_ibfk_1`,
+DROP FOREIGN KEY `levelprogression_ibfk_2`,
+DROP FOREIGN KEY `levelprogression_ibfk_3`;
+ALTER TABLE `dbbreakout`.`levelprogression` 
+CHANGE COLUMN `userid` `userid` INT(11) NOT NULL ,
+CHANGE COLUMN `levelpackid` `levelpackid` INT(11) NOT NULL ,
+CHANGE COLUMN `difficultyid` `difficultyid` INT(11) NOT NULL ,
+ADD PRIMARY KEY (`userid`, `levelpackid`, `difficultyid`);
+ALTER TABLE `dbbreakout`.`levelprogression` 
+ADD CONSTRAINT `levelprogression_ibfk_1`
+  FOREIGN KEY (`userid`)
+  REFERENCES `dbbreakout`.`users` (`userid`),
+ADD CONSTRAINT `levelprogression_ibfk_2`
+  FOREIGN KEY (`levelpackid`)
+  REFERENCES `dbbreakout`.`levelpacks` (`id`),
+ADD CONSTRAINT `levelprogression_ibfk_3`
+  FOREIGN KEY (`difficultyid`)
+  REFERENCES `dbbreakout`.`difficulties` (`difficultyid`);
+ALTER TABLE `dbbreakout`.`levelprogression` 
+CHANGE COLUMN `isCampaign` `isCampaign` TINYINT(1) NULL DEFAULT 0 ;
+
 
 create table level(
 	levelid int primary key auto_increment,
@@ -144,13 +171,32 @@ create table levelpaddles(
 create table level_scores(
 	scoreId int primary key auto_increment,
     levelid int,
+    levelNumber int,
     userid int,
     difficultyid int,
-    time int,
+    time bigint,
     points int,
     foreign key(levelid) references level(levelid),
     foreign key(userid) references users(userid),
     foreign key(difficultyid) references difficulties(difficultyid) 
+) engine=innodb;
+
+create table genericpaddlepowerup(
+	brickid int,
+    paddleid int,
+    width int,
+    height int,
+    foreign key(brickid) references bricks(brickid),
+    foreign key(paddleid) references paddles(paddleid)
+) engine=innodb;
+
+create table genericballpowerup(
+	brickid int,
+    ballid int,
+    width int,
+    height int,
+    foreign key(brickid) references bricks(brickid),
+    foreign key(ballid) references balls(ballid)
 ) engine=innodb;
 
 insert into brick_types(typename) values('REGULAR');
@@ -200,3 +246,5 @@ insert into difficulties(difficultyname,
         brickscore_time_penalty) values(
         "BRUTAL",100,1,false,2000,0,0,0,null);
         
+insert into levelpacks(name, description, default_open_levels, total_levels)
+values('arcade', 'arcade', 3, 5), ('multiplayer', 'multiplayer', 1, 2);

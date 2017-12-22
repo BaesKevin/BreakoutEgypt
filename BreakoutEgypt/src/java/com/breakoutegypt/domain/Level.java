@@ -24,6 +24,7 @@ import com.breakoutegypt.domain.shapes.RegularBody;
 import java.util.List;
 import java.util.Timer;
 import com.breakoutegypt.data.HighscoreRepository;
+import com.breakoutegypt.domain.levelprogression.LevelPackProgress;
 import java.util.HashMap;
 import java.util.Map;
 import org.jbox2d.common.Vec2;
@@ -324,15 +325,28 @@ public class Level implements BreakoutWorldEventListener {
             int winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
-            HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
-
-            int brickScore = brickScoreCalc.getScore();
-            //TODO user with playerindex x
-            Score scoreOfPlayer = new Score(getId(), new User("This is a new user"), getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
-            highScoreRepo.addScore(scoreOfPlayer);
+            endOfGame(winnerIndex);
 
             initNextLevel(winnerIndex);
         }
+    }
+
+    private void endOfGame(int winnerIndex) {
+        HighscoreRepository highScoreRepo = Repositories.getHighscoreRepository();
+        Player p = game.getPlayer(winnerIndex);
+        int brickScore = brickScoreCalc.getScore();
+        Score scoreOfPlayer = new Score(0, getId(), getLevelNumber(), p, getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
+        
+        LevelPackProgress progress = p.getProgressions().getProgress(game.getGameType(), game.getDifficulty().getName());
+        LevelPack lp = Repositories.getLevelPackRepo().getById(levelPackId);
+
+        if (this.levelNumber >= progress.getLevelProgress().getHighestLevelReached()) {
+            progress.sethighestLevelReached(this.levelNumber + 1, p, lp, game.getDifficulty());
+        }
+        
+        p.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(p.getUserId()));
+        
+        highScoreRepo.addScore(scoreOfPlayer);
     }
 
     @Override

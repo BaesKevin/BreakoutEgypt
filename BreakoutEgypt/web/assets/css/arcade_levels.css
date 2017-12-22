@@ -60,7 +60,7 @@ ul#levels li a{
 }
 
 
-ul#levels li.locked{
+ul#levels li.locked a{
     background-color: #824700;
     color: white;
 }

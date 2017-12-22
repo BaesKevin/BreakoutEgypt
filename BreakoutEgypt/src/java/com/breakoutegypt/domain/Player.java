@@ -19,8 +19,6 @@ import java.util.List;
  */
 public class Player extends User implements Serializable {
 
-//    private Paddle paddle;
-//    private List<Ball> balls;
     private transient PlayerConnection conn;
     private LevelProgressManager levelPackProgressions;
     private int index;
@@ -35,18 +33,15 @@ public class Player extends User implements Serializable {
     }
     
     public Player(String username, String email, String password) {
+        this(0, username, email, password, new LevelProgressManager());
+    }
+
+    public Player(int id, String username, String email, String password, LevelProgressManager lpm) {
         super(username, email, password);
-        this.levelPackProgressions = new LevelProgressManager();
+        super.setUserId(id);
+        this.levelPackProgressions = lpm;
         this.index = 1;
     }
-//
-//    public Paddle getPaddle() {
-//        return paddle;
-//    }
-//
-//    public void setPaddle(Paddle paddle) {
-//        this.paddle = paddle;
-//    }
 
     public PlayerConnection getConnection() {
         return conn;
@@ -82,5 +77,9 @@ public class Player extends User implements Serializable {
 
     public boolean noLivesLeft() {
         return lives == 0;
+    }
+    
+    public User getUser() throws CloneNotSupportedException {
+        return (User)super.clone();
     }
 }

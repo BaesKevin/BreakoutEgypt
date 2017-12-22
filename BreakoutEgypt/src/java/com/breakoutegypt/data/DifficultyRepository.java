@@ -15,4 +15,5 @@ import java.util.List;
 public interface DifficultyRepository {
     List<Difficulty> findAll();
     Difficulty findByName(String difficulty);
+    Difficulty getById(int id);
 }

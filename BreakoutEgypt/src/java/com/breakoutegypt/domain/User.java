@@ -13,48 +13,55 @@ import org.mindrot.jbcrypt.BCrypt;
  *
  * @author Bjarne Deketelaere
  */
-public class User implements Serializable{
-    private int userId=0;
+public class User implements Serializable {
+
+    private int userId = 0;
     private String username;
     private String email;
     private String hash;
-    private int gold,diamonds;
-    public User(String username){
-        this(username, "","");
+    private int gold, diamonds;
+
+    public User(String username) {
+        this(username, "", "");
     }
+
     public User(String username, String email, String hashorpass, int gold, int diamonds, boolean isHash) {
-        if(isHash) {
+        if (isHash) {
             this.setHash(hashorpass);
-        } else {            
+        } else {
             this.setHashFromPassword(hashorpass);
         }
         this.setUsername(username);
         this.setEmail(email);
         this.setDiamonds(diamonds);
-        this.setGold(gold);     
+        this.setGold(gold);
     }
-    public User(String username,String email,String password,int gold,int diamonds){
+
+    public User(int id, String username, String email, String password, int gold, int diamonds, boolean isHash) {
+        this.userId = id;
         this.setEmail(email);
         this.setHashFromPassword(password);
         this.setUsername(username);
         this.setDiamonds(diamonds);
         this.setGold(gold);
     }
-    public User(String username,String email,String password){
-        this(username,email,password,0,0);
+
+    public User(String username, String email, String password) {
+        this(0, username, email, password, 0, 0, false);
     }
-    public User(String email,String password){
-        this("",email,password);
+
+    public User(String email, String password) {
+        this("", email, password);
     }
-    
-    public int getUserId(){
+
+    public int getUserId() {
         return this.userId;
     }
-    
-    public void setUserId(int id){
-        this.userId=id;
+
+    public void setUserId(int id) {
+        this.userId = id;
     }
-    
+
     public String getUsername() {
         return username;
     }
@@ -74,7 +81,7 @@ public class User implements Serializable{
     public String getHash() {
         return hash;
     }
-    
+
     private void setHashFromPassword(String password) {
         this.hash = BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -132,9 +139,6 @@ public class User implements Serializable{
             return false;
         }
         if (!Objects.equals(this.email, other.email)) {
-            return false;
-        }
-        if (!Objects.equals(this.hash, other.hash)) {
             return false;
         }
         return true;

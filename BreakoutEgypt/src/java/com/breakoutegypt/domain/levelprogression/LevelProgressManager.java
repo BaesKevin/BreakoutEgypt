@@ -5,7 +5,8 @@
  */
 package com.breakoutegypt.domain.levelprogression;
 
-import com.breakoutegypt.data.LevelProgressionRepository;
+import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.GameType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,6 +24,10 @@ public class LevelProgressManager implements Serializable{
         packProgresses = new ArrayList();
     }
     
+    public LevelProgressManager(List<LevelPackProgress> llpp) {
+        this.packProgresses = llpp;
+    }
+    
     public LevelPackProgress getProgress(GameType type, String difficulty){
         LevelPackProgress toFind = new LevelPackProgress(type, difficulty);
         
@@ -32,12 +37,12 @@ public class LevelProgressManager implements Serializable{
             }
         }
          
-         return null;
+         return new LevelPackProgress(type, difficulty);
     }
     
     public LevelProgress getLevelProgressOrDefault(GameType type, String difficulty){
         LevelPackProgress packProgress = getProgress(type, difficulty);
-        LevelProgress progress = LevelProgressionRepository.getDefault(type);
+        LevelProgress progress = DummyLevelProgressionRepository.getDefault(type);
         
         if(packProgress != null)
             progress = packProgress.getLevelProgress();
@@ -71,6 +76,10 @@ public class LevelProgressManager implements Serializable{
         LevelPackProgress p = getProgress(gameType, difficulty);
         
         return p != null? p.getLevelProgress().getHighestLevelReached() : 1; 
+    }
+
+    public void setProgressions(List<LevelPackProgress> allForPlayer) {
+        this.packProgresses = allForPlayer;
     }
 
 

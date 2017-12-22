@@ -36,8 +36,12 @@ public class ArcadeLevelFactory extends LevelFactory {
     private Difficulty difficulty;
 
     public ArcadeLevelFactory(Game game, Difficulty difficulty) {
-        super(game, 5, 5, "arcade");
+        this(game, Repositories.getLevelPackRepo().getByName("arcade"));
         this.difficulty = difficulty;
+    }
+
+    private ArcadeLevelFactory(Game game, LevelPack lp) {
+        super(game, lp.getTotalLevels(), lp.getDefaultOpenLevels(), lp.getName());
     }
 
     @Override
@@ -49,15 +53,15 @@ public class ArcadeLevelFactory extends LevelFactory {
     protected void createCurrentLevel() {
 
         LevelPack pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
-        if (pack == null) {
-            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", defaultOpenLevels, totalLevels));
-            pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
-        }
-//
-//        LevelRepository levelRepo = Repositories.getLevelRepository();
-//        Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId,pack.getId(), game);
-//
-//        if (levelFromDatabase == null) {
+//        if (pack == null) {
+//            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", defaultOpenLevels, totalLevels));
+//            pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
+//        }
+
+        LevelRepository levelRepo = Repositories.getLevelRepository();
+        Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId, pack.getId(), game);
+
+        if (levelFromDatabase == null) {
             switch (currentLevelId) {
                 case 1:
                     currentLevel = getSimpleTestLevel();
@@ -78,11 +82,11 @@ public class ArcadeLevelFactory extends LevelFactory {
             }
 
             currentLevel.setLevelPackId(pack.getId());
-//            Repositories.getLevelRepository().addLevel(currentLevel);
-//            currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId,pack.getId(), game);
-//        } else {
-//            currentLevel = levelFromDatabase;
-//        }
+            Repositories.getLevelRepository().addLevel(currentLevel);
+            currentLevel = Repositories.getLevelRepository().getLevelByNumber(currentLevelId, pack.getId(), game);
+        } else {
+            currentLevel = levelFromDatabase;
+        }
     }
 
     public Level getLevelWithInvertedTriangles() {
