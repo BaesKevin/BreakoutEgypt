@@ -22,6 +22,7 @@ import com.breakoutegypt.domain.messages.LifeMessageType;
 import com.breakoutegypt.domain.messages.Message;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +38,17 @@ public class MessageTest {
     Player player;
     private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
     
-    public MessageTest() {
+    @Before
+    public void setTesting() {
         Repositories.isTesting(true);
+    }
+    
+    @After
+    public void disableTesting() {
+        Repositories.isTesting(false);
+    }
+    
+    public MessageTest() {
     }
 
     private void createGame(int startingLevel) {
