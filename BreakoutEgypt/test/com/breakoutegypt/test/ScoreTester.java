@@ -34,6 +34,12 @@ public class ScoreTester {
     Player player;
     private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
 
+    public ScoreTester() {
+        Repositories.isTesting(true);
+    }
+
+    
+    
     private void createGame(int startingLevel, String diff) {
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, diff);

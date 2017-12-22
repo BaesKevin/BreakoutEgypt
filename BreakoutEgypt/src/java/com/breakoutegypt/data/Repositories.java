@@ -22,6 +22,8 @@ import com.breakoutegypt.data.mysql.MysqlUserRepository;
  */
 public class Repositories {
     
+    private static boolean isTesting = false;
+    
     private static final HighscoreRepository highscoreRepository = new MysqlHighscoreRepository();
     private static final DifficultyRepository difficultyRepository = new DummyDifficultyRepository();
     private static final BrickTypeRepository bricktypeRepository = new MysqlBrickTypeRepository();
@@ -36,6 +38,9 @@ public class Repositories {
     private static LevelProgressionRepository levelProgressRepo = new MysqlLevelProgressionRepository();
     
     public static HighscoreRepository getHighscoreRepository() {
+        if (isTesting) {
+            return new StaticDummyHighscoreRepo();
+        }
         return highscoreRepository;
     }
 
@@ -85,6 +90,14 @@ public class Repositories {
     }
     
     public static LevelProgressionRepository getLevelProgressionRepository() {
+        if (isTesting) {
+            return new DummyLevelProgressionRepository();
+        }
         return levelProgressRepo;
     }
+    
+    public static void isTesting(boolean testing) {
+        isTesting = testing;
+    }
+    
 }

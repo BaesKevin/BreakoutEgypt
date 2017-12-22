@@ -7,6 +7,7 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -45,6 +46,7 @@ public class LevelPackProgressTest {
         player = new Player("player");
         factory = new TestLevelFactory(null);
         gm = new GameManager();
+        Repositories.isTesting(true);
     }
 
     private void createGame(int startingLevel) {

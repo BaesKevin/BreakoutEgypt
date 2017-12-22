@@ -38,7 +38,7 @@ public class ShowLevelsServlet extends HttpServlet {
 
     public static String DIFFICULTIES = "difficulties";
 
-    public static final String DEFAULT_DIFFICULTY = "medium";
+    public static final String DEFAULT_DIFFICULTY = EASY;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -50,6 +50,10 @@ public class ShowLevelsServlet extends HttpServlet {
             GameType gameType = getGameTypeFromRequestOrThrow(request);
             String difficulty = request.getParameter("difficulty");
 
+            if (difficulty != null) {
+                difficulty = DEFAULT_DIFFICULTY;
+            }
+            
             player.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(player.getUserId()));
             
             int levelReached = player.getProgressions().getHighestLevelReached(gameType, difficulty);

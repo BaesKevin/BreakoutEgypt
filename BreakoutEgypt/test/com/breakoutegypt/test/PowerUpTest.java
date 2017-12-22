@@ -7,6 +7,7 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.BreakoutWorld;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
@@ -37,6 +38,10 @@ public class PowerUpTest {
     Player player;
     private final LevelProgress ALL_LEVELS_UNLOCKED = DummyLevelProgressionRepository.getDefault(GameType.TEST);
 
+    public PowerUpTest() {
+        Repositories.isTesting(true);
+    }
+
     private void createGame(int startingLevel, boolean levelHasPaddle) {
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, "medium");
@@ -54,13 +59,13 @@ public class PowerUpTest {
         game.addConnectingPlayer(player);
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
-        
-        if(levelHasPaddle){
+
+        if (levelHasPaddle) {
 //            game.assignPaddleToPlayer(player);
         }
-        
+
     }
-    
+
     @Test
     public void twoBallsBouncOnBrokenPaddle1GoesOutOfBounds() {
         createGame(8, true);
@@ -80,24 +85,24 @@ public class PowerUpTest {
 
     @Test
     public void testBrokenPaddleMovement() {
-        
+
         createGame(8, true);
         level = game.getLevel();
         List<Paddle> paddles = level.getLevelState().getPaddles();
-        
-        int paddleWidth = paddles.get(0).getWidth() ;
+
+        int paddleWidth = paddles.get(0).getWidth();
         int minimum = paddleWidth / 2;
-        int maximum =  BreakoutWorld.DIMENSION - paddleWidth * 2 - BrokenPaddlePowerUp.GAP + paddleWidth / 2 ;
-        
+        int maximum = BreakoutWorld.DIMENSION - paddleWidth * 2 - BrokenPaddlePowerUp.GAP + paddleWidth / 2;
+
         float paddleY = paddles.get(0).getY();
 
         level.movePaddle(paddles.get(0).getPlayerIndex(), 0, 156);
         assertTrue(paddles.get(0).getX() == minimum);
-        
+
         level.movePaddle(paddles.get(0).getPlayerIndex(), 120, 156);
 
         float paddlePositionX = paddles.get(0).getX();
-        
+
         assertTrue(paddlePositionX == maximum);
     }
 
@@ -110,7 +115,7 @@ public class PowerUpTest {
         level.startBall();
         stepTimes(level, 40);
 
-        game.triggerPowerup("floor",1);
+        game.triggerPowerup("floor", 1);
         stepTimes(level, 120);
 
         DummyConnection conn = (DummyConnection) player.getConnection();
@@ -136,7 +141,7 @@ public class PowerUpTest {
     @Test
     public void activateBrokenPaddlePowerup() {
         createGame(12, true);
-        
+
         level = game.getLevel();
 
         level.getLevelState().getBall().setLinearVelocity(0, 100);
@@ -145,7 +150,7 @@ public class PowerUpTest {
         assertTrue(paddles.size() == 1);
 
         stepTimes(level, 60);
-        game.triggerPowerup("brokenpaddle1",1);
+        game.triggerPowerup("brokenpaddle1", 1);
 
         stepTimes(level, 10);
         paddles = level.getLevelState().getPaddles();
@@ -174,11 +179,11 @@ public class PowerUpTest {
 
         List<PowerUp> powerups = bpuh.getPowerUps();
 
-        level.triggerPowerup(powerups.get(0).getName(),1);
+        level.triggerPowerup(powerups.get(0).getName(), 1);
         stepTimes(level, 1);
-        
+
         powerups = bpuh.getPowerUps();
-        level.triggerPowerup(powerups.get(0).getName(),1);
+        level.triggerPowerup(powerups.get(0).getName(), 1);
 
         assertEquals(2, level.getLevelState().getBall().getAcidBall().getRange());
     }
@@ -196,12 +201,12 @@ public class PowerUpTest {
 
         List<PowerUp> powerups = bpuh.getPowerUps();
 
-        level.triggerPowerup(powerups.get(0).getName(),1);
+        level.triggerPowerup(powerups.get(0).getName(), 1);
         int initialTime = level.getLevelState().getFloor().getTimeVisible();
         powerups = bpuh.getPowerUps();
-        level.triggerPowerup(powerups.get(0).getName(),1);
-        
-        assertEquals(initialTime*2, level.getPoweruphandler().getActiveFloorForPlayer(1).getTimeVisible());
+        level.triggerPowerup(powerups.get(0).getName(), 1);
+
+        assertEquals(initialTime * 2, level.getPoweruphandler().getActiveFloorForPlayer(1).getTimeVisible());
     }
 
     @Test
@@ -217,17 +222,17 @@ public class PowerUpTest {
 
         List<PowerUp> powerups = bpuh.getPowerUps();
 
-        level.triggerPowerup(powerups.get(0).getName(),1);
+        level.triggerPowerup(powerups.get(0).getName(), 1);
         int initialTime = level.getPoweruphandler().getPaddlePowerup().get(0).getTimeVisible();
         powerups = bpuh.getPowerUps();
-        level.triggerPowerup(powerups.get(0).getName(),1);
+        level.triggerPowerup(powerups.get(0).getName(), 1);
 
         assertEquals(initialTime * 2, level.getPoweruphandler().getPaddlePowerup().get(0).getTimeVisible());
     }
-    
+
     @Test
     public void testAcidBallNotOnDecoyBall() {
-        
+
     }
 
     @Test

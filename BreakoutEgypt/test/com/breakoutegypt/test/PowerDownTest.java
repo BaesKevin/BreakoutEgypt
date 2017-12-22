@@ -7,6 +7,7 @@ package com.breakoutegypt.test;
 
 import com.breakoutegypt.connectionmanagement.DummyConnection;
 import com.breakoutegypt.data.DummyLevelProgressionRepository;
+import com.breakoutegypt.data.Repositories;
 import com.breakoutegypt.domain.Game;
 import com.breakoutegypt.domain.GameManager;
 import com.breakoutegypt.domain.GameType;
@@ -33,6 +34,7 @@ public class PowerDownTest {
 
     @Before
     public void init() {
+//        Repositories.isTesting(true);
         GameManager gm = new GameManager();
         int id = gm.createGame(GameType.TEST, "medium");
         game = gm.getGame(id);

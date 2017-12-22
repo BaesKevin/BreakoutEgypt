@@ -37,7 +37,7 @@ public class LevelProgressManager implements Serializable{
             }
         }
          
-         return null;
+         return new LevelPackProgress(type, difficulty);
     }
     
     public LevelProgress getLevelProgressOrDefault(GameType type, String difficulty){
