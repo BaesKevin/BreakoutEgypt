@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Bjarne Deketelaere
  */
-@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/", "/index", "/index.jsp", "/WEB-INF/*"})
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/", "/index", "/index.jsp"})
 public class AuthenticationFilter implements Filter {
 
     private static final boolean debug = true;
@@ -42,16 +42,6 @@ public class AuthenticationFilter implements Filter {
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-            HttpSession session = httpRequest.getSession();
-            Player logedinUser = (Player) session.getAttribute("player");
-
-            if (logedinUser == null) {
-                session.setAttribute("player", new Player(1, "JOSJOS", "jos@jos.be", "", new LevelProgressManager()));
-//                httpResponse.sendRedirect("login.jsp"); 
-            }
         }
 
     }

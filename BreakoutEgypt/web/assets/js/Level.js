@@ -139,13 +139,17 @@ const Level = (function () {
     const UpdateLevelDataHelper = (function (self) {
 
         function destroyBrick(message, self) {
+
             let brickToRemove = self.bricks.find(function (brick) {
                 return brick.name === message.name;
-            })
-            self.bricks = self.bricks.filter(function (brick) {
-                return brick.name !== message.name;
             });
-            DrawingModule.createExplosion(100, brickToRemove.x + brickToRemove.width / 2, brickToRemove.y + brickToRemove.height / 2)
+            console.log(brickToRemove);
+            if (brickToRemove) {
+                self.bricks = self.bricks.filter(function (brick) {
+                    return brick.name !== message.name;
+                });
+                DrawingModule.createExplosion(100, brickToRemove.x + brickToRemove.width / 2, brickToRemove.y + brickToRemove.height / 2);
+            }
         }
 
         function hideBrick(message, self) {

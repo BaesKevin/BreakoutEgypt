@@ -44,9 +44,7 @@ const PowerDownModule = (function () {
                 }
                 break;
             case powerdownnames.REMOVEINVERTEDCONTROLS:
-                if (json.playerIndex === level.playerIndex) {
-                    level.invertedcontrols = false;
-                }
+                level.invertedcontrols = false;
                 break;
         }
 
