@@ -292,14 +292,14 @@ public class MultiplayerTest {
         level.startBall(player1.getIndex());
         level.startBall(player2.getIndex());
         
-        stepTimes(30);
+        stepTimes(5);
         
         BreakoutPowerUpHandler bpuh = level.getPoweruphandler();
         String powerupName = bpuh.getPowerUps().get(0).getName();
         
-        game.triggerPowerup(powerupName, 0);
+        game.triggerPowerup(powerupName, player2.getIndex());
         
-        stepTimes(20);
+        stepTimes(80);
         
         Assert.assertEquals(2, player1.getLives());
         Assert.assertEquals(3, player2.getLives());

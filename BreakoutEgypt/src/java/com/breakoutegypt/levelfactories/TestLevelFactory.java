@@ -128,12 +128,12 @@ public class TestLevelFactory extends LevelFactory {
 
     private Level getTwoPlayerLevelWithfloorPowerup() {
         Ball ball = shapeRepo.getDefaultBall();
-        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 30);
+        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 35);
 
         Paddle paddle = shapeRepo.getDefaultPaddle("paddle1", 50, 80);
         Paddle paddle2 = shapeRepo.getDefaultPaddle("paddle2", 50, 10);
 
-        Brick target = shapeRepo.getDefaultBrick("target", 1, 1);
+        Brick target = shapeRepo.getDefaultBrick("target", 30, 20, true);
         Brick regularWithFloor = shapeRepo.getDefaultBrick("regular", 50, 20);
         
         regularWithFloor.setPowerUp(new FloorPowerUp(shapeRepo.getDefaultFloor(), game.getDifficulty().getPowerupTime()));
@@ -383,25 +383,29 @@ public class TestLevelFactory extends LevelFactory {
 
     // complicated tests rely on this level, change with care
     public Level getSimpleScoreTestLevel() {
-        ShapeDimension ballShape = new ShapeDimension("ball", 150, 10, DimensionDefaults.BALL_RADIUS, DimensionDefaults.BALL_RADIUS, Color.GREEN);
-
-        ShapeDimension paddleShape = new ShapeDimension("paddle", 180, 250, 100, 4, Color.BLUE);
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+        Ball ball = shapeRepo.getDefaultBall("ball", 50, 27);
+        Brick brick1 = shapeRepo.getDefaultBrick("brick", 40, 40);
+        Brick brick2 = shapeRepo.getDefaultBrick("brick", 70, 40);
+        Brick brick3 = shapeRepo.getDefaultBrick("brick", 60, 20);
+        
+        Brick target = shapeRepo.getDefaultBrick("target", 20,20, true);
+        
+        brick1.setHeight(DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER);
+        brick2.setHeight(DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER);
+        brick3.setHeight(DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER);
+        
         List<Ball> balls = new ArrayList();
-        Ball b = new Ball(ballShape);
-        b.setStartingBall(true);
-        balls.add(b);
-
+        ball.setStartingBall(true);
+        balls.add(ball);
+ 
         List<Brick> bricks = new ArrayList();
-        ShapeDimension brickshape1 = new ShapeDimension("brick1", 150, 70, 20, 20);
-        ShapeDimension brickshape2 = new ShapeDimension("brick2", 110, 70, 20, 20);
-        ShapeDimension brickshape3 = new ShapeDimension("brick3", 130, 65, 20, 20);
-        bricks.add(new Brick(brickshape1));
-        bricks.add(new Brick(brickshape2));
-        bricks.add(new Brick(brickshape3));
-
-        Paddle paddle = new Paddle(paddleShape);
-
-        LevelState initialState = new LevelState(b, paddle, bricks);
+        bricks.add(brick1);
+        bricks.add(brick2);
+        bricks.add(brick3);
+        bricks.add(target);
+ 
+        LevelState initialState = new LevelState(ball, paddle, bricks);
         Level level = new Level(4, game, initialState);
         level.setLevelNumber(13);
         level.setRunManual(true);

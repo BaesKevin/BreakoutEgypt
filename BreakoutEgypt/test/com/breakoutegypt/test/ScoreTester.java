@@ -44,10 +44,10 @@ public class ScoreTester {
         Repositories.isTesting(true);
     }
     
-    @After
-    public void disableTesting() {
-        Repositories.isTesting(false);
-    }
+//    @After
+//    public void disableTesting() {
+//        Repositories.isTesting(false);
+//    }
     
     
     private void createGame(int startingLevel, String diff) {
@@ -86,7 +86,9 @@ public class ScoreTester {
         level.getLevelState().getBalls().get(0).setLinearVelocity(0, 100);
 
         // step untill ball hits a brick
-        while(level.getLevelState().getBricks().size() >  2){
+        int totalBricks = level.getLevelState().getBricks().size();
+        
+        while(level.getLevelState().getBricks().size() >  totalBricks - 1){
             stepTimes(level, 1);
         }
         
@@ -98,7 +100,7 @@ public class ScoreTester {
         
         // place the ball above the paddle and make it hit the paddle
         Vec2 paddlePosition = level.getLevelState().getPaddles().get(0).getPosition();
-        Vec2 ballPositionAbovePaddle = new Vec2(paddlePosition.x, paddlePosition.y - 60);
+        Vec2 ballPositionAbovePaddle = new Vec2(paddlePosition.x, paddlePosition.y - 10);
         
         ball.getBody().setTransform(ballPositionAbovePaddle, 0);
         
@@ -111,8 +113,8 @@ public class ScoreTester {
         ball.setLinearVelocity(speedAfterHittingBrick.x, speedAfterHittingBrick.y);
         
         // move untill all bricks are gone
-        while(level.getLevelState().getBricks().size() > 0){
-            stepTimes(level, 1);
+        while(level.getLevelState().getBricks().size() > 1){
+            stepTimes(level, 10);
         }
         
         int expectedScore = 3 * Repositories.getDifficultyRepository().findByName("medium").getPointsPerBlock();
