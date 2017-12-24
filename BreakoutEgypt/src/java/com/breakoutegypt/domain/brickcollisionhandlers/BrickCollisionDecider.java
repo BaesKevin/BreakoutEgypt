@@ -26,11 +26,11 @@ public class BrickCollisionDecider {
     }
 
     public void handleCollision() {
-        if (brick.isVisible() && brick.isBreakable()) {
+        if (brick.isVisible()) {
             for (Effect effect : brick.getEffects()) {
                 effect.accept(collisionEventHandler);
             }
-        }
+        }   
 
     }
 

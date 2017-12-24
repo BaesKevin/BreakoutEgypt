@@ -114,7 +114,6 @@ const Level = (function () {
         }
 
         if (json.leveldata.brickactions) {
-
             json.leveldata.brickactions.forEach(function (message) {
                 switch (message.brickaction) {
                     case "destroy":
@@ -143,7 +142,7 @@ const Level = (function () {
             let brickToRemove = self.bricks.find(function (brick) {
                 return brick.name === message.name;
             });
-            console.log(brickToRemove);
+            
             if (brickToRemove) {
                 self.bricks = self.bricks.filter(function (brick) {
                     return brick.name !== message.name;
@@ -277,8 +276,13 @@ const Level = (function () {
                 if (response.allLevelsComplete) {
                     ModalModule.modalAllLevelsCompleted(self.level);
                     self.allLevelsComplete = true;
+                } else if(response.levelLoading){
+                    $("#nextLevelButton")
+                            .closest(".modal")
+                            .find(".modal-body")
+                            .text("Next level is still loading, please try again in an instant.");
                 } else {
-                    console.log("Load level: got data for level " + response.level);
+                    $("#nextLevelButton").closest(".modal").modal("hide");
                     $("#levelid")[0].innerHTML = response.level;
                     $("#levelid").val(response.level);
                     self.init(response.level, response.lives, false, false, false);

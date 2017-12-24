@@ -63,6 +63,9 @@ public class Level implements BreakoutWorldEventListener {
     private final BreakoutPowerDownHandler bpdh;
     private Map<Integer, Boolean> startedLevelMap;
 
+    private boolean levelComplete = false;
+    private int winnerIndex = -1;
+
     public Level(int id, Game game, LevelState initialObjects) {
         this(id, game, initialObjects, BreakoutWorld.TIMESTEP_DEFAULT);
 
@@ -201,10 +204,10 @@ public class Level implements BreakoutWorldEventListener {
                 if (ball.getPlayerIndex() == playerIndex) {
                     scoreTimer.start();
                     int speed = game.getDifficulty().getBallspeed();
-                    if(ball.getPlayerIndex() == 2){
+                    if (ball.getPlayerIndex() == 2) {
                         speed = -speed;
                     }
-                    
+
                     ball.setLinearVelocity(0, speed);
                 }
             }
@@ -285,8 +288,12 @@ public class Level implements BreakoutWorldEventListener {
     }
 
     public void step() {
-        breakoutWorld.step();
-        game.notifyPlayers(this, breakoutWorld.getMessageRepo());
+        if (!levelComplete) {
+            breakoutWorld.step();
+            game.notifyPlayers(this, breakoutWorld.getMessageRepo());
+        } else {
+            initNextLevel(winnerIndex);
+        }
     }
 
     public void stop() {
@@ -327,12 +334,12 @@ public class Level implements BreakoutWorldEventListener {
         brickScoreCalc.addPointsToScore();
 
         if (allTargetBricksDestroyed()) {
-            int winnerIndex = brick.getPlayerIndex();
+            
+            levelComplete = true;
+            this.winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
             endOfGame(winnerIndex);
-
-            initNextLevel(winnerIndex);
         }
     }
 
@@ -341,16 +348,16 @@ public class Level implements BreakoutWorldEventListener {
         Player p = game.getPlayer(winnerIndex);
         int brickScore = brickScoreCalc.getScore();
         Score scoreOfPlayer = new Score(0, getId(), getLevelNumber(), p, getScoreTimer().getDuration(), game.getDifficulty().getName(), brickScore - (int) getScoreTimer().getDuration());
-        
+
         LevelPackProgress progress = p.getProgressions().getProgress(game.getGameType(), game.getDifficulty().getName());
         LevelPack lp = Repositories.getLevelPackRepo().getById(levelPackId);
 
         if (this.levelNumber >= progress.getLevelProgress().getHighestLevelReached()) {
             progress.sethighestLevelReached(this.levelNumber + 1, p, lp, game.getDifficulty());
         }
-        
+
         p.getProgressions().setProgressions(Repositories.getLevelProgressionRepository().getAllForPlayer(p.getUserId()));
-        
+
         highScoreRepo.addScore(scoreOfPlayer);
     }
 
@@ -423,5 +430,9 @@ public class Level implements BreakoutWorldEventListener {
         paddle.setPosition(originalPosition);
 
         breakoutWorld.spawn(paddle);
+    }
+
+    public boolean isComplete() {
+        return this.levelComplete;
     }
 }

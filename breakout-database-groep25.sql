@@ -120,6 +120,7 @@ create table bricks(
     istarget bool,
     isInverted bool,
     playerIndex int,
+    isSquare bool,
     foreign key(shapedimensionid) references shapedimensions(idshapedimension),
     foreign key(typeid) references brick_types(id)
 )engine=innodb;

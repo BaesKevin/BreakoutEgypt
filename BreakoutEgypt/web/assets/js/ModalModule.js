@@ -7,7 +7,7 @@ const ModalModule = (function () {
         let buttons = shareButton;
         buttons += mainMenuButton;
         buttons += "<button id='retry' class='btn'>Retry</button>";
-        buttons += "<button id='nextLevelButton' class='btn' data-dismiss='modal'>Next Level</button>";
+        buttons += "<button id='nextLevelButton' class='btn'>Next Level</button>";
         printModal("Level " + levelId + " completed", "Congratz " + winnerName + "! Your time is: " + time + ". Brickscore is " + brickScore, buttons);
     }
 
