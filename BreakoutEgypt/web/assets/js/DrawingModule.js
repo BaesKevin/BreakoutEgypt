@@ -106,6 +106,7 @@ let DrawingModule = (function () {
         let padding = 0;
         let index = 1;
         let pixels = ScalingModule.scaleYForClient(3);
+        
         level.powerups.forEach(function (powerup) {
             if (powerup.active) {
                 brickCtx.fillStyle = "lightgreen";

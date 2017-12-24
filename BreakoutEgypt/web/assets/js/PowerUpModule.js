@@ -127,13 +127,18 @@ let PowerUpModule = (function () {
             level.paddles.push(paddleToAdd);
         }
     }
+    
+    function clearPowerups(){
+        powerups = [];
+    }
 
     $(document).ready(function () {
         $(document).on("keypress", checkKey);
     });
 
     return {
-        handlePowerUpMessage: handlePowerUpMessage
+        handlePowerUpMessage: handlePowerUpMessage,
+        clearPowerups
     };
 
 })();
