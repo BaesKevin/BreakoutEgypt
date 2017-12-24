@@ -37,7 +37,7 @@ public class MysqlBrickRepository implements BrickRepository {
     private final String SELECT_ALL_BRICKS = "select * from bricks";
     private final String SELECT_ALL_LEVELBRICKS_BYLEVELID = "select bricks.* from bricks inner join levelbricks on levelbricks.brickid=bricks.brickid where levelbricks.levelid = ?";
     private final String SELECT_BRICK_BY_ID = "select * from bricks where brickId=?";
-    private final String INSERT_BRICK = "insert into bricks(shapedimensionid,typeid,isbreakable,isvisible,istarget, isInverted, playerIndex) values(?, ?, ?, ?, ?, ?, ? )";
+    private final String INSERT_BRICK = "insert into bricks(shapedimensionid,typeid,isbreakable,isvisible,istarget, isInverted, playerIndex, isSquare) values(?, ?, ?, ?, ?, ?, ?, ? )";
     private final String DELETE_BRICK = "delete from bricks where brickid = ?";
     private final String DELETE_LEVELBRICKS = "delete from levelbricks where levelid = ?";
     private final String INSERT_LEVELBRICKS = "insert into levelbricks(levelid,brickid) values(?,?)";
@@ -136,13 +136,14 @@ public class MysqlBrickRepository implements BrickRepository {
         boolean isTarget = rs.getBoolean("istarget");
         boolean isInverted = rs.getBoolean("isInverted");
         int playerIndex = rs.getInt("playerIndex");
+        boolean isSquare = rs.getBoolean("isSquare");
 
         ShapeDimension dimension = Repositories.getShapeDimensionRepository().getShapeDimensionById(rs.getInt("shapedimensionid"));
         BrickType bricktype = Repositories.getBrickTypeRepository().getBrickTypeById(rs.getInt("typeid"));
         Brick brick = new Brick(dimension, isTarget, isVisible, isBreakable, isInverted);
         brick.setBrickId(brickId);
         brick.setPlayerIndex(playerIndex);
-
+        brick.setIsSquare(isSquare);
 //        EffectRepository effectRepo = new MysqlEffectRepository();
 //        PowerDownRepository powerdownRepo = new MysqlPowerDownRepository();
 //        effectRepo.giveEffectsToBrick(brick);
@@ -168,7 +169,8 @@ public class MysqlBrickRepository implements BrickRepository {
             prep.setBoolean(5, brick.isTarget());
             prep.setBoolean(6, brick.isInverted());
             prep.setInt(7, brick.getPlayerIndex());
-
+            prep.setBoolean(8, brick.isIsSquare());
+            
             prep.executeUpdate();
             try (ResultSet rs = prep.getGeneratedKeys()) {
                 int brickId = -1;

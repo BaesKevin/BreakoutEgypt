@@ -44,6 +44,20 @@ public class BodyConfigurationFactory {
 
         return INSTANCE;
     }
+    public BodyConfiguration createSquareConfig(ShapeDimension shape) {
+
+        BodyDefConfig bodyDef = new BodyDefConfig(BodyType.STATIC, new Vec2(shape.getPosX(), shape.getPosY()));
+
+        PolygonShape ps = new PolygonShape();
+        ps.setAsBox(shape.getWidth() / 2, shape.getHeight() / 2);
+
+        FixtureDefConfig fixtureConfig = new FixtureDefConfig(1f, 0f, 1f, false, BRICK_CATEGORY, BRICK_MASK);
+
+        BodyConfiguration config = new BodyConfiguration(bodyDef, ps, fixtureConfig);
+
+        return config;
+    }
+    
 
     public BodyConfiguration createTriangleConfig(ShapeDimension shape, boolean isInverted) {
 

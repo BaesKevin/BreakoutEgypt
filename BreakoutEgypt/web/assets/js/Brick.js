@@ -14,6 +14,7 @@ const Brick = (function () {
         this.effect = brickdata.effect;
         this.isBreakable = brickdata.isBreakable;
         this.isInverted = brickdata.isInverted;
+        this.isSquare = brickdata.isSquare;
     };
 
     Brick.prototype.draw = function (brickCtx) {
@@ -23,17 +24,29 @@ const Brick = (function () {
             brickCtx.fillStyle = visual.color;
             brickCtx.shadowColor = "black";
 
-            brickCtx.beginPath();
-            if (this.isInverted) {
-                brickCtx.moveTo((this.x + this.width), this.y);
-                brickCtx.lineTo((this.x + this.width / 2), this.y + this.height);
-                brickCtx.lineTo(this.x, this.y);
+            if (!this.isSquare) {
+                brickCtx.beginPath();
+                if (this.isInverted) {
+                    brickCtx.moveTo((this.x + this.width), this.y);
+                    brickCtx.lineTo((this.x + this.width / 2), this.y + this.height);
+                    brickCtx.lineTo(this.x, this.y);
+                } else {
+                    brickCtx.moveTo((this.x + this.width / 2), this.y);
+                    brickCtx.lineTo(this.x, (this.y + this.height));
+                    brickCtx.lineTo((this.x + this.width), (this.y + this.height));
+                }
+                brickCtx.fill();
             } else {
-                brickCtx.moveTo((this.x + this.width / 2), this.y);
+                brickCtx.beginPath();
+                
+                brickCtx.moveTo(this.x, this.y);
                 brickCtx.lineTo(this.x, (this.y + this.height));
                 brickCtx.lineTo((this.x + this.width), (this.y + this.height));
+                brickCtx.lineTo((this.x + this.width), this.y);
+                
+                brickCtx.fill();
             }
-            brickCtx.fill();
+
 
             brickCtx.fillStyle = visual.pattern;
             brickCtx.fill();

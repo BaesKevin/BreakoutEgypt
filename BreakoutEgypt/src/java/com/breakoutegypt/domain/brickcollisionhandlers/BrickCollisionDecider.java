@@ -26,7 +26,7 @@ public class BrickCollisionDecider {
     }
 
     public void handleCollision() {
-        if (brick.isVisible()) {
+        if (brick.isVisible() && brick.isBreakable()) {
             for (Effect effect : brick.getEffects()) {
                 effect.accept(collisionEventHandler);
             }

@@ -234,7 +234,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         for (int i = 0; i < 1; i++) {
             bricks.get(i).setTarget(true);
         }
-
+        
         bricks.get(2).addEffect(new ExplosiveEffect(bricks.get(2), 1));
         List<Ball> balls = new ArrayList();
         balls.add(ball);

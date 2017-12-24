@@ -40,7 +40,7 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
         LevelRepository levelRepo = Repositories.getLevelRepository();
         Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId, pack.getId(), game);
-
+        
         if (levelFromDatabase == null) {
             switch (this.currentLevelId) {
                 case 1:
@@ -62,28 +62,20 @@ public class MultiplayerLevelFactory extends LevelFactory {
 
     public Level makePong() {
 
-        Ball ball = shapeRepo.getDefaultBall("ball", 50, 70);
-        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 30);
+        Ball ball = shapeRepo.getDefaultBall();
+        Ball ball2 = shapeRepo.getDefaultBall("ball2", 50, 20);
 
         Paddle paddle = shapeRepo.getDefaultPaddle("paddle1", 50, 10);
-        Paddle paddle2 = shapeRepo.getDefaultPaddle("paddle2", 50, 90);
+        Paddle paddle2 = shapeRepo.getDefaultPaddle("paddle2", 50, 95);
 
         Brick target = shapeRepo.getDefaultBrick("target", 45, 45, true);
-
+        target.setIsSquare(true);
+        
         List<Brick> bricks = new ArrayList();
-        for (int i = 0; i < 3; i++) {
-            Brick brick = new Brick(
-                    new ShapeDimension("upperBrick" + i, 35 + i * DimensionDefaults.BRICK_WIDTH, 40, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER),
-                    false, true, true, false);
-            bricks.add(brick);
-        }
 
-        for (int i = 0; i < 3; i++) {
-            Brick brick = new Brick(
-                    new ShapeDimension("lowerBrick" + i, 35 + i * DimensionDefaults.BRICK_WIDTH, 55, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER),
-                    false, true, true, true);
-            bricks.add(brick);
-        }
+        drawTopPyramid(bricks);
+        drawBottomPyramid(bricks);
+        
 
         paddle.setPlayerIndex(2);
         List<Paddle> paddles = new ArrayList();
@@ -105,6 +97,60 @@ public class MultiplayerLevelFactory extends LevelFactory {
         Level level = new Level(currentLevelId, game, initialState);
         level.setLevelNumber(1);
         return level;
+    }
+    
+     private void drawTopPyramid(List<Brick> bricks) {
+        int rows = 4;
+        int x= 45, y = 50 - rows * DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER;
+        int bricksPerRow = 1;
+        for (int row = 0; row < rows; row++) {
+            
+            int startingx = 45 - (int)Math.floor(bricksPerRow / 2) * (DimensionDefaults.BRICK_WIDTH / 2);
+            boolean invertedBrick = false;
+            
+            for(int col = 0; col < bricksPerRow; col++){
+                int brickx = startingx + col * DimensionDefaults.BRICK_WIDTH / 2;
+                int bricky = y;
+                Brick brick = new Brick(
+                        new ShapeDimension("lowerBrick", brickx, bricky, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER),
+                        false, true, true, invertedBrick);
+                bricks.add(brick);
+                invertedBrick = !invertedBrick;
+                System.out.printf("x: %d y: %d\n", startingx + col * DimensionDefaults.BRICK_WIDTH, y);
+            }
+            
+            bricksPerRow += 4;
+            y += DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER;
+        }
+        
+        bricks.get(0).setBreakable(false);
+    }
+
+    private void drawBottomPyramid(List<Brick> bricks) {
+        int rows = 4;
+        int x= 45, y = 50;
+        int bricksPerRow = ((rows - 1) * 4) + 1;
+        for (int row = 0; row < rows; row++) {
+            
+            int startingx = 45 - (int)Math.floor(bricksPerRow / 2) * (DimensionDefaults.BRICK_WIDTH / 2);
+            boolean invertedBrick = true;
+            
+            for(int col = 0; col < bricksPerRow; col++){
+                int brickx = startingx + col * DimensionDefaults.BRICK_WIDTH / 2;
+                int bricky = y;
+                Brick brick = new Brick(
+                        new ShapeDimension("lowerBrick", brickx, bricky, DimensionDefaults.BRICK_WIDTH, DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER),
+                        false, true, true, invertedBrick);
+                bricks.add(brick);
+                invertedBrick = !invertedBrick;
+                System.out.printf("x: %d y: %d\n", startingx + col * DimensionDefaults.BRICK_WIDTH, y);
+            }
+            
+            bricksPerRow -= 4;
+            y += DimensionDefaults.BRICK_HEIGHT_MULTIPLAYER;
+        }
+        
+        bricks.get(bricks.size() - 1).setBreakable(false);
     }
 
     public Level levelWithTarget() {

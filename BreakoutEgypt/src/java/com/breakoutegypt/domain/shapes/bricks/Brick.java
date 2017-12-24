@@ -41,7 +41,7 @@ public class Brick extends RegularBody {
     private PowerUp powerup;
     private PowerDown powerdown;
     private boolean isInverted;
-
+    private boolean isSquare;
 //    private int points = 2000;
     public Brick(ShapeDimension s) {
         this(s, false);
@@ -109,6 +109,14 @@ public class Brick extends RegularBody {
         return isBreakable;
     }
 
+    public boolean isIsSquare() {
+        return isSquare;
+    }
+
+    public void setIsSquare(boolean isSquare) {
+        this.isSquare = isSquare;
+    }
+
     public JsonObjectBuilder toJson() {
         JsonObjectBuilder builder = super.toJson();
 
@@ -123,6 +131,7 @@ public class Brick extends RegularBody {
         }
         builder.add("isBreakable", isBreakable);
         builder.add("isInverted", isInverted);
+        builder.add("isSquare", isSquare);
         return builder;
     }
 
@@ -213,8 +222,13 @@ public class Brick extends RegularBody {
     @Override
     public BodyConfiguration getConfig() {
         BodyConfigurationFactory factory = BodyConfigurationFactory.getInstance();
-        BodyConfiguration brickBody = factory.createTriangleConfig(this.dimension, isInverted);
-
+        BodyConfiguration brickBody;
+        if(!isSquare){
+            brickBody = factory.createTriangleConfig(this.dimension, isInverted);
+        } else {
+            brickBody = factory.createSquareConfig(this.dimension);
+        }
+        
         if (!this.isVisibible) {
             brickBody.getFixtureConfig().setMaskBits(0);
         }
