@@ -53,10 +53,10 @@ public class ArcadeLevelFactory extends LevelFactory {
     protected void createCurrentLevel() {
 
         LevelPack pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
-//        if (pack == null) {
-//            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", defaultOpenLevels, totalLevels));
-//            pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
-//        }
+        if (pack == null) {
+            Repositories.getLevelPackRepo().add(new LevelPack(LEVELPACK_NAME, "arcade levels", defaultOpenLevels, totalLevels));
+            pack = Repositories.getLevelPackRepo().getByName(LEVELPACK_NAME);
+        }
 
         LevelRepository levelRepo = Repositories.getLevelRepository();
         Level levelFromDatabase = levelRepo.getLevelByNumber(currentLevelId, pack.getId(), game);
@@ -71,13 +71,12 @@ public class ArcadeLevelFactory extends LevelFactory {
                     break;
                 case 3:
                     currentLevel = getLevelWithInvertedTriangles();
-                    currentLevel.setLevelNumber(3);
                     break;
                 case 4:
                     currentLevel = getPossibleRealLevel();
                     break;
                 case 5:
-                    currentLevel = getLevelWithFloodPowerDown();
+                    currentLevel = explosiveDemo();
                     break;
             }
 
@@ -127,6 +126,8 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         LevelState state = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(currentLevelId, game, state);
+        level.setLevelNumber(currentLevelId);
+        level.setLevelName("Pyramid");
         return level;
     }
 
@@ -184,7 +185,7 @@ public class ArcadeLevelFactory extends LevelFactory {
 
         Brick invertedBrick = Repositories.getDefaultShapeRepository().getDefaultBrick("inverted", 50, 5, false, true, true, true);
         invertedBrick.setPowerUp(new BallPowerup(ball, 1, 1, difficulty.getPowerupTime()));
-        
+
         bricks.add(brick);
         bricks.add(invertedBrick);
         List<Ball> balls = new ArrayList();
@@ -234,7 +235,7 @@ public class ArcadeLevelFactory extends LevelFactory {
         for (int i = 0; i < 1; i++) {
             bricks.get(i).setTarget(true);
         }
-        
+
         bricks.get(2).addEffect(new ExplosiveEffect(bricks.get(2), 1));
         List<Ball> balls = new ArrayList();
         balls.add(ball);
@@ -405,6 +406,111 @@ public class ArcadeLevelFactory extends LevelFactory {
         LevelState initialState = new LevelState(balls, paddles, bricks, difficulty, true);
         Level level = new Level(currentLevelId, game, initialState);
 
+        return level;
+    }
+
+    public Level bricktypeDemo() {
+        Ball ball = shapeRepo.getDefaultBall();
+        ball.setStartingBall(true);
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+        Brick brick = shapeRepo.getDefaultBrick("default", 45, 20);
+        Brick target = shapeRepo.getDefaultBrick("target", 20, 20, true);
+
+        List<Ball> balls = new ArrayList();
+        List<Paddle> paddles = new ArrayList();
+        List<Brick> bricks = new ArrayList();
+
+        balls.add(ball);
+        paddles.add(paddle);
+        bricks.add(brick);
+        bricks.add(target);
+
+        LevelState state = new LevelState(balls, paddles, bricks, difficulty, true);
+        Level level = new Level(currentLevelId, game, state);
+        level.setLevelNumber(1);
+        level.setLevelName("bricktypedemo");
+        return level;
+    }
+
+    public Level explosiveDemo() {
+        Ball ball = shapeRepo.getDefaultBall();
+        ball.setStartingBall(true);
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+
+//        Brick brick = shapeRepo.getDefaultBrick("brick1", 35, 20, true, true, false);
+        Brick brick2 = shapeRepo.getDefaultBrick("brick2", 45, 20, true);
+//        Brick brick3 = shapeRepo.getDefaultBrick("brick3", 55, 20, true, true, false);
+        Brick brick4 = shapeRepo.getDefaultBrick("brick4", 35, 30, false, true, false, true);
+        Brick explosive = shapeRepo.getDefaultBrick("brick5", 45, 30, false, true, false);
+        Brick brick5 = shapeRepo.getDefaultBrick("brick6", 55, 30, false, true, false, true);
+        Brick brick6 = shapeRepo.getDefaultBrick("brick7", 35, 20, false, true, false);
+        Brick brick7 = shapeRepo.getDefaultBrick("brick8", 45, 10, false, true, false, true);
+        Brick brick8 = shapeRepo.getDefaultBrick("brick9", 55, 20, false, true, false);
+        Brick inverted1 = shapeRepo.getDefaultBrick("brick10", 38, 40, false, true, false, true);
+        Brick inverted2 = shapeRepo.getDefaultBrick("brick11", 52, 40, false, true, false, true);
+
+        explosive.addEffect(new ExplosiveEffect(explosive, 1));
+
+//        Brick target = shapeRepo.getDefaultBrick("target", 45, 10, true);
+        List<Ball> balls = new ArrayList();
+        List<Paddle> paddles = new ArrayList();
+        List<Brick> bricks = new ArrayList();
+
+        balls.add(ball);
+        paddles.add(paddle);
+//        bricks.add(brick);
+        bricks.add(brick2);
+//        bricks.add(brick3);
+        bricks.add(brick4);
+        bricks.add(brick5);
+        bricks.add(brick6);
+        bricks.add(brick7);
+        bricks.add(brick8);
+        bricks.add(inverted1);
+        bricks.add(inverted2);
+        bricks.add(explosive);
+
+        LevelState state = new LevelState(balls, paddles, bricks, difficulty, true);
+        Level level = new Level(currentLevelId, game, state);
+        level.setLevelName("explosivedemo");
+        level.setLevelNumber(currentLevelId);
+        return level;
+    }
+
+    public Level switchDemo() {
+        Ball ball = shapeRepo.getDefaultBall();
+        ball.setStartingBall(true);
+        Paddle paddle = shapeRepo.getDefaultPaddle();
+
+        Brick brick = shapeRepo.getDefaultBrick("brick1", 25, 20, false, false);
+        Brick brick2 = shapeRepo.getDefaultBrick("brick2", 35, 20, true, false);
+        Brick brick3 = shapeRepo.getDefaultBrick("brick3", 45, 20);
+        Brick brick4 = shapeRepo.getDefaultBrick("brick4", 55, 20);
+        Brick brick5 = shapeRepo.getDefaultBrick("brick5", 65, 20);
+
+        List<Brick> bricksToToggle = new ArrayList();
+        bricksToToggle.add(brick);
+        bricksToToggle.add(brick2);
+        bricksToToggle.add(brick4);
+        bricksToToggle.add(brick5);
+        brick3.addEffect(new ToggleEffect(bricksToToggle));
+
+//        Brick target = shapeRepo.getDefaultBrick("target", 45, 10, true);
+        List<Ball> balls = new ArrayList();
+        List<Paddle> paddles = new ArrayList();
+        List<Brick> bricks = new ArrayList();
+
+        balls.add(ball);
+        paddles.add(paddle);
+        bricks.add(brick);
+        bricks.add(brick2);
+        bricks.add(brick3);
+        bricks.add(brick4);
+        bricks.add(brick5);
+
+        LevelState state = new LevelState(balls, paddles, bricks, difficulty, true);
+        Level level = new Level(currentLevelId, game, state);
+        level.setLevelName("switchdemo");
         return level;
     }
 }

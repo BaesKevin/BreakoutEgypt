@@ -289,7 +289,6 @@ const Level = (function () {
                     self.init(response.level, response.lives, false, false, false);
                     self.initLevelState(response.balls, response.bricks, response.paddles, response.mypaddle);
                     self.playerIndex = response.playerIndex;
-                    console.log(response.lives);
                     self.levelDimension = response.levelDimension;
 
                     ScalingModule.updateCanvasDimension(self.levelDimension);

@@ -421,7 +421,7 @@ public class TestLevelFactory extends LevelFactory {
         LevelState initialState = new LevelState(b, paddle, new ArrayList());
         Level level = new Level(5, game, initialState);
         level.setLevelNumber(1);
-        level.setRunManual(true);
+//        level.setRunManual(true);
         return level;
     }
 

@@ -292,6 +292,7 @@ public class Level implements BreakoutWorldEventListener {
             breakoutWorld.step();
             game.notifyPlayers(this, breakoutWorld.getMessageRepo());
         } else {
+            endOfGame(winnerIndex);
             initNextLevel(winnerIndex);
         }
     }
@@ -334,12 +335,11 @@ public class Level implements BreakoutWorldEventListener {
         brickScoreCalc.addPointsToScore();
 
         if (allTargetBricksDestroyed()) {
-            
+
             levelComplete = true;
             this.winnerIndex = brick.getPlayerIndex();
             getScoreTimer().stop();
 
-            endOfGame(winnerIndex);
         }
     }
 

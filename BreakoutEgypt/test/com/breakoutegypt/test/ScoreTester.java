@@ -63,7 +63,9 @@ public class ScoreTester {
         }
 
         player = new Player("Kevin");
-
+        player.getProgressions().addNewProgression(GameType.TEST, diff);
+        
+        
         game.addConnectingPlayer(player);
 
         game.addConnectionForPlayer("Kevin", new DummyConnection());
